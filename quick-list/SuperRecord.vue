@@ -1,0 +1,266 @@
+<template>
+    <div>
+        <!--      <pre>{{headers}}</pre>-->
+        <v-tabs v-model="activeTab">
+            <v-tab :value="'tab'"> Overview </v-tab>
+            <v-tab
+                v-for="(relation, index) in filteredChildRelations"
+                :key="index"
+                :value="'tab-' + index"
+            >
+                {{ relation.field.label }}
+            </v-tab>
+
+
+        </v-tabs>
+        <v-tabs-window v-model="activeTab">
+
+          <v-tabs-window-item value="tab">
+            <template
+              v-if="model.displayMapFull && model.displayMapFull.rows"
+            >
+              <RecordOverviewDynamic
+                :headers="headers"
+                :item="item"
+                :displayMapField="displayMapField"
+                :modelFields="modelFields"
+                :model="model"
+                :canEdit="canEdit"
+                :currentParentRecord="{
+                        item: this.item,
+                        model: this.model,
+                    }"
+                :childRelations="childRelations"
+              />
+            </template>
+            <template v-else>
+              <RecordOverview
+                :headers="headers"
+                :item="item"
+                :displayMapField="displayMapField"
+                :modelFields="modelFields"
+                :model="model"
+                :canEdit="canEdit"
+                :currentParentRecord="{
+                        item: this.item,
+                        model: this.model,
+                    }"
+              />
+            </template>
+            <!--              @deleteItem="deleteItem"-->
+            <!--              @editItem="editItem"-->
+            <!--              @clickRow="clickRow"-->
+            <!--              :clickable="true"-->
+          </v-tabs-window-item>
+          <v-tabs-window-item
+            v-for="(relation, index) in filteredChildRelations"
+            :key="index"
+            :value="'tab-' + index"
+          >
+            <!--                <pre>{{ relation.field }}</pre>-->
+            <!--              :forcedFilters="filters(relation.field.foreignKey)"-->
+            <SuperTable
+              :ref="`tab-${index}`"
+              :currentParentRecord="relation.currentParentRecord"
+              :model="relation.field.meta.field.related"
+              :canEdit="canEdit"
+            >
+              <template v-if="!!$slots[relation.field.name]" #create>
+                <slot :name="relation.field.name" />
+              </template>
+            </SuperTable>
+          </v-tabs-window-item>
+        </v-tabs-window>
+    </div>
+</template>
+
+<script>
+import SuperTable from '@/views/global/quick-list/SuperTable.vue'
+import RecordOverview from '@/views/global/quick-list/RecordOverview.vue'
+import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
+import LoginSession from '@/models/LoginSession'
+import RecordOverviewDynamic from '@/views/global/quick-list/RecordOverviewDynamic.vue'
+
+export default {
+    name: 'SuperRecord',
+    components: {
+        RecordOverviewDynamic,
+        RecordOverview,
+        SuperTable,
+    },
+
+    props: {
+        model: {
+            type: [Object, Function],
+            required: true,
+        },
+        id: {
+            type: Number,
+            required: true,
+        },
+        displayMapField: {
+            type: Boolean,
+            default() {
+                return false
+            },
+        },
+    },
+    data() {
+        return {
+            activeTab: null,
+            // childRelations: [],
+        }
+    },
+    computed: {
+        rowsAndDataIndicators() {
+            // const result = QuickListsHelpers.rowsAndDataIndicators(
+            //     false,
+            //     this.model,
+            //     this.headers,
+            //     this.childRelations
+            // )
+            // return result
+
+            let result = {
+                dataIndicators: [],
+                rows: [],
+            }
+            if (this.model.displayMapFull && this.model.displayMapFull.rows) {
+                result.rows = this.model.displayMapFull.rows
+            }
+
+            for (const rowKey in result.rows) {
+                for (const col of result.rows[rowKey].cols) {
+                    if (col.rows) {
+                        for (const row of col.rows) {
+                            for (const col2 of row.cols) {
+                                if (col2.dataPoint.data) {
+                                    result.dataIndicators.push(
+                                        col2.dataPoint.data
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        if (col.dataPoint.data) {
+                            result.dataIndicators.push(
+                                col.dataPoint.data
+                            )
+                        }
+                    }
+                }
+            }
+
+            return result
+        },
+        canEdit() {
+            return !!this.loginSession
+        },
+        childRelations() {
+            const fields = QuickListsHelpers.computedAttrs(
+                this.model,
+                this.excludedCols
+            )
+            const result = []
+
+            for (let fieldName in fields) {
+                const field = fields[fieldName]
+                if (field.usageType.startsWith('relChildren')) {
+                    result.push({
+                        field,
+                        currentParentRecord: {
+                            item: this.item,
+                            model: this.model,
+                            relationType: field.usageType,
+                            foreignKeyToParentRecord:
+                                field.meta.field.foreignKey,
+                        },
+                    })
+                }
+            }
+            return result
+        },
+        filteredChildRelations() {
+            let result = []
+            for (const childRelation of this.childRelations) {
+                if (
+                    !this.rowsAndDataIndicators.dataIndicators.includes(
+                        childRelation.field.name
+                    )
+                ) {
+                    result.push(childRelation)
+                }
+            }
+            return result
+        },
+        loginSession() {
+            return LoginSession.query().withAllRecursive().first()
+        },
+        headers() {
+            return QuickListsHelpers.SupaerTableHeaders(
+                this.model,
+                [],
+                this.canEdit,
+                this.displayMapField
+            )
+        },
+        item() {
+            const result = this.model
+                .query()
+                .whereId(this.id)
+                .withAll()
+                .get()[0]
+            return result
+        },
+        modelFields() {
+            const result = QuickListsHelpers.computedAttrs(
+                this.model,
+                this.excludedCols
+            )
+            return result
+        },
+    },
+    methods: {
+        getMsg(type) {
+            let result = ''
+            if (Array.isArray(type)) {
+                if (type.length > 1) {
+                    result = `To create first set your active ${type[0]} group and  active ${type[1]}  group`
+                }
+            } else {
+                result = `To create first set your active ${type} group`
+            }
+            return result
+        },
+        filters(foreignKey) {
+            let result = {}
+            result[foreignKey] = this.id
+            return result
+        },
+        // getChildRelations() {
+        // },
+        fetchData() {
+            this.model
+                .FetchById(this.id, [])
+                .then(() => {})
+                .catch(() => {})
+        },
+    },
+    mounted() {
+        // this.getChildRelations()
+        this.fetchData()
+        console.log(this.headers)
+    },
+    watch: {
+        activeTab(newVal) {
+            this.$nextTick(() => {
+                if (this.$refs[newVal]) {
+                    this.$refs[newVal][0].fetchData()
+                }
+            })
+        },
+    },
+}
+</script>
+
+<style scoped></style>
