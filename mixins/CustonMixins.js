@@ -1,10 +1,10 @@
-import router from '@/router'
+// import router from '@/router'
 import VueCookies from 'vue-cookies'
 import moment from 'moment/moment'
 import SnackbarNotification from '@/models/SnackbarNotification'
 import LoginSession from '@/models/LoginSession'
 import DBProviderGroup from '@/models/DBProviderGroup'
-import Helpers from '@/utils/Helpers'
+import Helpers from '@/2024-05-vue-orm-ui/utils/Helpers'
 import DBMembership from '@/models/DBMembership'
 import DBCustomerManager from '@/models/DBCustomerManager'
 import DBCustomerGroup from '@/models/DBCustomerGroup'
@@ -84,9 +84,9 @@ export default {
             return result
         },
 
-        goto(path) {
-            router.push(path)
-        },
+        // goto(path) {
+        //     router.push(path)
+        // },
         VITE_API_URL() {
             return import.meta.env.VITE_API_URL
         },
