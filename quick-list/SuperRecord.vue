@@ -75,11 +75,11 @@
 </template>
 
 <script>
-import SuperTable from '@/views/global/quick-list/SuperTable.vue'
-import RecordOverview from '@/views/global/quick-list/RecordOverview.vue'
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
+import SuperTable from '@/2024-05-vue-orm-ui/quick-list/SuperTable.vue'
+import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
 import LoginSession from '@/models/LoginSession'
-import RecordOverviewDynamic from '@/views/global/quick-list/RecordOverviewDynamic.vue'
+import RecordOverviewDynamic from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamic.vue'
 
 export default {
     name: 'SuperRecord',

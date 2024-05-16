@@ -89,8 +89,8 @@
 <script>
 import moment from 'moment-timezone'
 import LoginSession from '@/models/LoginSession'
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
-import CreateEditForm from '@/views/global/quick-list/CreateEditForm.vue'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import CreateEditForm from '@/2024-05-vue-orm-ui/quick-list/CreateEditForm.vue'
 
 export default {
     name: 'FormattedColumn',

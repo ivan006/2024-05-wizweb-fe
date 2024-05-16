@@ -125,14 +125,14 @@
 </template>
 
 <script>
-import FormattedColumn from '@/views/global/quick-list/FormattedColumn.vue'
+import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
 import { defineAsyncComponent } from 'vue';
 
 export default {
     name: 'RecordOverviewDynamicDataPoint',
     components: {
         SuperTable: defineAsyncComponent(() =>
-          import('@/views/global/quick-list/SuperTable.vue')
+          import('@/2024-05-vue-orm-ui/quick-list/SuperTable.vue')
         ),
         FormattedColumn,
     },

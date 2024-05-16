@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import FormattedColumn from '@/views/global/quick-list/FormattedColumn.vue'
+import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
 
 export default {
     name: 'SuperTableList',

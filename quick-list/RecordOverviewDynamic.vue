@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import RecordOverviewDynamicDataPoint from '@/views/global/quick-list/RecordOverviewDynamicDataPoint.vue'
+import RecordOverviewDynamicDataPoint from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamicDataPoint.vue'
 
 export default {
     name: 'RecordOverviewDynamic',

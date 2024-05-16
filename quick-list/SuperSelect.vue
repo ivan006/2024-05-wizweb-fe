@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
 
 export default {
     name: 'SuperSelect',

@@ -122,8 +122,8 @@
 <script>
 // import moment from 'moment'
 
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
-import RecordOverview from '@/views/global/quick-list/RecordOverview.vue'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
 
 import VueCal from 'vue-cal'
 // import 'vue-cal/dist/vue-cal.css'

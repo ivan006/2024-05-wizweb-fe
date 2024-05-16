@@ -78,8 +78,8 @@
 </template>
 
 <script>
-import SuperSelect from '@/views/global/quick-list/SuperSelect.vue'
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
+import SuperSelect from '@/2024-05-vue-orm-ui/quick-list/SuperSelect.vue'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
 
 export default {
     name: 'FilterPlace',

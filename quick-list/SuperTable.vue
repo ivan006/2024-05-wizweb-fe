@@ -173,19 +173,19 @@
 
 <script>
 import moment from 'moment-timezone'
-import CreateEditForm from '@/views/global/quick-list/CreateEditForm.vue'
-import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
-import SuperTableCalendar from '@/views/global/quick-list/SuperTableCalendar.vue'
-import SuperTableGrid from '@/views/global/quick-list/SuperTableGrid.vue'
-import SuperTableTable from '@/views/global/quick-list/SuperTableTable.vue'
-import SuperTableMap from '@/views/global/quick-list/SuperTableMap.vue'
-import SuperTableList from '@/views/global/quick-list/SuperTableList.vue'
-import SuperSelect from '@/views/global/quick-list/SuperSelect.vue'
-import FilterTime from '@/views/global/quick-list/FilterTime.vue'
-import FilterPlace from '@/views/global/quick-list/FilterPlace.vue'
-import DestructableExpansionPanels from '@/views/global/quick-list/DestructableExpansionPanels.vue'
+import CreateEditForm from '@/2024-05-vue-orm-ui/quick-list/CreateEditForm.vue'
+import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import SuperTableCalendar from '@/2024-05-vue-orm-ui/quick-list/SuperTableCalendar.vue'
+import SuperTableGrid from '@/2024-05-vue-orm-ui/quick-list/SuperTableGrid.vue'
+import SuperTableTable from '@/2024-05-vue-orm-ui/quick-list/SuperTableTable.vue'
+import SuperTableMap from '@/2024-05-vue-orm-ui/quick-list/SuperTableMap.vue'
+import SuperTableList from '@/2024-05-vue-orm-ui/quick-list/SuperTableList.vue'
+import SuperSelect from '@/2024-05-vue-orm-ui/quick-list/SuperSelect.vue'
+import FilterTime from '@/2024-05-vue-orm-ui/quick-list/FilterTime.vue'
+import FilterPlace from '@/2024-05-vue-orm-ui/quick-list/FilterPlace.vue'
+import DestructableExpansionPanels from '@/2024-05-vue-orm-ui/quick-list/DestructableExpansionPanels.vue'
 import LoginSession from '@/models/LoginSession'
-import CreateButton from '@/views/global/quick-list/CreateButton.vue'
+import CreateButton from '@/2024-05-vue-orm-ui/quick-list/CreateButton.vue'
 
 export default {
     name: 'SuperTable',

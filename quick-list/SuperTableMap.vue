@@ -69,8 +69,8 @@
 <script>
 // import place from '@/models/place'
 import Upload from '@/models/Upload'
-import RecordOverview from '@/views/global/quick-list/RecordOverview.vue'
-import MyGoogleMap from "@/views/global/quick-list/MyGoogleMap.vue";
+import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
+import MyGoogleMap from "@/2024-05-vue-orm-ui/quick-list/MyGoogleMap.vue";
 import {useGeolocation} from "@vueuse/core";
 export default {
     name: 'SuperTableMap',

@@ -47,9 +47,9 @@
 </template>
 
 <script>
-import RecordOverview from '@/views/global/quick-list/RecordOverview.vue'
-import RecordOverviewDynamic from '@/views/global/quick-list/RecordOverviewDynamic.vue'
-// import QuickListsHelpers from '@/views/global/quick-list/QuickListsHelpers'
+import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
+import RecordOverviewDynamic from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamic.vue'
+// import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
 
 export default {
     name: 'SuperTableGrid',
