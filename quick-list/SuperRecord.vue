@@ -264,7 +264,7 @@ export default {
         // },
         fetchData() {
             this.model
-                .FetchById(this.id, [])
+                .FetchById(this.baseUrl, this.id, [])
                 .then(() => {})
                 .catch(() => {})
         },
