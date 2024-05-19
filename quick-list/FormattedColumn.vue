@@ -125,6 +125,7 @@ export default {
               canEdit: false,
               currentParentRecord: {},
               user: {},
+              baseUrl: "",
             }
           },
         },

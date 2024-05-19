@@ -120,6 +120,12 @@ export default {
             return {}
           },
         },
+        baseUrl: {
+          type: String,
+          default() {
+            return ""
+          },
+        },
     },
     data() {
         return {
@@ -233,7 +239,7 @@ export default {
 
             this.loading = true
 
-            const response = await this.model.FetchAll({
+            const response = await this.model.FetchAll(this.baseUrl, {
                 page: this.pagination.page,
                 limit: this.pagination.limit,
                 filters: this.filtersComp,

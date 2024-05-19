@@ -31,6 +31,7 @@
                     canEdit: canEdit,
                     currentParentRel: {},
                     user: user,
+                    baseUrl: baseUrl,
                 }"
               >
                 <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
@@ -49,6 +50,7 @@
                     canEdit: canEdit,
                     currentParentRel: {},
                     user: user,
+                    baseUrl: baseUrl,
                 }"
               />
             </template>
@@ -70,6 +72,7 @@
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
               :user="user"
+              :baseUrl="baseUrl"
             >
               <template v-if="!!$slots[relation.field.name]" #create>
                 <slot :name="relation.field.name" />
@@ -116,6 +119,12 @@ export default {
           type: Object,
           default() {
             return {}
+          },
+        },
+        baseUrl: {
+          type: String,
+          default() {
+            return ""
           },
         },
     },

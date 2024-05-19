@@ -17,6 +17,7 @@
                         canEdit: canEdit,
                         currentParentRel: currentParentRel,
                         user: user,
+                        baseUrl: baseUrl,
                     }"
                 />
             </template>
@@ -34,6 +35,7 @@
                     canEdit: canEdit,
                     currentParentRel: currentParentRel,
                     user: user,
+                    baseUrl: baseUrl,
                 }"
             />
         </template>
@@ -135,6 +137,7 @@
                             canEdit: canEdit,
                             currentParentRel: currentParentRel,
                             user: user,
+                            baseUrl: baseUrl,
                         }"
                     />
                 </template>
@@ -151,6 +154,7 @@
                                 canEdit: canEdit,
                                 currentParentRel: currentParentRel,
                                 user: user,
+                                baseUrl: baseUrl,
                             }"
                         />
                     </div>
@@ -168,6 +172,7 @@
                             canEdit: canEdit,
                             currentParentRel: currentParentRel,
                             user: user,
+                            baseUrl: baseUrl,
                         }"
                     />
                 </template>
@@ -183,6 +188,7 @@
                             canEdit: canEdit,
                             currentParentRel: currentParentRel,
                             user: user,
+                            baseUrl: baseUrl,
                         }"
                     />
                 </template>
@@ -205,6 +211,7 @@
                         canEdit: canEdit,
                         currentParentRel: currentParentRel,
                         user: user,
+                        baseUrl: baseUrl,
                     }"
                 />
             </v-dialog>
@@ -297,6 +304,12 @@ export default {
             },
         },
         defaultViewModeProp: {
+            type: String,
+            default() {
+                return ''
+            },
+        },
+        baseUrl: {
             type: String,
             default() {
                 return ''
@@ -483,7 +496,7 @@ export default {
             if (this.model.rules?.readables){
               rules = this.model.rules.readables(this.user)
             }
-            const response = await this.model.FetchAll({
+            const response = await this.model.FetchAll(this.baseUrl, {
                 page: this.pagination.page,
                 limit: this.pagination.itemsPerPage,
                 filters: this.filtersComp,
