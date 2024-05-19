@@ -22,14 +22,8 @@
                         <FormattedColumn
                             :isTag="true"
                             :header="header"
-                            :modelFields="modelFields"
                             :item="item[header.isChildOf.value]"
-                            @deleteItem="deleteItem"
-                            @editItem="editItem"
-                            :displayMapField="displayMapField"
-                            :model="model"
-                            :canEdit="canEdit"
-                            :currentParentRecord="currentParentRecord"
+                            :superOptions="superOptions"
                         />
                     </div>
                 </template>
@@ -37,14 +31,8 @@
                     <div>
                         <FormattedColumn
                             :header="header"
-                            :modelFields="modelFields"
                             :item="item"
-                            @deleteItem="deleteItem"
-                            @editItem="editItem"
-                            :displayMapField="displayMapField"
-                            :model="model"
-                            :canEdit="canEdit"
-                            :currentParentRecord="currentParentRecord"
+                            :superOptions="superOptions"
                         />
                     </div>
                 </template>
@@ -54,19 +42,14 @@
 </template>
 
 <script>
-import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
+import FormattedColumn from './FormattedColumn.vue'
+import CreateEditForm from "./CreateEditForm.vue";
 
 export default {
     name: 'SuperTableTable',
-    components: { FormattedColumn },
+    components: {CreateEditForm, FormattedColumn },
 
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
         items: {
             type: Array,
             default() {
@@ -79,33 +62,18 @@ export default {
                 return {}
             },
         },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+            }
+          },
         },
     },
     computed: {
@@ -119,7 +87,7 @@ export default {
         },
         flattenedHeaders() {
             let result = []
-            for (const header of this.headers) {
+            for (const header of this.superOptions.headers) {
                 result.push(header)
                 if (header.headerChildren) {
                     for (const childHeader of header.headerChildren) {
@@ -135,7 +103,7 @@ export default {
         flattenedHeadersHideMapField() {
             let result = []
             for (const header of this.flattenedHeaders) {
-                if (!this.displayMapField) {
+                if (!this.superOptions.superOptions) {
                     if (
                         !header.usageType.startsWith('relLookupMapExtra') &&
                         !header.usageType.startsWith('mapExtra')

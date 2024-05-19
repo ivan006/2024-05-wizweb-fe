@@ -12,6 +12,7 @@
             {{ formatTimestamp(item[header.value]) }}
         </template>
         <template v-else-if="header.usageType == 'actions'">
+          <div @click.stop :style="disabled() ? 'cursor: default;': ''">
             <v-btn
               @click.stop="editItem(item)"
               :disabled="disabled()"
@@ -30,18 +31,17 @@
               height="36px"
               width="36px"
             />
-            <template v-if="canEdit">
+          </div>
+
+            <template v-if="superOptions.canEdit">
                 <v-dialog v-model="editItemData.showModal" max-width="800px" scrollable>
                     <CreateEditForm
                         title="Edit Item"
                         v-if="editItemData.showModal"
-                        :modelFields="modelFields"
                         v-model="editItemData.data"
-                        :model="model"
-                        :displayMapField="displayMapField"
                         @submit="editItemSubmit"
                         @cancel="editItemData.showModal = false"
-                        :currentParentRecord="currentParentRecord"
+                        :superOptions="superOptions"
                     />
                 </v-dialog>
 
@@ -89,8 +89,8 @@
 <script>
 import moment from 'moment-timezone'
 import LoginSession from '@/models/LoginSession'
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
-import CreateEditForm from '@/2024-05-vue-orm-ui/quick-list/CreateEditForm.vue'
+import QuickListsHelpers from './QuickListsHelpers'
+import CreateEditForm from './CreateEditForm.vue'
 
 export default {
     name: 'FormattedColumn',
@@ -114,33 +114,19 @@ export default {
                 return {}
             },
         },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
     },
     data() {
@@ -158,7 +144,7 @@ export default {
     computed: {
         // treatAsRealation() {
         //     let result = ['relationship']
-        //     if (this.displayMapField) {
+        //     if (this.superOptions.displayMapField) {
         //         result.push('mapRelation')
         //     }
         //     return result
@@ -178,103 +164,39 @@ export default {
 
     methods: {
         disabled() {
-            // console.log('123')
-            // console.log(this.hasGroupBeingAppliedToEditPermissions())
-            // console.log(this.hasProviderGroupOwnerEditPermissions())
-            // console.log(this.hasRecordOwnerEditPermissions())
-            // console.log(this.hasCustomerGroupOwnerEditPermissions())
-            const result =
-                !this.hasGroupBeingAppliedToEditPermissions() &&
-                !this.hasProviderGroupOwnerEditPermissions() &&
-                !this.hasRecordOwnerEditPermissions() &&
-                !this.hasCustomerGroupOwnerEditPermissions()
-            return result
-        },
-        hasCustomerGroupOwnerEditPermissions() {
-            let result = false
-            if (this.loginSession) {
-                const providerKey = this.modelFields.find((field) => {
-                    return field.usageType == 'relForeignKeyOwnerCustomerType'
-                })
-                if (providerKey) {
-                    result = [this.customerGroupsForOwners].includes(
-                        this.item[providerKey.name]
-                    )
+          let result = false
 
-                    const theirGroupThatOwnsRecord =
-                        this.customerGroupsForOwners.find((item) => {
-                            return item.id == this.item[providerKey.name]
-                        })
-                    result = !!theirGroupThatOwnsRecord
-                }
-            }
-            return result
+          if (this.superOptions.model.rules?.editable){
+            result = this.superOptions.model.rules.editable(
+              this.superOptions.user,
+              this.item
+            )
+          }
+          return !result
         },
-        hasProviderGroupOwnerEditPermissions() {
-            let result = false
-            if (this.loginSession) {
-                const providerKey = this.modelFields.find((field) => {
-                    return field.usageType == 'relForeignKeyOwnerProviderType'
-                })
-                if (providerKey) {
-                    result = [this.providerGroupsTheyOwn].includes(
-                        this.item[providerKey.name]
-                    )
-
-                    const theirGroupThatOwnsRecord =
-                        this.providerGroupsTheyOwn.find((item) => {
-                            return item.id == this.item[providerKey.name]
-                        })
-                    result = !!theirGroupThatOwnsRecord
-                }
-            }
-            return result
-        },
-        hasGroupBeingAppliedToEditPermissions() {
-            // relForeignKeyOwnerCustomerType
-            let result = false
-            if (this.loginSession) {
-                const providerKey = this.modelFields.find((field) => {
-                    return (
-                        field.usageType ==
-                        'relForeignKeyOwnerAppliedToProviderType'
-                    )
-                })
-                if (providerKey) {
-                    result = this.providerGroupsTheyOwn.includes(
-                        this.item[providerKey.name]
-                    )
-
-                    const theirGroupThatOwnsRecord =
-                        this.providerGroupsTheyOwn.find((item) => {
-                            return item.id == this.item[providerKey.name]
-                        })
-                    result = !!theirGroupThatOwnsRecord
-                }
-            }
-            return result
-        },
-        hasRecordOwnerEditPermissions() {
-            let result = false
-            if (this.loginSession) {
-                const creatorKey = this.modelFields.find((field) => {
-                    return field.usageType == 'relForeignKeyCreatorType'
-                })
-                if (creatorKey) {
-                    if (this.loginSession?.user?.person?.[0]?.id) {
-                        result =
-                            this.loginSession.user.person[0].id ==
-                            this.item[creatorKey.name]
-                    }
-                }
-            }
-            return result
-        },
-        // deleteItem(input) {
-        //     this.$emit('deleteItem', input)
-        // },
-        // editItem(input) {
-        //     this.$emit('editItem', input)
+        // hasGroupBeingAppliedToEditPermissions() {
+        //     // relForeignKeyOwnerCustomerType
+        //     let result = false
+        //     if (this.loginSession) {
+        //         const providerKey = this.superOptions.modelFields.find((field) => {
+        //             return (
+        //                 field.usageType ==
+        //                 'relForeignKeyOwnerAppliedToProviderType'
+        //             )
+        //         })
+        //         if (providerKey) {
+        //             result = this.providerGroupsTheyOwn.includes(
+        //                 this.item[providerKey.name]
+        //             )
+        //
+        //             const theirGroupThatOwnsRecord =
+        //                 this.providerGroupsTheyOwn.find((item) => {
+        //                     return item.id == this.item[providerKey.name]
+        //                 })
+        //             result = !!theirGroupThatOwnsRecord
+        //         }
+        //     }
+        //     return result
         // },
 
         deleteItem(item) {
@@ -282,7 +204,7 @@ export default {
             this.deleteItemData.showModal = true
         },
         deleteItemSubmit() {
-            this.model.Delete(this.deleteItemData.data.id).then(() => {
+            this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
                 // Remove item from items array or refetch data
                 this.fetchData()
             })
@@ -295,9 +217,9 @@ export default {
         editItemSubmit() {
             const payload = QuickListsHelpers.preparePayload(
                 this.editItemData.data,
-                this.modelFields
+                this.superOptions.modelFields
             )
-            this.model.Update(payload).then(() => {
+            this.superOptions.model.Update(payload).then(() => {
                 this.fetchData()
             })
             this.editItemData.showModal = false

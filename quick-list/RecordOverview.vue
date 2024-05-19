@@ -1,6 +1,6 @@
 <template>
     <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)">
-        <template v-for="(header, index) in headers">
+        <template v-for="(header, index) in superOptions.headers">
             <div
                 :key="header.name"
                 v-if="
@@ -10,19 +10,14 @@
                 style="min-height: 1.375rem"
             >
                 <template v-if="index < 2">
-                    <template v-if="headers[0].value == 'id'">
+                    <template v-if="superOptions.headers[0].value == 'id'">
                         <template v-if="index == 0"></template>
                         <template v-else>
                             <v-card-title>
                                 <FormattedColumn
                                     :header="header"
                                     :item="item"
-                                    @deleteItem="deleteItem"
-                                    @editItem="editItem"
-                                    :displayMapField="displayMapField"
-                                    :model="model"
-                                    :canEdit="canEdit"
-                                    :currentParentRecord="currentParentRecord"
+                                    :superOptions="superOptions"
                                 />
                             </v-card-title>
                         </template>
@@ -33,12 +28,7 @@
                                 <FormattedColumn
                                     :header="header"
                                     :item="item"
-                                    @deleteItem="deleteItem"
-                                    @editItem="editItem"
-                                    :displayMapField="displayMapField"
-                                    :model="model"
-                                    :canEdit="canEdit"
-                                    :currentParentRecord="currentParentRecord"
+                                    :superOptions="superOptions"
                                 />
                             </v-card-title>
                         </template>
@@ -51,12 +41,7 @@
                                     :key="index"
                                     :header="header"
                                     :item="item"
-                                    @deleteItem="deleteItem"
-                                    @editItem="editItem"
-                                    :displayMapField="displayMapField"
-                                    :model="model"
-                                    :canEdit="canEdit"
-                                    :currentParentRecord="currentParentRecord"
+                                    :superOptions="superOptions"
                                 />
                             </v-card-text>
                         </template>
@@ -70,14 +55,8 @@
                         <FormattedColumn
                             :key="index"
                             :header="header"
-                            :modelFields="modelFields"
                             :item="item"
-                            @deleteItem="deleteItem"
-                            @editItem="editItem"
-                            :displayMapField="displayMapField"
-                            :model="model"
-                            :canEdit="canEdit"
-                            :currentParentRecord="currentParentRecord"
+                            :superOptions="superOptions"
                         />
                     </v-card-text>
                 </template>
@@ -87,24 +66,12 @@
 </template>
 
 <script>
-import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
+import FormattedColumn from './FormattedColumn.vue'
 
 export default {
     name: 'RecordOverview',
     components: { FormattedColumn },
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        item: {
-            type: Object,
-            default() {
-                return {}
-            },
-        },
         clickable: {
             type: Boolean,
             default() {
@@ -117,32 +84,25 @@ export default {
                 return 999
             },
         },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
+
+        item: {
+          type: Object,
+          default() {
+            return {}
+          },
         },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
+        superOptions: {
             type: Object,
             default() {
-                return null
+                return {
+                  headers: [],
+                  modelFields: [],
+                  displayMapField: false,
+                  model: {},
+                  canEdit: false,
+                  currentParentRecord: {},
+                  user: {},
+                }
             },
         },
     },

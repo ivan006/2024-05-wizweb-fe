@@ -18,22 +18,17 @@
                                     >
                                         <v-col :cols="col2.width" >
                                             <RecordOverviewDynamicDataPoint
-                                                :currentParentRecord="
-                                                    currentParentRecord
-                                                "
                                                 :item="item"
-                                                :canEdit="canEdit"
                                                 :dataPoint="col2.dataPoint"
-                                                :model="model"
-                                                :headers="headers"
-                                                :displayMapField="
-                                                    displayMapField
-                                                "
                                                 :childRelations="childRelations"
-                                                @deleteItem="deleteItem"
-                                                @editItem="editItem"
                                                 @clickRow="clickRow"
-                                            />
+                                                :superOptions="superOptions"
+                                                :filteredChildRelations="filteredChildRelations"
+                                            >
+                                              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                                                <slot :name="slotName" v-bind="slotProps"></slot>
+                                              </template>
+                                            </RecordOverviewDynamicDataPoint>
                                         </v-col>
                                     </template>
                                 </v-row>
@@ -41,18 +36,17 @@
                         </template>
                         <template v-else>
                             <RecordOverviewDynamicDataPoint
-                                :currentParentRecord="currentParentRecord"
                                 :item="item"
-                                :canEdit="canEdit"
                                 :dataPoint="col.dataPoint"
-                                :model="model"
-                                :headers="headers"
-                                :displayMapField="displayMapField"
                                 :childRelations="childRelations"
-                                @deleteItem="deleteItem"
-                                @editItem="editItem"
                                 @clickRow="clickRow"
-                            />
+                                :superOptions="superOptions"
+                                :filteredChildRelations="filteredChildRelations"
+                            >
+                              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                                <slot :name="slotName" v-bind="slotProps"></slot>
+                              </template>
+                            </RecordOverviewDynamicDataPoint>
                         </template>
                     </v-col>
                 </template>
@@ -63,11 +57,13 @@
 </template>
 
 <script>
-import RecordOverviewDynamicDataPoint from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamicDataPoint.vue'
+import RecordOverviewDynamicDataPoint from './RecordOverviewDynamicDataPoint.vue'
+import RecordOverview from "./RecordOverview.vue";
 
 export default {
     name: 'RecordOverviewDynamic',
     components: {
+      RecordOverview,
         RecordOverviewDynamicDataPoint,
     },
     props: {
@@ -78,12 +74,6 @@ export default {
             },
         },
         childRelations: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        headers: {
             type: Array,
             default() {
                 return []
@@ -107,39 +97,31 @@ export default {
                 return 999
             },
         },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
-        },
         rowsAndDataIndicators: {
             type: Object,
             default() {
                 return {}
             },
+        },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
+        },
+      filteredChildRelations: {
+          type: Array,
+          default() {
+            return []
+          },
         },
     },
     methods: {
@@ -159,17 +141,17 @@ export default {
             let result = []
             if (this.isSummary) {
                 if (
-                    this.model.displayMapSummary &&
-                    this.model.displayMapSummary.rows
+                    this.superOptions.model.displayMapSummary &&
+                    this.superOptions.model.displayMapSummary.rows
                 ) {
-                    result = this.model.displayMapSummary.rows
+                    result = this.superOptions.model.displayMapSummary.rows
                 }
             } else {
                 if (
-                    this.model.displayMapFull &&
-                    this.model.displayMapFull.rows
+                    this.superOptions.model.displayMapFull &&
+                    this.superOptions.model.displayMapFull.rows
                 ) {
-                    result = this.model.displayMapFull.rows
+                    result = this.superOptions.model.displayMapFull.rows
                 }
             }
             return result

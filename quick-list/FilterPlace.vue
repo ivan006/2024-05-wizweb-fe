@@ -61,6 +61,7 @@
                                     @update:modelValue="
                                         handleSelectChange(childFilter.name)
                                     "
+                                    :user="user"
                                 />
                             </div>
                         </template>
@@ -78,12 +79,13 @@
 </template>
 
 <script>
-import SuperSelect from '@/2024-05-vue-orm-ui/quick-list/SuperSelect.vue'
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import SuperSelect from './SuperSelect.vue'
+import QuickListsHelpers from './QuickListsHelpers'
+import SuperTableTable from "./SuperTableTable.vue";
 
 export default {
     name: 'FilterPlace',
-    components: { SuperSelect },
+    components: {SuperTableTable, SuperSelect },
     props: {
         filterField: {
             type: Object,
@@ -96,6 +98,12 @@ export default {
             default() {
                 return {}
             },
+        },
+        user: {
+          type: Object,
+          default() {
+            return {}
+          },
         },
     },
     data() {

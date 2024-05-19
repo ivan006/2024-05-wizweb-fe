@@ -31,34 +31,33 @@
                                 <div class="pt-1">
                                     <template v-if="compRelation">
                                         <SuperTable
-                                            :currentParentRecord="
-                                                compRelation.currentParentRecord
+                                            :currentParentRel="
+                                                compRelation
                                             "
                                             :model="
                                                 compRelation.field.meta.field
                                                     .related
                                             "
-                                            :canEdit="canEdit"
+                                            :canEdit="superOptions.canEdit"
                                             :defaultViewModeProp="
                                                 dataPoint.relationViewMode
                                                     ? dataPoint.relationViewMode
                                                     : 'table'
                                             "
-                                        />
+                                        >
+                                          <template v-if="!!$slots[compRelation.field.name]" #create>
+                                            <slot :name="compRelation.field.name" />
+                                          </template>
+                                        </SuperTable>
                                     </template>
                                 </div>
                             </template>
                             <template v-else>
-                                <FormattedColumn
-                                    :header="compHeader"
-                                    :item="item"
-                                    @deleteItem="deleteItem"
-                                    @editItem="editItem"
-                                    :displayMapField="displayMapField"
-                                    :model="model"
-                                    :canEdit="canEdit"
-                                    :currentParentRecord="currentParentRecord"
-                                />
+                              <FormattedColumn
+                                :header="compHeader"
+                                :item="item"
+                                :superOptions="superOptions"
+                              />
                             </template>
                         </component>
                     </div>
@@ -90,19 +89,23 @@
                         <div class="pt-1">
                             <template v-if="compRelation">
                                 <SuperTable
-                                    :currentParentRecord="
-                                        compRelation.currentParentRecord
+                                    :currentParentRel="
+                                        compRelation
                                     "
                                     :model="
                                         compRelation.field.meta.field.related
                                     "
-                                    :canEdit="canEdit"
+                                    :canEdit="superOptions.canEdit"
                                     :defaultViewModeProp="
                                         dataPoint.relationViewMode
                                             ? dataPoint.relationViewMode
                                             : 'table'
                                     "
-                                />
+                                >
+                                  <template v-if="!!$slots[compRelation.field.name]" #create>
+                                    <slot :name="compRelation.field.name" />
+                                  </template>
+                                </SuperTable>
                             </template>
                         </div>
                     </template>
@@ -110,12 +113,7 @@
                         <FormattedColumn
                             :header="compHeader"
                             :item="item"
-                            @deleteItem="deleteItem"
-                            @editItem="editItem"
-                            :displayMapField="displayMapField"
-                            :model="model"
-                            :canEdit="canEdit"
-                            :currentParentRecord="currentParentRecord"
+                            :superOptions="superOptions"
                         />
                     </template>
                 </component>
@@ -125,14 +123,16 @@
 </template>
 
 <script>
-import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
+import FormattedColumn from './FormattedColumn.vue'
 import { defineAsyncComponent } from 'vue';
+import RecordOverview from "./RecordOverview.vue";
 
 export default {
     name: 'RecordOverviewDynamicDataPoint',
     components: {
+      RecordOverview,
         SuperTable: defineAsyncComponent(() =>
-          import('@/2024-05-vue-orm-ui/quick-list/SuperTable.vue')
+          import('./SuperTable.vue')
         ),
         FormattedColumn,
     },
@@ -143,32 +143,10 @@ export default {
                 return {}
             },
         },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
         item: {
             type: Object,
             default() {
                 return {}
-            },
-        },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
             },
         },
         childRelations: {
@@ -177,37 +155,20 @@ export default {
                 return []
             },
         },
-
-        // rowsAndDataIndicators: {
-        //     type: Object,
-        //     default() {
-        //         return {}
-        //     },
-        // },
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
-        // clickable: {
-        //     type: Boolean,
-        //     default() {
-        //         return false
-        //     },
-        // },
-        // maxFields: {
-        //     type: Number,
-        //     default() {
-        //         return 999
-        //     },
-        // },
-        // modelFields: {
-        //     type: Array,
-        //     default() {
-        //         return []
-        //     },
-        // },
     },
     methods: {
         deleteItem(e) {
@@ -222,12 +183,12 @@ export default {
     },
     computed: {
         compHeader() {
-            const result = this.headers.find((header) => {
+            const result = this.superOptions.headers.find((header) => {
                 return header.value == this.dataPoint.data
             })
             // console.log(this.dataPoint.data)
-            // console.log("this.headers")
-            // console.log(this.headers)
+            // console.log("this.superOptions.headers")
+            // console.log(this.superOptions.headers)
             // console.log(result)
             return result
         },

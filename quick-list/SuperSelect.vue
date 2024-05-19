@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import QuickListsHelpers from './QuickListsHelpers'
 
 export default {
     name: 'SuperSelect',
@@ -114,6 +114,12 @@ export default {
                 return false
             },
         },
+        user: {
+          type: Object,
+          default() {
+            return {}
+          },
+        },
     },
     data() {
         return {
@@ -125,6 +131,7 @@ export default {
             },
             loading: false,
             noMoreShowMore: false,
+            fetchedItems: [],
         }
     },
     computed: {
@@ -169,16 +176,17 @@ export default {
                         id: null,
                     })
                 }
-                const data = this.model
-                    .query()
-                    .where((item) => {
-                        return this.quickListsGetIfMatchesAllChecks(
-                            item,
-                            this.filtersComp
-                        )
-                    })
-                    .withAll()
-                    .get()
+                // const data = this.model
+                //     .query()
+                //     .where((item) => {
+                //         return this.quickListsGetIfMatchesAllChecks(
+                //             item,
+                //             this.filtersComp
+                //         )
+                //     })
+                //     .withAll()
+                //     .get()
+              const data = this.fetchedItems
                 result = [...result, ...data]
             }
             return result
@@ -217,6 +225,12 @@ export default {
             return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters)
         },
         async fetchData() {
+
+            let linkables = []
+            if (this.modelField.fieldExtras?.relationRules?.linkables){
+              linkables = this.modelField.fieldExtras.relationRules.linkables(this.user)
+            }
+
             this.loading = true
 
             const response = await this.model.FetchAll({
@@ -224,6 +238,7 @@ export default {
                 limit: this.pagination.limit,
                 filters: this.filtersComp,
                 flags: {
+                    ...linkables,
                     order: 'id.desc',
                 },
                 moreHeaders: {
@@ -235,6 +250,7 @@ export default {
             if (response.response.data.length == 0) {
                 this.noMoreShowMore = true
             }
+            this.fetchedItems = response.response.data
             // this.pagination.totalItems = response.total // Assuming your API returns a total count
             this.loading = false
         },

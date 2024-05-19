@@ -46,12 +46,8 @@
                 <!--              <pre>{{headers}}</pre>-->
                 <v-card-text>
                     <RecordOverview
-                        :headers="headers"
                         :item="viewItemData.data"
-                        :displayMapField="true"
-                        :model="model"
-                        :canEdit="canEdit"
-                        :currentParentRecord="currentParentRecord"
+                        :superOptions="superOptions"
                     />
                 </v-card-text>
 
@@ -69,8 +65,8 @@
 <script>
 // import place from '@/models/place'
 import Upload from '@/models/Upload'
-import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
-import MyGoogleMap from "@/2024-05-vue-orm-ui/quick-list/MyGoogleMap.vue";
+import RecordOverview from './RecordOverview.vue'
+import MyGoogleMap from "./MyGoogleMap.vue";
 import {useGeolocation} from "@vueuse/core";
 export default {
     name: 'SuperTableMap',
@@ -79,19 +75,7 @@ export default {
       RecordOverview,
     },
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
         items: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        modelFields: {
             type: Array,
             default() {
                 return []
@@ -103,21 +87,19 @@ export default {
                 return []
             },
         },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
     },
     data() {

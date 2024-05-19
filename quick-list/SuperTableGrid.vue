@@ -4,36 +4,24 @@
             <template v-for="item of items" :key="item.name">
                 <v-col cols="12" md="3" class="pa-2">
                     <v-card class="mx-auto" style="height: 100%;">
-                        <template v-if="model.displayMapSummary && model.displayMapSummary.rows">
+                        <template v-if="superOptions.model.displayMapSummary && superOptions.model.displayMapSummary.rows">
                             <RecordOverviewDynamic
-                                :headers="headers"
                                 :item="item"
-                                @deleteItem="deleteItem"
-                                @editItem="editItem"
                                 @clickRow="clickRow"
                                 :clickable="true"
                                 :maxFields="6"
-                                :displayMapField="displayMapField"
-                                :model="model"
-                                :canEdit="canEdit"
-                                :currentParentRecord="currentParentRecord"
                                 :childRelations="[]"
                                 isSummary
+                                :superOptions="superOptions"
                             />
                         </template>
                         <template v-else>
                             <RecordOverview
-                                :headers="headers"
                                 :item="item"
-                                @deleteItem="deleteItem"
-                                @editItem="editItem"
                                 @clickRow="clickRow"
                                 :clickable="true"
                                 :maxFields="6"
-                                :displayMapField="displayMapField"
-                                :model="model"
-                                :canEdit="canEdit"
-                                :currentParentRecord="currentParentRecord"
+                                :superOptions="superOptions"
                             />
                         </template>
                     </v-card>
@@ -47,50 +35,38 @@
 </template>
 
 <script>
-import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
-import RecordOverviewDynamic from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamic.vue'
-// import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import RecordOverview from './RecordOverview.vue'
+import RecordOverviewDynamic from './RecordOverviewDynamic.vue'
+import FormattedColumn from "./FormattedColumn.vue";
+// import QuickListsHelpers from './QuickListsHelpers'
 
 export default {
     name: 'SuperTableGrid',
     components: {
+      FormattedColumn,
         RecordOverview,
         RecordOverviewDynamic,
     },
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
         items: {
             type: Array,
             default() {
                 return []
             },
         },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        canEdit: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
     },
     methods: {
@@ -105,13 +81,13 @@ export default {
         },
     },
     mounted() {
-        // console.log(this.model.displayMapSummary)
+        // console.log(this.superOptions.model.displayMapSummary)
     },
     computed: {
         // rowsAndDataIndicators() {
         //     return QuickListsHelpers.rowsAndDataIndicators(
         //         true,
-        //         this.model,
+        //         this.superOptions.model,
         //         this.headers,
         //         []
         //     )

@@ -20,19 +20,13 @@
 </template>
 
 <script>
-import FormattedColumn from '@/2024-05-vue-orm-ui/quick-list/FormattedColumn.vue'
+import FormattedColumn from './FormattedColumn.vue'
 
 export default {
     name: 'SuperTableList',
     components: { FormattedColumn },
 
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
         items: {
             type: Array,
             default() {
@@ -45,6 +39,20 @@ export default {
                 return null
             },
         },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
+        },
     },
     methods: {
         clickRow(e) {
@@ -53,7 +61,7 @@ export default {
     },
     computed: {
         title() {
-            const result = this.headers.find((header) => header.value !== 'id')
+            const result = this.superOptions.headers.find((header) => header.value !== 'id')
             return result
         },
     },

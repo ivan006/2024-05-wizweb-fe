@@ -8,17 +8,33 @@
                 <CreateButton
                     :modelFields="modelFields"
                     @createItem="createItem"
-                    :currentParentRecord="currentParentRecord"
                     :model="model"
+                    :superOptions="{
+                        headers: headers,
+                        modelFields: modelFields,
+                        displayMapField: displayMapField,
+                        model: model,
+                        canEdit: canEdit,
+                        currentParentRel: currentParentRel,
+                        user: user,
+                    }"
                 />
             </template>
         </div>
         <template v-if="isForSelectingRelation">
             <SuperTableList
-                :headers="headers"
                 :items="items"
                 :modelValue="modelValue"
                 @update:modelValue="clickRow"
+                :superOptions="{
+                    headers: headers,
+                    modelFields: modelFields,
+                    displayMapField: displayMapField,
+                    model: model,
+                    canEdit: canEdit,
+                    currentParentRel: currentParentRel,
+                    user: user,
+                }"
             />
         </template>
         <template v-else>
@@ -71,6 +87,7 @@
                                     class="ma-2 flex-grow-1 is-flex"
                                     variant="outlined"
                                     density="compact"
+                                    :user="user"
                                 />
                             </template>
                             <template
@@ -93,6 +110,7 @@
                                     :filterField="filterInput"
                                     v-model="filters"
                                     class="ma-2 flex-grow-1 is-flex"
+                                    :user="user"
                                 />
                             </template>
                         </template>
@@ -106,48 +124,66 @@
 
                     <SuperTableTable
                         @updateOptions="updateOptions"
-                        :headers="headers"
-                        :modelFields="modelFields"
                         :items="items"
                         @clickRow="clickRow"
                         :pagination="pagination"
-                        :displayMapField="displayMapField"
-                        :model="model"
-                        :canEdit="canEdit"
-                        :currentParentRecord="currentParentRecord"
+                        :superOptions="{
+                            headers: headers,
+                            modelFields: modelFields,
+                            displayMapField: displayMapField,
+                            model: model,
+                            canEdit: canEdit,
+                            currentParentRel: currentParentRel,
+                            user: user,
+                        }"
                     />
                 </template>
                 <template v-if="activeTab == 'grid'">
                     <div class="my-4">
                         <SuperTableGrid
-                            :headers="headers"
                             :items="items"
                             @clickRow="clickRow"
-                            :displayMapField="displayMapField"
-                            :model="model"
-                            :canEdit="canEdit"
-                            :currentParentRecord="currentParentRecord"
+                            :superOptions="{
+                                headers: headers,
+                                modelFields: modelFields,
+                                displayMapField: displayMapField,
+                                model: model,
+                                canEdit: canEdit,
+                                currentParentRel: currentParentRel,
+                                user: user,
+                            }"
                         />
                     </div>
                 </template>
                 <template v-if="activeTab == 'map'">
                     <SuperTableMap
-                        :headers="headers"
-                        :modelFields="modelFields"
                         :mapHeaders="mapHeaders"
                         :items="items"
                         @clickRow="clickRow"
-                        :model="model"
-                        :canEdit="canEdit"
-                        :currentParentRecord="currentParentRecord"
+                        :superOptions="{
+                            headers: headers,
+                            modelFields: modelFields,
+                            displayMapField: displayMapField,
+                            model: model,
+                            canEdit: canEdit,
+                            currentParentRel: currentParentRel,
+                            user: user,
+                        }"
                     />
                 </template>
                 <template v-if="activeTab == 'calendar'">
                     <SuperTableCalendar
-                        :headers="headers"
-                        :modelFields="modelFields"
                         :items="items"
                         @clickRow="clickRow"
+                        :superOptions="{
+                            headers: headers,
+                            modelFields: modelFields,
+                            displayMapField: displayMapField,
+                            model: model,
+                            canEdit: canEdit,
+                            currentParentRel: currentParentRel,
+                            user: user,
+                        }"
                     />
                 </template>
             </div>
@@ -158,13 +194,18 @@
                 <CreateEditForm
                     title="Create Item"
                     v-if="createItemData.showModal"
-                    :modelFields="modelFields"
                     v-model="createItemData.data"
-                    :model="model"
-                    :displayMapField="displayMapField"
                     @submit="createItemSubmit"
                     @cancel="createItemData.showModal = false"
-                    :currentParentRecord="currentParentRecord"
+                    :superOptions="{
+                        headers: headers,
+                        modelFields: modelFields,
+                        displayMapField: displayMapField,
+                        model: model,
+                        canEdit: canEdit,
+                        currentParentRel: currentParentRel,
+                        user: user,
+                    }"
                 />
             </v-dialog>
         </template>
@@ -173,19 +214,19 @@
 
 <script>
 import moment from 'moment-timezone'
-import CreateEditForm from '@/2024-05-vue-orm-ui/quick-list/CreateEditForm.vue'
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
-import SuperTableCalendar from '@/2024-05-vue-orm-ui/quick-list/SuperTableCalendar.vue'
-import SuperTableGrid from '@/2024-05-vue-orm-ui/quick-list/SuperTableGrid.vue'
-import SuperTableTable from '@/2024-05-vue-orm-ui/quick-list/SuperTableTable.vue'
-import SuperTableMap from '@/2024-05-vue-orm-ui/quick-list/SuperTableMap.vue'
-import SuperTableList from '@/2024-05-vue-orm-ui/quick-list/SuperTableList.vue'
-import SuperSelect from '@/2024-05-vue-orm-ui/quick-list/SuperSelect.vue'
-import FilterTime from '@/2024-05-vue-orm-ui/quick-list/FilterTime.vue'
-import FilterPlace from '@/2024-05-vue-orm-ui/quick-list/FilterPlace.vue'
-import DestructableExpansionPanels from '@/2024-05-vue-orm-ui/quick-list/DestructableExpansionPanels.vue'
+import CreateEditForm from './CreateEditForm.vue'
+import QuickListsHelpers from './QuickListsHelpers'
+import SuperTableCalendar from './SuperTableCalendar.vue'
+import SuperTableGrid from './SuperTableGrid.vue'
+import SuperTableTable from './SuperTableTable.vue'
+import SuperTableMap from './SuperTableMap.vue'
+import SuperTableList from './SuperTableList.vue'
+import SuperSelect from './SuperSelect.vue'
+import FilterTime from './FilterTime.vue'
+import FilterPlace from './FilterPlace.vue'
+import DestructableExpansionPanels from './DestructableExpansionPanels.vue'
 import LoginSession from '@/models/LoginSession'
-import CreateButton from '@/2024-05-vue-orm-ui/quick-list/CreateButton.vue'
+import CreateButton from './CreateButton.vue'
 
 export default {
     name: 'SuperTable',
@@ -207,6 +248,12 @@ export default {
             type: Object,
             default() {
                 return {}
+            },
+        },
+        user: {
+            type: Object,
+            default() {
+              return {}
             },
         },
         model: {
@@ -243,7 +290,7 @@ export default {
                 return false
             },
         },
-        currentParentRecord: {
+        currentParentRel: {
             type: Object,
             default() {
                 return null
@@ -282,8 +329,8 @@ export default {
         },
         excludedCols() {
             let result = []
-            if (this.currentParentRecord) {
-                result = [this.currentParentRecord.foreignKeyToParentRecord]
+            if (this.currentParentRel?.currentParentRecord) {
+                result = [this.currentParentRel.currentParentRecord.foreignKeyToParentRecord]
             }
             return result
         },
@@ -293,9 +340,9 @@ export default {
                 ...this.forcedFilters,
             }
 
-            if (this.currentParentRecord && this.currentParentRecord.item) {
-                result[this.currentParentRecord.foreignKeyToParentRecord] =
-                    this.currentParentRecord.item.id
+            if (this.currentParentRel?.currentParentRecord && this.currentParentRel.currentParentRecord.item) {
+                result[this.currentParentRel.currentParentRecord.foreignKeyToParentRecord] =
+                    this.currentParentRel.currentParentRecord.item.id
             }
             return result
         },
@@ -432,11 +479,16 @@ export default {
             this.fetchData()
         },
         async fetchData() {
+            let rules = []
+            if (this.model.rules?.readables){
+              rules = this.model.rules.readables(this.user)
+            }
             const response = await this.model.FetchAll({
                 page: this.pagination.page,
                 limit: this.pagination.itemsPerPage,
                 filters: this.filtersComp,
                 flags: {
+                    ...rules,
                     order: 'id.desc',
                 },
                 moreHeaders: {
@@ -467,10 +519,10 @@ export default {
                 this.createItemData.data = this.createNewInstance()
 
 
-                if (this.currentParentRecord) {
+                if (this.currentParentRel?.currentParentRecord) {
                     this.createItemData.data[
-                        this.currentParentRecord.foreignKeyToParentRecord
-                    ] = this.currentParentRecord.item.id
+                        this.currentParentRel.currentParentRecord.foreignKeyToParentRecord
+                    ] = this.currentParentRel.currentParentRecord.item.id
                 }
             }
         },

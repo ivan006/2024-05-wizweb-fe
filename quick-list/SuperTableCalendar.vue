@@ -99,12 +99,11 @@
         <v-dialog v-model="viewItemData.showModal" max-width="800px">
             <v-card class="pt-4">
                 <!--                <v-card-title> View item </v-card-title>-->
-                <!--              <pre>{{headers}}</pre>-->
+                <!--              <pre>{{superOptions.headers}}</pre>-->
                 <v-card-text>
                     <RecordOverview
-                        :headers="headers"
                         :item="viewItemData.data"
-                        :displayMapField="true"
+                        :superOptions="superOptions"
                     />
                 </v-card-text>
 
@@ -122,8 +121,8 @@
 <script>
 // import moment from 'moment'
 
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
-import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
+import QuickListsHelpers from './QuickListsHelpers'
+import RecordOverview from './RecordOverview.vue'
 
 import VueCal from 'vue-cal'
 // import 'vue-cal/dist/vue-cal.css'
@@ -137,23 +136,25 @@ export default {
     },
 
     props: {
-        headers: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
         items: {
             type: Array,
             default() {
                 return []
             },
+        },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
     },
     data: () => ({
@@ -195,18 +196,18 @@ export default {
     }),
     computed: {
         firstNonIdKey() {
-            const key = Object.keys(this.headers).find(
-                (field) => this.headers[field].value !== 'id'
+            const key = Object.keys(this.superOptions.headers).find(
+                (field) => this.superOptions.headers[field].value !== 'id'
             )
-            const result = this.headers[key].value
+            const result = this.superOptions.headers[key].value
             return result
         },
         startFieldName() {
-            let timeRangeStartField = this.headers.find((field) => {
+            let timeRangeStartField = this.superOptions.headers.find((field) => {
                 return field.usageType == 'timeRangeStart'
             })
             if (!timeRangeStartField) {
-                for (const modelField of this.headers) {
+                for (const modelField of this.superOptions.headers) {
                     if (modelField.headerChildren) {
                         timeRangeStartField = modelField.headerChildren.find(
                             (field) => {
@@ -224,11 +225,11 @@ export default {
             return timeRangeStartField
         },
         endFieldName() {
-            let timeRangeEndField = this.headers.find((field) => {
+            let timeRangeEndField = this.superOptions.headers.find((field) => {
                 return field.usageType == 'timeRangeEnd'
             })
             if (!timeRangeEndField) {
-                for (const modelField of this.headers) {
+                for (const modelField of this.superOptions.headers) {
                     if (modelField.headerChildren) {
                         timeRangeEndField = modelField.headerChildren.find(
                             (field) => {

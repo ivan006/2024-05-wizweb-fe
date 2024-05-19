@@ -4,7 +4,7 @@
         <v-card-title> {{ title }} </v-card-title>
         <v-card-text>
             <v-form ref="editForm">
-                <template v-for="field in modelFields" :key="field.name">
+                <template v-for="field in superOptions.modelFields" :key="field.name">
                     <div>
                         <!--                          <pre>{{field.usageType}}</pre>-->
                         <!--                            <pre>{{ field }}</pre>-->
@@ -44,6 +44,7 @@
                                     :model="field.meta.relatedModel"
                                     variant="underlined"
                                     density="default"
+                                    :user="superOptions.user"
                                 />
                             </template>
 
@@ -62,8 +63,7 @@
                             </template>
                             <template
                                 v-else-if="
-                                    field.usageType ==
-                                    'relForeignKeyCreatorType'
+                                    field.usageType == 'relForeignKeyCreatorType'
                                 "
                             >
                                 <!--                                  class="ma-2 flex-grow-1 is-flex"-->
@@ -75,62 +75,57 @@
                                     readonly
                                     variant="underlined"
                                     density="default"
+                                    :user="superOptions.user"
                                 />
                             </template>
+                            <!--<template-->
+                            <!--    v-else-if="-->
+                            <!--        field.usageType == 'relForeignKeyOwnerProviderType'-->
+                            <!--    "-->
+                            <!--&gt;-->
+                            <!--    <SelectAssociatedProvider-->
+                            <!--        v-model="itemData[field.name]"-->
+                            <!--        :readonly="-->
+                            <!--            superOptions.currentParentRel.currentParentRecord && superOptions.currentParentRel.currentParentRecord.model.name == 'DBProviderGroup'-->
+                            <!--        "-->
+                            <!--        :rules="field.meta.rules"-->
+                            <!--    />-->
+                            <!--</template>-->
+                            <!--<template-->
+                            <!--    v-else-if="-->
+                            <!--        field.usageType == 'relForeignKeyOwnerApprovedByProviderType'-->
+                            <!--    "-->
+                            <!--&gt;-->
+                            <!--    <SelectGroupsUserOwns-->
+                            <!--        v-model="itemData[field.name]"-->
+                            <!--        :whiteList="[superOptions.currentParentRel.currentParentRecord.item.id]"-->
+                            <!--        :label="field.label"-->
+                            <!--    />-->
+                            <!--    &lt;!&ndash;                                  readonly&ndash;&gt;-->
+                            <!--    <template-->
+                            <!--        v-if="-->
+                            <!--            currentParentRecordRelationType !==-->
+                            <!--            'relChildrenChildrenApplicationType'-->
+                            <!--        "-->
+                            <!--    >-->
+                            <!--    </template>-->
+                            <!--</template>-->
+                            <!--<template-->
+                            <!--    v-else-if="-->
+                            <!--        field.usageType == 'relForeignKeyOwnerCustomerType'-->
+                            <!--    "-->
+                            <!--&gt;-->
+                            <!--    <SelectAssociatedCustomer-->
+                            <!--        v-model="itemData[field.name]"-->
+                            <!--        :readonly="-->
+                            <!--            superOptions.currentParentRel.currentParentRecord && superOptions.currentParentRel.currentParentRecord.model.name == 'DBCustomerGroup'-->
+                            <!--        "-->
+                            <!--        :rules="field.meta.rules"-->
+                            <!--    />-->
+                            <!--</template>-->
                             <template
                                 v-else-if="
-                                    field.usageType ==
-                                    'relForeignKeyOwnerProviderType'
-                                "
-                            >
-                                <SelectAssociatedProvider
-                                    v-model="itemData[field.name]"
-                                    :readonly="
-                                        currentParentRecord && currentParentRecord.model.name ==
-                                        'DBProviderGroup'
-                                    "
-                                    :rules="field.meta.rules"
-                                />
-                            </template>
-                            <template
-                                v-else-if="
-                                    field.usageType ==
-                                    'relForeignKeyOwnerApprovedByProviderType'
-                                "
-                            >
-                                <SelectGroupsUserOwns
-                                    v-model="itemData[field.name]"
-                                    :whiteList="[currentParentRecord.item.id]"
-                                    :label="field.label"
-                                />
-                                <!--                                  readonly-->
-                                <template
-                                    v-if="
-                                        currentParentRecordRelationType !==
-                                        'relChildrenChildrenApplicationType'
-                                    "
-                                >
-                                </template>
-                            </template>
-                            <template
-                                v-else-if="
-                                    field.usageType ==
-                                    'relForeignKeyOwnerCustomerType'
-                                "
-                            >
-                                <SelectAssociatedCustomer
-                                    v-model="itemData[field.name]"
-                                    :readonly="
-                                        currentParentRecord && currentParentRecord.model.name ==
-                                        'DBCustomerGroup'
-                                    "
-                                    :rules="field.meta.rules"
-                                />
-                            </template>
-                            <template
-                                v-else-if="
-                                    field.usageType ==
-                                    'relForeignKeyOwnerAppliedToProviderType'
+                                    field.usageType == 'relForeignKeyOwnerAppliedToProviderType'
                                 "
                             >
                                 <SuperSelect
@@ -140,6 +135,7 @@
                                     readonly
                                     variant="underlined"
                                     density="default"
+                                    :user="superOptions.user"
                                 />
                             </template>
 
@@ -289,29 +285,29 @@
 </template>
 
 <script>
-import RelationComponent from '@/2024-05-vue-orm-ui/quick-list/RelationComponent.vue'
-import DateAndTimeRangePicker from '@/2024-05-vue-orm-ui/quick-list/DateAndTimeRangePicker.vue'
-import DateAndTimePicker from '@/2024-05-vue-orm-ui/quick-list/DateAndTimePicker.vue'
+import RelationComponent from './RelationComponent.vue'
+import DateAndTimeRangePicker from './DateAndTimeRangePicker.vue'
+import DateAndTimePicker from './DateAndTimePicker.vue'
 import moment from 'moment/moment'
-import SearchGooglePlace from '@/2024-05-vue-orm-ui/quick-list/SearchGooglePlace.vue'
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import SearchGooglePlace from './SearchGooglePlace.vue'
+import QuickListsHelpers from './QuickListsHelpers'
 import DBVenueCountry from '@/models/DBVenueCountry'
 import DBVenueState from '@/models/DBVenueState'
 import DBVenueSubstate from '@/models/DBVenueSubstate'
 import DBVenueTown from '@/models/DBVenueTown'
 import DBVenueSuburb from '@/models/DBVenueSuburb'
 import LoginSession from '@/models/LoginSession'
-import SuperSelect from '@/2024-05-vue-orm-ui/quick-list/SuperSelect.vue'
-import SelectGroupsUserOwns from '@/views/global/SelectGroupsUserOwns.vue'
-import SelectAssociatedProvider from '@/views/global/selects/SelectAssociatedProvider.vue'
-import SelectAssociatedCustomer from '@/views/global/selects/SelectAssociatedCustomer.vue'
+import SuperSelect from './SuperSelect.vue'
+// import SelectGroupsUserOwns from '@/views/global/SelectGroupsUserOwns.vue'
+// import SelectAssociatedProvider from '@/views/global/selects/SelectAssociatedProvider.vue'
+// import SelectAssociatedCustomer from '@/views/global/selects/SelectAssociatedCustomer.vue'
 
 export default {
     name: 'CreateEditForm',
     components: {
-        SelectAssociatedCustomer,
-        SelectAssociatedProvider,
-        SelectGroupsUserOwns,
+        // SelectAssociatedCustomer,
+        // SelectAssociatedProvider,
+        // SelectGroupsUserOwns,
         SuperSelect,
         SearchGooglePlace,
         DateAndTimePicker,
@@ -319,22 +315,10 @@ export default {
         RelationComponent,
     },
     props: {
-        currentParentRecord: {
-            type: Object,
-            default() {
-                return null
-            },
-        },
         title: {
             type: String,
             default() {
                 return ''
-            },
-        },
-        modelFields: {
-            type: Array,
-            default() {
-                return []
             },
         },
         modelValue: {
@@ -343,17 +327,19 @@ export default {
                 return {}
             },
         },
-        model: {
-            type: Function,
-            default() {
-                return {}
-            },
-        },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
+        superOptions: {
+          type: Object,
+          default() {
+            return {
+              headers: [],
+              modelFields: [],
+              displayMapField: false,
+              model: {},
+              canEdit: false,
+              currentParentRecord: {},
+              user: {},
+            }
+          },
         },
     },
     data() {
@@ -363,32 +349,32 @@ export default {
         }
     },
     computed: {
-        currentParentRecordRelationType() {
-            let result = null
-            if (this.currentParentRecord) {
-                result = this.currentParentRecord.relationType
-            }
-            return result
-        },
-        currentParentRecordforeignKeyToParentRecord() {
-            let result = null
-            if (this.currentParentRecord) {
-                result = this.currentParentRecord.foreignKeyToParentRecord
-            }
-            return result
-        },
+        // currentParentRecordRelationType() {
+        //     let result = null
+        //     if (this.superOptions.currentParentRel?.currentParentRecord) {
+        //         result = this.superOptions.currentParentRel.currentParentRecord.relationType
+        //     }
+        //     return result
+        // },
+        // currentParentRecordforeignKeyToParentRecord() {
+        //     let result = null
+        //     if (this.superOptions.currentParentRel?.currentParentRecord) {
+        //         result = this.superOptions.currentParentRel.currentParentRecord.foreignKeyToParentRecord
+        //     }
+        //     return result
+        // },
         loginSession() {
             return LoginSession.query().withAllRecursive().first()
         },
         placeFieldsWithFieldNames() {
             let result = []
-            const mapName = this.modelFields.find((field) => {
+            const mapName = this.superOptions.modelFields.find((field) => {
                 return field.usageType == 'mapName'
             })
 
             if (mapName) {
                 for (const placeFieldType of QuickListsHelpers.mapPlaceFields()) {
-                    const placeField = this.modelFields.find((field) => {
+                    const placeField = this.superOptions.modelFields.find((field) => {
                         return field.usageType == placeFieldType.flag
                     })
                     if (placeField) {
@@ -412,7 +398,7 @@ export default {
             }
         },
         setDefaultForEndTime(arg) {
-            const timeRangeEndField = this.modelFields.find((field) => {
+            const timeRangeEndField = this.superOptions.modelFields.find((field) => {
                 return field.usageType == 'timeRangeEnd'
             })
 
@@ -431,7 +417,7 @@ export default {
                 relForeignKeyMapExtraRelAdminArea2: DBVenueSubstate,
                 relForeignKeyMapExtraRelLocality: DBVenueTown,
                 relForeignKeyMapExtraRelSublocality: DBVenueSuburb,
-                test: this.model,
+                test: this.superOptions.model,
             }
             let allValues = []
             let result = []
@@ -528,7 +514,7 @@ export default {
     mounted() {
         this.itemData = this.modelValue
 
-        const creatorKey = this.modelFields.find((field) => {
+        const creatorKey = this.superOptions.modelFields.find((field) => {
             return field.usageType == 'relForeignKeyCreatorType'
         })
         if (creatorKey) {
@@ -536,7 +522,7 @@ export default {
         }
         // this.itemData[creatorKey] = this.loginSession.user.person[0].id
 
-        // const ownerProviderTypeKey = this.modelFields.find((field) => {
+        // const ownerProviderTypeKey = this.superOptions.modelFields.find((field) => {
         //     return field.usageType == 'relForeignKeyOwnerProviderType'
         // })
         // if (ownerProviderTypeKey) {

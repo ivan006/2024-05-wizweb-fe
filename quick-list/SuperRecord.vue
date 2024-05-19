@@ -20,31 +20,36 @@
               v-if="model.displayMapFull && model.displayMapFull.rows"
             >
               <RecordOverviewDynamic
-                :headers="headers"
                 :item="item"
-                :displayMapField="displayMapField"
-                :modelFields="modelFields"
-                :model="model"
-                :canEdit="canEdit"
-                :currentParentRecord="{
-                        item: this.item,
-                        model: this.model,
-                    }"
                 :childRelations="childRelations"
-              />
+                :filteredChildRelations="filteredChildRelations"
+                :superOptions="{
+                    headers: headers,
+                    modelFields: modelFields,
+                    displayMapField: displayMapField,
+                    model: model,
+                    canEdit: canEdit,
+                    currentParentRel: {},
+                    user: user,
+                }"
+              >
+                <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                  <slot :name="slotName" v-bind="slotProps"></slot>
+                </template>
+              </RecordOverviewDynamic>
             </template>
             <template v-else>
               <RecordOverview
-                :headers="headers"
                 :item="item"
-                :displayMapField="displayMapField"
-                :modelFields="modelFields"
-                :model="model"
-                :canEdit="canEdit"
-                :currentParentRecord="{
-                        item: this.item,
-                        model: this.model,
-                    }"
+                :superOptions="{
+                    headers: headers,
+                    modelFields: modelFields,
+                    displayMapField: displayMapField,
+                    model: model,
+                    canEdit: canEdit,
+                    currentParentRel: {},
+                    user: user,
+                }"
               />
             </template>
             <!--              @deleteItem="deleteItem"-->
@@ -61,9 +66,10 @@
             <!--              :forcedFilters="filters(relation.field.foreignKey)"-->
             <SuperTable
               :ref="`tab-${index}`"
-              :currentParentRecord="relation.currentParentRecord"
+              :currentParentRel="relation"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
+              :user="user"
             >
               <template v-if="!!$slots[relation.field.name]" #create>
                 <slot :name="relation.field.name" />
@@ -75,15 +81,17 @@
 </template>
 
 <script>
-import SuperTable from '@/2024-05-vue-orm-ui/quick-list/SuperTable.vue'
-import RecordOverview from '@/2024-05-vue-orm-ui/quick-list/RecordOverview.vue'
-import QuickListsHelpers from '@/2024-05-vue-orm-ui/quick-list/QuickListsHelpers'
+import SuperTable from './SuperTable.vue'
+import RecordOverview from './RecordOverview.vue'
+import QuickListsHelpers from './QuickListsHelpers'
 import LoginSession from '@/models/LoginSession'
-import RecordOverviewDynamic from '@/2024-05-vue-orm-ui/quick-list/RecordOverviewDynamic.vue'
+import RecordOverviewDynamic from './RecordOverviewDynamic.vue'
+import SuperTableList from "./SuperTableList.vue";
 
 export default {
     name: 'SuperRecord',
     components: {
+      SuperTableList,
         RecordOverviewDynamic,
         RecordOverview,
         SuperTable,
@@ -103,6 +111,12 @@ export default {
             default() {
                 return false
             },
+        },
+        user: {
+          type: Object,
+          default() {
+            return {}
+          },
         },
     },
     data() {
@@ -249,7 +263,6 @@ export default {
     mounted() {
         // this.getChildRelations()
         this.fetchData()
-        console.log(this.headers)
     },
     watch: {
         activeTab(newVal) {

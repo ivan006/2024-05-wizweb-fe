@@ -36,7 +36,7 @@ import { Attribute } from '@vuex-orm/core'
 export default {
     name: 'RelationComponent',
     components: {
-        SuperTable: () => import('@/2024-05-vue-orm-ui/quick-list/SuperTable.vue'),
+        SuperTable: () => import('./SuperTable.vue'),
     },
     props: {
         configs: {
