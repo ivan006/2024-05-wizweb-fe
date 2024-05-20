@@ -1,4 +1,4 @@
-import DBCrudCacheSet from '@/models/DBCrudCacheSet'
+import DBCrudCacheSet from './DBCrudCacheSet'
 
 class Helpers {
     static quickListsIsMobile() {
