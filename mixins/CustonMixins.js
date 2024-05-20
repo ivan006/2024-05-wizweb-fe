@@ -93,7 +93,7 @@ export default {
         DefaultHeaders() {
             // const SUPABASE_ANON_KEY =
             //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvbGtlbHB2enJqendyc3N0eGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODg5MTU1NzEsImV4cCI6MjAwNDQ5MTU3MX0.nV9IYVjXM0rlh_rYXIcJN8R3UE5_Lopw5hczNlZmMwQ'
-            const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON_KEY
+            // const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON_KEY
             let defaultHeaders = {
                 // 'X-Requested-With': 'XMLHttpRequest',
                 // Accept: 'application/json',
