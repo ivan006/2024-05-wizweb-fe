@@ -1,7 +1,7 @@
 import { Model } from '@vuex-orm/core'
 
 // import { DefaultSISHeadersAndBaseUrl } from '@v2/models/sis/SISHeaders'
-import CustonMixins from '../mixins/CustonMixins'
+import CustonMixins from '@/2024-05-vue-orm-ui/mixins/CustonMixins'
 import Helpers from '../utils/Helpers'
 
 export default class DBBaseModel extends Model {
@@ -23,7 +23,17 @@ export default class DBBaseModel extends Model {
     static customSupabaseApiFetchAll(
         url,
         relationships = [],
-        options = { flags: {}, moreHeaders: {}, rels: [] },
+        options = {
+          page: 1,
+          limit: 15,
+          filters: {},
+          flags: {},
+          moreHeaders: {},
+          clearPrimaryModelOnly: false,
+          relationships: [],
+          ...options,
+          Apikey: this.Apikey,
+        },
         // { page = 1, limit = 15 },
         // filters = {},
         // flags = {},

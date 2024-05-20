@@ -1,10 +1,10 @@
-import router from '@/router'
+// import router from '@/router'
 import VueCookies from 'vue-cookies'
 import moment from 'moment/moment'
 import SnackbarNotification from '@/models/SnackbarNotification'
 import LoginSession from '@/models/LoginSession'
 import DBProviderGroup from '@/models/DBProviderGroup'
-import Helpers from '@/views/global/quicklists-wrapper/utils/Helpers'
+import Helpers from '@/2024-05-vue-orm-ui/utils/Helpers'
 import DBMembership from '@/models/DBMembership'
 import DBCustomerManager from '@/models/DBCustomerManager'
 import DBCustomerGroup from '@/models/DBCustomerGroup'
@@ -84,9 +84,9 @@ export default {
             return result
         },
 
-        goto(path) {
-            router.push(path)
-        },
+        // goto(path) {
+        //     router.push(path)
+        // },
         VITE_API_URL() {
             return import.meta.env.VITE_API_URL
         },
@@ -97,7 +97,7 @@ export default {
             let defaultHeaders = {
                 // 'X-Requested-With': 'XMLHttpRequest',
                 // Accept: 'application/json',
-                Apikey: import.meta.env.VITE_ANON_KEY,
+                // Apikey: import.meta.env.VITE_ANON_KEY,
                 'Content-Type': 'application/json',
             }
             const VITE_AUTH = VueCookies.get('VITE_AUTH')
@@ -114,7 +114,7 @@ export default {
         },
         DefaultHeadersAndBaseUrl() {
             // const SUPABASE_URL = 'https://volkelpvzrjzwrsstxjh.supabase.co'
-            const SUPABASE_URL = import.meta.env.VITE_API_URL
+            const SUPABASE_URL = ""
             const result = {
                 baseURL: SUPABASE_URL,
                 headers: {

@@ -1,4 +1,4 @@
-import CustonMixins from '@/views/global/quicklists-wrapper/mixins/CustonMixins'
+import CustonMixins from '@/2024-05-vue-orm-ui/mixins/CustonMixins'
 import { createClient } from '@supabase/supabase-js'
 
 class Helpers {
