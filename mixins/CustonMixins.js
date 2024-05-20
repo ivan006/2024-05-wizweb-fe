@@ -1,10 +1,10 @@
-// import router from '@/router'
+import router from '@/router'
 import VueCookies from 'vue-cookies'
 import moment from 'moment/moment'
 import SnackbarNotification from '@/models/SnackbarNotification'
 import LoginSession from '@/models/LoginSession'
 import DBProviderGroup from '@/models/DBProviderGroup'
-import Helpers from '@/2024-05-vue-orm-ui/utils/Helpers'
+import Helpers from '@/views/global/quicklists-wrapper/utils/Helpers'
 import DBMembership from '@/models/DBMembership'
 import DBCustomerManager from '@/models/DBCustomerManager'
 import DBCustomerGroup from '@/models/DBCustomerGroup'
@@ -84,21 +84,20 @@ export default {
             return result
         },
 
-        // goto(path) {
-        //     router.push(path)
-        // },
+        goto(path) {
+            router.push(path)
+        },
         VITE_API_URL() {
             return import.meta.env.VITE_API_URL
         },
         DefaultHeaders() {
             // const SUPABASE_ANON_KEY =
             //     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZvbGtlbHB2enJqendyc3N0eGpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODg5MTU1NzEsImV4cCI6MjAwNDQ5MTU3MX0.nV9IYVjXM0rlh_rYXIcJN8R3UE5_Lopw5hczNlZmMwQ'
-            // const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON_KEY
-            const SUPABASE_ANON_KEY = ""
+            const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON_KEY
             let defaultHeaders = {
                 // 'X-Requested-With': 'XMLHttpRequest',
                 // Accept: 'application/json',
-                Apikey: SUPABASE_ANON_KEY,
+                Apikey: import.meta.env.VITE_ANON_KEY,
                 'Content-Type': 'application/json',
             }
             const VITE_AUTH = VueCookies.get('VITE_AUTH')
@@ -115,8 +114,7 @@ export default {
         },
         DefaultHeadersAndBaseUrl() {
             // const SUPABASE_URL = 'https://volkelpvzrjzwrsstxjh.supabase.co'
-            // const SUPABASE_URL = import.meta.env.VITE_API_URL
-            const SUPABASE_URL = ""
+            const SUPABASE_URL = import.meta.env.VITE_API_URL
             const result = {
                 baseURL: SUPABASE_URL,
                 headers: {
@@ -430,6 +428,7 @@ export default {
 
             return result
         },
+
 
         customerGroupsAssociatedWithUser() {
             let result = this.customerGroupsForOwners
