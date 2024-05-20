@@ -24,7 +24,6 @@
                         :modelValue="modelValue"
                         @update:modelValue="input"
                         :model="configs.meta.relatedModel"
-                        :baseUrl="baseUrl"
                     ></SuperTable>
                 </v-card-text>
             </v-card>
@@ -66,12 +65,6 @@ export default {
             type: Boolean,
             default() {
                 return false
-            },
-        },
-        baseUrl: {
-            type: String,
-            default() {
-                return ""
             },
         },
     },

@@ -62,7 +62,6 @@
                                         handleSelectChange(childFilter.name)
                                     "
                                     :user="user"
-                                    :baseUrl="baseUrl"
                                 />
                             </div>
                         </template>
@@ -104,12 +103,6 @@ export default {
           type: Object,
           default() {
             return {}
-          },
-        },
-        baseUrl: {
-          type: String,
-          default() {
-            return ""
           },
         },
     },

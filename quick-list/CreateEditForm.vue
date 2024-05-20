@@ -45,7 +45,6 @@
                                     variant="underlined"
                                     density="default"
                                     :user="superOptions.user"
-                                    :baseUrl="superOptions.baseUrl"
                                 />
                             </template>
 
@@ -60,7 +59,6 @@
                                     :configs="field"
                                     v-model="itemData[field.name]"
                                     readonly
-                                    :baseUrl="superOptions.baseUrl"
                                 ></RelationComponent>
                             </template>
                             <template
@@ -340,7 +338,6 @@ export default {
               canEdit: false,
               currentParentRecord: {},
               user: {},
-              baseUrl: "",
             }
           },
         },

@@ -44,7 +44,6 @@
                                                     ? dataPoint.relationViewMode
                                                     : 'table'
                                             "
-                                            :baseUrl="superOptions.baseUrl"
                                         >
                                           <template v-if="!!$slots[compRelation.field.name]" #create>
                                             <slot :name="compRelation.field.name" />
@@ -102,7 +101,6 @@
                                             ? dataPoint.relationViewMode
                                             : 'table'
                                     "
-                                    :baseUrl="superOptions.baseUrl"
                                 >
                                   <template v-if="!!$slots[compRelation.field.name]" #create>
                                     <slot :name="compRelation.field.name" />
@@ -168,7 +166,6 @@ export default {
               canEdit: false,
               currentParentRecord: {},
               user: {},
-              baseUrl: "",
             }
           },
         },

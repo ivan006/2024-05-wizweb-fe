@@ -37,7 +37,6 @@ export default {
               canEdit: false,
               currentParentRecord: {},
               user: {},
-              baseUrl: "",
             }
           },
         },
@@ -176,7 +175,7 @@ export default {
     },
     methods: {
         // getProviderWithRelationships() {
-        //     DBProviderGroup.FetchAll(this.baseUrl, {
+        //     DBProviderGroup.FetchAll({
         //         page: 1,
         //         limit: 100,
         //         filters: {
