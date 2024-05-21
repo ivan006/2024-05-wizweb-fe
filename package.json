@@ -12,11 +12,22 @@
   },
   "dependencies": {
     "vue": "^3.0.0",
-    "vuetify": "^2.0.0"
+    "vuetify": "^3.5.0",
+    "@supabase/supabase-js": "^2.43.1",
+    "@vueuse/core": "^10.9.0",
+    "@vuex-orm/core": "^0.36.4",
+    "@vuex-orm/plugin-axios": "^0.9.4",
+    "axios": "^1.6.8",
+    "moment-timezone": "^0.5.45",
+    "vue-cal": "^4.8.1",
+    "vue-cookies": "^1.8.4",
+    "vue-google-maps-community-fork": "^0.3.1",
+    "vue3-google-map": "^0.20.0",
+    "vuex": "^4.0.2"
   },
   "peerDependencies": {
     "vue": "^3.0.0",
-    "vuetify": "^2.0.0"
+    "vuetify": "^3.5.0"
   },
   "keywords": [
     "vue",
