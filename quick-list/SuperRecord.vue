@@ -255,7 +255,11 @@ export default {
         // },
         fetchData() {
             this.model
-                .FetchById(this.id, [])
+                .FetchById(
+                    { flags: {}, moreHeaders: {}, rels: [] },
+                    this.id,
+                    []
+                )
                 .then(() => {})
                 .catch(() => {})
         },
