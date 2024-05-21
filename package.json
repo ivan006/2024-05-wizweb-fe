@@ -1,0 +1,23 @@
+{
+  "name": "quicklists-vue-orm-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivan006/2024-05-vue-orm-ui.git"
+  },
+  "keywords": [
+    "ddd",
+    "ddd"
+  ],
+  "author": "Ivan Copeland",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/ivan006/2024-05-vue-orm-ui/issues"
+  },
+  "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme"
+}
