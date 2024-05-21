@@ -1,13 +1,13 @@
 // import router from '@/router'
 import VueCookies from 'vue-cookies'
 import moment from 'moment/moment'
-import SnackbarNotification from '@/models/SnackbarNotification'
-import LoginSession from '@/models/LoginSession'
-import DBProviderGroup from '@/models/DBProviderGroup'
-import Helpers from '@/2024-05-vue-orm-ui/utils/Helpers'
-import DBMembership from '@/models/DBMembership'
-import DBCustomerManager from '@/models/DBCustomerManager'
-import DBCustomerGroup from '@/models/DBCustomerGroup'
+import SnackbarNotification from '../models/SnackbarNotification'
+import LoginSession from '../models/LoginSession'
+import DBProviderGroup from '../models/DBProviderGroup'
+import Helpers from 'src/utils/Helpers'
+import DBMembership from '../models/DBMembership'
+import DBCustomerManager from '../models/DBCustomerManager'
+import DBCustomerGroup from '../models/DBCustomerGroup'
 
 export default {
     methods: {
