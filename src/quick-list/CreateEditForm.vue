@@ -61,23 +61,23 @@
                                     readonly
                                 ></RelationComponent>
                             </template>
-                            <template
-                                v-else-if="
-                                    field.usageType == 'relForeignKeyCreatorType'
-                                "
-                            >
-                                <!--                                  class="ma-2 flex-grow-1 is-flex"-->
-                                <SuperSelect
-                                    allowAll
-                                    :modelField="field"
-                                    :modelValue="loginSession.user.person[0].id"
-                                    :model="field.meta.relatedModel"
-                                    readonly
-                                    variant="underlined"
-                                    density="default"
-                                    :user="superOptions.user"
-                                />
-                            </template>
+                            <!--<template-->
+                            <!--    v-else-if="-->
+                            <!--        field.usageType == 'relForeignKeyCreatorType'-->
+                            <!--    "-->
+                            <!--&gt;-->
+                            <!--    &lt;!&ndash;                                  class="ma-2 flex-grow-1 is-flex"&ndash;&gt;-->
+                            <!--    <SuperSelect-->
+                            <!--        allowAll-->
+                            <!--        :modelField="field"-->
+                            <!--        :modelValue="loginSession.user.person[0].id"-->
+                            <!--        :model="field.meta.relatedModel"-->
+                            <!--        readonly-->
+                            <!--        variant="underlined"-->
+                            <!--        density="default"-->
+                            <!--        :user="superOptions.user"-->
+                            <!--    />-->
+                            <!--</template>-->
                             <!--<template-->
                             <!--    v-else-if="-->
                             <!--        field.usageType == 'relForeignKeyOwnerProviderType'-->
@@ -291,12 +291,12 @@ import DateAndTimePicker from './DateAndTimePicker.vue'
 import moment from 'moment/moment'
 import SearchGooglePlace from './SearchGooglePlace.vue'
 import QuickListsHelpers from './QuickListsHelpers'
-import DBVenueCountry from '@/models/DBVenueCountry'
-import DBVenueState from '@/models/DBVenueState'
-import DBVenueSubstate from '@/models/DBVenueSubstate'
-import DBVenueTown from '@/models/DBVenueTown'
-import DBVenueSuburb from '@/models/DBVenueSuburb'
-import LoginSession from '@/models/LoginSession'
+// import DBVenueCountry from '@/models/DBVenueCountry'
+// import DBVenueState from '@/models/DBVenueState'
+// import DBVenueSubstate from '@/models/DBVenueSubstate'
+// import DBVenueTown from '@/models/DBVenueTown'
+// import DBVenueSuburb from '@/models/DBVenueSuburb'
+// import LoginSession from '@/models/LoginSession'
 import SuperSelect from './SuperSelect.vue'
 // import SelectGroupsUserOwns from '@/views/global/SelectGroupsUserOwns.vue'
 // import SelectAssociatedProvider from '@/views/global/selects/SelectAssociatedProvider.vue'
@@ -363,9 +363,9 @@ export default {
         //     }
         //     return result
         // },
-        loginSession() {
-            return LoginSession.query().withAllRecursive().first()
-        },
+        // loginSession() {
+        //     return LoginSession.query().withAllRecursive().first()
+        // },
         placeFieldsWithFieldNames() {
             let result = []
             const mapName = this.superOptions.modelFields.find((field) => {
@@ -407,108 +407,110 @@ export default {
                 .toISOString()
         },
         async upsertAndGetEntityIds(googlePlace) {
-            // Assume Upsert returns a promise that resolves with the upserted entity.
-            let parent_id = null
-
-            // Mapping of flags to Vuex ORM Models.
-            const flagToModel = {
-                relForeignKeyMapExtraRelCountry: DBVenueCountry,
-                relForeignKeyMapExtraRelAdminArea1: DBVenueState,
-                relForeignKeyMapExtraRelAdminArea2: DBVenueSubstate,
-                relForeignKeyMapExtraRelLocality: DBVenueTown,
-                relForeignKeyMapExtraRelSublocality: DBVenueSuburb,
-                test: this.superOptions.model,
-            }
-            let allValues = []
-            let result = []
-            for (const placeField of QuickListsHelpers.mapPlaceFields()) {
-                if (placeField.googleType === 'components') {
-                    let component
-                    if (Array.isArray(placeField.googleName)) {
-                        // Find the first available sublocality level
-                        for (const name of placeField.googleName) {
-                            component = googlePlace.address_components.find(
-                                (item) => item.types.includes(name)
-                            )
-                            if (component) break
-                        }
-                    } else {
-                        component = googlePlace.address_components.find(
-                            (item) => item.types.includes(placeField.googleName)
-                        )
-                    }
-
-                    let finalValue = ''
-                    if (component) {
-                        finalValue = component.long_name
-                    } else {
-                        if (
-                            placeField.flag ===
-                            'relForeignKeyMapExtraRelSublocality'
-                        ) {
-                            // If sublocality is not found, default to the most granular available
-                            finalValue =
-                                allValues['relForeignKeyMapExtraRelLocality']
-                        } else if (
-                            placeField.flag ===
-                            'relForeignKeyMapExtraRelAdminArea2'
-                        ) {
-                            // If administrative_area_level_2 is not found, duplicate it from administrative_area_level_1
-                            finalValue =
-                                allValues['relForeignKeyMapExtraRelAdminArea1']
-                        } else if (
-                            placeField.flag ===
-                            'relForeignKeyMapExtraRelLocality'
-                        ) {
-                            // If locality is not found, set to "Unknown"
-                            finalValue = 'Unknown'
-                        } else {
-                            finalValue = null
-                        }
-                    }
-                    allValues[placeField.flag] = finalValue
-
-                    if (flagToModel[placeField.flag]) {
-                        // Extract the data for this entity from the example data.
-                        let data = {
-                            name: finalValue, // Set the data.
-                        }
-                        if (
-                            placeField.flag !==
-                            'relForeignKeyMapExtraRelCountry'
-                        ) {
-                            data.parent_id = parent_id // Set the parent id.
-                        }
-                        // Perform the Upsert operation.
-                        const responce = await flagToModel[
-                            placeField.flag
-                        ].Upsert(data)
-                        // Extract the id from the result for use as parent_id in the next iteration.
-                        parent_id = responce.response.data[0].id
-                        result[placeField.flag] = parent_id
-                    }
-                }
-            }
-            return result
+          // todo: fix the below
+            // // Assume Upsert returns a promise that resolves with the upserted entity.
+            // let parent_id = null
+            //
+            // // Mapping of flags to Vuex ORM Models.
+            // const flagToModel = {
+            //     relForeignKeyMapExtraRelCountry: DBVenueCountry,
+            //     relForeignKeyMapExtraRelAdminArea1: DBVenueState,
+            //     relForeignKeyMapExtraRelAdminArea2: DBVenueSubstate,
+            //     relForeignKeyMapExtraRelLocality: DBVenueTown,
+            //     relForeignKeyMapExtraRelSublocality: DBVenueSuburb,
+            //     test: this.superOptions.model,
+            // }
+            // let allValues = []
+            // let result = []
+            // for (const placeField of QuickListsHelpers.mapPlaceFields()) {
+            //     if (placeField.googleType === 'components') {
+            //         let component
+            //         if (Array.isArray(placeField.googleName)) {
+            //             // Find the first available sublocality level
+            //             for (const name of placeField.googleName) {
+            //                 component = googlePlace.address_components.find(
+            //                     (item) => item.types.includes(name)
+            //                 )
+            //                 if (component) break
+            //             }
+            //         } else {
+            //             component = googlePlace.address_components.find(
+            //                 (item) => item.types.includes(placeField.googleName)
+            //             )
+            //         }
+            //
+            //         let finalValue = ''
+            //         if (component) {
+            //             finalValue = component.long_name
+            //         } else {
+            //             if (
+            //                 placeField.flag ===
+            //                 'relForeignKeyMapExtraRelSublocality'
+            //             ) {
+            //                 // If sublocality is not found, default to the most granular available
+            //                 finalValue =
+            //                     allValues['relForeignKeyMapExtraRelLocality']
+            //             } else if (
+            //                 placeField.flag ===
+            //                 'relForeignKeyMapExtraRelAdminArea2'
+            //             ) {
+            //                 // If administrative_area_level_2 is not found, duplicate it from administrative_area_level_1
+            //                 finalValue =
+            //                     allValues['relForeignKeyMapExtraRelAdminArea1']
+            //             } else if (
+            //                 placeField.flag ===
+            //                 'relForeignKeyMapExtraRelLocality'
+            //             ) {
+            //                 // If locality is not found, set to "Unknown"
+            //                 finalValue = 'Unknown'
+            //             } else {
+            //                 finalValue = null
+            //             }
+            //         }
+            //         allValues[placeField.flag] = finalValue
+            //
+            //         if (flagToModel[placeField.flag]) {
+            //             // Extract the data for this entity from the example data.
+            //             let data = {
+            //                 name: finalValue, // Set the data.
+            //             }
+            //             if (
+            //                 placeField.flag !==
+            //                 'relForeignKeyMapExtraRelCountry'
+            //             ) {
+            //                 data.parent_id = parent_id // Set the parent id.
+            //             }
+            //             // Perform the Upsert operation.
+            //             const responce = await flagToModel[
+            //                 placeField.flag
+            //             ].Upsert(data)
+            //             // Extract the id from the result for use as parent_id in the next iteration.
+            //             parent_id = responce.response.data[0].id
+            //             result[placeField.flag] = parent_id
+            //         }
+            //     }
+            // }
+            // return result
         },
         async searchGooglePlace(arg) {
-            this.loading = true
-            const entitiesIds = await this.upsertAndGetEntityIds(arg)
-            for (const placeField of this.placeFieldsWithFieldNames) {
-                if (placeField.googleType === 'simple') {
-                    this.itemData[placeField.fieldNames] =
-                        arg[placeField.googleName]
-                } else if (placeField.googleType === 'mapGeoLoc') {
-                    if (arg.geometry?.location?.[placeField.googleName]) {
-                        this.itemData[placeField.fieldNames] =
-                            arg.geometry.location[placeField.googleName]()
-                    }
-                } else if (placeField.googleType === 'components') {
-                    this.itemData[placeField.fieldNames] =
-                        entitiesIds[placeField.flag]
-                }
-            }
-            this.loading = false
+          // todo: fix the below
+            // this.loading = true
+            // const entitiesIds = await this.upsertAndGetEntityIds(arg)
+            // for (const placeField of this.placeFieldsWithFieldNames) {
+            //     if (placeField.googleType === 'simple') {
+            //         this.itemData[placeField.fieldNames] =
+            //             arg[placeField.googleName]
+            //     } else if (placeField.googleType === 'mapGeoLoc') {
+            //         if (arg.geometry?.location?.[placeField.googleName]) {
+            //             this.itemData[placeField.fieldNames] =
+            //                 arg.geometry.location[placeField.googleName]()
+            //         }
+            //     } else if (placeField.googleType === 'components') {
+            //         this.itemData[placeField.fieldNames] =
+            //             entitiesIds[placeField.flag]
+            //     }
+            // }
+            // this.loading = false
         },
     },
     mounted() {
@@ -517,9 +519,9 @@ export default {
         const creatorKey = this.superOptions.modelFields.find((field) => {
             return field.usageType == 'relForeignKeyCreatorType'
         })
-        if (creatorKey) {
-            this.itemData[creatorKey.name] = this.loginSession.user.person[0].id
-        }
+        // if (creatorKey) {
+        //     this.itemData[creatorKey.name] = this.loginSession.user.person[0].id
+        // }
         // this.itemData[creatorKey] = this.loginSession.user.person[0].id
 
         // const ownerProviderTypeKey = this.superOptions.modelFields.find((field) => {

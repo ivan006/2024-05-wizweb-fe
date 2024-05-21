@@ -88,7 +88,7 @@
 
 <script>
 import moment from 'moment-timezone'
-import LoginSession from '@/models/LoginSession'
+// import LoginSession from '@/models/LoginSession'
 import QuickListsHelpers from './QuickListsHelpers'
 import CreateEditForm from './CreateEditForm.vue'
 
@@ -149,17 +149,9 @@ export default {
         //     }
         //     return result
         // },
-        loginSession() {
-            return LoginSession.query().withAllRecursive().first()
-        },
-        filters() {
-            let result = {}
-            if (this.loginSession?.user?.person?.[0]?.id) {
-                result.person_that_created_this_id =
-                    this.loginSession.user.person[0].id
-            }
-            return result
-        },
+        // loginSession() {
+        //     return LoginSession.query().withAllRecursive().first()
+        // },
     },
 
     methods: {

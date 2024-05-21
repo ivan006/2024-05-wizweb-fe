@@ -84,7 +84,7 @@
 import SuperTable from './SuperTable.vue'
 import RecordOverview from './RecordOverview.vue'
 import QuickListsHelpers from './QuickListsHelpers'
-import LoginSession from '@/models/LoginSession'
+// import LoginSession from '@/models/LoginSession'
 import RecordOverviewDynamic from './RecordOverviewDynamic.vue'
 import SuperTableList from "./SuperTableList.vue";
 
@@ -168,7 +168,8 @@ export default {
             return result
         },
         canEdit() {
-            return !!this.loginSession
+          return true
+            // return !!this.loginSession
         },
         childRelations() {
             const fields = QuickListsHelpers.computedAttrs(
@@ -207,9 +208,9 @@ export default {
             }
             return result
         },
-        loginSession() {
-            return LoginSession.query().withAllRecursive().first()
-        },
+        // loginSession() {
+        //     return LoginSession.query().withAllRecursive().first()
+        // },
         headers() {
             return QuickListsHelpers.SupaerTableHeaders(
                 this.model,

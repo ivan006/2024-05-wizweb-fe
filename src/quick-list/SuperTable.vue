@@ -225,7 +225,6 @@ import SuperSelect from './SuperSelect.vue'
 import FilterTime from './FilterTime.vue'
 import FilterPlace from './FilterPlace.vue'
 import DestructableExpansionPanels from './DestructableExpansionPanels.vue'
-import LoginSession from '@/models/LoginSession'
 import CreateButton from './CreateButton.vue'
 
 export default {
@@ -324,9 +323,6 @@ export default {
         }
     },
     computed: {
-        loginSession() {
-            return LoginSession.query().withAllRecursive().first()
-        },
         excludedCols() {
             let result = []
             if (this.currentParentRel?.currentParentRecord) {

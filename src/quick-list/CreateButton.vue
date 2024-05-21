@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import LoginSession from '@/models/LoginSession'
-import DBProviderGroup from '@/models/DBProviderGroup'
+// import LoginSession from '@/models/LoginSession'
+// import DBProviderGroup from '@/models/DBProviderGroup'
 
 export default {
     name: 'CreateButton',
@@ -42,9 +42,9 @@ export default {
         },
     },
     computed: {
-        loginSession() {
-            return LoginSession.query().withAllRecursive().first()
-        },
+        // loginSession() {
+        //     return LoginSession.query().withAllRecursive().first()
+        // },
         // relationshipsOfProvider() {
         //     const result = DBProviderGroup.query()
         //         .whereId(+this.superOptions.currentParentRel.currentParentRecord.item.id)
