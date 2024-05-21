@@ -1,7 +1,7 @@
 {
   "name": "quicklists-vue-orm-ui",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Vue-based ORM to UI generator library.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,14 +10,36 @@
     "type": "git",
     "url": "git+https://github.com/ivan006/2024-05-vue-orm-ui.git"
   },
+  "dependencies": {
+    "vue": "^3.0.0",
+    "vuetify": "^2.0.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "vuetify": "^2.0.0"
+  },
   "keywords": [
-    "ddd",
-    "ddd"
+    "vue",
+    "vuejs",
+    "vuetify",
+    "orm",
+    "ui generator",
+    "model-driven ui",
+    "vue orm",
+    "vue ui generator",
+    "dynamic ui",
+    "data-driven ui",
+    "vue data binding",
+    "vue forms",
+    "vue dynamic forms",
+    "crud generator",
+    "automatic ui",
+    "vue model ui"
   ],
-  "author": "Ivan Copeland",
+  "author": "Ivan Copeland <ivan.copeland2015@gmail.com> (https://github.com/ivan006)",
   "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/ivan006/2024-05-vue-orm-ui/issues"
   },
-  "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme"
+  "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme",
 }
