@@ -1,4 +1,4 @@
-import CustonMixins from 'src/mixins/CustonMixins'
+import CustonMixins from '../mixins/CustonMixins'
 import { createClient } from '@supabase/supabase-js'
 
 class Helpers {

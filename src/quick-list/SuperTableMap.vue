@@ -64,7 +64,7 @@
 
 <script>
 // import place from '@/models/place'
-import Upload from '@/models/Upload'
+// import Upload from '@/models/Upload'
 import RecordOverview from './RecordOverview.vue'
 import MyGoogleMap from "./MyGoogleMap.vue";
 import {useGeolocation} from "@vueuse/core";
@@ -272,7 +272,7 @@ export default {
         },
     },
     mounted() {
-        Upload.deleteAll()
+        // Upload.deleteAll()
 
     },
     watch: {

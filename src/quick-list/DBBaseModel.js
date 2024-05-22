@@ -1,7 +1,7 @@
 import { Model } from '@vuex-orm/core'
 
 // import { DefaultSISHeadersAndBaseUrl } from '@v2/models/sis/SISHeaders'
-import CustonMixins from 'src/mixins/CustonMixins'
+import CustonMixins from '../mixins/CustonMixins'
 import Helpers from '../utils/Helpers'
 
 export default class DBBaseModel extends Model {

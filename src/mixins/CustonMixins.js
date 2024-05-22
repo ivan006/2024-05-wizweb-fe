@@ -1,6 +1,6 @@
 // import router from '@/router'
 import VueCookies from 'vue-cookies'
-import moment from 'moment/moment'
+import moment from 'moment'
 // import SnackbarNotification from '../models/SnackbarNotification'
 // import LoginSession from '../models/LoginSession'
 // import DBProviderGroup from '../models/DBProviderGroup'

@@ -288,7 +288,7 @@
 import RelationComponent from './RelationComponent.vue'
 import DateAndTimeRangePicker from './DateAndTimeRangePicker.vue'
 import DateAndTimePicker from './DateAndTimePicker.vue'
-import moment from 'moment/moment'
+import moment from 'moment'
 import SearchGooglePlace from './SearchGooglePlace.vue'
 import QuickListsHelpers from './QuickListsHelpers'
 // import DBVenueCountry from '@/models/DBVenueCountry'
