@@ -23,7 +23,7 @@ export default class DBCrudCacheSet extends Model {
 
     static fields() {
         return {
-            id: this.attr([]),
+            id: this.uid(null),
             fields: this.attr([]),
         }
     }
