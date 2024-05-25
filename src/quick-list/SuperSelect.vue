@@ -233,19 +233,16 @@ export default {
 
             this.loading = true
 
-            const response = await this.model.FetchAll({
-                page: this.pagination.page,
-                limit: this.pagination.limit,
-                filters: this.filtersComp,
-                flags: {
-                    ...linkables,
-                    order: 'id.desc',
-                },
-                moreHeaders: {
-                    Prefer: 'count=exact',
-                },
-                clearPrimaryModelOnly: false,
-                relationships: [],
+            const response = await this.model.FetchAll([], {
+                  ...linkables,
+                  order: 'id.desc',
+              }, {
+                  Prefer: 'count=exact',
+              }, {
+              page: this.pagination.page,
+              limit: this.pagination.limit,
+              filters: this.filtersComp,
+              clearPrimaryModelOnly: false
             })
             if (response.response.data.length == 0) {
                 this.noMoreShowMore = true

@@ -23,27 +23,19 @@ export default class DBBaseModel extends Model {
     static customSupabaseApiFetchAll(
         url,
         relationships = [],
+        flags = {},
+        headers = {},
         options = {
-          page: 1,
-          limit: 15,
-          filters: {},
-          flags: {},
-          moreHeaders: {},
-          clearPrimaryModelOnly: false,
-          relationships: [],
-          ...options,
-          Apikey: this.Apikey,
+            page: 1,
+            limit: 15,
+            filters: {},
+            clearPrimaryModelOnly: false
         },
-        // { page = 1, limit = 15 },
-        // filters = {},
-        // flags = {},
-        // moreHeaders,
-        // clearPrimaryModelOnly = false
     ) {
         let offset = (options.page - 1) * options.limit
         // todo: note - i hade to put the filters in line because urls can have duplicates keys and objects cans and i needed duplicates key support for the date range filter
 
-        return this.customApiBase(options.moreHeaders)
+        return this.customApiBase(headers)
             .get(`${url}?${Helpers.prepareFiltersForAxios(options.filters)}`, {
                 persistBy: 'insertOrUpdate',
                 params: {
@@ -51,7 +43,7 @@ export default class DBBaseModel extends Model {
                         limit: options.limit,
                         offset: offset,
                     },
-                    ...options.flags,
+                    ...flags,
                     ...Helpers.prepareRelationsForAxios(relationships),
                 },
                 dataTransformer: ({ data }) => {
@@ -66,18 +58,27 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
                 // return error // < would this be needed maybe?
             })
     }
 
-    static customSupabaseApiFetchById(options = { flags: {}, moreHeaders: {}, rels: [] }, url, id, relationships = []) {
+    static FetchById( id, relationships = [], flags = {}, headers = {} ) {
         relationships
-        return this.customApiBase(options.moreHeaders)
+        return this.customSupabaseApiFetchById(
+            `${this.baseUrl}/rest/v1/provider_groups?id=eq.${id}&select=*`,
+            id,
+            relationships,
+            flags,
+            this.mergeHeaders(headers)
+        )
+    }
+
+
+    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} ) {
+        relationships
+        return this.customApiBase(headers)
             .get(url, {
-                // params: {
-                //     with: relationships,
-                // },
                 dataTransformer: ({ data }) => {
                     const result = CustonMixins.methods.NormalizeRecursive(data)
                     return result
@@ -87,12 +88,12 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
             })
     }
 
-    static customSupabaseApiStore(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
+    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} ) {
+        return this.customApiBase(headers)
             .post(
                 url,
                 { ...entity },
@@ -109,12 +110,12 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
             })
     }
 
-    static customSupabaseApiUpsert(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
+    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} ) {
+        return this.customApiBase(headers)
             .post(
                 url,
                 { ...entity },
@@ -131,12 +132,12 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
             })
     }
 
-    static customSupabaseApiUpdate(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
+    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} ) {
+        return this.customApiBase(headers)
             .patch(
                 url,
                 { ...entity },
@@ -154,12 +155,12 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
             })
     }
 
-    static customSupabaseApiDelete(url, entityId, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
+    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} ) {
+        return this.customApiBase(headers)
             .delete(url, {
                 delete: entityId,
             })
@@ -168,7 +169,7 @@ export default class DBBaseModel extends Model {
                 return res
             })
             .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
+                // CustonMixins.methods.logNetworkError(error)
             })
     }
 }

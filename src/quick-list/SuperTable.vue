@@ -479,20 +479,17 @@ export default {
             if (this.model.rules?.readables){
               rules = this.model.rules.readables(this.user)
             }
-            const response = await this.model.FetchAll({
+            const response = await this.model.FetchAll([], {
+                ...rules,
+                order: 'id.desc',
+              }, {
+                Prefer: 'count=exact',
+              }, {
                 page: this.pagination.page,
                 limit: this.pagination.itemsPerPage,
                 filters: this.filtersComp,
-                flags: {
-                    ...rules,
-                    order: 'id.desc',
-                },
-                moreHeaders: {
-                    Prefer: 'count=exact',
-                },
                 clearPrimaryModelOnly: false,
-                relationships: [],
-            })
+              })
             // let count = null
             let count = -1
             if (response?.response?.headers?.['content-range']) {
