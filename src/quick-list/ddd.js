@@ -1,174 +1,179 @@
-import { Model } from '@vuex-orm/core'
+// src/models/BaseModel.js
+import axios from 'axios';
+import CustonMixins from '../mixins/CustonMixins';
+import Helpers from '../utils/Helpers';
 
-// import { DefaultSISHeadersAndBaseUrl } from '@v2/models/sis/SISHeaders'
-import CustonMixins from '../mixins/CustonMixins'
-import Helpers from '../utils/Helpers'
+class BaseModel {
+    constructor(record = {}) {
+        this.$fill(record);
+    }
 
-export default class DBBaseModel extends Model {
+    $fill(record) {
+        const fields = this.constructor.fields();
+        for (const field in fields) {
+            this[field] = record[field] !== undefined ? record[field] : fields[field].default;
+        }
+    }
+
+    static get localKey() {
+        return 'id';
+    }
+
+    static fields() {
+        return {};
+    }
+
+    static attr(value = null) {
+        return { type: 'attr', default: value };
+    }
+
+    static string(value = '') {
+        return { type: 'string', default: value };
+    }
+
+    static number(value = 0) {
+        return { type: 'number', default: value };
+    }
+
+    static boolean(value = false) {
+        return { type: 'boolean', default: value };
+    }
+
+    static uid(value = null) {
+        return { type: 'uid', default: value };
+    }
+
+    static hasOne(related, foreignKey, localKey = this.localKey) {
+        return { type: 'hasOne', related, foreignKey, localKey };
+    }
+
+    static belongsTo(parent, foreignKey, ownerKey = this.localKey) {
+        return { type: 'belongsTo', parent, foreignKey, ownerKey };
+    }
+
+    static hasMany(related, foreignKey, localKey = this.localKey) {
+        return { type: 'hasMany', related, foreignKey, localKey };
+    }
+
     static customApiBase(moreHeaders) {
-        const baseUrlAndHeaders =
-            CustonMixins.methods.DefaultHeadersAndBaseUrl()
+        const baseUrlAndHeaders = CustonMixins.methods.DefaultHeadersAndBaseUrl();
         this.apiConfig = {
-            // ...DefaultSISHeadersAndBaseUrl(),
-            // baseURL: baseUrlAndHeaders.baseURL,
-            baseURL: "",
+            baseURL: '',
             headers: {
                 ...baseUrlAndHeaders.headers,
                 ...moreHeaders,
             },
-        }
-        return this.api()
+        };
+        return axios.create(this.apiConfig);
     }
 
-    static customSupabaseApiFetchAll(
-        url,
-        relationships = [],
-        options = {
-            page: 1,
-            limit: 15,
-            filters: {},
-            flags: {},
-            moreHeaders: {},
-            clearPrimaryModelOnly: false,
-            relationships: [],
-            ...options,
-            Apikey: this.Apikey,
-        },
-        // { page = 1, limit = 15 },
-        // filters = {},
-        // flags = {},
-        // moreHeaders,
-        // clearPrimaryModelOnly = false
-    ) {
-        let offset = (options.page - 1) * options.limit
-        // todo: note - i hade to put the filters in line because urls can have duplicates keys and objects cans and i needed duplicates key support for the date range filter
+    static async customApiFetchAll(url, relationships = [], options = {}) {
+        const {
+            page = 1,
+            limit = 15,
+            filters = {},
+            flags = {},
+            moreHeaders = {},
+            clearPrimaryModelOnly = false,
+        } = options;
 
-        return this.customApiBase(options.moreHeaders)
-            .get(`${url}?${Helpers.prepareFiltersForAxios(options.filters)}`, {
-                persistBy: 'insertOrUpdate',
-                params: {
-                    ...{
-                        limit: options.limit,
-                        offset: offset,
+        const offset = (page - 1) * limit;
+
+        try {
+            const response = await this.customApiBase(moreHeaders).get(
+                `${url}?${Helpers.prepareFiltersForAxios(filters)}`,
+                {
+                    params: {
+                        limit,
+                        offset,
+                        ...flags,
+                        ...Helpers.prepareRelationsForAxios(relationships),
                     },
-                    ...options.flags,
+                }
+            );
+
+            if (clearPrimaryModelOnly) {
+                this.deleteAll();
+            }
+
+            return CustonMixins.methods.NormalizeRecursive(response.data);
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
+    }
+
+    static async customApiFetchById(url, id, relationships = [], options = {}) {
+        const { flags = {}, moreHeaders = {} } = options;
+
+        try {
+            const response = await this.customApiBase(moreHeaders).get(`${url}/${id}`, {
+                params: {
+                    ...flags,
                     ...Helpers.prepareRelationsForAxios(relationships),
                 },
-                dataTransformer: ({ data }) => {
-                    if (options.clearPrimaryModelOnly) {
-                        this.deleteAll()
-                    }
-                    const result = CustonMixins.methods.NormalizeRecursive(data)
-                    return result
-                },
-            })
-            .then((res) => {
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-                // return error // < would this be needed maybe?
-            })
+            });
+
+            return CustonMixins.methods.NormalizeRecursive(response.data);
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
     }
 
-    static customSupabaseApiFetchById(options = { flags: {}, moreHeaders: {}, rels: [] }, url, id, relationships = []) {
-        relationships
-        return this.customApiBase(options.moreHeaders)
-            .get(url, {
-                // params: {
-                //     with: relationships,
-                // },
-                dataTransformer: ({ data }) => {
-                    const result = CustonMixins.methods.NormalizeRecursive(data)
-                    return result
-                },
-            })
-            .then((res) => {
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-            })
+    static async customApiStore(url, entity, options = {}) {
+        const { moreHeaders = {} } = options;
+
+        try {
+            const response = await this.customApiBase(moreHeaders).post(url, entity);
+            CustonMixins.methods.logNetworkSuccess(response);
+            return CustonMixins.methods.NormalizeRecursive(response.data);
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
     }
 
-    static customSupabaseApiStore(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
-            .post(
-                url,
-                { ...entity },
-                {
-                    dataTransformer: ({ data }) => {
-                        const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
-                        return result
-                    },
-                }
-            )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-            })
+    static async customApiUpsert(url, entity, options = {}) {
+        const { moreHeaders = {} } = options;
+
+        try {
+            const response = await this.customApiBase(moreHeaders).post(url, entity);
+            CustonMixins.methods.logNetworkSuccess(response);
+            return CustonMixins.methods.NormalizeRecursive(response.data);
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
     }
 
-    static customSupabaseApiUpsert(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
-            .post(
-                url,
-                { ...entity },
-                {
-                    dataTransformer: ({ data }) => {
-                        const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
-                        return result
-                    },
-                }
-            )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-            })
+    static async customApiUpdate(url, entity, options = {}) {
+        const { moreHeaders = {} } = options;
+
+        try {
+            const response = await this.customApiBase(moreHeaders).patch(url, entity);
+            CustonMixins.methods.logNetworkSuccess(response);
+            return CustonMixins.methods.NormalizeRecursive(response.data);
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
     }
 
-    static customSupabaseApiUpdate(url, entity, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
-            .patch(
-                url,
-                { ...entity },
-                {
-                    dataTransformer: ({ data }) => {
-                        const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
-                        return result
-                    },
-                    save: true,
-                }
-            )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-            })
-    }
+    static async customApiDelete(url, entityId, options = {}) {
+        const { moreHeaders = {} } = options;
 
-    static customSupabaseApiDelete(url, entityId, options = { flags: {}, moreHeaders: {}, rels: [] }) {
-        return this.customApiBase(options.moreHeaders)
-            .delete(url, {
-                delete: entityId,
-            })
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                CustonMixins.methods.logNetworkError(error)
-            })
+        try {
+            const response = await this.customApiBase(moreHeaders).delete(url, {
+                data: { id: entityId },
+            });
+            CustonMixins.methods.logNetworkSuccess(response);
+            return response.data;
+        } catch (error) {
+            CustonMixins.methods.logNetworkError(error);
+            throw error;
+        }
     }
 }
+
+export default BaseModel;
