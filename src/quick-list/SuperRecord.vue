@@ -257,9 +257,9 @@ export default {
         fetchData() {
             this.model
                 .FetchById(
-                    { flags: {}, moreHeaders: {}, rels: [] },
                     this.id,
-                    []
+                    [],
+                    { flags: {}, moreHeaders: {}, rels: [] }
                 )
                 .then(() => {})
                 .catch(() => {})

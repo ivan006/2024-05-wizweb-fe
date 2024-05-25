@@ -1,6 +1,7 @@
 import DBCrudCacheSet from './DBCrudCacheSet'
+// import Helpers from '../utils/Helpers.js'
 
-class Helpers {
+class QuickListsHelpers {
     static quickListsIsMobile() {
         if (
             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
@@ -110,7 +111,7 @@ class Helpers {
             DBCrudCacheSet.Generate(model)
             crudCache = DBCrudCacheSet.find(model.entity)
         }
-        const result = Helpers.computedAttrs2(crudCache.fields, excludedCols)
+        const result = this.computedAttrs2(crudCache.fields, excludedCols)
         return result
     }
 
@@ -257,4 +258,4 @@ class Helpers {
     }
 }
 
-export default Helpers
+export default QuickListsHelpers

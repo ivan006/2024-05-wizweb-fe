@@ -4,7 +4,8 @@
   "description": "A Vue-based ORM to UI generator library.",
   "main": "src/index.js",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "watch": "vite build --watch"
   },
   "repository": {
     "type": "git",
