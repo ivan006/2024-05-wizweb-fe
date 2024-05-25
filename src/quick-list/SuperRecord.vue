@@ -122,6 +122,7 @@ export default {
     data() {
         return {
             activeTab: null,
+           item: {},
             // childRelations: [],
         }
     },
@@ -219,14 +220,14 @@ export default {
                 this.displayMapField
             )
         },
-        item() {
-            const result = this.model
-                .query()
-                .whereId(this.id)
-                .withAll()
-                .get()[0]
-            return result
-        },
+        // item() {
+        //     const result = this.model
+        //         .query()
+        //         .whereId(this.id)
+        //         .withAll()
+        //         .get()[0]
+        //     return result
+        // },
         modelFields() {
             const result = QuickListsHelpers.computedAttrs(
                 this.model,
@@ -261,7 +262,9 @@ export default {
                     [],
                     { flags: {}, moreHeaders: {}, rels: [] }
                 )
-                .then(() => {})
+                .then((res) => {
+                  this.item = res.data[0]
+                })
                 .catch(() => {})
         },
     },

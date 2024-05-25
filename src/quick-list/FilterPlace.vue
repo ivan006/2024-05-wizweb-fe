@@ -207,7 +207,8 @@ export default {
         },
         fetchDisplayNameFromVuex(model, id) {
             let result = 'PlaceholderName'
-            const data = model.query().whereId(id).first()
+            // const data = model.query().whereId(id).first()
+            const data = {}
             result = data[this.title(model).name]
             return result
         },

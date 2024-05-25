@@ -320,6 +320,7 @@ export default {
             highlightedRow: null,
             filters: {},
             activeTab: "table",
+            items: [],
         }
     },
     computed: {
@@ -398,20 +399,20 @@ export default {
             )
             return result
         },
-        items() {
-            const result = this.model
-                .query()
-                .where((item) => {
-                    return this.quickListsGetIfMatchesAllChecks(
-                        item,
-                        this.filtersComp
-                    )
-                })
-                .withAll()
-                .orderBy('id', 'desc')
-                .get()
-            return result
-        },
+        // items() {
+        //     const result = this.model
+        //         .query()
+        //         .where((item) => {
+        //             return this.quickListsGetIfMatchesAllChecks(
+        //                 item,
+        //                 this.filtersComp
+        //             )
+        //         })
+        //         .withAll()
+        //         .orderBy('id', 'desc')
+        //         .get()
+        //     return result
+        // },
     },
     methods: {
         quickListsGetIfMatchesAllChecks(item, filters) {
@@ -500,6 +501,7 @@ export default {
                     response?.response?.headers?.['content-range']
                 count = contentRange.split('/')[1]
             }
+            this.items = response.data
             this.pagination.totalItems = count // Assuming your API returns a total count
         },
     },
