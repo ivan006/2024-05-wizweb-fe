@@ -1,15 +1,15 @@
 <template>
     <div>
-        <v-data-table
+        <v-data-table-server
             :mobile-breakpoint="0"
             @click:row="clickRow"
             :headers="flattenedHeadersHideMapField"
             :items="items"
-            :page="paginatedGetSet.page"
             sort-desc
-            :items-per-page="paginatedGetSet.itemsPerPage"
-            :server-items-length="+pagination.totalItems"
-            @update:options="updateOptions"
+            :itemsLength="+itemsLength"
+            :page="optionsComputed.page"
+            :items-per-page="optionsComputed.itemsPerPage"
+            @update:options="(e)=>{$emit('update:options', e)}"
             :sort-by="['id']"
         >
             <template
@@ -37,7 +37,7 @@
                     </div>
                 </template>
             </template>
-        </v-data-table>
+        </v-data-table-server>
     </div>
 </template>
 
@@ -56,10 +56,16 @@ export default {
                 return []
             },
         },
-        pagination: {
+        options: {
             type: Object,
             default() {
                 return {}
+            },
+        },
+        itemsLength: {
+            type: Number,
+            default() {
+                return null
             },
         },
         superOptions: {
@@ -77,12 +83,12 @@ export default {
         },
     },
     computed: {
-        paginatedGetSet: {
+        optionsComputed: {
             get() {
-                return this.pagination
+                return this.options
             },
             set(value) {
-                this.$emit('updatePagination', value)
+                this.$emit('update:options', value)
             },
         },
         flattenedHeaders() {

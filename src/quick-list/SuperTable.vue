@@ -121,12 +121,11 @@
 
             <div class="my-4">
                 <template v-if="activeTab == 'table'">
-
                     <SuperTableTable
-                        @updateOptions="updateOptions"
                         :items="items"
                         @clickRow="clickRow"
-                        :pagination="pagination"
+                        v-model:options="optionsComputed"
+                        :itemsLength="+itemsLength"
                         :superOptions="{
                             headers: headers,
                             modelFields: modelFields,
@@ -308,10 +307,14 @@ export default {
                 { length: 5 },
                 (_, index) => new Date().getFullYear() - index
             ), // last 5 years including this year
-            pagination: {
-                page: 1,
-                itemsPerPage: 15,
-                totalItems: 0,
+            itemsLength: 1000,
+            options: {
+              "page": 1,
+              "itemsPerPage": 10,
+              "sortBy": [
+                "id"
+              ],
+              "groupBy": []
             },
             createItemData: {
                 showModal: false,
@@ -323,6 +326,18 @@ export default {
         }
     },
     computed: {
+        optionsComputed: {
+          get() {
+            return this.options
+          },
+          set(value) {
+
+            this.fetchData()
+            console.log("value")
+            console.log(value)
+            this.options = value
+          },
+        },
         excludedCols() {
             let result = []
             if (this.currentParentRel?.currentParentRecord) {
@@ -469,11 +484,6 @@ export default {
             // Close the dialog after submission
             this.createItemData.showModal = false
         },
-        updateOptions(e) {
-            this.pagination.page = e.page
-            this.pagination.limit = e.itemsPerPage
-            this.fetchData()
-        },
         async fetchData() {
             let rules = []
             if (this.model.rules?.readables){
@@ -485,8 +495,8 @@ export default {
               }, {
                 Prefer: 'count=exact',
               }, {
-                page: this.pagination.page,
-                limit: this.pagination.itemsPerPage,
+                page: this.options.page,
+                limit: this.options.itemsPerPage,
                 filters: this.filtersComp,
                 clearPrimaryModelOnly: false,
               })
@@ -497,7 +507,7 @@ export default {
                     response?.response?.headers?.['content-range']
                 count = contentRange.split('/')[1]
             }
-            this.pagination.totalItems = count // Assuming your API returns a total count
+            this.itemsLength = count // Assuming your API returns a total count
         },
     },
     watch: {
