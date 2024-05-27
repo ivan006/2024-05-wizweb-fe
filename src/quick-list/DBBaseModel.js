@@ -5,6 +5,9 @@ import CustonMixins from '../mixins/CustonMixins'
 import Helpers from '../utils/Helpers'
 
 export default class DBBaseModel extends Model {
+
+    static adapator = 'supabase'
+
     static customApiBase(moreHeaders) {
         const baseUrlAndHeaders =
             CustonMixins.methods.DefaultHeadersAndBaseUrl()
@@ -31,12 +34,28 @@ export default class DBBaseModel extends Model {
             filters: {},
             clearPrimaryModelOnly: false
         },
+        adapator = "supabase"
     ) {
         let offset = (options.page - 1) * options.limit
         // todo: note - i hade to put the filters in line because urls can have duplicates keys and objects cans and i needed duplicates key support for the date range filter
 
+        let computedUrl = url
+        let preparedRels = {}
+
+        if (adapator === "supabase"){
+
+            computedUrl= `${url}?${Helpers.prepareFiltersForSupabase(options.filters)}`
+            preparedRels = Helpers.prepareRelationsForSupabase(relationships)
+
+        } else if(adapator === "laravel") {
+
+            computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
+            preparedRels = Helpers.prepareRelationsForLaravel(relationships)
+
+        }
+
         return this.customApiBase(headers)
-            .get(`${url}?${Helpers.prepareFiltersForAxios(options.filters)}`, {
+            .get(computedUrl, {
                 persistBy: 'insertOrUpdate',
                 params: {
                     ...{
@@ -44,7 +63,7 @@ export default class DBBaseModel extends Model {
                         offset: offset,
                     },
                     ...flags,
-                    ...Helpers.prepareRelationsForAxios(relationships),
+                    ...preparedRels,
                 },
                 dataTransformer: ({ data }) => {
                     if (options.clearPrimaryModelOnly) {
@@ -63,22 +82,18 @@ export default class DBBaseModel extends Model {
             })
     }
 
-    static FetchById( id, relationships = [], flags = {}, headers = {} ) {
+    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
         relationships
-        return this.customSupabaseApiFetchById(
-            `${this.baseUrl}/rest/v1/provider_groups?id=eq.${id}&select=*`,
-            id,
-            relationships,
-            flags,
-            this.mergeHeaders(headers)
-        )
-    }
 
+        let computedUrl = url
+        if (adapator === "supabase"){
+            computedUrl= `${url}?id=eq.${id}`
+        } else if(adapator === "laravel") {
+            computedUrl = `${url}/${id}`
+        }
 
-    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} ) {
-        relationships
         return this.customApiBase(headers)
-            .get(url, {
+            .get(computedUrl, {
                 dataTransformer: ({ data }) => {
                     const result = CustonMixins.methods.NormalizeRecursive(data)
                     return result
@@ -92,7 +107,7 @@ export default class DBBaseModel extends Model {
             })
     }
 
-    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} ) {
+    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
         return this.customApiBase(headers)
             .post(
                 url,
@@ -114,7 +129,7 @@ export default class DBBaseModel extends Model {
             })
     }
 
-    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} ) {
+    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
         return this.customApiBase(headers)
             .post(
                 url,
@@ -136,10 +151,18 @@ export default class DBBaseModel extends Model {
             })
     }
 
-    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} ) {
+    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+
+        let computedUrl = url
+        if (adapator === "supabase"){
+            computedUrl = `${url}?id=eq.${entity.id}`
+        } else if(adapator === "laravel") {
+            computedUrl = `${url}/${entity.id}`
+        }
+
         return this.customApiBase(headers)
             .patch(
-                url,
+                computedUrl,
                 { ...entity },
                 {
                     dataTransformer: ({ data }) => {
@@ -159,9 +182,17 @@ export default class DBBaseModel extends Model {
             })
     }
 
-    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} ) {
+    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , adapator = "supabase") {
+
+        let computedUrl = url
+        if (adapator === "supabase"){
+            computedUrl = `${url}?id=eq.${entityId}`
+        } else if(adapator === "laravel") {
+            computedUrl = `${url}/${entityId}`
+        }
+
         return this.customApiBase(headers)
-            .delete(url, {
+            .delete(computedUrl, {
                 delete: entityId,
             })
             .then((res) => {

@@ -39,7 +39,7 @@ class Helpers {
         return true
     }
 
-    static prepareFiltersForAxios(obj) {
+    static prepareFiltersForSupabase(obj) {
         let result = []
         for (const [key, filter] of Object.entries(obj)) {
             // todo: note the below logic was to support time range filters
@@ -67,7 +67,29 @@ class Helpers {
         return result.join('&')
     }
 
-    static prepareRelationsForAxios(arr) {
+    static prepareFiltersForLaravel(obj) {
+        let result = [];
+        for (const [key, filter] of Object.entries(obj)) {
+            // Handle time range filters
+            if (typeof filter === 'object' && !Array.isArray(filter) && filter !== null) {
+                if (filter?.value) {
+                    if (filter.usageType === 'timeRangeStart') {
+                        if (filter.value.range.start) {
+                            result.push(`filter[${key}]=gte,${filter.value.range.start}`);
+                            result.push(`filter[${key}]=lte,${filter.value.range.end}`);
+                        }
+                    }
+                }
+            } else if (filter !== null) {
+                // Handle simple equality filters
+                result.push(`filter[${key}]=${filter}`);
+            }
+        }
+        return result.join('&');
+    }
+
+
+    static prepareRelationsForSupabase(arr) {
         let select = ['*']
         for (const value of arr) {
             select.push(`${value}(*)`)
@@ -80,6 +102,20 @@ class Helpers {
             select: result,
         }
     }
+    static prepareRelationsForLaravel(arr) {
+        let includes = [];
+        for (const value of arr) {
+            includes.push(value);
+        }
+
+        // Join the relations with commas
+        const result = includes.join(',');
+
+        return {
+            include: result,
+        };
+    }
+
 
     static getSupabaseClient() {
         const baseUrlAndHeaders =

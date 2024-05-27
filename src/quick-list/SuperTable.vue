@@ -136,6 +136,7 @@
                             user: user,
                         }"
                     />
+                  <pre>{{options}}</pre>
                 </template>
                 <template v-if="activeTab == 'grid'">
                     <div class="my-4">
@@ -307,7 +308,7 @@ export default {
                 { length: 5 },
                 (_, index) => new Date().getFullYear() - index
             ), // last 5 years including this year
-            itemsLength: 1000,
+            itemsLength: 0,
             options: {
               "page": 1,
               "itemsPerPage": 10,
@@ -489,23 +490,56 @@ export default {
             if (this.model.rules?.readables){
               rules = this.model.rules.readables(this.user)
             }
-            const response = await this.model.FetchAll([], {
-                ...rules,
-                order: 'id.desc',
-              }, {
+
+            let extraHeaderComputed = {}
+            let flagsComputed = {}
+            if (this.model.adapator == "supabase"){
+              extraHeaderComputed = {
                 Prefer: 'count=exact',
-              }, {
+              }
+              flagsComputed = {
+                order: 'id.desc'
+              }
+            } else if (this.model.adapator == "laravel"){
+              extraHeaderComputed = {}
+              flagsComputed = {
+                sort: '-id',
+                per_page: this.options.itemsPerPage,
+                page: this.options.page
+              }
+            }
+
+          // options: {
+          //   "page": 1,
+          //       "itemsPerPage": 10,
+          //       "sortBy": [
+          //     "id"
+          //   ],
+          //       "groupBy": []
+          // },
+
+            const response = await this.model.FetchAll([], {
+                  ...rules,
+                  ...flagsComputed,
+                },
+                extraHeaderComputed
+                , {
                 page: this.options.page,
                 limit: this.options.itemsPerPage,
                 filters: this.filtersComp,
-                clearPrimaryModelOnly: false,
+                clearPrimaryModelOnly: true,
               })
             // let count = null
-            let count = -1
-            if (response?.response?.headers?.['content-range']) {
+            let count = 0
+
+            if (this.model.adapator == "supabase"){
+              if (response?.response?.headers?.['content-range']) {
                 const contentRange =
                     response?.response?.headers?.['content-range']
                 count = contentRange.split('/')[1]
+              }
+            } else if (this.model.adapator == "laravel"){
+              count = response.response.data.total
             }
             this.itemsLength = count // Assuming your API returns a total count
         },
