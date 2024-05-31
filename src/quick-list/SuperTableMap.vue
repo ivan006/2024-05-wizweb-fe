@@ -163,7 +163,7 @@ export default {
             } else {
                 let mapHeaderParent = ''
                 for (const mapHeader of this.mapHeaders) {
-                    mapHeaderParent = mapHeader.value
+                    mapHeaderParent = mapHeader.key
                     if (mapHeader.headerChildren) {
                         longField = mapHeader.headerChildren.find((field) => {
                             return field.usageType == 'mapExtraGeoLocLong'

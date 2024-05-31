@@ -61,7 +61,7 @@ export default {
     },
     computed: {
         title() {
-            const result = this.superOptions.headers.find((header) => header.value !== 'id')
+            const result = this.superOptions.headers.find((header) => header.key !== 'id')
             return result
         },
     },

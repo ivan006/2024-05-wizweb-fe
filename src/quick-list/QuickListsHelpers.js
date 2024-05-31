@@ -173,10 +173,11 @@ class QuickListsHelpers {
                         } else {
                             headerChildren.push({
                                 title: relatedAttr.label,
-                                value: relatedAttr.name,
+                                key: relatedAttr.name,
                                 usageType: relatedAttr.usageType,
                                 dataType: relatedAttr.dataType,
                                 meta: relatedAttr.meta,
+                                sortable: true,
                             })
                         }
                     }
@@ -184,26 +185,28 @@ class QuickListsHelpers {
 
                 result.push({
                     title: computedAttr.label,
-                    value: computedAttr.name,
+                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
                     headerChildren: headerChildren,
+                    sortable: true,
                 })
             } else {
                 result.push({
                     title: computedAttr.label,
-                    value: computedAttr.name,
+                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
+                    sortable: true,
                 })
             }
         }
         if (canEdit) {
             result.push({
                 title: 'Actions',
-                value: 'actions',
+                key: 'actions',
                 usageType: 'actions',
                 dataType: 'actions',
             })

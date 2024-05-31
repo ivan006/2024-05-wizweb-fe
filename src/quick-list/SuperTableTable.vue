@@ -1,20 +1,20 @@
 <template>
     <div>
+      <!--<pre>{{flattenedHeadersHideMapField}}</pre>-->
         <v-data-table-server
             :mobile-breakpoint="0"
             @click:row="clickRow"
             :headers="flattenedHeadersHideMapField"
             :items="items"
-            sort-desc
             :itemsLength="+itemsLength"
             :page="optionsComputed.page"
             :items-per-page="optionsComputed.itemsPerPage"
             @update:options="(e)=>{$emit('update:options', e)}"
-            :sort-by="['id']"
+            v-model:sort-by="sortBy"
         >
             <template
                 v-for="(header, index) in flattenedHeaders"
-                v-slot:[`item.${header.value}`]="{ item }"
+                v-slot:[`item.${header.key}`]="{ item }"
                 :key="index"
             >
                 <template v-if="header.isChildOf">
@@ -82,7 +82,15 @@ export default {
           },
         },
     },
+  data(){
+    return {
+      sortBy: [{ key: this.pKey, order: 'asc' }]
+    }
+  },
     computed: {
+        pKey() {
+          return this.superOptions.model.primaryKey
+        },
         optionsComputed: {
             get() {
                 return this.options

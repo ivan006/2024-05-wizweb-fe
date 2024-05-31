@@ -156,7 +156,7 @@ export default {
             return QuickListsHelpers.quickListsIsMobile()
         },
         title() {
-            const result = this.headers.find((header) => header.value !== 'id')
+            const result = this.headers.find((header) => header.key !== 'id')
             return result
         },
         headers() {
@@ -247,7 +247,7 @@ export default {
             if (response.response.data.length == 0) {
                 this.noMoreShowMore = true
             }
-            this.fetchedItems = response.response.data
+            this.fetchedItems = response.response.data.data
             // this.pagination.totalItems = response.total // Assuming your API returns a total count
             this.loading = false
         },

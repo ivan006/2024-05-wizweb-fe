@@ -184,7 +184,7 @@ export default {
     computed: {
         compHeader() {
             const result = this.superOptions.headers.find((header) => {
-                return header.value == this.dataPoint.data
+                return header.key == this.dataPoint.data
             })
             // console.log(this.dataPoint.data)
             // console.log("this.superOptions.headers")

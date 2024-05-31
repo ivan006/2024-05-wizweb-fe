@@ -7,6 +7,7 @@ import Helpers from '../utils/Helpers'
 export default class DBBaseModel extends Model {
 
     static adapator = 'supabase'
+    static primaryKey = 'id';
 
     static customApiBase(moreHeaders) {
         const baseUrlAndHeaders =

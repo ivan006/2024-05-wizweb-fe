@@ -9,7 +9,7 @@
                 header.usageType == 'timeRangeEnd'
             "
         >
-            {{ formatTimestamp(item[header.value]) }}
+            {{ formatTimestamp(item[header.key]) }}
         </template>
         <template v-else-if="header.usageType == 'actions'">
           <div @click.stop :style="disabled() ? 'cursor: default;': ''">
@@ -62,26 +62,26 @@
         </template>
         <template v-else-if="header.usageType.startsWith('relLookup')">
             <div style="min-height: 32px">
-                <!--                {{header.value}}-->
+                <!--                {{header.key}}-->
                 <!--                <pre>{{item}}</pre>-->
                 <v-chip
                     v-if="
-                        item?.[header.value]?.[header.meta.lookupDisplayField]
+                        item?.[header.key]?.[header.meta.lookupDisplayField]
                     "
                 >
-                    {{ item?.[header.value]?.[header.meta.lookupDisplayField] }}
+                    {{ item?.[header.key]?.[header.meta.lookupDisplayField] }}
                 </v-chip>
             </div>
         </template>
         <template v-else>
             <template v-if="isTag">
                 <v-chip v-if="isTag">
-                    {{ item[header.value] }}
+                    {{ item[header.key] }}
                 </v-chip>
             </template>
             <template v-else>
-                <div :title="item[header.value]">
-                  {{ truncateStr(item[header.value]) }}
+                <div :title="item[header.key]">
+                  {{ truncateStr(item[header.key]) }}
                 </div>
             </template>
         </template>
@@ -158,8 +158,11 @@ export default {
 
     methods: {
       truncateStr(str){
-        const maxLength = 40;
-        const truncatedStr = str.length>maxLength ? str.substring(0, maxLength) + "..." : str;
+        let truncatedStr = ""
+        if (str){
+          const maxLength = 40;
+          truncatedStr = str.length>maxLength ? str.substring(0, maxLength) + "..." : str;
+        }
         return truncatedStr
       },
         disabled() {

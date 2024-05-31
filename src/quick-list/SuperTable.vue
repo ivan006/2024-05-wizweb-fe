@@ -136,7 +136,6 @@
                             user: user,
                         }"
                     />
-                  <pre>{{options}}</pre>
                 </template>
                 <template v-if="activeTab == 'grid'">
                     <div class="my-4">
@@ -309,6 +308,7 @@ export default {
                 (_, index) => new Date().getFullYear() - index
             ), // last 5 years including this year
             itemsLength: 0,
+            loading: false,
             options: {
               "page": 1,
               "itemsPerPage": 10,
@@ -332,10 +332,9 @@ export default {
             return this.options
           },
           set(value) {
-
-            this.fetchData()
-            console.log("value")
-            console.log(value)
+            if (!this.loading){
+              this.fetchData()
+            }
             this.options = value
           },
         },
@@ -351,10 +350,10 @@ export default {
                 ...this.filters,
                 ...this.forcedFilters,
             }
-
             if (this.currentParentRel?.currentParentRecord && this.currentParentRel.currentParentRecord.item) {
+              const pKey = this.currentParentRel.currentParentRecord.model.primaryKey
                 result[this.currentParentRel.currentParentRecord.foreignKeyToParentRecord] =
-                    this.currentParentRel.currentParentRecord.item.id
+                    this.currentParentRel.currentParentRecord.item[pKey]
             }
             return result
         },
@@ -475,7 +474,9 @@ export default {
             const inititalItemLength = this.items.length
             this.model.Store(payload).then(() => {
                 if (!inititalItemLength) {
+                  if (!this.loading){
                     this.fetchData()
+                  }
                 }
             })
 
@@ -486,6 +487,7 @@ export default {
             this.createItemData.showModal = false
         },
         async fetchData() {
+          this.loading = true
             let rules = []
             if (this.model.rules?.readables){
               rules = this.model.rules.readables(this.user)
@@ -517,7 +519,6 @@ export default {
           //   ],
           //       "groupBy": []
           // },
-
             const response = await this.model.FetchAll([], {
                   ...rules,
                   ...flagsComputed,
@@ -529,6 +530,9 @@ export default {
                 filters: this.filtersComp,
                 clearPrimaryModelOnly: true,
               })
+
+
+          this.loading = false
             // let count = null
             let count = 0
 
@@ -547,7 +551,9 @@ export default {
     watch: {
         filters: {
             handler() {
+              if (!this.loading){
                 this.fetchData()
+              }
             },
             deep: true,
         },
@@ -597,7 +603,9 @@ export default {
                 };
             }
         }
+      if (!this.loading){
         this.fetchData()
+      }
     },
 }
 </script>
