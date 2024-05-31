@@ -9,6 +9,8 @@ export default class DBBaseModel extends Model {
     static adapator = 'supabase'
     static primaryKey = 'id';
 
+    static openRecord(id){}
+
     static customApiBase(moreHeaders) {
         const baseUrlAndHeaders =
             CustonMixins.methods.DefaultHeadersAndBaseUrl()

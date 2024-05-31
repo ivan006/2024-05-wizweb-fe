@@ -427,6 +427,9 @@ export default {
                 .get()
             return result
         },
+        pKey() {
+          return this.model.primaryKey
+        },
     },
     methods: {
         quickListsGetIfMatchesAllChecks(item, filters) {
@@ -457,6 +460,7 @@ export default {
             if (this.isForSelectingRelation) {
                 this.highlightedRow = item.id
             }
+            this.model.openRecord(item[this.pKey])
 
             this.$emit('update:modelValue', item)
         },
