@@ -80,7 +80,9 @@
                 </v-chip>
             </template>
             <template v-else>
-                {{ item[header.value] }}
+                <div :title="item[header.value]">
+                  {{ truncateStr(item[header.value]) }}
+                </div>
             </template>
         </template>
     </div>
@@ -155,6 +157,11 @@ export default {
     },
 
     methods: {
+      truncateStr(str){
+        const maxLength = 40;
+        const truncatedStr = str.length>maxLength ? str.substring(0, maxLength) + "..." : str;
+        return truncatedStr
+      },
         disabled() {
           let result = false
 
