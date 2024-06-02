@@ -89,14 +89,20 @@ export default class DBBaseModel extends Model {
         relationships
 
         let computedUrl = url
+        let preparedRels = {}
         if (adapator === "supabase"){
             computedUrl= `${url}?id=eq.${id}`
+            preparedRels = Helpers.prepareRelationsForSupabase(relationships)
         } else if(adapator === "laravel") {
             computedUrl = `${url}/${id}`
+            preparedRels = Helpers.prepareRelationsForLaravel(relationships)
         }
 
         return this.customApiBase(headers)
             .get(computedUrl, {
+                params: {
+                    ...preparedRels,
+                },
                 dataTransformer: ({ data }) => {
                     const result = CustonMixins.methods.NormalizeRecursive(data)
                     return result

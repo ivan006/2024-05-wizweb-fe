@@ -68,6 +68,7 @@
                     v-if="
                         item?.[header.key]?.[header.meta.lookupDisplayField]
                     "
+                    @click.stop="clickParent(item?.[header.key], header)"
                 >
                     {{ item?.[header.key]?.[header.meta.lookupDisplayField] }}
                 </v-chip>
@@ -75,9 +76,9 @@
         </template>
         <template v-else>
             <template v-if="isTag">
-                <v-chip v-if="isTag">
-                    {{ item[header.key] }}
-                </v-chip>
+              <v-chip v-if="isTag" @click.stop="clickParent(item)">
+                {{ item[header.key] }}
+              </v-chip>
             </template>
             <template v-else>
                 <div :title="item[header.key]">
@@ -157,6 +158,10 @@ export default {
     },
 
     methods: {
+      clickParent(item, header) {
+        const model = header.meta.relatedModel
+        model.openRecord(item[model.primaryKey])
+      },
       truncateStr(str){
         let truncatedStr = ""
         if (str){
