@@ -11,15 +11,90 @@ export default class DBBaseModel extends Model {
 
     static openRecord(id){}
 
+
+    static NormalizeRecursive(value) {
+        const result = this.NormalizeRecursiveChild(
+            value,
+            null,
+            'attributes',
+            'data'
+        )
+        return result
+    }
+
+    static NormalizeRecursiveChild(
+        value,
+        parent,
+        propertyGroupNameToFlatten,
+        elementGroupNameToFlatten
+    ) {
+        let result = value
+        if (
+            typeof value === 'object' &&
+            !Array.isArray(value) &&
+            value !== null
+        ) {
+            //Chatgpts logic start
+            // New logic: Rename keys ending in '_id'
+            // Object.keys(value).forEach((key) => {
+            //     if (key.endsWith('_id') && typeof value[key] == "object" && value[key] !== null) {
+            //         const newKey = key.slice(0, -3) // Removing "_id"
+            //         value[newKey] = value[key]
+            //         delete value[key]
+            //     }
+            // })
+
+            //Chatgpts logic end
+
+            if (value[elementGroupNameToFlatten] !== undefined) {
+                const valueToFlatten = value[elementGroupNameToFlatten]
+                result = this.NormalizeRecursiveChild(
+                    valueToFlatten,
+                    value,
+                    propertyGroupNameToFlatten,
+                    elementGroupNameToFlatten
+                )
+            } else {
+                let flattened = value
+                if (value[propertyGroupNameToFlatten] !== undefined) {
+                    const valueToFlatten = value[propertyGroupNameToFlatten]
+                    flattened = { ...value, ...valueToFlatten }
+                }
+                result = {}
+                Object.keys(flattened).map((key) => {
+                    if (key !== propertyGroupNameToFlatten) {
+                        result[key] = this.NormalizeRecursiveChild(
+                            flattened[key],
+                            value,
+                            propertyGroupNameToFlatten,
+                            elementGroupNameToFlatten
+                        )
+                    }
+                })
+            }
+        } else if (Array.isArray(value)) {
+            result = []
+            value.map((value2, key) => {
+                result[key] = this.NormalizeRecursiveChild(
+                    value2,
+                    value,
+                    propertyGroupNameToFlatten,
+                    elementGroupNameToFlatten
+                )
+            })
+        }
+        return result
+    }
+
     static customApiBase(moreHeaders) {
-        const baseUrlAndHeaders =
-            CustonMixins.methods.DefaultHeadersAndBaseUrl()
+        // const baseUrlAndHeaders =
+        //     CustonMixins.methods.DefaultHeadersAndBaseUrl()
         this.apiConfig = {
             // ...DefaultSISHeadersAndBaseUrl(),
             // baseURL: baseUrlAndHeaders.baseURL,
             baseURL: "",
             headers: {
-                ...baseUrlAndHeaders.headers,
+                // ...baseUrlAndHeaders.headers,
                 ...moreHeaders,
             },
         }
@@ -72,17 +147,17 @@ export default class DBBaseModel extends Model {
                     if (options.clearPrimaryModelOnly) {
                         this.deleteAll()
                     }
-                    const result = CustonMixins.methods.NormalizeRecursive(data)
+                    const result = this.NormalizeRecursive(data)
                     return result
                 },
             })
-            .then((res) => {
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-                // return error // < would this be needed maybe?
-            })
+            // .then((res) => {
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            //     // return error // < would this be needed maybe?
+            // })
     }
 
     static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
@@ -104,16 +179,16 @@ export default class DBBaseModel extends Model {
                     ...preparedRels,
                 },
                 dataTransformer: ({ data }) => {
-                    const result = CustonMixins.methods.NormalizeRecursive(data)
+                    const result = this.NormalizeRecursive(data)
                     return result
                 },
             })
-            .then((res) => {
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-            })
+            // .then((res) => {
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            // })
     }
 
     static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
@@ -124,18 +199,18 @@ export default class DBBaseModel extends Model {
                 {
                     dataTransformer: ({ data }) => {
                         const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
+                            this.NormalizeRecursive(data)
                         return result
                     },
                 }
             )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-            })
+            // .then((res) => {
+            //     CustonMixins.methods.logNetworkSuccess(res)
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            // })
     }
 
     static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
@@ -146,18 +221,18 @@ export default class DBBaseModel extends Model {
                 {
                     dataTransformer: ({ data }) => {
                         const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
+                            this.NormalizeRecursive(data)
                         return result
                     },
                 }
             )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-            })
+            // .then((res) => {
+            //     CustonMixins.methods.logNetworkSuccess(res)
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            // })
     }
 
     static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
@@ -176,19 +251,19 @@ export default class DBBaseModel extends Model {
                 {
                     dataTransformer: ({ data }) => {
                         const result =
-                            CustonMixins.methods.NormalizeRecursive(data)
+                            this.NormalizeRecursive(data)
                         return result
                     },
                     save: true,
                 }
             )
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-            })
+            // .then((res) => {
+            //     CustonMixins.methods.logNetworkSuccess(res)
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            // })
     }
 
     static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , adapator = "supabase") {
@@ -204,12 +279,12 @@ export default class DBBaseModel extends Model {
             .delete(computedUrl, {
                 delete: entityId,
             })
-            .then((res) => {
-                CustonMixins.methods.logNetworkSuccess(res)
-                return res
-            })
-            .catch((error) => {
-                // CustonMixins.methods.logNetworkError(error)
-            })
+            // .then((res) => {
+            //     CustonMixins.methods.logNetworkSuccess(res)
+            //     return res
+            // })
+            // .catch((error) => {
+            //     // CustonMixins.methods.logNetworkError(error)
+            // })
     }
 }

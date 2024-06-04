@@ -62,14 +62,14 @@
             :key="index"
             :value="'tab-' + index"
           >
-            <!--                <pre>{{ relation.field }}</pre>-->
-            <!--              :forcedFilters="filters(relation.field.foreignKey)"-->
+                            <!--<pre>{{ relation.currentParentRecord.foreignKeyToParentRecord }}</pre>-->
             <SuperTable
               :ref="`tab-${index}`"
               :currentParentRel="relation"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
               :user="user"
+              :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
             >
               <template v-if="!!$slots[relation.field.name]" #create>
                 <slot :name="relation.field.name" />

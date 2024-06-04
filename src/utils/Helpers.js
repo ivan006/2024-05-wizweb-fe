@@ -1,6 +1,3 @@
-import CustonMixins from '../mixins/CustonMixins'
-import { createClient } from '@supabase/supabase-js'
-
 class Helpers {
 
     static snakeToTitle(string) {
@@ -117,18 +114,6 @@ class Helpers {
     }
 
 
-    static getSupabaseClient() {
-        const baseUrlAndHeaders =
-            CustonMixins.methods.DefaultHeadersAndBaseUrl()
-        const result = createClient(
-            baseUrlAndHeaders.baseURL,
-            baseUrlAndHeaders.headers.AuthToken,
-            {
-                headers: { ...baseUrlAndHeaders.headers },
-            }
-        )
-        return result
-    }
 
     static capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1)
