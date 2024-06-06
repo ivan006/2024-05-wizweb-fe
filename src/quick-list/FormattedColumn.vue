@@ -90,7 +90,8 @@
 </template>
 
 <script>
-import moment from 'moment-timezone'
+import moment from 'moment';
+import 'moment-timezone';
 // import LoginSession from '@/models/LoginSession'
 import QuickListsHelpers from './QuickListsHelpers'
 import CreateEditForm from './CreateEditForm.vue'
