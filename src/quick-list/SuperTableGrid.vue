@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-row class="fill-height ma-n2" justify="center">
-      <template v-for="item of items" :key="item.name">
-        <v-col cols="12" md="3" class="pa-2">
-          <v-card class="mx-auto" style="height: 100%">
+    <div class="row q-mx-n2 justify-center">
+      <template v-for="item in items" :key="item.name">
+        <div class="col-12 col-md-3 q-pa-sm">
+          <div class="q-card q-mx-auto" style="height: 100%">
             <template
                 v-if="
                 superOptions.model.displayMapSummary &&
@@ -29,12 +29,12 @@
                   :superOptions="superOptions"
               />
             </template>
-          </v-card>
-        </v-col>
+          </div>
+        </div>
       </template>
-    </v-row>
+    </div>
     <template v-if="!items.length">
-      <div style="text-align: center">No data available</div>
+      <div class="text-center">No data available</div>
     </template>
   </div>
 </template>
@@ -42,13 +42,10 @@
 <script>
 import RecordOverview from "./RecordOverview.vue";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
-import FormattedColumn from "./FormattedColumn.vue";
-// import QuickListsHelpers from './QuickListsHelpers'
 
 export default {
   name: "SuperTableGrid",
   components: {
-    FormattedColumn,
     RecordOverview,
     RecordOverviewDynamic,
   },
@@ -84,19 +81,6 @@ export default {
     clickRow(e) {
       this.$emit("clickRow", e);
     },
-  },
-  mounted() {
-    // console.log(this.superOptions.model.displayMapSummary)
-  },
-  computed: {
-    // rowsAndDataIndicators() {
-    //     return QuickListsHelpers.rowsAndDataIndicators(
-    //         true,
-    //         this.superOptions.model,
-    //         this.headers,
-    //         []
-    //     )
-    // },
   },
 };
 </script>

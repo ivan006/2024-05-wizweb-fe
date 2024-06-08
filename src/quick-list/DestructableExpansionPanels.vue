@@ -4,16 +4,14 @@
       <slot></slot>
     </template>
     <template v-else>
-      <v-expansion-panels>
-        <v-expansion-panel>
-          <v-expansion-panel-title>
-            <template v-slot:default> {{ title }} </template>
-          </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <slot></slot>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <q-expansion-item>
+        <template v-slot:header>
+          <div class="text-h6">{{ title }}</div>
+        </template>
+        <div class="q-pa-md">
+          <slot></slot>
+        </div>
+      </q-expansion-item>
     </template>
   </div>
 </template>

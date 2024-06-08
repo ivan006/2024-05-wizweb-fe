@@ -1,16 +1,16 @@
-import DBCrudCacheSet from "./DBCrudCacheSet";
+import DBCrudCacheSet from './DBCrudCacheSet'
 // import Helpers from '../utils/Helpers.js'
 
 class QuickListsHelpers {
     static quickListsIsMobile() {
         if (
             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-                navigator.userAgent,
+                navigator.userAgent
             )
         ) {
-            return true;
+            return true
         } else {
-            return false;
+            return false
         }
     }
 
@@ -22,44 +22,44 @@ class QuickListsHelpers {
             //     googleName: 'mapName',
             // },
             {
-                flag: "mapExtraFormattedAddress",
-                googleType: "simple",
-                googleName: "formatted_address",
+                flag: 'mapExtraFormattedAddress',
+                googleType: 'simple',
+                googleName: 'formatted_address',
             },
             {
-                flag: "mapExtraPlaceID",
-                googleType: "simple",
-                googleName: "place_id",
+                flag: 'mapExtraPlaceID',
+                googleType: 'simple',
+                googleName: 'place_id',
             },
             {
-                flag: "mapExtraGeoLocLong",
-                googleType: "mapGeoLoc",
-                googleName: "lng",
+                flag: 'mapExtraGeoLocLong',
+                googleType: 'mapGeoLoc',
+                googleName: 'lng',
             },
             {
-                flag: "mapExtraGeoLocLat",
-                googleType: "mapGeoLoc",
-                googleName: "lat",
+                flag: 'mapExtraGeoLocLat',
+                googleType: 'mapGeoLoc',
+                googleName: 'lat',
             },
             {
-                flag: "relForeignKeyMapExtraRelCountry",
-                googleType: "components",
-                googleName: "country",
+                flag: 'relForeignKeyMapExtraRelCountry',
+                googleType: 'components',
+                googleName: 'country',
             },
             {
-                flag: "relForeignKeyMapExtraRelAdminArea1",
-                googleType: "components",
-                googleName: "administrative_area_level_1",
+                flag: 'relForeignKeyMapExtraRelAdminArea1',
+                googleType: 'components',
+                googleName: 'administrative_area_level_1',
             },
             {
-                flag: "relForeignKeyMapExtraRelAdminArea2",
-                googleType: "components",
-                googleName: "administrative_area_level_2",
+                flag: 'relForeignKeyMapExtraRelAdminArea2',
+                googleType: 'components',
+                googleName: 'administrative_area_level_2',
             },
             {
-                flag: "relForeignKeyMapExtraRelLocality",
-                googleType: "components",
-                googleName: "locality",
+                flag: 'relForeignKeyMapExtraRelLocality',
+                googleType: 'components',
+                googleName: 'locality',
             },
             // {
             //     flag: 'mapExtraRelSublocality1',
@@ -72,53 +72,53 @@ class QuickListsHelpers {
             //     googleName: 'sublocality_level_2',
             // },
             {
-                flag: "relForeignKeyMapExtraRelSublocality",
-                googleType: "components",
-                googleName: ["sublocality_level_1", "sublocality_level_2"], // Search for both sublocality levels
+                flag: 'relForeignKeyMapExtraRelSublocality',
+                googleType: 'components',
+                googleName: ['sublocality_level_1', 'sublocality_level_2'], // Search for both sublocality levels
             },
-        ];
+        ]
     }
 
     static quickListsGetIfMatchesAllChecks(item, filters) {
         for (const [key, filter] of Object.entries(filters)) {
             // todo: note the below logic was to support time range filters
             if (
-                typeof filter === "object" &&
+                typeof filter === 'object' &&
                 !Array.isArray(filter) &&
                 filter !== null
             ) {
                 if (filter?.value) {
-                    if (filter.usageType === "timeRangeStart") {
+                    if (filter.usageType === 'timeRangeStart') {
                         if (filter.value.range.start) {
-                            const startDate = new Date(filter.value.range.start);
-                            const endDate = new Date(filter.value.range.end);
-                            const itemDate = new Date(item[key]);
-                            return startDate < itemDate && itemDate < endDate;
+                            const startDate = new Date(filter.value.range.start)
+                            const endDate = new Date(filter.value.range.end)
+                            const itemDate = new Date(item[key])
+                            return startDate < itemDate && itemDate < endDate
                         }
                     }
                 }
             } else if (filter !== null) {
-                return item[key] == filter;
+                return item[key] == filter
             }
         }
 
-        return true;
+        return true
     }
 
     static computedAttrs(model, excludedCols = []) {
-        let crudCache = DBCrudCacheSet.find(model.entity);
+        let crudCache = DBCrudCacheSet.find(model.entity)
         if (!crudCache) {
-            DBCrudCacheSet.Generate(model);
-            crudCache = DBCrudCacheSet.find(model.entity);
+            DBCrudCacheSet.Generate(model)
+            crudCache = DBCrudCacheSet.find(model.entity)
         }
-        const result = this.computedAttrs2(crudCache.fields, excludedCols);
-        return result;
+        const result = this.computedAttrs2(crudCache.fields, excludedCols)
+        return result
     }
 
     static computedAttrs2(fields, excludedCols = []) {
-        let lookupKeys = []; // To keep track of foreign keys
+        let lookupKeys = [] // To keep track of foreign keys
 
-        let result = [];
+        let result = []
 
         for (const field of fields) {
             // if (!excludedCols.includes(field.name)) {
@@ -132,51 +132,43 @@ class QuickListsHelpers {
             //     }
             // }
 
-            excludedCols;
-            if (field.usageType.startsWith("relForeignKey")) {
-                result.push(field);
-                lookupKeys.push(field);
+            excludedCols
+            if (field.usageType.startsWith('relForeignKey')) {
+                result.push(field)
+                lookupKeys.push(field)
             } else {
-                result.push(field);
+                result.push(field)
             }
         }
 
-        return result;
+        return result
     }
 
-    static SupaerTableHeaders(
-        model,
-        excludedCols = [],
-        canEdit,
-        displayMapField = false,
-    ) {
+
+    static SupaerTableHeaders(model, excludedCols = [], canEdit, displayMapField = false) {
         let result = [];
         const computedAttrs = this.computedAttrs(model, excludedCols);
 
         for (const computedAttr of computedAttrs) {
-            if (
-                // !computedAttr.dataType.startsWith('mapExtra') &&
-                // computedAttr.dataType !== 'foreignKey'
-                computedAttr.usageType.startsWith("relForeignKey")
-            ) {
+            if (computedAttr.usageType.startsWith('relForeignKey')) {
                 // do nothing
-            } else if (computedAttr.usageType.startsWith("relLookup")) {
-                const relatedAttrs = this.computedAttrs(
-                    computedAttr.meta.relatedModel,
-                    excludedCols,
-                );
+            } else if (computedAttr.usageType.startsWith('relLookup')) {
+                const relatedAttrs = this.computedAttrs(computedAttr.meta.relatedModel, excludedCols);
                 let headerChildren = [];
                 for (const relatedAttr of relatedAttrs) {
-                    if (relatedAttr.important == true) {
-                        if (relatedAttr.usageType.startsWith("relForeignKey")) {
+                    if (relatedAttr.important === true) {
+                        if (relatedAttr.usageType.startsWith('relForeignKey')) {
                             // do nothing
                         } else {
                             headerChildren.push({
-                                title: relatedAttr.label,
-                                key: relatedAttr.name,
                                 usageType: relatedAttr.usageType,
                                 dataType: relatedAttr.dataType,
                                 meta: relatedAttr.meta,
+                                name: `${computedAttr.name}.${relatedAttr.name}`,
+                                align: 'left',
+                                label: relatedAttr.label,
+                                field: row => row[computedAttr.name] && row[computedAttr.name][relatedAttr.name],
+                                format: val => `${val}`,
                                 sortable: true,
                             });
                         }
@@ -184,81 +176,90 @@ class QuickListsHelpers {
                 }
 
                 result.push({
-                    title: computedAttr.label,
-                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
                     headerChildren: headerChildren,
+                    name: computedAttr.name,
+                    align: 'left',
+                    label: computedAttr.label,
+                    field: computedAttr.name,
                     sortable: true,
+                    children: headerChildren,
                 });
             } else {
                 result.push({
-                    title: computedAttr.label,
-                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
+                    name: computedAttr.name,
+                    align: 'left',
+                    label: computedAttr.label,
+                    field: computedAttr.name,
                     sortable: true,
                 });
             }
         }
+
         if (canEdit) {
             result.push({
-                title: "Actions",
-                key: "actions",
-                usageType: "actions",
-                dataType: "actions",
+                usageType: 'actions',
+                dataType: 'actions',
+                name: 'actions',
+                align: 'right',
+                label: 'Actions',
+                field: 'actions',
+                sortable: false,
             });
         }
 
-        result = result.filter((item) => {
+        result = result.filter(item => {
             if (displayMapField) {
-                if (!item.usageType.startsWith("relForeignKey")) {
+                if (!item.usageType.startsWith('relForeignKey')) {
                     return true;
                 }
             } else {
                 return (
-                    !item.usageType.startsWith("relForeignKey") &&
-                    !item.usageType.startsWith("relLookupMapExtra") &&
-                    !item.usageType.startsWith("mapExtra")
+                    !item.usageType.startsWith('relForeignKey') &&
+                    !item.usageType.startsWith('relLookupMapExtra') &&
+                    !item.usageType.startsWith('mapExtra')
                 );
             }
         });
-        // console.log(result)
 
         return result;
     }
 
+
     static preparePayload(input, modelFields) {
-        let result = [];
+        let result = []
         for (const attr of modelFields) {
-            if (typeof input?.[attr.name] !== "undefined") {
-                if (attr.usageType.startsWith("relForeignKey")) {
-                    result[attr.meta.foreignKey] = input[attr.meta.foreignKey];
-                } else if (attr.usageType.startsWith("relLookup")) {
+            if (typeof input?.[attr.name] !== 'undefined') {
+                if (attr.usageType.startsWith('relForeignKey')) {
+                    result[attr.meta.foreignKey] = input[attr.meta.foreignKey]
+                } else if (attr.usageType.startsWith('relLookup')) {
                     // do nothing
-                } else if (attr.usageType.startsWith("relChildren")) {
+                } else if (attr.usageType.startsWith('relChildren')) {
                     // do nothing
                 } else if (
                     [
-                        "timestampType",
-                        "readOnlyTimestampType",
-                        "timeRangeStart",
-                        "timeRangeEnd",
+                        'timestampType',
+                        'readOnlyTimestampType',
+                        'timeRangeStart',
+                        'timeRangeEnd',
                     ].includes(attr.usageType)
                 ) {
                     if (input[attr.name]) {
-                        result[attr.name] = input[attr.name];
+                        result[attr.name] = input[attr.name]
                     }
                 } else {
-                    result[attr.name] = input[attr.name];
+                    result[attr.name] = input[attr.name]
                 }
             }
         }
-        delete result.$id;
-        return result;
+        delete result.$id
+        return result
     }
 }
 
-export default QuickListsHelpers;
+export default QuickListsHelpers

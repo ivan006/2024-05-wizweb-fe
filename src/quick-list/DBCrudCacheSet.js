@@ -1,4 +1,4 @@
-import { Model } from "@vuex-orm/core";
+import { Model } from '@vuex-orm/core'
 import {
     Attribute,
     BelongsTo,
@@ -13,51 +13,56 @@ import {
     String,
     Uid,
     HasOne,
-} from "@vuex-orm/core";
-import Helpers from "../utils/Helpers";
+} from '@vuex-orm/core'
+import Helpers from '../utils/Helpers'
+
+
 
 export default class DBCrudCacheSet extends Model {
-    static entity = "DBCrudCacheSet";
+    static entity = 'DBCrudCacheSet'
 
     static fields() {
         return {
             id: this.uid(null),
             fields: this.attr([]),
-        };
+        }
     }
 
     static Generate(model) {
-        let fields = model.fields();
-        let lookupKeys = []; // To keep track of foreign keys
+        let fields = model.fields()
+        let lookupKeys = [] // To keep track of foreign keys
 
-        let result = [];
+        let result = []
 
-        let newField = {};
+        let newField = {}
 
         for (const fieldName in fields) {
-            let field = fields[fieldName];
+            let field = fields[fieldName]
             // if (!excludedCols.includes(fieldName)) {
-            const label = Helpers.snakeToTitle(fieldName);
+            const label = Helpers.snakeToTitle(fieldName)
 
-            let usageType = "normal";
-            let important = false;
-            let fieldExtras = {};
-            if (model.fieldsMetadata && model.fieldsMetadata[fieldName]) {
-                if (model.fieldsMetadata[fieldName].usageType) {
-                    usageType = model.fieldsMetadata[fieldName].usageType;
+            let usageType = 'normal'
+            let important = false
+            let fieldExtras = {}
+            if (
+                model.fieldsMetadata &&
+                model.fieldsMetadata[fieldName]
+            ) {
+                if (model.fieldsMetadata[fieldName].usageType){
+                    usageType = model.fieldsMetadata[fieldName].usageType
                 }
-                if (model.fieldsMetadata[fieldName].important) {
-                    important = model.fieldsMetadata[fieldName].important;
+                if (model.fieldsMetadata[fieldName].important){
+                    important = model.fieldsMetadata[fieldName].important
                 }
-                fieldExtras = model.fieldsMetadata[fieldName];
+                fieldExtras = model.fieldsMetadata[fieldName]
             }
 
-            let dataType = "attr";
-            if (field instanceof Uid) dataType = "uid";
-            else if (field instanceof String) dataType = "string";
-            else if (field instanceof Boolean) dataType = "boolean";
-            else if (field instanceof Number) dataType = "number";
-            else if (field instanceof Attribute) dataType = "attr";
+            let dataType = 'attr'
+            if (field instanceof Uid) dataType = 'uid'
+            else if (field instanceof String) dataType = 'string'
+            else if (field instanceof Boolean) dataType = 'boolean'
+            else if (field instanceof Number) dataType = 'number'
+            else if (field instanceof Attribute) dataType = 'attr'
 
             if (
                 field instanceof HasMany ||
@@ -68,8 +73,11 @@ export default class DBCrudCacheSet extends Model {
             ) {
                 newField = {
                     name: fieldName,
+                    field: fieldName,
                     label,
-                    usageType: "relChildren" + Helpers.capitalizeFirstLetter(usageType),
+                    usageType:
+                        'relChildren' +
+                        Helpers.capitalizeFirstLetter(usageType),
                     dataType: dataType,
                     important,
                     fieldExtras,
@@ -77,30 +85,34 @@ export default class DBCrudCacheSet extends Model {
                         relation: field.constructor.name,
                         field: field,
                     },
-                };
+                }
 
-                result.push(newField);
+                result.push(newField)
             } else if (
                 field instanceof Relation &&
                 (field instanceof BelongsTo || field instanceof MorphTo)
             ) {
-                const relatedModelFields = field.parent.fields();
+                const relatedModelFields = field.parent.fields()
                 const lookupDisplayField = Object.keys(relatedModelFields).find(
                     (fName) =>
-                        fName !== "id" && relatedModelFields[fName] instanceof Attribute,
-                );
+                        fName !== 'id' &&
+                        relatedModelFields[fName] instanceof Attribute
+                )
 
-                let rules = [];
-                console.log(fields);
-                console.log(field);
+
+                let rules = []
+                console.log(fields)
+                console.log(field)
                 if (!fields[field.foreignKey].isNullable) {
-                    rules = [(v) => !!v || `${label} is required.`];
+                    rules = [(v) => !!v || `${label} is required.`]
                 }
 
                 newField = {
                     name: fieldName,
+                    field: fieldName,
                     label,
-                    usageType: "relLookup" + Helpers.capitalizeFirstLetter(usageType),
+                    usageType:
+                        'relLookup' + Helpers.capitalizeFirstLetter(usageType),
                     dataType: dataType,
                     important,
                     fieldExtras,
@@ -113,11 +125,11 @@ export default class DBCrudCacheSet extends Model {
                         lookupDisplayField: lookupDisplayField,
                         lookupField: fieldName,
                     },
-                };
+                }
 
                 // if (!excludedCols.includes(field.foreignKey)) {
-                result.push(newField);
-                lookupKeys.push(newField);
+                result.push(newField)
+                lookupKeys.push(newField)
                 // }
                 // } else if (usageType == 'creatorType') {
                 //     let rules = []
@@ -137,13 +149,14 @@ export default class DBCrudCacheSet extends Model {
                 //
                 //     result.push(newField)
             } else {
-                let rules = [];
+                let rules = []
                 if (!field.isNullable) {
-                    rules = [(v) => !!v || `${label} is required.`];
+                    rules = [(v) => !!v || `${label} is required.`]
                 }
 
                 newField = {
                     name: fieldName,
+                    field: fieldName,
                     label,
                     usageType: usageType,
                     dataType: dataType,
@@ -152,9 +165,9 @@ export default class DBCrudCacheSet extends Model {
                     meta: {
                         rules,
                     },
-                };
+                }
 
-                result.push(newField);
+                result.push(newField)
             }
             // }
         }
@@ -165,36 +178,41 @@ export default class DBCrudCacheSet extends Model {
 
         for (const lookupKey of lookupKeys) {
             const foreignKeyKey = result.findIndex(
-                (item) => lookupKey.meta.foreignKey == item.name,
-            );
+                (item) => lookupKey.meta.foreignKey == item.name
+            )
 
-            const originalForeignKeyValue = result[foreignKeyKey];
+            const originalForeignKeyValue = result[foreignKeyKey]
 
-            if (result[foreignKeyKey].usageType.startsWith("mapExtraRel")) {
+            if (result[foreignKeyKey].usageType.startsWith('mapExtraRel')) {
                 const lookupKeyKey = result.findIndex(
-                    (item) => lookupKey.name == item.name,
-                );
+                    (item) => lookupKey.name == item.name
+                )
                 result[lookupKeyKey].usageType =
-                    "relLookup" +
-                    Helpers.capitalizeFirstLetter(result[foreignKeyKey].usageType);
+                    'relLookup' +
+                    Helpers.capitalizeFirstLetter(
+                        result[foreignKeyKey].usageType
+                    )
             }
 
-            let dataType = "attr";
+            let dataType = 'attr'
             const foreignKeyValue = {
                 ...lookupKey,
                 usageType:
-                    "relForeignKey" +
-                    Helpers.capitalizeFirstLetter(originalForeignKeyValue.usageType),
+                    'relForeignKey' +
+                    Helpers.capitalizeFirstLetter(
+                        originalForeignKeyValue.usageType
+                    ),
                 dataType: dataType,
                 important: originalForeignKeyValue.important,
                 fieldExtras: originalForeignKeyValue.fieldExtras,
                 name: lookupKey.meta.foreignKey,
-            };
-            result[foreignKeyKey] = foreignKeyValue;
+                field: lookupKey.meta.foreignKey,
+            }
+            result[foreignKeyKey] = foreignKeyValue
         }
         const payload = {
             data: { id: model.entity, fields: result },
-        };
-        this.insert(payload);
+        }
+        this.insert(payload)
     }
 }

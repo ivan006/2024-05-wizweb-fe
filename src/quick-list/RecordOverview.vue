@@ -1,40 +1,39 @@
 <template>
-  <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)">
+  <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="q-pa-sm">
     <template v-for="(header, index) in superOptions.headers">
       <div
           :key="header.name"
-          v-if="
-          header.key !== 'id' && (index < maxFields || header.type == 'actions')
-        "
+          v-if="header.field !== 'id' && (index < maxFields || header.type === 'actions')"
+          class="q-pa-xs"
           style="min-height: 1.375rem"
       >
         <template v-if="index < 2">
-          <template v-if="superOptions.headers[0].value == 'id'">
-            <template v-if="index == 0"></template>
+          <template v-if="superOptions.headers[0].value === 'id'">
+            <template v-if="index === 0"></template>
             <template v-else>
-              <v-card-title>
+              <div>
                 <FormattedColumn
                     :header="header"
                     :item="item"
                     :superOptions="superOptions"
                 />
-              </v-card-title>
+              </div>
             </template>
           </template>
           <template v-else>
-            <template v-if="index == 0">
-              <v-card-title>
+            <template v-if="index === 0">
+              <div class="text-h6">
                 <FormattedColumn
                     :header="header"
                     :item="item"
                     :superOptions="superOptions"
                 />
-              </v-card-title>
+              </div>
             </template>
             <template v-else>
-              <v-card-text>
+              <div>
                 <div class="text-caption">
-                  {{ header.title }}
+                  {{ header.label }}
                 </div>
                 <FormattedColumn
                     :key="index"
@@ -42,14 +41,14 @@
                     :item="item"
                     :superOptions="superOptions"
                 />
-              </v-card-text>
+              </div>
             </template>
           </template>
         </template>
         <template v-else>
-          <v-card-text>
+          <div>
             <div class="text-caption">
-              {{ header.title }}
+              {{ header.label }}
             </div>
             <FormattedColumn
                 :key="index"
@@ -57,7 +56,7 @@
                 :item="item"
                 :superOptions="superOptions"
             />
-          </v-card-text>
+          </div>
         </template>
       </div>
     </template>
@@ -65,10 +64,10 @@
 </template>
 
 <script>
-import FormattedColumn from "./FormattedColumn.vue";
+import FormattedColumn from './FormattedColumn.vue';
 
 export default {
-  name: "RecordOverview",
+  name: 'RecordOverview',
   components: { FormattedColumn },
   props: {
     clickable: {
@@ -83,7 +82,6 @@ export default {
         return 999;
       },
     },
-
     item: {
       type: Object,
       default() {
@@ -107,13 +105,13 @@ export default {
   },
   methods: {
     deleteItem(e) {
-      this.$emit("deleteItem", e);
+      this.$emit('deleteItem', e);
     },
     editItem(e) {
-      this.$emit("editItem", e);
+      this.$emit('editItem', e);
     },
     clickRow(e) {
-      this.$emit("clickRow", e);
+      this.$emit('clickRow', e);
     },
   },
 };

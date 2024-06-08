@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="header.usageType.startsWith('relChildren')"> </template>
+    <template v-if="header.usageType.startsWith('relChildren')"></template>
     <template
         v-else-if="
         header.usageType == 'readOnlyTimestampType' ||
@@ -9,76 +9,79 @@
         header.usageType == 'timeRangeEnd'
       "
     >
-      {{ formatTimestamp(item[header.key]) }}
+      {{ formatTimestamp(item[header.field]) }}
     </template>
     <template v-else-if="header.usageType == 'actions'">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
-        <v-btn
+        <q-btn
             @click.stop="editItem(item)"
-            :disabled="disabled()"
+            :disable="disabled()"
             color="grey"
-            icon="mdi-pencil"
-            variant="plain"
-            height="36px"
-            width="36px"
+            icon="edit"
+            flat
+            size="sm"
         />
-        <v-btn
+        <q-btn
             @click.stop="deleteItem(item)"
-            :disabled="disabled()"
+            :disable="disabled()"
             color="grey"
-            icon="mdi-delete"
-            variant="plain"
-            height="36px"
-            width="36px"
+            icon="delete"
+            flat
+            size="sm"
         />
       </div>
 
       <template v-if="superOptions.canEdit">
-        <v-dialog v-model="editItemData.showModal" max-width="800px" scrollable>
-          <CreateEditForm
-              title="Edit Item"
-              v-if="editItemData.showModal"
-              v-model="editItemData.data"
-              @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false"
-              :superOptions="superOptions"
-          />
-        </v-dialog>
+        <q-dialog v-model="editItemData.showModal" max-width="800px">
+          <q-card>
+            <q-card-section>
+              <CreateEditForm
+                  title="Edit Item"
+                  v-if="editItemData.showModal"
+                  v-model="editItemData.data"
+                  @submit="editItemSubmit"
+                  @cancel="editItemData.showModal = false"
+                  :superOptions="superOptions"
+              />
+            </q-card-section>
+          </q-card>
+        </q-dialog>
 
-        <v-dialog v-model="deleteItemData.showModal" max-width="600px">
-          <v-card>
-            <v-card-title> Delete Item </v-card-title>
-            <v-card-text> Delete item? </v-card-text>
-
-            <v-card-actions>
-              <v-btn @click="deleteItemData.showModal = false">Cancel</v-btn>
-              <v-btn @click="deleteItemSubmit">Delete</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <q-dialog v-model="deleteItemData.showModal" max-width="600px">
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">Delete Item</div>
+            </q-card-section>
+            <q-card-section>
+              <p>Delete item?</p>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
+              <q-btn @click="deleteItemSubmit" flat>Delete</q-btn>
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </template>
     </template>
     <template v-else-if="header.usageType.startsWith('relLookup')">
       <div style="min-height: 32px">
-        <!--                {{header.key}}-->
-        <!--                <pre>{{item}}</pre>-->
-        <v-chip
-            v-if="item?.[header.key]?.[header.meta.lookupDisplayField]"
-            @click.stop="clickParent(item?.[header.key], header)"
+        <q-chip
+            v-if="item?.[header.field]?.[header.meta.lookupDisplayField]"
+            @click.stop="clickParent(item?.[header.field], header)"
         >
-          {{ item?.[header.key]?.[header.meta.lookupDisplayField] }}
-        </v-chip>
+          {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
+        </q-chip>
       </div>
     </template>
     <template v-else>
       <template v-if="isTag">
-        <v-chip v-if="isTag" @click.stop="clickParent(item)">
-          {{ item[header.key] }}
-        </v-chip>
+        <q-chip v-if="isTag" @click.stop="clickParent(item)">
+          {{ item[header.field] }}
+        </q-chip>
       </template>
       <template v-else>
-        <div :title="item[header.key]">
-          {{ truncateStr(item[header.key]) }}
+        <div :title="item[header.field]">
+          {{ truncateStr(item[header.field]) }}
         </div>
       </template>
     </template>
@@ -86,15 +89,14 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
-// import LoginSession from '@/models/LoginSession'
-import QuickListsHelpers from "./QuickListsHelpers";
-import CreateEditForm from "./CreateEditForm.vue";
+import moment from 'moment';
+import 'moment-timezone';
+import QuickListsHelpers from './QuickListsHelpers';
+import CreateEditForm from './CreateEditForm.vue';
 
 export default {
-  name: "FormattedColumn",
-  components: { CreateEditForm },
+  name: 'FormattedColumn',
+  components: {CreateEditForm},
   props: {
     isTag: {
       type: Boolean,
@@ -141,19 +143,6 @@ export default {
       },
     };
   },
-  computed: {
-    // treatAsRealation() {
-    //     let result = ['relationship']
-    //     if (this.superOptions.displayMapField) {
-    //         result.push('mapRelation')
-    //     }
-    //     return result
-    // },
-    // loginSession() {
-    //     return LoginSession.query().withAllRecursive().first()
-    // },
-  },
-
   methods: {
     clickParent(item, header) {
       const model = header.meta.relatedModel;
@@ -163,8 +152,7 @@ export default {
       let truncatedStr = "";
       if (str) {
         const maxLength = 40;
-        truncatedStr =
-            str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
       }
       return truncatedStr;
     },
@@ -172,45 +160,16 @@ export default {
       let result = false;
 
       if (this.superOptions.model.rules?.editable) {
-        result = this.superOptions.model.rules.editable(
-            this.superOptions.user,
-            this.item,
-        );
+        result = this.superOptions.model.rules.editable(this.superOptions.user, this.item);
       }
       return !result;
     },
-    // hasGroupBeingAppliedToEditPermissions() {
-    //     // relForeignKeyOwnerCustomerType
-    //     let result = false
-    //     if (this.loginSession) {
-    //         const providerKey = this.superOptions.modelFields.find((field) => {
-    //             return (
-    //                 field.usageType ==
-    //                 'relForeignKeyOwnerAppliedToProviderType'
-    //             )
-    //         })
-    //         if (providerKey) {
-    //             result = this.providerGroupsTheyOwn.includes(
-    //                 this.item[providerKey.name]
-    //             )
-    //
-    //             const theirGroupThatOwnsRecord =
-    //                 this.providerGroupsTheyOwn.find((item) => {
-    //                     return item.id == this.item[providerKey.name]
-    //                 })
-    //             result = !!theirGroupThatOwnsRecord
-    //         }
-    //     }
-    //     return result
-    // },
-
     deleteItem(item) {
       this.deleteItemData.data = item;
       this.deleteItemData.showModal = true;
     },
     deleteItemSubmit() {
       this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
-        // Remove item from items array or refetch data
         this.fetchData();
       });
       this.deleteItemData.showModal = false;
@@ -222,7 +181,7 @@ export default {
     editItemSubmit() {
       const payload = QuickListsHelpers.preparePayload(
           this.editItemData.data,
-          this.superOptions.modelFields,
+          this.superOptions.modelFields
       );
       this.superOptions.model.Update(payload).then(() => {
         this.fetchData();
@@ -231,11 +190,11 @@ export default {
     },
     formatTimestamp(timestamp) {
       if (timestamp) {
-        const timezone = "Africa/Johannesburg"; // replace with desired timezone
+        const timezone = 'Africa/Johannesburg'; // replace with desired timezone
         const formattedDateInTimeZone = moment
-            .tz(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ", "UTC")
+            .tz(timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'UTC')
             .tz(timezone)
-            .format("dddd, MMMM D, YYYY h:mm A");
+            .format('dddd, MMMM D, YYYY h:mm A');
         return formattedDateInTimeZone;
       } else {
         return null;

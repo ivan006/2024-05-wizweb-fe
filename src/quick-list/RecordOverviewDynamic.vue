@@ -1,19 +1,14 @@
 <template>
-  <div
-      :style="clickable ? 'cursor: pointer' : ''"
-      @click="clickRow(item)"
-      class="pa-2"
-  >
-    <!--        <v-container class="d-flex flex-column" style="height: 100%;">-->
+  <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="q-pa-sm">
     <template v-for="(row, index) in rows" :key="index">
-      <v-row no-gutters>
+      <div class="row q-col-gutter-md">
         <template v-for="(col, index2) in row.cols" :key="index2">
-          <v-col :cols="col.width">
+          <div :class="`col-${col.width}`">
             <template v-if="col.rows">
               <template v-for="(row2, index3) in col.rows" :key="index3">
-                <v-row no-gutters>
+                <div class="row q-col-gutter-md">
                   <template v-for="(col2, index4) in row2.cols" :key="index4">
-                    <v-col :cols="col2.width">
+                    <div :class="`col-${col2.width}`">
                       <RecordOverviewDynamicDataPoint
                           :item="item"
                           :dataPoint="col2.dataPoint"
@@ -22,16 +17,13 @@
                           :superOptions="superOptions"
                           :filteredChildRelations="filteredChildRelations"
                       >
-                        <template
-                            v-for="(slot, slotName) in $slots"
-                            v-slot:[slotName]="slotProps"
-                        >
+                        <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                           <slot :name="slotName" v-bind="slotProps"></slot>
                         </template>
                       </RecordOverviewDynamicDataPoint>
-                    </v-col>
+                    </div>
                   </template>
-                </v-row>
+                </div>
               </template>
             </template>
             <template v-else>
@@ -43,32 +35,27 @@
                   :superOptions="superOptions"
                   :filteredChildRelations="filteredChildRelations"
               >
-                <template
-                    v-for="(slot, slotName) in $slots"
-                    v-slot:[slotName]="slotProps"
-                >
+                <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                   <slot :name="slotName" v-bind="slotProps"></slot>
                 </template>
               </RecordOverviewDynamicDataPoint>
             </template>
-          </v-col>
+          </div>
         </template>
-      </v-row>
+      </div>
     </template>
-    <!-- </v-container>-->
+    <template v-if="!rows.length">
+      <div class="text-center">No data available</div>
+    </template>
   </div>
 </template>
 
 <script>
-import RecordOverviewDynamicDataPoint from "./RecordOverviewDynamicDataPoint.vue";
-import RecordOverview from "./RecordOverview.vue";
+import RecordOverviewDynamicDataPoint from './RecordOverviewDynamicDataPoint.vue';
 
 export default {
-  name: "RecordOverviewDynamic",
-  components: {
-    RecordOverview,
-    RecordOverviewDynamicDataPoint,
-  },
+  name: 'RecordOverviewDynamic',
+  components: {RecordOverviewDynamicDataPoint},
   props: {
     isSummary: {
       type: Boolean,
@@ -129,13 +116,13 @@ export default {
   },
   methods: {
     deleteItem(e) {
-      this.$emit("deleteItem", e);
+      this.$emit('deleteItem', e);
     },
     editItem(e) {
-      this.$emit("editItem", e);
+      this.$emit('editItem', e);
     },
     clickRow(e) {
-      this.$emit("clickRow", e);
+      this.$emit('clickRow', e);
     },
   },
   computed: {
@@ -159,7 +146,8 @@ export default {
       return result;
     },
   },
-  mounted() {},
+  mounted() {
+  },
 };
 </script>
 

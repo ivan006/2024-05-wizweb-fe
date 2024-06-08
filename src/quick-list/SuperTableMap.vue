@@ -1,34 +1,5 @@
 <template>
   <div>
-    <!--        <v-card class="pa-2">-->
-    <!--            <v-row no-gutters>-->
-    <!--                <v-col cols="12" sm="8" class="ma-n2">-->
-    <!--                    -->
-    <!--                </v-col>-->
-    <!--                <v-col cols="12" sm="4" class="pa-4">-->
-    <!--                    <template v-if="Object.keys(markers).length !== 0">-->
-    <!--                        <v-card>-->
-    <!--                            <v-card-text>-->
-    <!--                                <div>-->
-    <!--                                    <h3 class="headline mb-0">-->
-    <!--                                        {{ this.viewItemData.data?.text }}-->
-    <!--                                    </h3>-->
-
-    <!--                                    &lt;!&ndash;            <img&ndash;&gt;-->
-    <!--                                    &lt;!&ndash;              :src="'http://' + VITE_API_URL() + item.Image[0].url"&ndash;&gt;-->
-    <!--                                    &lt;!&ndash;              width="100px"&ndash;&gt;-->
-    <!--                                    &lt;!&ndash;            />&ndash;&gt;-->
-    <!--                                </div>-->
-    <!--                            </v-card-text>-->
-    <!--                        </v-card>-->
-    <!--                    </template>-->
-    <!--                    <template v-else> Please select a marker. </template>-->
-    <!--                </v-col>-->
-    <!--            </v-row>-->
-
-    <!--            &lt;!&ndash;          <pre>{{markers}}</pre>&ndash;&gt;-->
-    <!--        </v-card>-->
-
     <MyGoogleMap
         :markers="markers"
         v-model="center"
@@ -36,32 +7,29 @@
         @clickMarker="clickedMarker"
     />
 
-    <v-dialog v-model="viewItemData.showModal" max-width="800px">
-      <v-card class="pt-4">
-        <!--                <v-card-title> View item </v-card-title>-->
-        <!--              <pre>{{headers}}</pre>-->
-        <v-card-text>
+    <q-dialog v-model="viewItemData.showModal" max-width="800px">
+      <q-card class="q-pt-md">
+        <q-card-section>
           <RecordOverview
               :item="viewItemData.data"
               :superOptions="superOptions"
           />
-        </v-card-text>
+        </q-card-section>
 
-        <v-card-actions>
-          <v-btn @click="clickRow(viewItemData.data)">Open</v-btn>
-          <v-btn @click="viewItemData.showModal = false">Cancel</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        <q-card-actions>
+          <q-btn @click="clickRow(viewItemData.data)" flat label="Open" />
+          <q-btn @click="viewItemData.showModal = false" flat label="Cancel" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-// import place from '@/models/place'
-// import Upload from '@/models/Upload'
 import RecordOverview from "./RecordOverview.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
+
 export default {
   name: "SuperTableMap",
   components: {
@@ -103,15 +71,12 @@ export default {
       zoom: 2,
       geolocation: geolocation,
       center: { lat: 0, lng: 0 },
-      // zoom: 2,
       geoLocate: {},
       selectedPlaceIndex: null,
       clusterStyle: {
         textColor: "white",
-        // textSize: 16,
         url: "/mapIconCluster.svg",
         anchorText: [1.5, 1],
-        // anchorIcon: [1.5, 1]
       },
       viewItemData: {
         showModal: false,
@@ -156,7 +121,7 @@ export default {
       } else {
         let mapHeaderParent = "";
         for (const mapHeader of this.mapHeaders) {
-          mapHeaderParent = mapHeader.key;
+          mapHeaderParent = mapHeader.field;
           if (mapHeader.headerChildren) {
             longField = mapHeader.headerChildren.find((field) => {
               return field.usageType == "mapExtraGeoLocLong";
@@ -171,49 +136,30 @@ export default {
           }
         }
 
-        for (const item of this.items) {
-          if (item[latField.value] !== null) {
-            result.push({
-              position: {
-                lat: item[mapHeaderParent][latField.value],
-                lng: item[mapHeaderParent][longField.value],
-              },
-              keys: {
-                long: longField.value,
-                lat: latField.value,
-              },
-              meta: item,
-            });
+
+        if (latField && longField) {
+          for (const item of this.items) {
+            if (item[latField.value] !== null) {
+              result.push({
+                position: {
+                  lat: item[mapHeaderParent][latField.value],
+                  lng: item[mapHeaderParent][longField.value],
+                },
+                keys: {
+                  long: longField.value,
+                  lat: latField.value,
+                },
+                meta: item,
+              });
+            }
           }
         }
       }
-      // placeField.flag === 'mapExtraRelSublocality'
-      // this.items
 
       return result;
     },
   },
   methods: {
-    // zoomIntoCluster(cluster) {
-    //     const markerIds = []
-    //     const gmapMarkers = cluster.getMarkers()
-    //     gmapMarkers.forEach((m) => {
-    //         let iconData = m.getIcon()
-    //         if (iconData && iconData.id) {
-    //             markerIds.push(iconData.id)
-    //         }
-    //     })
-    //     // todo: i now have markerIds if i want to use it
-    //
-    //     const center = {
-    //         lat: cluster.getCenter().lat(),
-    //         lng: cluster.getCenter().lng(),
-    //     }
-    //     this.$refs.mapRef.$mapObject.setCenter(center)
-    //     this.$refs.mapRef.$mapObject.setZoom(
-    //         this.$refs.mapRef.$mapObject.getZoom() + 1
-    //     )
-    // },
     deleteItem(e) {
       this.$emit("deleteItem", e);
     },
@@ -238,14 +184,10 @@ export default {
       return result;
     },
     clickedMarker(m, index) {
-      // this.center = this.position(m);
-
       this.viewItemData.showModal = true;
       this.viewItemData.data = m.meta;
-
       this.selectedPlaceIndex = index;
     },
-
     markerOptions(m) {
       return {
         id: m.meta.id,
@@ -263,9 +205,7 @@ export default {
       };
     },
   },
-  mounted() {
-    // Upload.deleteAll()
-  },
+  mounted() {},
   watch: {
     "geolocation.coords.latitude"() {
       if (!this.locationHasBeenGranted) {
@@ -281,14 +221,11 @@ export default {
             this.geolocation.coords.accuracy <= 100 ||
             this.geolocation.coords.altitude
         ) {
-          // High accuracy (typically GPS-based)
-          result = 9;
+          result = 9; // High accuracy (typically GPS-based)
         } else if (this.geolocation.coords.accuracy <= 1000) {
-          // Moderate accuracy
-          result = 8;
+          result = 8; // Moderate accuracy
         } else {
-          // Low accuracy (e.g., IP-based)
-          result = 7;
+          result = 7; // Low accuracy (e.g., IP-based)
         }
         this.zoom = result;
       }

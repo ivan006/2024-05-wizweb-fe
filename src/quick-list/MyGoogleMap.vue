@@ -8,11 +8,9 @@
     >
       <template #default="{ api }">
         <InocanMarkerCluster :options="clusterOptions(api)">
-          <!--          draggable="true"-->
-          <!--          clickable="true"-->
           <InocanMarker
-              :key="index"
               v-for="(m, index) in markers"
+              :key="index"
               @click="clickedMarker(m, index)"
               :options="{
               position: m.position,
@@ -58,20 +56,12 @@ export default {
   data() {
     return {
       selectedPlaceIndex: null,
-      // clusterStyle: {
-      //   textColor: 'white',
-      //   // textSize: 16,
-      //   url: '/mapIconCluster.svg',
-      //   anchorText: [1.5, 1],
-      //   // anchorIcon: [1.5, 1]
-      // },
       iconAndLabelLabel: {
         icon: {
           url: "/mapIconCluster.svg",
         },
         label: {
           color: "white",
-          // fontSize: '12px'
         },
       },
     };
@@ -90,7 +80,7 @@ export default {
   methods: {
     iconAndLabelLabelMethod(count) {
       return {
-        icon: this.iconAndLabelLabel.icon, // Use custom icon computed above
+        icon: this.iconAndLabelLabel.icon,
         label: {
           text: String(count),
           ...this.iconAndLabelLabel.label,
@@ -109,10 +99,8 @@ export default {
         },
       };
     },
-
     markerOptions(m) {
       return {
-        // id: m.meta.id,
         url: "/mapIconPin.svg",
         size: { width: 30, height: 30, f: "px", b: "px" },
         scaledSize: { width: 30, height: 30, f: "px", b: "px" },
@@ -120,37 +108,26 @@ export default {
     },
     selectedMarkerOptions(m) {
       return {
-        // url: "/mapIconPin.svg",
-        // scaledSize: {width: 77, height: 77},
-        // labelOrigin: {x: 16, y: -10}
-
         id: m.meta.id,
         url: "/mapIconPin.svg",
         size: { width: 40, height: 40, f: "px", b: "px" },
         scaledSize: { width: 40, height: 40, f: "px", b: "px" },
       };
     },
-
     markerOptionsMethod(m, index) {
-      const result =
-          index == this.selectedPlaceIndex
-              ? this.selectedMarkerOptions(m, index)
-              : this.markerOptions(m, index);
-      return result;
+      return index === this.selectedPlaceIndex
+          ? this.selectedMarkerOptions(m)
+          : this.markerOptions(m);
     },
     position(m) {
       return { lng: Number(m.lng), lat: Number(m.lat) };
     },
     clickedMarker(m, index) {
-      // this.$emit('update:modelValue', this.position(m))
       this.$emit("update:modelValue", m.position);
-
       this.selectedPlaceIndex = index;
       this.$emit("clickMarker", m, index);
     },
   },
-  mounted() {},
-  watch: {},
 };
 </script>
 
