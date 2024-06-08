@@ -1,71 +1,61 @@
-
 <template>
   <div>
     <InocanGoogleMap
-      :center="modelValue"
-      :zoom="zoom"
-      map-type-id="terrain"
-      style="height: 500px; width: 904px"
+        :center="modelValue"
+        :zoom="zoom"
+        map-type-id="terrain"
+        style="height: 500px; width: 904px"
     >
-
-
-
       <template #default="{ api }">
-        <InocanMarkerCluster
-          :options="clusterOptions(api)"
-        >
-<!--          draggable="true"-->
-<!--          clickable="true"-->
+        <InocanMarkerCluster :options="clusterOptions(api)">
+          <!--          draggable="true"-->
+          <!--          clickable="true"-->
           <InocanMarker
-            :key="index"
-            v-for="(m, index) in markers"
-            @click="clickedMarker(m, index)"
-            :options="{
+              :key="index"
+              v-for="(m, index) in markers"
+              @click="clickedMarker(m, index)"
+              :options="{
               position: m.position,
               icon: markerOptionsMethod(m, index),
             }"
           />
         </InocanMarkerCluster>
       </template>
-
     </InocanGoogleMap>
   </div>
-
-
 </template>
 
 <script>
-
-import { GoogleMap, Marker, MarkerCluster } from 'vue3-google-map'
+import { GoogleMap, Marker, MarkerCluster } from "vue3-google-map";
 
 export default {
   name: "MyGoogleMap",
   components: {
     InocanGoogleMap: GoogleMap,
     InocanMarker: Marker,
-    InocanMarkerCluster: MarkerCluster
+    InocanMarkerCluster: MarkerCluster,
   },
-  props:{
+  props: {
     markers: {
       type: Array,
       default() {
-        return []
+        return [];
       },
     },
     modelValue: {
       type: Object,
       default() {
-        return {}
+        return {};
       },
     },
     zoom: {
       type: Number,
       default() {
-        return 2
+        return 2;
       },
     },
   },
-  data(){
+  data() {
     return {
       selectedPlaceIndex: null,
       // clusterStyle: {
@@ -77,18 +67,16 @@ export default {
       // },
       iconAndLabelLabel: {
         icon: {
-          url: '/mapIconCluster.svg',
+          url: "/mapIconCluster.svg",
         },
         label: {
-
-          color: 'white',
+          color: "white",
           // fontSize: '12px'
         },
       },
-    }
+    };
   },
   computed: {
-
     clusterStyles() {
       return [
         { ...this.clusterStyle, height: 40, width: 40 },
@@ -96,7 +84,7 @@ export default {
         { ...this.clusterStyle, height: 40, width: 40 },
         { ...this.clusterStyle, height: 40, width: 40 },
         { ...this.clusterStyle, height: 40, width: 40 },
-      ]
+      ];
     },
   },
   methods: {
@@ -107,27 +95,28 @@ export default {
           text: String(count),
           ...this.iconAndLabelLabel.label,
         },
-      }
+      };
     },
     clusterOptions(api) {
       return {
         renderer: {
-          render: ({ count, position }) => new api.Marker({
-            position,
-            ...this.iconAndLabelLabelMethod(count),
-            zIndex: 999 + count
-          })
-        }
-      }
+          render: ({ count, position }) =>
+              new api.Marker({
+                position,
+                ...this.iconAndLabelLabelMethod(count),
+                zIndex: 999 + count,
+              }),
+        },
+      };
     },
 
     markerOptions(m) {
       return {
         // id: m.meta.id,
-        url: '/mapIconPin.svg',
-        size: { width: 30, height: 30, f: 'px', b: 'px' },
-        scaledSize: { width: 30, height: 30, f: 'px', b: 'px' },
-      }
+        url: "/mapIconPin.svg",
+        size: { width: 30, height: 30, f: "px", b: "px" },
+        scaledSize: { width: 30, height: 30, f: "px", b: "px" },
+      };
     },
     selectedMarkerOptions(m) {
       return {
@@ -136,42 +125,33 @@ export default {
         // labelOrigin: {x: 16, y: -10}
 
         id: m.meta.id,
-        url: '/mapIconPin.svg',
-        size: { width: 40, height: 40, f: 'px', b: 'px' },
-        scaledSize: { width: 40, height: 40, f: 'px', b: 'px' },
-      }
+        url: "/mapIconPin.svg",
+        size: { width: 40, height: 40, f: "px", b: "px" },
+        scaledSize: { width: 40, height: 40, f: "px", b: "px" },
+      };
     },
-
 
     markerOptionsMethod(m, index) {
       const result =
-        index == this.selectedPlaceIndex
-          ? this.selectedMarkerOptions(m, index)
-          : this.markerOptions(m, index)
-      return result
+          index == this.selectedPlaceIndex
+              ? this.selectedMarkerOptions(m, index)
+              : this.markerOptions(m, index);
+      return result;
     },
     position(m) {
-      return { lng: Number(m.lng), lat: Number(m.lat) }
+      return { lng: Number(m.lng), lat: Number(m.lat) };
     },
     clickedMarker(m, index) {
-
       // this.$emit('update:modelValue', this.position(m))
-      this.$emit('update:modelValue', m.position)
+      this.$emit("update:modelValue", m.position);
 
-      this.selectedPlaceIndex = index
-      this.$emit("clickMarker", m, index)
+      this.selectedPlaceIndex = index;
+      this.$emit("clickMarker", m, index);
     },
-
   },
-  mounted() {
-
-  },
-  watch: {
-  }
-}
+  mounted() {},
+  watch: {},
+};
 </script>
 
-
-<style scoped>
-
-</style>
+<style scoped></style>
