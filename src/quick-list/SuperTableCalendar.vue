@@ -2,13 +2,13 @@
   <div>
     <q-card class="q-pa-none">
       <q-select
-          v-model="type"
-          :options="types"
+          v-model="view"
+          :options="views"
           dense
           outlined
           hide-details
           class="q-ma-md"
-          label="Type"
+          label="View"
       ></q-select>
 
       <q-select
@@ -27,7 +27,7 @@
           ref="calendar"
           v-model="selectedDate"
           :weekdays="weekday"
-          view="type"
+          :view="view"
           :events="events"
           event-overlap-mode="mode"
           event-overlap-threshold="30"
@@ -98,8 +98,8 @@ export default {
     },
   },
   data: () => ({
-    type: "week",
-    types: ["month", "week", "day", "4day"],
+    view: "day", // Initialize with a valid view
+    views: ["month", "week", "day", "4day"],
     mode: "stack",
     modes: ["stack", "column"],
     weekday: [1, 2, 3, 4, 5, 6, 0],
@@ -227,12 +227,12 @@ export default {
     },
     viewDay({date}) {
       this.selectedDate = date;
-      this.type = "day";
+      this.view = "day";
     },
   },
   mounted() {
     if (QuickListsHelpers.quickListsIsMobile()) {
-      this.type = "day";
+      this.view = "day";
     }
   },
 };
