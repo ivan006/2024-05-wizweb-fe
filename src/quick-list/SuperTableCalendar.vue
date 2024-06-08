@@ -22,10 +22,10 @@
       ></q-select>
     </q-card>
 
-    <q-card class="q-pa-none" style="height: 800px">
+    <q-card class="q-pa-none" style="height: 800px;">
       <q-calendar
           ref="calendar"
-          v-model="value"
+          v-model="selectedDate"
           :weekdays="weekday"
           view="type"
           :events="events"
@@ -104,12 +104,12 @@ export default {
     modes: ["stack", "column"],
     weekday: [1, 2, 3, 4, 5, 6, 0],
     weekdays: [
-      { title: "Sun - Sat", value: [0, 1, 2, 3, 4, 5, 6] },
-      { title: "Mon - Sun", value: [1, 2, 3, 4, 5, 6, 0] },
-      { title: "Mon - Fri", value: [1, 2, 3, 4, 5] },
-      { title: "Mon, Wed, Fri", value: [1, 3, 5] },
+      {title: "Sun - Sat", value: [0, 1, 2, 3, 4, 5, 6]},
+      {title: "Mon - Sun", value: [1, 2, 3, 4, 5, 6, 0]},
+      {title: "Mon - Fri", value: [1, 2, 3, 4, 5]},
+      {title: "Mon, Wed, Fri", value: [1, 3, 5]},
     ],
-    value: [new Date()],
+    selectedDate: new Date().toISOString().split('T')[0], // Initialize with the current date in 'YYYY-MM-DD' format
     colors: [
       "blue",
       "indigo",
@@ -127,7 +127,7 @@ export default {
   computed: {
     firstNonIdKey() {
       const key = Object.keys(this.superOptions.headers).find(
-          (field) => this.superOptions.headers[field].value !== "id",
+          (field) => this.superOptions.headers[field].value !== "id"
       );
       const result = this.superOptions.headers[key].value;
       return result;
@@ -182,12 +182,12 @@ export default {
               start: new Date(
                   item[this.startFieldName.isChildOf.value][
                       this.startFieldName.value
-                      ],
+                      ]
               ),
               end: new Date(
                   item[this.startFieldName.isChildOf.value][
                       this.endFieldName.value
-                      ],
+                      ]
               ),
               color: "deep-purple",
               timed: true,
@@ -213,7 +213,8 @@ export default {
       this.viewItemData.showModal = false;
       this.$emit("clickRow", e);
     },
-    updateTimeWindow() {},
+    updateTimeWindow() {
+    },
     getEventColor(event) {
       return event.color;
     },
@@ -224,8 +225,8 @@ export default {
       this.viewItemData.showModal = true;
       this.viewItemData.data = m.meta;
     },
-    viewDay({ date }) {
-      this.modelValue = date;
+    viewDay({date}) {
+      this.selectedDate = date;
       this.type = "day";
     },
   },
