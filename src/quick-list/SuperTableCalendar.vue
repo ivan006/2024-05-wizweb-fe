@@ -22,7 +22,9 @@
       ></q-select>
     </q-card>
 
-    <q-card class="q-pa-none" style="height: 800px;">
+    <q-card class="q-pa-none q-py-md" style="height: 800px;">
+      <q-btn flat dense icon="arrow_left" @click="prevPeriod">Prev</q-btn>
+      <q-btn flat dense icon="arrow_right" @click="nextPeriod">Next</q-btn>
       <q-calendar
           ref="calendar"
           v-model="selectedDate"
@@ -98,7 +100,7 @@ export default {
     },
   },
   data: () => ({
-    view: "day", // Initialize with a valid view
+    view: "week", // Initialize with a valid view
     views: ["month", "week", "day", "4day"],
     mode: "stack",
     modes: ["stack", "column"],
@@ -229,6 +231,12 @@ export default {
       this.selectedDate = date;
       this.view = "day";
     },
+    prevPeriod() {
+      this.$refs.calendar.prev();
+    },
+    nextPeriod() {
+      this.$refs.calendar.next();
+    }
   },
   mounted() {
     if (QuickListsHelpers.quickListsIsMobile()) {
