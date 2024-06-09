@@ -1,23 +1,21 @@
 <template>
   <div>
-    <v-text-field
+    <q-input
         @click="click"
         :label="configs.label"
         :modelValue="computedValue"
         :rules="configs.meta.rules"
         readonly
-        :disabled="readonly"
-        variant="underlined"
-    ></v-text-field>
-    <!--        <v-btn @click="showRelationDialog = true">{{-->
-    <!--            displayNameField || 'Select'-->
-    <!--        }}</v-btn>-->
-    <v-dialog v-model="showRelationDialog" max-width="800px">
-      <v-card>
-        <v-card-title> Select Item </v-card-title>
-        <v-card-text>
-          <!--              :model="selectedRelationModel"-->
-          <!--              @emitValue="setRelation"-->
+        :disable="readonly"
+        outlined
+        dense
+    ></q-input>
+    <q-dialog v-model="showRelationDialog" max-width="800px">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Select Item</div>
+        </q-card-section>
+        <q-card-section>
           <SuperTable
               :isForSelectingRelation="true"
               :canEdit="false"
@@ -25,47 +23,37 @@
               @update:modelValue="input"
               :model="configs.meta.relatedModel"
           ></SuperTable>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 import { Attribute } from "@vuex-orm/core";
+import SuperTable from "./SuperTable.vue";
+
 export default {
   name: "RelationComponent",
   components: {
-    SuperTable: () => import("./SuperTable.vue"),
+    SuperTable,
   },
   props: {
     configs: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
-    // model: {
-    //     type: Function,
-    //     required: true,
-    // },
     lookup: {
       type: Number,
-      default() {
-        return null;
-      },
+      default: null,
     },
     modelValue: {
       type: Number,
-      default() {
-        return null;
-      },
+      default: null,
     },
     readonly: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
   },
   data() {
@@ -82,36 +70,30 @@ export default {
     displayNameField() {
       const relatedModelFields = this.configs.meta.relatedModel.fields();
       return Object.keys(relatedModelFields).find(
-          (fName) =>
-              fName !== "id" && relatedModelFields[fName] instanceof Attribute,
+          (fName) => fName !== "id" && relatedModelFields[fName] instanceof Attribute
       );
     },
-    computedValue() {
-      let result = "";
-      // if (this.lookup) {
-      //     result = this.lookup?.[this.configs.meta.lookupDisplayField]
-      // } else {
-      //     result = this.newlookup?.[this.configs.meta.lookupDisplayField]
-      // }
-
-      const entities = this.configs.meta.relatedModel
-          .query()
-          .whereId(+this.modelValue)
-          .get();
-      if (entities.length) {
-        result = entities[0][this.configs.meta.lookupDisplayField];
+    computedValue: {
+      get() {
+        let result = "";
+        const entities = this.configs.meta.relatedModel
+            .query()
+            .whereId(+this.modelValue)
+            .get();
+        if (entities.length) {
+          result = entities[0][this.configs.meta.lookupDisplayField];
+        }
+        return result;
+      },
+      set(value) {
+        this.$emit("update:modelValue", value);
       }
-
-      return result;
-    },
+    }
   },
   methods: {
     input(item) {
       this.newlookup = item;
-      // Set the relation based on the selected item
-      // Close the relation dialog
       this.showRelationDialog = false;
-
       this.$emit("update:modelValue", item.id);
     },
     click() {
@@ -120,6 +102,5 @@ export default {
       }
     },
   },
-  mounted() {},
 };
 </script>

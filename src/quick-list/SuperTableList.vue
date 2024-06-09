@@ -1,21 +1,21 @@
 <template>
   <div style="max-height: 330px; overflow-y: scroll">
-    <v-list density="compact">
-      <v-list-item-group :modelValue="modelValue" color="primary">
-        <v-list-item
+    <q-list dense>
+      <q-item-label header :model-value="modelValue" color="primary">
+        <q-item
             v-for="(item, i) in items"
             :key="i"
-            :modelValue="item.id"
+            :value="item.id"
             @click="clickRow(item)"
         >
-          <v-list-item-content>
-            <v-list-item-title>
+          <q-item-section>
+            <q-item-label>
               <FormattedColumn :header="title" :item="item" />
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-item-label>
+    </q-list>
   </div>
 </template>
 
@@ -25,7 +25,6 @@ import FormattedColumn from "./FormattedColumn.vue";
 export default {
   name: "SuperTableList",
   components: { FormattedColumn },
-
   props: {
     items: {
       type: Array,
@@ -35,9 +34,7 @@ export default {
     },
     modelValue: {
       type: Number,
-      default() {
-        return null;
-      },
+      default: null,
     },
     superOptions: {
       type: Object,
@@ -55,16 +52,13 @@ export default {
     },
   },
   methods: {
-    clickRow(e) {
-      this.$emit("update:modelValue", e);
+    clickRow(item) {
+      this.$emit("update:modelValue", item.id);
     },
   },
   computed: {
     title() {
-      const result = this.superOptions.headers.find(
-          (header) => header.field !== "id",
-      );
-      return result;
+      return this.superOptions.headers.find((header) => header.field !== "id");
     },
   },
 };

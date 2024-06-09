@@ -1,109 +1,114 @@
 <template>
-  <div>
+  <q-page>
     <!-- Initial Text Area Input -->
-    <v-textarea
+    <q-input
         label="Select Date Range"
         readonly
         @click="showDialog = true"
-        :modelValue="formattedValue"
-        rows="2"
+        v-model="formattedValue"
+        filled
     >
       <template v-slot:append>
-        <v-icon>mdi-calendar</v-icon>
+        <q-icon name="event" />
       </template>
-    </v-textarea>
+    </q-input>
 
     <!-- The Main Modal -->
-    <v-dialog v-model="showDialog" max-width="500px">
-      <v-card class="pa-4">
+    <q-dialog v-model="showDialog" max-width="500px">
+      <q-card class="q-pa-md">
         <!-- Start Section -->
         <div>
-          <h3>Start</h3>
+          <div class="text-h6">Start</div>
 
           <!-- Start Date -->
-          <v-text-field
+          <q-input
               label="Start Date"
               v-model="formattedStartDate"
               readonly
               @click="showStartDatePicker = true"
-              variant="underlined"
-          ></v-text-field>
+              filled
+          ></q-input>
 
           <!-- Start Date Picker Modal -->
-          <v-dialog v-model="showStartDatePicker" max-width="290px">
-            <v-date-picker
+          <q-dialog v-model="showStartDatePicker" max-width="290px">
+            <q-date
                 v-model="startDate"
                 @update:modelValue="setDefaultStartTime"
-            ></v-date-picker>
-          </v-dialog>
+            ></q-date>
+          </q-dialog>
 
           <!-- Start Time -->
-          <v-text-field
+          <q-input
               label="Start Time"
               v-model="formattedStartTime"
               readonly
               @click="showStartTimePicker = true"
-              variant="underlined"
-          ></v-text-field>
+              filled
+          ></q-input>
 
           <!-- Start Time Picker Modal -->
-          <v-dialog v-model="showStartTimePicker" max-width="290px">
-            <v-time-picker v-model="startTime"></v-time-picker>
-          </v-dialog>
+          <q-dialog v-model="showStartTimePicker" max-width="290px">
+            <q-time v-model="startTime"></q-time>
+          </q-dialog>
         </div>
 
         <!-- End Section -->
         <div>
-          <h3>End</h3>
+          <div class="text-h6">End</div>
 
           <!-- End Date -->
-          <v-text-field
+          <q-input
               label="End Date"
               v-model="formattedEndDate"
               readonly
               @click="showEndDatePicker = true"
-              variant="underlined"
-          ></v-text-field>
+              filled
+          ></q-input>
 
           <!-- End Date Picker Modal -->
-          <v-dialog v-model="showEndDatePicker" max-width="290px">
-            <v-date-picker v-model="endDate"></v-date-picker>
-          </v-dialog>
+          <q-dialog v-model="showEndDatePicker" max-width="290px">
+            <q-date v-model="endDate"></q-date>
+          </q-dialog>
 
           <!-- End Time -->
-          <v-text-field
+          <q-input
               label="End Time"
               v-model="formattedEndTime"
               readonly
               @click="showEndTimePicker = true"
-              variant="underlined"
-          ></v-text-field>
+              filled
+          ></q-input>
 
           <!-- End Time Picker Modal -->
-          <v-dialog v-model="showEndTimePicker" max-width="290px">
-            <v-time-picker
+          <q-dialog v-model="showEndTimePicker" max-width="290px">
+            <q-time
                 v-model="endTime"
                 @update:modelValue="manuallyChangedEndTime"
-            ></v-time-picker>
-          </v-dialog>
+            ></q-time>
+          </q-dialog>
         </div>
 
         <!-- OK Button -->
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="finalizeDateTimeRange">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" @click="finalizeDateTimeRange" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </q-page>
 </template>
 
 <script>
 import moment from "moment";
 import "moment-timezone";
-import { String } from "@vuex-orm/core";
 
 export default {
+  name: "DateRangePicker",
+  props: {
+    modelValue: {
+      type: String,
+      default: null,
+    },
+  },
   data() {
     return {
       showDialog: false,
@@ -115,34 +120,24 @@ export default {
       endDate: null,
       startTime: null,
       endTime: null,
-      selectedTimezone: "Africa/Johannesburg", // default timezone
+      selectedTimezone: "Africa/Johannesburg",
       duration: 120,
     };
-  },
-  props: {
-    modelValue: {
-      type: String,
-      default: null,
-    },
   },
   computed: {
     formattedValue() {
       let result = "";
-
       if (
           this.formattedStartDate &&
           this.formattedStartTime &&
           this.formattedEndTime
       ) {
         if (this.startDate === this.endDate) {
-          // Single day event
           result = `${this.formattedStartDate} \n${this.formattedStartTime} - ${this.formattedEndTime} (${this.selectedTimezone})`;
         } else {
-          // Multi-day event
           result = `${this.formattedStartDate} ${this.formattedStartTime} -\n${this.formattedEndDate} ${this.formattedEndTime} (${this.selectedTimezone})`;
         }
       }
-
       return result;
     },
     formattedStartDate() {
@@ -173,7 +168,6 @@ export default {
               .format("h:mm A")
           : "";
     },
-
     dateTimeRange() {
       if (
           this.formattedStartDate &&
@@ -186,17 +180,16 @@ export default {
     },
     pgDateTimeRange() {
       const startDateTime = moment(
-          `${this.startDate} ${this.startTime}`,
+          `${this.startDate} ${this.startTime}`
       ).format("YYYY-MM-DD HH:mm:ssZZ");
       const endDateTime = moment(`${this.endDate} ${this.endTime}`).format(
-          "YYYY-MM-DD HH:mm:ssZZ",
+          "YYYY-MM-DD HH:mm:ssZZ"
       );
       return `"[${startDateTime},${endDateTime}]"`;
     },
   },
   methods: {
     parseTstzrange(value) {
-      // [2023-09-16 20:00:00+02,2023-09-16 22:00:00+02]
       const matches = value.match(/\[(.*?),(.*)\]/);
       if (matches) {
         const startDateTime = moment.tz(matches[1], this.selectedTimezone);
@@ -204,7 +197,7 @@ export default {
 
         this.detectDuration(
             startDateTime.format("HH:mm:ss"),
-            endDateTime.format("HH:mm:ss"),
+            endDateTime.format("HH:mm:ss")
         );
         this.startDate = startDateTime.format("YYYY-MM-DD");
         this.startTime = startDateTime.format("HH:mm:ss");
@@ -213,19 +206,11 @@ export default {
         this.endTime = endDateTime.format("HH:mm:ss");
       }
     },
-    // updateValue(event) {
-    //     // Emit the input event to inform the parent of the change.
-    //     this.$emit('update:modelValue', event.target.value)
-    // },
     setDefaultStartTime() {
       this.showStartDatePicker = false;
       const now = moment.tz(this.selectedTimezone);
-
-      // Set minutes, seconds, and milliseconds to 0 and add 1 hour
       now.minutes(0).seconds(0).milliseconds(0).add(1, "hours");
-
       this.startTime = now.format("HH:mm:ss");
-
       this.endDate = this.startDate;
     },
     getTimestampsForDatabase() {
@@ -239,7 +224,6 @@ export default {
     },
     finalizeDateTimeRange() {
       const dateTimeRangeForDB = this.getTimestampsForDatabase();
-      // Emit the value or use as needed
       this.$emit("update:modelValue", dateTimeRangeForDB);
       this.showDialog = false;
     },
@@ -249,13 +233,12 @@ export default {
     detectDuration(startTime, endTime) {
       this.duration = moment(endTime, "HH:mm:ss").diff(
           moment(startTime, "HH:mm:ss"),
-          "minutes",
+          "minutes"
       );
     },
   },
   watch: {
     startTime(newStartTime) {
-      // Set the endTime based on the new startTime + duration
       this.endTime = moment(newStartTime, "HH:mm:ss")
           .add(this.duration, "minutes")
           .format("HH:mm:ss");
@@ -266,3 +249,5 @@ export default {
   },
 };
 </script>
+
+<style scoped></style>

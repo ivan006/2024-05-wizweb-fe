@@ -1,18 +1,18 @@
 <template>
   <div>
     <!--      <pre>{{headers}}</pre>-->
-    <v-tabs v-model="activeTab">
-      <v-tab :value="'tab'"> Overview </v-tab>
-      <v-tab
+    <q-tabs v-model="activeTab">
+      <q-tab :name="'tab'"> Overview </q-tab>
+      <q-tab
           v-for="(relation, index) in filteredChildRelations"
           :key="index"
-          :value="'tab-' + index"
+          :name="'tab-' + index"
       >
         {{ relation.field.label }}
-      </v-tab>
-    </v-tabs>
-    <v-tabs-window v-model="activeTab">
-      <v-tabs-window-item value="tab">
+      </q-tab>
+    </q-tabs>
+    <q-tab-panels v-model="activeTab">
+      <q-tab-panel name="tab">
         <template v-if="model.displayMapFull && model.displayMapFull.rows">
           <RecordOverviewDynamic
               :item="item"
@@ -28,10 +28,7 @@
               user: user,
             }"
           >
-            <template
-                v-for="(slot, slotName) in $slots"
-                v-slot:[slotName]="slotProps"
-            >
+            <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
               <slot :name="slotName" v-bind="slotProps"></slot>
             </template>
           </RecordOverviewDynamic>
@@ -50,33 +47,26 @@
             }"
           />
         </template>
-        <!--              @deleteItem="deleteItem"-->
-        <!--              @editItem="editItem"-->
-        <!--              @clickRow="clickRow"-->
-        <!--              :clickable="true"-->
-      </v-tabs-window-item>
-      <v-tabs-window-item
+      </q-tab-panel>
+      <q-tab-panel
           v-for="(relation, index) in filteredChildRelations"
           :key="index"
-          :value="'tab-' + index"
+          :name="'tab-' + index"
       >
-        <!--<pre>{{ relation.currentParentRecord.foreignKeyToParentRecord }}</pre>-->
         <SuperTable
             :ref="`tab-${index}`"
             :currentParentRel="relation"
             :model="relation.field.meta.field.related"
             :canEdit="canEdit"
             :user="user"
-            :forcedFilters="
-            filters(relation.currentParentRecord.foreignKeyToParentRecord)
-          "
+            :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
         >
-          <template v-if="!!$slots[relation.field.name]" #create>
-            <slot :name="relation.field.name"/>
+          <template v-if="$slots[relation.field.name]" v-slot:create>
+            <slot :name="relation.field.name" />
           </template>
         </SuperTable>
-      </v-tabs-window-item>
-    </v-tabs-window>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
@@ -84,7 +74,6 @@
 import SuperTable from "./SuperTable.vue";
 import RecordOverview from "./RecordOverview.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-// import LoginSession from '@/models/LoginSession'
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 
 export default {
@@ -94,7 +83,6 @@ export default {
     RecordOverview,
     SuperTable,
   },
-
   props: {
     model: {
       type: [Object, Function],
@@ -106,33 +94,20 @@ export default {
     },
     displayMapField: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     user: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
   },
   data() {
     return {
       activeTab: null,
-      // childRelations: [],
     };
   },
   computed: {
     rowsAndDataIndicators() {
-      // const result = QuickListsHelpers.rowsAndDataIndicators(
-      //     false,
-      //     this.model,
-      //     this.headers,
-      //     this.childRelations
-      // )
-      // return result
-
       let result = {
         dataIndicators: [],
         rows: [],
@@ -163,13 +138,9 @@ export default {
     },
     canEdit() {
       return true;
-      // return !!this.loginSession
     },
     childRelations() {
-      const fields = QuickListsHelpers.computedAttrs(
-          this.model,
-          this.excludedCols,
-      );
+      const fields = QuickListsHelpers.computedAttrs(this.model, this.excludedCols);
       const result = [];
 
       for (let fieldName in fields) {
@@ -191,69 +162,45 @@ export default {
     filteredChildRelations() {
       let result = [];
       for (const childRelation of this.childRelations) {
-        if (
-            !this.rowsAndDataIndicators.dataIndicators.includes(
-                childRelation.field.name,
-            )
-        ) {
+        if (!this.rowsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
           result.push(childRelation);
         }
       }
       return result;
     },
-    // loginSession() {
-    //     return LoginSession.query().withAllRecursive().first()
-    // },
     headers() {
-      return QuickListsHelpers.SupaerTableHeaders(
-          this.model,
-          [],
-          this.canEdit,
-          this.displayMapField,
-      );
+      return QuickListsHelpers.SupaerTableHeaders(this.model, [], this.canEdit, this.displayMapField);
     },
     item() {
-      const result = this.model.query().whereId(this.id).withAll().get()[0];
-      return result;
+      return this.model.query().whereId(this.id).withAll().get()[0];
     },
     modelFields() {
-      const result = QuickListsHelpers.computedAttrs(
-          this.model,
-          this.excludedCols,
-      );
-      return result;
+      return QuickListsHelpers.computedAttrs(this.model, this.excludedCols);
     },
   },
   methods: {
     getMsg(type) {
-      let result = "";
       if (Array.isArray(type)) {
-        if (type.length > 1) {
-          result = `To create first set your active ${type[0]} group and  active ${type[1]}  group`;
-        }
+        return type.length > 1
+            ? `To create first set your active ${type[0]} group and active ${type[1]} group`
+            : "";
       } else {
-        result = `To create first set your active ${type} group`;
+        return `To create first set your active ${type} group`;
       }
-      return result;
     },
     filters(foreignKey) {
-      let result = {};
-      result[foreignKey] = this.id;
-      return result;
+      return {
+        [foreignKey]: this.id,
+      };
     },
-    // getChildRelations() {
-    // },
     fetchData() {
       this.model
-          .FetchById(this.id, [], {flags: {}, moreHeaders: {}, rels: []})
-          .then(() => {
-          })
-          .catch(() => {
-          });
+          .FetchById(this.id, [], { flags: {}, moreHeaders: {}, rels: [] })
+          .then(() => {})
+          .catch(() => {});
     },
   },
   mounted() {
-    // this.getChildRelations()
     this.fetchData();
   },
   watch: {

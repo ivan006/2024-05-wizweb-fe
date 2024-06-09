@@ -1,47 +1,29 @@
 <template>
   <div>
-    <!--        <pre>{{ modelValue }}</pre>-->
-    <!-- Read-only input to display selected value and open the dropdown -->
-    <!--    <v-text-field-->
-    <!--        readonly-->
-    <!--        v-model="formattedValue"-->
-    <!--        prepend-icon="mdi-calendar"-->
-    <!--        @click="menu = !menu"-->
-    <!--    />-->
-
-    <!-- Dropdown with selectors -->
-
-    <v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        :nudge-width="200"
-        :nudge-top="25"
-        offset-y
-    >
-      <template v-slot:activator="{ props }">
-        <div v-bind="props">
-          <!--                  label="Vicinity"-->
-          <v-text-field
-              label="Place Filter"
-              type="text"
-              :modelValue="displayPlace"
-              readonly
-              density="compact"
-              variant="outlined"
-              placeholder="All"
-          />
-        </div>
+    <q-menu v-model="menu" fit class="q-pt-none" no-corner>
+      <template v-slot:activator="{ attrs }">
+        <q-input
+            v-bind="attrs"
+            label="Place Filter"
+            type="text"
+            v-model="displayPlace"
+            readonly
+            dense
+            outlined
+            placeholder="All"
+        />
       </template>
 
-      <v-card>
-        <v-card-text>
-          <template v-for="childFilter of filterField.children">
+      <q-card>
+        <q-card-section>
+          <template
+              v-for="childFilter in filterField.children"
+              :key="childFilter.name"
+          >
             <template
-                v-if="
-                childFilter.usageType.startsWith('relForeignKeyMapExtraRel')
-              "
+                v-if="childFilter.usageType.startsWith('relForeignKeyMapExtraRel')"
             >
-              <div :key="childFilter.name" class="ma-2">
+              <div class="q-mt-md">
                 <SuperSelect
                     allowAll
                     v-if="typeof filtersData[childFilter.name] !== 'undefined'"
@@ -60,18 +42,15 @@
             </template>
           </template>
 
-          <!-- OK Button -->
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="menu = false">OK</v-btn>
-          </v-card-actions>
-        </v-card-text>
-      </v-card>
-    </v-menu>
+          <q-btn color="primary" class="q-mt-md" @click="menu = false">OK</q-btn>
+        </q-card-section>
+      </q-card>
+    </q-menu>
   </div>
 </template>
 
 <script>
+import { ref, computed, watch } from "vue";
 import SuperSelect from "./SuperSelect.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 
@@ -81,25 +60,21 @@ export default {
   props: {
     filterField: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     modelValue: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     user: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
   },
   data() {
     return {
+      menu: false,
+      filtersData: [],
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -110,35 +85,20 @@ export default {
       parentRelationships: {
         relForeignKeyMapExtraRelCountry: null,
         relForeignKeyMapExtraRelAdminArea1: "relForeignKeyMapExtraRelCountry",
-        relForeignKeyMapExtraRelAdminArea2:
-            "relForeignKeyMapExtraRelAdminArea1",
+        relForeignKeyMapExtraRelAdminArea2: "relForeignKeyMapExtraRelAdminArea1",
         relForeignKeyMapExtraRelLocality: "relForeignKeyMapExtraRelAdminArea2",
         relForeignKeyMapExtraRelSublocality: "relForeignKeyMapExtraRelLocality",
       },
-      menu: false,
-      filtersData: [],
     };
   },
   computed: {
-    // filterValues() {
-    //   let result = []
-    //   for (const childFilter of this.filterField.children) {
-    //     if (childFilter.usageType.startsWith('mapExtraRel')){
-    //       result.push({
-    //         ...childFilter,
-    //         vModelValue: this.filtersData[childFilter.name]
-    //       })
-    //     }
-    //   }
-    //   return result
-    // },
     displayPlace() {
       let displayText = "";
       const placeFields = this.filterField.children;
 
       for (let placeFieldLevelType of this.placeFieldLevelTypes) {
         let placeField = placeFields.find(
-            (placeField) => placeField.usageType === placeFieldLevelType,
+            (placeField) => placeField.usageType === placeFieldLevelType
         );
 
         if (
@@ -146,12 +106,10 @@ export default {
             this.filtersData[placeField.name] &&
             this.filtersData[placeField.name]
         ) {
-          // Use Vuex to fetch the display name
           let displayName = this.fetchDisplayNameFromVuex(
               placeField.meta.relatedModel,
-              this.filtersData[placeField.name],
+              this.filtersData[placeField.name]
           );
-          // Store the displayName only if it exists
           if (displayName) {
             displayText = displayName;
           }
@@ -163,19 +121,17 @@ export default {
   },
   methods: {
     handleSelectChange(fieldName) {
-      // Once a change is detected, reset the child filters
       const changedField = this.filterField.children.find(
-          (child) => child.name === fieldName,
+          (child) => child.name === fieldName
       );
 
       if (changedField) {
         const childTypes = this.getChildFields(changedField.usageType);
         for (let childType of childTypes) {
           const childField = this.filterField.children.find(
-              (child) => child.usageType === childType,
+              (child) => child.usageType === childType
           );
           if (childField && this.filtersData[childField.name]) {
-            // this.$set(this.filtersData, childField.name, null)
             this.filtersData[childField.name] = null;
           }
         }
@@ -184,7 +140,7 @@ export default {
     getChildFields(modelFieldType) {
       const index = this.placeFieldLevelTypes.indexOf(modelFieldType);
       if (index === -1 || index === this.placeFieldLevelTypes.length - 1) {
-        return []; // return empty array if the type isn't found or it's the last in the list
+        return [];
       }
       return this.placeFieldLevelTypes.slice(index + 1);
     },
@@ -200,12 +156,11 @@ export default {
       return result;
     },
     filterParentName(modelField) {
-      const parentRelationships = this.parentRelationships;
-      const parentType = parentRelationships[modelField.usageType];
+      const parentType = this.parentRelationships[modelField.usageType];
       let filterParentName = null;
       if (parentType) {
         const parent = this.filterField.children.find(
-            (field) => field.usageType == parentType,
+            (field) => field.usageType == parentType
         );
         if (parent) {
           filterParentName = parent.name;
@@ -223,18 +178,16 @@ export default {
       return JSON.stringify(result);
     },
   },
-  mounted() {
-    // this.$set(this, 'filtersData', this.modelValue)
-    this.filtersData = this.modelValue;
-  },
   watch: {
     filtersData: {
-      handler() {
-        console.log("handler");
-        this.$emit("update:modelValue", this.filtersData);
+      handler(newVal) {
+        this.$emit("update:modelValue", newVal);
       },
       deep: true,
     },
+  },
+  mounted() {
+    this.filtersData = this.modelValue;
   },
 };
 </script>

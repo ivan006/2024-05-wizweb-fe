@@ -1,73 +1,74 @@
 <template>
   <div>
     <!-- Initial Text Area Input -->
-    <v-textarea
-        :label="label"
+    <q-input
+        label="Select Date Range"
         readonly
         @click="click"
-        :modelValue="formattedValue"
-        rows="1"
-        :disabled="disabled"
-        variant="underlined"
+        v-model="formattedValue"
+        dense
+        outlined
+        :disable="disabled"
+        v-slot:append
     >
-      <template v-slot:append>
-        <v-icon>mdi-calendar</v-icon>
-      </template>
-    </v-textarea>
+      <q-icon name="calendar_today" />
+    </q-input>
 
     <!-- The Main Modal -->
-    <v-dialog v-model="showDialog" max-width="500px">
-      <v-card class="pa-4">
+    <q-dialog v-model="showDialog" max-width="500px">
+      <q-card class="q-pa-md">
         <h3>Select Date & Time</h3>
 
         <!-- Date -->
-        <v-text-field
+        <q-input
             label="Date"
             v-model="formattedDate"
             readonly
             @click="showDatePicker = true"
-            variant="underlined"
-        ></v-text-field>
+            dense
+            outlined
+        ></q-input>
 
         <!-- Date Picker Modal -->
-        <v-dialog v-model="showDatePicker" max-width="290px">
-          <v-card class="">
-            <v-date-picker
+        <q-dialog v-model="showDatePicker" max-width="290px">
+          <q-card>
+            <q-date
                 v-model="selectedDate"
                 @update:modelValue="setDefaultStartTime"
             />
-            <div class="pa-4" style="text-align: right">
-              <v-btn color="primary" @click="showDatePicker = false">OK</v-btn>
+            <div class="q-pa-md text-right">
+              <q-btn color="primary" @click="showDatePicker = false">OK</q-btn>
             </div>
-          </v-card>
-        </v-dialog>
+          </q-card>
+        </q-dialog>
 
         <!-- Time -->
-        <v-text-field
+        <q-input
             label="Time"
             v-model="formattedTime"
             readonly
             @click="showTimePicker = true"
-            variant="underlined"
-        ></v-text-field>
+            dense
+            outlined
+        ></q-input>
 
         <!-- Time Picker Modal -->
-        <v-dialog v-model="showTimePicker" max-width="290px">
-          <v-card class="">
-            <v-time-picker v-model="selectedTime"></v-time-picker>
-            <div class="pa-4" style="text-align: right">
-              <v-btn color="primary" @click="showTimePicker = false">OK</v-btn>
+        <q-dialog v-model="showTimePicker" max-width="290px">
+          <q-card>
+            <q-time v-model="selectedTime"></q-time>
+            <div class="q-pa-md text-right">
+              <q-btn color="primary" @click="showTimePicker = false">OK</q-btn>
             </div>
-          </v-card>
-        </v-dialog>
+          </q-card>
+        </q-dialog>
 
         <!-- OK Button -->
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" @click="finalizeDateTime">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        <q-card-actions>
+          <q-space></q-space>
+          <q-btn color="primary" @click="finalizeDateTime">OK</q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -77,16 +78,6 @@ import "moment-timezone";
 
 export default {
   name: "DateAndTimePicker",
-  data() {
-    return {
-      showDialog: false,
-      showDatePicker: false,
-      showTimePicker: false,
-      selectedDate: null,
-      selectedTime: null,
-      selectedTimezone: "Africa/Johannesburg", // default timezone
-    };
-  },
   props: {
     modelValue: {
       type: String,
@@ -101,6 +92,16 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      showDialog: false,
+      showDatePicker: false,
+      showTimePicker: false,
+      selectedDate: null,
+      selectedTime: null,
+      selectedTimezone: "Africa/Johannesburg", // default timezone
+    };
+  },
   computed: {
     formattedValue() {
       if (this.formattedDate && this.formattedTime) {
@@ -109,12 +110,11 @@ export default {
       return "";
     },
     formattedDate() {
-      const result = this.selectedDate
+      return this.selectedDate
           ? moment
               .tz(this.selectedDate, this.selectedTimezone)
               .format("dddd, MMMM D, YYYY")
           : "";
-      return result;
     },
     formattedTime() {
       return this.selectedTime
@@ -137,8 +137,6 @@ export default {
       now.minutes(0).seconds(0).milliseconds(0).add(1, "hours");
 
       this.selectedTime = now.format("HH:mm:ss");
-
-      // this.endDate = this.startDate
     },
     parseTimestamptz(value) {
       if (value) {
@@ -159,13 +157,13 @@ export default {
     },
   },
   watch: {
-    modelValue() {
-      this.parseTimestamptz(this.modelValue);
+    modelValue: {
+      immediate: true,
+      handler(newVal) {
+        this.parseTimestamptz(newVal);
+      },
     },
   },
-  // mounted() {
-  //     this.parseTimestamptz(this.modelValue)
-  // },
 };
 </script>
 

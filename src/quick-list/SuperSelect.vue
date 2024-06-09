@@ -1,45 +1,37 @@
 <template>
   <div>
-    <v-select
+    <q-select
         :menu-props="{ offsetY: true }"
-        :modelValue="modelValue"
-        @update:modelValue="
-        (e) => {
-          $emit('update:modelValue', e);
-        }
-      "
-        :variant="variant"
-        :density="density"
-        :items="items"
+        v-model="internalModelValue"
+        @input="updateValue"
+        :options="items"
         :label="modelField.label"
-        :item-title="title.value"
-        item-value="id"
-        :disabled="disabledComp"
+        option-label="label"
+        option-value="id"
+        :disable="disabledComp"
         :loading="loading"
         :readonly="readonly"
+        :dense="density === 'compact'"
+        outlined
     >
-      <template v-slot:prepend-item>
-        <v-text-field
+      <template v-slot:before>
+        <q-input
             v-model="search"
             label="Search"
-            density="compact"
-            variant="outlined"
+            dense
+            outlined
             single-line
-            hide-details
-            class="ma-2 mt-0 pa-0"
-        ></v-text-field>
-        <v-divider class="mt-2"></v-divider>
+            hide-bottom-space
+            class="q-ma-md q-mt-none q-pa-none"
+        ></q-input>
+        <q-separator class="q-mt-md"></q-separator>
       </template>
-      <template v-slot:append-item>
-        <div
-            v-if="showMoreButtonVisible"
-            @click="showMore"
-            class="text-center pa-2"
-        >
+      <template v-slot:after>
+        <div v-if="showMoreButtonVisible" @click="showMore" class="text-center q-pa-md">
           Show More
         </div>
       </template>
-    </v-select>
+    </q-select>
   </div>
 </template>
 
@@ -48,19 +40,14 @@ import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
   name: "SuperSelect",
-  components: {},
   props: {
     modelValue: {
       type: [Number, Object],
-      default() {
-        return null;
-      },
+      default: null,
     },
     filters: {
       type: String,
-      default() {
-        return "{}";
-      },
+      default: "{}",
     },
     model: {
       type: [Object, Function],
@@ -68,63 +55,44 @@ export default {
     },
     disabled: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     modelField: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     displayMapField: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     excludedCols: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
     },
     readonly: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     variant: {
       type: String,
-      default() {
-        return "outlined";
-      },
+      default: "outlined",
     },
     density: {
       type: String,
-      default() {
-        return "compact";
-      },
+      default: "compact",
     },
     allowAll: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     user: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
   },
   data() {
     return {
       search: "",
-      // filteredItems: [],
       pagination: {
         page: 1,
         limit: 5,
@@ -132,29 +100,21 @@ export default {
       loading: false,
       noMoreShowMore: false,
       fetchedItems: [],
+      internalModelValue: this.modelValue,
     };
   },
   computed: {
     disabledComp() {
-      if (this.disabled || this.readonly) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.disabled || this.readonly;
     },
     showMoreButtonVisible() {
-      let result = true;
-      if (this.pagination.limit >= this.items.length || this.noMoreShowMore) {
-        result = false;
-      }
-      return result;
+      return this.pagination.limit < this.items.length && !this.noMoreShowMore;
     },
     quickListsIsMobile() {
       return QuickListsHelpers.quickListsIsMobile();
     },
     title() {
-      const result = this.headers.find((header) => header.field !== "id");
-      return result;
+      return this.headers.find((header) => header.field !== "id");
     },
     headers() {
       return QuickListsHelpers.SupaerTableHeaders(
@@ -168,78 +128,40 @@ export default {
       let result = [];
       if (!this.disabled) {
         if (this.allowAll) {
-          result.push({
-            [this.title.value]: `All`,
-            id: null,
-          });
+          result.push({ label: "All", id: null });
         }
-        // const data = this.model
-        //     .query()
-        //     .where((item) => {
-        //         return this.quickListsGetIfMatchesAllChecks(
-        //             item,
-        //             this.filtersComp
-        //         )
-        //     })
-        //     .withAll()
-        //     .get()
-        const data = this.fetchedItems;
-        result = [...result, ...data];
+        result = [...result, ...this.fetchedItems];
       }
       return result;
     },
-    // displayedItems() {
-    //     let itemsFilteredBySearch = this.items
-    //     if (this.search) {
-    //         itemsFilteredBySearch = itemsFilteredBySearch.filter((item) =>
-    //             item[this.title.value]
-    //                 .toLowerCase()
-    //                 .includes(this.search.toLowerCase())
-    //         )
-    //     }
-    //     return itemsFilteredBySearch.filter((item) =>
-    //         this.quickListsGetIfMatchesAllChecks(item, JSON.parse(this.filters))
-    //     )
-    // },
     filtersComp() {
       const filters = JSON.parse(this.filters);
-      let result = filters;
-      if (this.title.value && this.search) {
-        result = {
-          ...filters,
-          [this.title.value]: this.search,
-        };
+      if (this.title && this.search) {
+        filters[this.title.field] = this.search;
       }
-      return result;
+      return filters;
     },
   },
   methods: {
-    showMore() {
-      this.pagination.page = this.pagination.page + 1;
-      this.fetchData();
+    updateValue(value) {
+      this.$emit('update:modelValue', value);
     },
-    quickListsGetIfMatchesAllChecks(item, filters) {
-      return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters);
+    showMore() {
+      this.pagination.page++;
+      this.fetchData();
     },
     async fetchData() {
       let linkables = [];
       if (this.modelField.fieldExtras?.relationRules?.linkables) {
-        linkables = this.modelField.fieldExtras.relationRules.linkables(
-            this.user,
-        );
+        linkables = this.modelField.fieldExtras.relationRules.linkables(this.user);
       }
 
       this.loading = true;
 
       const response = await this.model.FetchAll(
           [],
-          {
-            ...linkables,
-            order: "id.desc",
-          },
-          {
-            Prefer: "count=exact",
-          },
+          { ...linkables, order: "id.desc" },
+          { Prefer: "count=exact" },
           {
             page: this.pagination.page,
             limit: this.pagination.limit,
@@ -247,24 +169,18 @@ export default {
             clearPrimaryModelOnly: false,
           },
       );
-      if (response.response.data.length == 0) {
+
+      if (response.response.data.length === 0) {
         this.noMoreShowMore = true;
       }
-      this.fetchedItems = response.response.data.data;
-      // this.pagination.totalItems = response.total // Assuming your API returns a total count
+      this.fetchedItems = response.response.data;
       this.loading = false;
     },
-    // filterItems() {
-    //     this.filteredItems = this.displayedItems
-    // },
   },
   watch: {
-    // items: {
-    //     immediate: true,
-    //     handler() {
-    //         this.filteredItems = this.items
-    //     },
-    // },
+    modelValue(val) {
+      this.internalModelValue = val;
+    },
     filters() {
       if (!this.disabled) {
         this.fetchData();
@@ -284,4 +200,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>
