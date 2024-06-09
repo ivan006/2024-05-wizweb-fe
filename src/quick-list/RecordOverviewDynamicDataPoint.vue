@@ -62,12 +62,6 @@
                         </component>
                     </div>
                 </div>
-                <!--                                <v-card-text-->
-                <!--                                    class="d-flex flex-column"-->
-                <!--                                    style="height: 100%"-->
-                <!--                                >-->
-
-                <!--                                </v-card-text>-->
             </div>
         </template>
         <template v-else>

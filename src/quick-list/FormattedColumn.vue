@@ -96,7 +96,9 @@ import CreateEditForm from './CreateEditForm.vue';
 
 export default {
   name: 'FormattedColumn',
-  components: {CreateEditForm},
+  components: {
+    CreateEditForm
+  },
   props: {
     isTag: {
       type: Boolean,

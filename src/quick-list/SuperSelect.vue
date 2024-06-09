@@ -173,7 +173,7 @@ export default {
       if (response.response.data.length === 0) {
         this.noMoreShowMore = true;
       }
-      this.fetchedItems = response.response.data;
+      this.fetchedItems = response.response.data.data;
       this.loading = false;
     },
   },

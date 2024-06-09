@@ -31,12 +31,11 @@
 
 <script>
 import { Attribute } from "@vuex-orm/core";
-import SuperTable from "./SuperTable.vue";
 
 export default {
   name: "RelationComponent",
   components: {
-    SuperTable,
+    SuperTable: () => import("./SuperTable.vue"),
   },
   props: {
     configs: {
