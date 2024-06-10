@@ -1,7 +1,10 @@
 <template>
   <div>
     <!--      <pre>{{headers}}</pre>-->
-    <q-tabs v-model="activeTab">
+    <q-tabs
+        v-model="activeTab"
+        align="left"
+    >
       <q-tab :name="'tab'"> Overview </q-tab>
       <q-tab
           v-for="(relation, index) in filteredChildRelations"
@@ -103,7 +106,7 @@ export default {
   },
   data() {
     return {
-      activeTab: null,
+      activeTab: 'tab',
     };
   },
   computed: {

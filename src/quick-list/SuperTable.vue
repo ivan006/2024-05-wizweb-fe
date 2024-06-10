@@ -57,6 +57,7 @@
               option-value="value"
               dense
               class="q-ma-sm col-grow"
+              outlined
           />
           <div
               class="q-ma-sm col-grow"

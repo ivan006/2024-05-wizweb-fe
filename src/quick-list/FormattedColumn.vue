@@ -32,19 +32,16 @@
       </div>
 
       <template v-if="superOptions.canEdit">
-        <q-dialog v-model="editItemData.showModal" max-width="800px">
-          <q-card>
-            <q-card-section>
-              <CreateEditForm
-                  title="Edit Item"
-                  v-if="editItemData.showModal"
-                  v-model="editItemData.data"
-                  @submit="editItemSubmit"
-                  @cancel="editItemData.showModal = false"
-                  :superOptions="superOptions"
-              />
-            </q-card-section>
-          </q-card>
+        <q-dialog v-model="editItemData.showModal">
+          <CreateEditForm
+              title="Edit Item"
+              v-if="editItemData.showModal"
+              v-model="editItemData.data"
+              @submit="editItemSubmit"
+              @cancel="editItemData.showModal = false"
+              :superOptions="superOptions"
+              style="width: 700px; max-width: 80vw;"
+            />
         </q-dialog>
 
         <q-dialog v-model="deleteItemData.showModal" max-width="600px">

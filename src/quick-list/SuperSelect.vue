@@ -1,7 +1,6 @@
 <template>
   <div>
     <q-select
-        :menu-props="{ offsetY: true }"
         v-model="internalModelValue"
         @input="updateValue"
         :options="items"
@@ -13,23 +12,33 @@
         :readonly="readonly"
         :dense="density === 'compact'"
         outlined
+        :menu-props="{ offsetY: true }"
     >
-      <template v-slot:before>
-        <q-input
-            v-model="search"
-            label="Search"
-            dense
-            outlined
-            single-line
-            hide-bottom-space
-            class="q-ma-md q-mt-none q-pa-none"
-        ></q-input>
-        <q-separator class="q-mt-md"></q-separator>
-      </template>
-      <template v-slot:after>
-        <div v-if="showMoreButtonVisible" @click="showMore" class="text-center q-pa-md">
-          Show More
-        </div>
+      <template v-slot:option="scope">
+        <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
+          <q-item-section>
+            <q-input
+                v-model="search"
+                label="Search"
+                dense
+                outlined
+                single-line
+                hide-bottom-space
+                class="q-mt-none q-pa-none"
+                @keyup.enter="fetchData"
+            ></q-input>
+          </q-item-section>
+        </q-item>
+        <q-item v-else-if="scope.index === items.length - 1 && showMoreButtonVisible" @click="showMore" class="text-center q-pa-md">
+          <q-item-section>
+            Show More
+          </q-item-section>
+        </q-item>
+        <q-item v-else :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
+          <q-item-section>
+            {{ scope.opt.label }}
+          </q-item-section>
+        </q-item>
       </template>
     </q-select>
   </div>
@@ -121,16 +130,21 @@ export default {
           this.model,
           this.excludedCols,
           false,
-          this.displayMapField,
+          this.displayMapField
       );
     },
     items() {
       let result = [];
       if (!this.disabled) {
+        result.push({ label: "", id: null });  // Empty item for search input
+        result = [...result, ...this.fetchedItems.map(item => ({
+          label: item[this.title.field],
+          id: item.id
+        }))];
         if (this.allowAll) {
           result.push({ label: "All", id: null });
         }
-        result = [...result, ...this.fetchedItems];
+        result.push({ label: "", id: null });  // Empty item for show more button
       }
       return result;
     },
@@ -167,13 +181,13 @@ export default {
             limit: this.pagination.limit,
             filters: this.filtersComp,
             clearPrimaryModelOnly: false,
-          },
+          }
       );
 
       if (response.response.data.length === 0) {
         this.noMoreShowMore = true;
       }
-      this.fetchedItems = response.response.data.data;
+      this.fetchedItems = [...this.fetchedItems, ...response.response.data.data];
       this.loading = false;
     },
   },
