@@ -13,6 +13,7 @@
         :dense="density === 'compact'"
         outlined
         :menu-props="{ offsetY: true }"
+        :rules="rules"
     >
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
@@ -97,6 +98,10 @@ export default {
     user: {
       type: Object,
       default: () => ({}),
+    },
+    rules: {
+      type: Array,
+      default: () => ([() => true]),
     },
   },
   data() {

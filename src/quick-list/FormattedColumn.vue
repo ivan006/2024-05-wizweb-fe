@@ -44,17 +44,17 @@
             />
         </q-dialog>
 
-        <q-dialog v-model="deleteItemData.showModal" max-width="600px">
-          <q-card>
-            <q-card-section>
+        <q-dialog v-model="deleteItemData.showModal" >
+          <q-card style="width: 500px; max-width: 80vw;">
+            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
               <div class="text-h6">Delete Item</div>
             </q-card-section>
             <q-card-section>
-              <p>Delete item?</p>
+              <p>Are you sure you want to delete this item?</p>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-              <q-btn @click="deleteItemSubmit" flat>Delete</q-btn>
+              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
             </q-card-actions>
           </q-card>
         </q-dialog>

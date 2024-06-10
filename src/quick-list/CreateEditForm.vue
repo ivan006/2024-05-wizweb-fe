@@ -6,7 +6,7 @@
     <q-card-section>
       <q-form ref="editForm">
         <template v-for="field in superOptions.modelFields" :key="field.name">
-          <div>
+          <div class="q-mb-sm">
             <template v-if="field.dataType === 'uid'"></template>
             <template v-else-if="field.usageType.startsWith('rel')">
               <template v-if="field.usageType.startsWith('relLookup')"></template>
@@ -15,9 +15,10 @@
                     :modelField="field"
                     v-model="itemData[field.name]"
                     :model="field.meta.relatedModel"
-                    variant="underlined"
+                    variant="outlined"
                     density="default"
                     :user="superOptions.user"
+                    :rules="[() => true]"
                 />
               </template>
               <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
@@ -25,7 +26,7 @@
                     :configs="field"
                     v-model="itemData[field.name]"
                     readonly
-                ></RelationComponent>
+                />
               </template>
               <template v-else-if="field.usageType == 'relForeignKeyOwnerAppliedToProviderType'">
                 <SuperSelect
@@ -33,7 +34,7 @@
                     v-model="itemData[field.name]"
                     :model="field.meta.relatedModel"
                     readonly
-                    variant="underlined"
+                    variant="outlined"
                     density="default"
                     :user="superOptions.user"
                 />
@@ -42,7 +43,7 @@
                 <RelationComponent
                     :configs="field"
                     v-model="itemData[field.name]"
-                ></RelationComponent>
+                />
               </template>
             </template>
             <template v-else-if="field.usageType == 'timeRangeType'">
@@ -97,7 +98,7 @@
                   readonly
                   style="display: none"
                   outlined
-              ></q-input>
+              />
             </template>
             <template v-else-if="field.usageType == 'normal'">
               <template v-if="field.dataType === 'string'">
@@ -106,14 +107,14 @@
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
                     outlined
-                ></q-input>
+                />
               </template>
               <template v-else-if="field.dataType === 'boolean'">
                 <q-checkbox
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
-                ></q-checkbox>
+                />
               </template>
               <template v-else-if="field.dataType === 'number'">
                 <q-input
@@ -122,7 +123,7 @@
                     :rules="field.meta.rules"
                     type="number"
                     outlined
-                ></q-input>
+                />
               </template>
               <template v-else-if="field.dataType === 'attr'">
                 <q-input
@@ -130,7 +131,7 @@
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
                     outlined
-                ></q-input>
+                />
               </template>
             </template>
             <template v-else>
@@ -139,7 +140,7 @@
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
                   outlined
-              ></q-input>
+              />
             </template>
           </div>
         </template>
