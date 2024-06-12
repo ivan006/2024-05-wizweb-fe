@@ -27,7 +27,7 @@
                 single-line
                 hide-bottom-space
                 class="q-mt-none q-pa-none"
-                @keyup.enter="fetchData"
+                @input="handleSearchInput"
             ></q-input>
           </q-item-section>
         </q-item>
@@ -51,6 +51,21 @@
 </template>
 
 <script>
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    const context = this, args = arguments;
+    const later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
 import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
@@ -188,11 +203,9 @@ export default {
             clearPrimaryModelOnly: false,
           }
       );
-      console.log(1111)
 
       this.fetchedItems = response.response.data.data;
       this.totalPages = Math.ceil(response.response.data.total / this.pagination.limit);
-      console.log(222)
       this.loading = false;
     },
     activateAndFetchData() {
@@ -201,6 +214,9 @@ export default {
         this.fetchData();
       }
     },
+    handleSearchInput: debounce(function () {
+      this.fetchData();
+    }, 3000),
   },
   watch: {
     modelValue(val) {
