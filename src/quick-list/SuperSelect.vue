@@ -31,7 +31,7 @@
             ></q-input>
           </q-item-section>
         </q-item>
-        <q-item v-else-if="scope.index === items.length - 1 && showMoreButtonVisible" @click="showMore" class="text-center q-pa-md">
+        <q-item v-else-if="scope.index === items.length - 1" class="text-center q-pa-md">
           <q-pagination
               v-model="pagination.page"
               :max="totalPages"
