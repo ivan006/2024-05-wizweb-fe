@@ -112,7 +112,7 @@ export default class DBBaseModel extends Model {
             filters: {},
             clearPrimaryModelOnly: false
         },
-        adapator = "supabase"
+        modelClass
     ) {
         let offset = (options.page - 1) * options.limit
         // todo: note - i hade to put the filters in line because urls can have duplicates keys and objects cans and i needed duplicates key support for the date range filter
@@ -120,12 +120,12 @@ export default class DBBaseModel extends Model {
         let computedUrl = url
         let preparedRels = {}
 
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
 
             computedUrl= `${url}?${Helpers.prepareFiltersForSupabase(options.filters)}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
 
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
 
             computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
@@ -160,15 +160,15 @@ export default class DBBaseModel extends Model {
             // })
     }
 
-    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , modelClass) {
         relationships
 
         let computedUrl = url
         let preparedRels = {}
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
             computedUrl= `${url}?id=eq.${id}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
             computedUrl = `${url}/${id}`
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
         }
@@ -191,7 +191,7 @@ export default class DBBaseModel extends Model {
             // })
     }
 
-    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
         return this.customApiBase(headers)
             .post(
                 url,
@@ -213,7 +213,7 @@ export default class DBBaseModel extends Model {
             // })
     }
 
-    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
         return this.customApiBase(headers)
             .post(
                 url,
@@ -235,13 +235,13 @@ export default class DBBaseModel extends Model {
             // })
     }
 
-    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
 
         let computedUrl = url
-        if (adapator === "supabase"){
-            computedUrl = `${url}?id=eq.${entity.id}`
-        } else if(adapator === "laravel") {
-            computedUrl = `${url}/${entity.id}`
+        if (modelClass.adapator === "supabase"){
+            computedUrl = `${url}?id=eq.${entity[modelClass.primaryKey]}`
+        } else if(modelClass.adapator === "laravel") {
+            computedUrl = `${url}/${entity[modelClass.primaryKey]}`
         }
 
         return this.customApiBase(headers)
@@ -266,12 +266,12 @@ export default class DBBaseModel extends Model {
             // })
     }
 
-    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , modelClass) {
 
         let computedUrl = url
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
             computedUrl = `${url}?id=eq.${entityId}`
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
             computedUrl = `${url}/${entityId}`
         }
 

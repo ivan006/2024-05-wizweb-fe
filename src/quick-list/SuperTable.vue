@@ -58,9 +58,9 @@
               dense
               class="q-ma-sm col-grow"
               outlined
+              :rules="[() => true]"
           />
-          <div
-              class="q-ma-sm col-grow"
+          <template
               v-for="filterInput of filterInputs"
               :key="filterInput.name"
           >
@@ -99,7 +99,7 @@
                 />
               </template>
             </template>
-          </div>
+          </template>
         </div>
       </DestructableExpansionPanels>
       <div class="q-my-md">

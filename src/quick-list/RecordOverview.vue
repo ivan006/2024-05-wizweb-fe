@@ -4,7 +4,7 @@
       <div
           :key="header.name"
           v-if="header.field !== 'id' && (index < maxFields || header.type === 'actions')"
-          class="q-pa-xs"
+          class="q-pa-xs q-mb-sm"
           style="min-height: 1.375rem"
       >
         <template v-if="index < 2">

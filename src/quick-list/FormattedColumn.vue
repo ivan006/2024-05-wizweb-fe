@@ -61,10 +61,12 @@
       </template>
     </template>
     <template v-else-if="header.usageType.startsWith('relLookup')">
-      <div style="min-height: 32px">
+      <div
+          style="min-height: 32px; cursor: pointer;"
+          @click.stop="clickParent(item?.[header.field], header)"
+      >
         <q-chip
             v-if="item?.[header.field]?.[header.meta.lookupDisplayField]"
-            @click.stop="clickParent(item?.[header.field], header)"
         >
           {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
         </q-chip>
@@ -72,9 +74,14 @@
     </template>
     <template v-else>
       <template v-if="isTag">
-        <q-chip v-if="isTag" @click.stop="clickParent(item)">
-          {{ item[header.field] }}
-        </q-chip>
+        <div
+            @click.stop="clickParent(item)"
+            style="cursor: pointer;"
+        >
+          <q-chip v-if="isTag">
+            {{ item[header.field] }}
+          </q-chip>
+        </div>
       </template>
       <template v-else>
         <div :title="item[header.field]">
@@ -144,6 +151,7 @@ export default {
   },
   methods: {
     clickParent(item, header) {
+      console.log(123)
       const model = header.meta.relatedModel;
       model.openRecord(item[model.primaryKey]);
     },
@@ -182,6 +190,8 @@ export default {
           this.editItemData.data,
           this.superOptions.modelFields
       );
+      console.log("payload")
+      console.log(payload)
       this.superOptions.model.Update(payload).then(() => {
         this.fetchData();
       });

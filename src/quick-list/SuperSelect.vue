@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <q-select
         v-model="internalModelValue"
         @input="updateValue"
@@ -35,7 +36,7 @@
             Show More
           </q-item-section>
         </q-item>
-        <q-item v-else :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
+        <q-item v-else  v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
           <q-item-section>
             {{ scope.opt.label }}
           </q-item-section>
