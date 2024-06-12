@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <q-select
         v-model="internalModelValue"
         @input="updateValue"
@@ -15,6 +14,7 @@
         outlined
         :menu-props="{ offsetY: true }"
         :rules="rules"
+        @click="activateAndFetchData"
     >
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
@@ -32,11 +32,15 @@
           </q-item-section>
         </q-item>
         <q-item v-else-if="scope.index === items.length - 1 && showMoreButtonVisible" @click="showMore" class="text-center q-pa-md">
-          <q-item-section>
-            Show More
-          </q-item-section>
+          <q-pagination
+              v-model="pagination.page"
+              :max="totalPages"
+              @input="fetchData"
+              input
+              class="q-ma-md"
+          />
         </q-item>
-        <q-item v-else  v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
+        <q-item v-else v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
           <q-item-section>
             {{ scope.opt.label }}
           </q-item-section>
@@ -112,18 +116,16 @@ export default {
         page: 1,
         limit: 5,
       },
+      totalPages: 1,
       loading: false,
-      noMoreShowMore: false,
       fetchedItems: [],
       internalModelValue: this.modelValue,
+      activated: false,
     };
   },
   computed: {
     disabledComp() {
       return this.disabled || this.readonly;
-    },
-    showMoreButtonVisible() {
-      return this.pagination.limit < this.items.length && !this.noMoreShowMore;
     },
     quickListsIsMobile() {
       return QuickListsHelpers.quickListsIsMobile();
@@ -150,7 +152,6 @@ export default {
         if (this.allowAll) {
           result.push({ label: "All", id: null });
         }
-        result.push({ label: "", id: null });  // Empty item for show more button
       }
       return result;
     },
@@ -166,11 +167,9 @@ export default {
     updateValue(value) {
       this.$emit('update:modelValue', value);
     },
-    showMore() {
-      this.pagination.page++;
-      this.fetchData();
-    },
     async fetchData() {
+      if (!this.activated) return;
+
       let linkables = [];
       if (this.modelField.fieldExtras?.relationRules?.linkables) {
         linkables = this.modelField.fieldExtras.relationRules.linkables(this.user);
@@ -189,12 +188,18 @@ export default {
             clearPrimaryModelOnly: false,
           }
       );
+      console.log(1111)
 
-      if (response.response.data.length === 0) {
-        this.noMoreShowMore = true;
-      }
-      this.fetchedItems = [...this.fetchedItems, ...response.response.data.data];
+      this.fetchedItems = response.response.data.data;
+      this.totalPages = Math.ceil(response.response.data.total / this.pagination.limit);
+      console.log(222)
       this.loading = false;
+    },
+    activateAndFetchData() {
+      if (!this.activated) {
+        this.activated = true;
+        this.fetchData();
+      }
     },
   },
   watch: {
@@ -211,11 +216,6 @@ export default {
         this.fetchData();
       }
     },
-  },
-  mounted() {
-    if (!this.disabled) {
-      this.fetchData();
-    }
   },
 };
 </script>
