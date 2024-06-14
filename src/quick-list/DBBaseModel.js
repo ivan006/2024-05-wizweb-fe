@@ -1,5 +1,5 @@
 import { Model } from '@vuex-orm/core'
-import Helpers from './Helpers'
+import Helpers from '../utils/Helpers'
 // import { serialize } from 'object-to-formdata';
 
 export default class DBBaseModel extends Model {
