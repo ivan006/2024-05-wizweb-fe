@@ -1,8 +1,6 @@
 import { Model } from '@vuex-orm/core'
-
-// import { DefaultSISHeadersAndBaseUrl } from '@v2/models/sis/SISHeaders'
-import CustonMixins from '../mixins/CustonMixins'
-import Helpers from '../utils/Helpers'
+import Helpers from './Helpers'
+// import { serialize } from 'object-to-formdata';
 
 export default class DBBaseModel extends Model {
 
@@ -10,7 +8,6 @@ export default class DBBaseModel extends Model {
     static primaryKey = 'id';
 
     static openRecord(id){}
-
 
     static NormalizeRecursive(value) {
         const result = this.NormalizeRecursiveChild(
@@ -88,7 +85,7 @@ export default class DBBaseModel extends Model {
 
     static customApiBase(moreHeaders) {
         // const baseUrlAndHeaders =
-        //     CustonMixins.methods.DefaultHeadersAndBaseUrl()
+        //   CustonMixins.methods.DefaultHeadersAndBaseUrl()
         this.apiConfig = {
             // ...DefaultSISHeadersAndBaseUrl(),
             // baseURL: baseUrlAndHeaders.baseURL,
@@ -151,13 +148,13 @@ export default class DBBaseModel extends Model {
                     return result
                 },
             })
-            // .then((res) => {
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            //     // return error // < would this be needed maybe?
-            // })
+        // .then((res) => {
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        //   // return error // < would this be needed maybe?
+        // })
     }
 
     static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , modelClass) {
@@ -183,18 +180,28 @@ export default class DBBaseModel extends Model {
                     return result
                 },
             })
-            // .then((res) => {
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 
-    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
+    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , modelClass, supportFiles = false) {
+        let computedUrl = url
+        // if (modelClass.adapator === "supabase"){
+        //   computedUrl = `${url}?id=eq.${entity.id}`
+        // } else if(modelClass.adapator === "laravel") {
+        //   computedUrl = `${url}/${entity.id}`
+        // }
+        if (supportFiles) {
+            entity = serialize(entity);
+        }
+
         return this.customApiBase(headers)
             .post(
-                url,
+                computedUrl,
                 { ...entity },
                 {
                     dataTransformer: ({ data }) => {
@@ -204,13 +211,13 @@ export default class DBBaseModel extends Model {
                     },
                 }
             )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 
     static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
@@ -226,28 +233,38 @@ export default class DBBaseModel extends Model {
                     },
                 }
             )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 
-    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
 
+    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {}, modelClass, supportFiles = false) {
         let computedUrl = url
         if (modelClass.adapator === "supabase"){
-            computedUrl = `${url}?id=eq.${entity[modelClass.primaryKey]}`
+            computedUrl = `${url}?id=eq.${entity.id}`
         } else if(modelClass.adapator === "laravel") {
-            computedUrl = `${url}/${entity[modelClass.primaryKey]}`
+            computedUrl = `${url}/${entity.id}`
         }
+
+        const queryParams = new URLSearchParams(flags).toString();
+        if (queryParams) {
+            computedUrl += (computedUrl.includes('?') ? '&' : '?') + queryParams;
+        }
+
+        // if (supportFiles) {
+        //   entity = serialize(entity);
+        // }
 
         return this.customApiBase(headers)
             .patch(
                 computedUrl,
-                { ...entity },
+                // { ...entity },
+                entity,
                 {
                     dataTransformer: ({ data }) => {
                         const result =
@@ -256,14 +273,7 @@ export default class DBBaseModel extends Model {
                     },
                     save: true,
                 }
-            )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+            );
     }
 
     static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , modelClass) {
@@ -279,12 +289,12 @@ export default class DBBaseModel extends Model {
             .delete(computedUrl, {
                 delete: entityId,
             })
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 }
