@@ -27,7 +27,6 @@
                 single-line
                 hide-bottom-space
                 class="q-mt-none q-pa-none"
-                @input="handleSearchInput"
             ></q-input>
           </q-item-section>
         </q-item>
@@ -51,6 +50,7 @@
 </template>
 
 <script>
+
 function debounce(func, wait, immediate) {
   let timeout;
   return function() {
@@ -126,6 +126,7 @@ export default {
   },
   data() {
     return {
+      timeout: null,
       search: "",
       pagination: {
         page: 1,
@@ -214,9 +215,6 @@ export default {
         this.fetchData();
       }
     },
-    handleSearchInput: debounce(function () {
-      this.fetchData();
-    }, 3000),
   },
   watch: {
     modelValue(val) {
@@ -229,7 +227,11 @@ export default {
     },
     search() {
       if (!this.disabled) {
-        this.fetchData();
+        // this.fetchData();
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.fetchData()
+        }, 300)
       }
     },
   },
