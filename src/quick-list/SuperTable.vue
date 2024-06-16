@@ -106,9 +106,6 @@
         <template v-if="activeTab.value == 'table'">
           <SuperTableTable
               :items="items"
-              @clickRow="clickRow"
-              v-model:options="optionsComputed"
-              :itemsLength="+itemsLength"
               :superOptions="{
                 headers: headers,
                 modelFields: modelFields,
@@ -119,6 +116,17 @@
                 user: user,
               }"
           />
+          <!--:itemsLength="itemsLength"-->
+          <!--@clickRow="clickRow"-->
+          <!--:pagination="options"-->
+          <!--@update:pagination="updatePagination"-->
+          <q-pagination
+              v-model="options.page"
+              @update:modelValue="pageUpdate"
+              :max="maxPages"
+              input
+          />
+          <!--@update:rows-per-page="updateRowsPerPage"-->
         </template>
         <template v-if="activeTab.value == 'grid'">
           <div class="q-my-md">
@@ -290,12 +298,12 @@ export default {
           {length: 5},
           (_, index) => new Date().getFullYear() - index,
       ), // last 5 years including this year
-      itemsLength: 0,
+      itemsLength: 1,
       loading: false,
       options: {
         page: 1,
         itemsPerPage: 10,
-        sortBy: ["id"],
+        sortBy: [],
         groupBy: [],
       },
       createItemData: {
@@ -408,15 +416,46 @@ export default {
             return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
           })
           .withAll()
-          .orderBy("id", "desc")
+          .orderBy(`${this.model.primaryKey}`, "desc")
           .get();
       return result;
     },
     pKey() {
       return this.model.primaryKey;
     },
+    maxPages() {
+      return Math.ceil(this.itemsLength / this.options.itemsPerPage);
+    },
   },
   methods: {
+    pageUpdate(page) {
+      this.options = {
+        ...this.options,
+        page: page,
+        // itemsPerPage: page.rowsPerPage,
+        // sortBy: page.sortBy,
+        // descending: page.descending,
+      };
+      this.fetchData();
+    },
+    updatePagination(pagination) {
+      this.options = {
+        ...this.options,
+        page: pagination.page,
+        itemsPerPage: pagination.rowsPerPage,
+        sortBy: pagination.sortBy,
+        descending: pagination.descending,
+      };
+      this.fetchData();
+    },
+    // updateRowsPerPage(rowsPerPage) {
+    //   this.options = {
+    //     ...this.options,
+    //     itemsPerPage: rowsPerPage,
+    //     page: 1,
+    //   };
+    //   this.fetchData();
+    // },
     quickListsGetIfMatchesAllChecks(item, filters) {
       return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters);
     },
@@ -491,7 +530,7 @@ export default {
       } else if (this.model.adapator == "laravel") {
         extraHeaderComputed = {};
         flagsComputed = {
-          sort: "-id",
+          sort: `-${this.model.primaryKey}`,
           per_page: this.options.itemsPerPage,
           page: this.options.page,
         };
@@ -576,8 +615,10 @@ export default {
 };
 </script>
 
-<style>
-.highlighted {
-  background-color: #f0f0f0;
-}
+<style lang="scss">
+//.highlighted {
+//  background-color: #f0f0f0;
+//}
+
+
 </style>
