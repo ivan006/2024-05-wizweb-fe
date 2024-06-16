@@ -2,6 +2,7 @@
   <div>
     <!--<pre>{{flattenedHeadersHideMapField}}</pre>-->
     <q-table
+        class="qTable"
         :rows="items"
         :columns="flattenedHeadersHideMapField"
         row-key="id"
@@ -188,4 +189,14 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+.qTable .q-tr {
+  cursor: pointer;
+}
+
+
+.qTable {
+  box-shadow: none !important;
+}
+</style>
