@@ -122,6 +122,7 @@ export default class DBCrudCacheSet extends Model {
                         foreignKeyField: fields[field.foreignKey],
                         relation: field.constructor.name,
                         relatedModel: field.parent,
+                        field: field,
                         lookupDisplayField: lookupDisplayField,
                         lookupField: fieldName,
                     },

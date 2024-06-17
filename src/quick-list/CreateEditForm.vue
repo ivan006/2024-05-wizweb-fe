@@ -14,7 +14,7 @@
                 <SuperSelect
                     :modelField="field"
                     v-model="itemData[field.name]"
-                    :model="field.meta.relatedModel"
+                    :model="field.meta.field.parent"
                     variant="outlined"
                     density="default"
                     :user="superOptions.user"
@@ -32,14 +32,14 @@
                 <SuperSelect
                     :modelField="field"
                     v-model="itemData[field.name]"
-                    :model="field.meta.relatedModel"
+                    :model="field.meta.field.parent"
                     readonly
                     variant="outlined"
                     density="default"
                     :user="superOptions.user"
                 />
               </template>
-              <template v-else>
+              <template v-else-if="field.usageType !== 'relChildrenNormal'">
                 <RelationComponent
                     :configs="field"
                     v-model="itemData[field.name]"
