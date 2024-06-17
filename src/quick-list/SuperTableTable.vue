@@ -25,6 +25,7 @@
                     :header="header"
                     :item="props.row[header.isChildOf.value]"
                     :superOptions="superOptions"
+                    hideLabel
                 />
               </div>
             </template>
@@ -34,6 +35,7 @@
                     :header="header"
                     :item="props.row"
                     :superOptions="superOptions"
+                    hideLabel
                 />
               </div>
             </template>
