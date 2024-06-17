@@ -1,6 +1,6 @@
 {
   "name": "quicklists-vue-orm-ui",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A Vue-based ORM to UI generator library.",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   },
   "peerDependencies": {
     "vue": "^3.0.0",
-    "vite": "^2.0.0",
+    "vite": "^2.0.0"
   },
   "keywords": [
     "vue",
@@ -54,7 +54,7 @@
   },
   "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.9.18",
+    "@vitejs/plugin-vue": "^2.0.0",
     "vite": "^2.9.18"
   }
 }
