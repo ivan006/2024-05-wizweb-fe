@@ -26,13 +26,12 @@
     "vuex": "^4.0.2"
   },
   "peerDependencies": {
-    "vue": "^3.0.0",
-    "vuetify": "^3.5.0"
+    "vue": "^3.0.0"
   },
   "keywords": [
     "vue",
     "vuejs",
-    "vuetify",
+    "quasar",
     "orm",
     "ui generator",
     "model-driven ui",
@@ -54,7 +53,7 @@
   },
   "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme",
   "devDependencies": {
-    "vite": "^2.9.18",
-    "@vitejs/plugin-vue": "^2.0.0"
+    "@vitejs/plugin-vue": "^2.0.0",
+    "vite": "^2.9.18"
   }
 }
