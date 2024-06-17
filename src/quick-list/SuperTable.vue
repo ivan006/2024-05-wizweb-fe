@@ -77,7 +77,7 @@
               option-label="label"
               option-value="value"
               dense
-              class="q-ma-sm col-grow"
+              class="col-grow q-mr-sm"
               outlined
               :rules="[() => true]"
           />
@@ -121,7 +121,6 @@
                 <!--  :loading="loading"-->
                 <!--  :rules="rules"-->
                 <!--/>-->
-
                 <SuperTable
                     :isForSelectingRelation="true"
                     :canEdit="false"
@@ -390,6 +389,7 @@ export default {
       },
       highlightedRow: null,
       filters: {},
+      items: [],
       activeTab: {
         "label": "Table",
         "value": "table"
@@ -487,17 +487,17 @@ export default {
       );
       return result;
     },
-    items() {
-      const result = this.model
-          .query()
-          .where((item) => {
-            return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
-          })
-          .withAll()
-          .orderBy(`${this.model.primaryKey}`, "desc")
-          .get();
-      return result;
-    },
+    // items() {
+    //   const result = this.model
+    //       .query()
+    //       .where((item) => {
+    //         return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
+    //       })
+    //       .withAll()
+    //       .orderBy(`${this.model.primaryKey}`, "desc")
+    //       .get();
+    //   return result;
+    // },
     pKey() {
       return this.model.primaryKey;
     },
@@ -627,9 +627,11 @@ export default {
             page: this.options.page,
             limit: this.options.itemsPerPage,
             filters: this.filtersComp,
-            clearPrimaryModelOnly: true,
+            clearPrimaryModelOnly: false,
           },
       );
+
+      this.items = response.response.data.data
 
       this.loading = false;
       let count = 0;

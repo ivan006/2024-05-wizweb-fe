@@ -98,6 +98,8 @@ export default class DBBaseModel extends Model {
         return this.api()
     }
 
+    static titleKey = this.primaryKey;
+
     static customSupabaseApiFetchAll(
         url,
         relationships = [],

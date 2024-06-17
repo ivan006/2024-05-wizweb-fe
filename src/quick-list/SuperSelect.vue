@@ -4,10 +4,10 @@
         style="min-width: 200px;"
         v-model="internalModelValue"
         @input="updateValue"
-        :options="items"
+        :options="itemsComp"
         :label="modelField.label"
         option-label="label"
-        option-value="id"
+        :option-value="model.primaryKey"
         :disable="disabledComp"
         :loading="loading"
         :readonly="readonly"
@@ -31,7 +31,7 @@
             ></q-input>
           </q-item-section>
         </q-item>
-        <q-item v-else-if="scope.index === items.length - 1" class="text-center q-pa-md">
+        <q-item v-else-if="scope.index === itemsComp.length - 1" class="text-center q-pa-md">
           <q-pagination
               :modelValue="page"
               :max="maxPages"
@@ -168,9 +168,9 @@ export default {
     quickListsIsMobile() {
       return QuickListsHelpers.quickListsIsMobile();
     },
-    title() {
-      return this.headers.find((header) => header.field !== "id");
-    },
+    // title() {
+    //   return this.headers.find((header) => header.field !== "id");
+    // },
     headers() {
       return QuickListsHelpers.SupaerTableHeaders(
           this.model,
@@ -183,13 +183,16 @@ export default {
       let result = [];
       if (!this.disabled) {
         result.push({ label: "", id: null });  // Empty item for search input
-        result = [...result, ...this.items.map(item => ({
-          label: item[this.title.field],
-          id: item.id
-        }))];
         if (this.allowAll) {
           result.push({ label: "All", id: null });
         }
+        for (const item of this.items) {
+          result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
+        }
+        // result = [...result, ...this.items.map(item => ({
+        //   label: item[this.model.titleKey],
+        //   id: item[this.model.primaryKey]
+        // }))];
       }
       return result;
     },
