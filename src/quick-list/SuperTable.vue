@@ -73,7 +73,7 @@
                     :key="filterInput.name"
                     :modelField="filterInput"
                     v-model="filters[filterInput.name]"
-                    :model="filterInput.meta.relatedModel"
+                    :model="filterInput.meta.field.parent"
                     class="q-ma-sm col-grow"
                     dense
                     :user="user"

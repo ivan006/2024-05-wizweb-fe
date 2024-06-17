@@ -152,7 +152,7 @@ export default {
   methods: {
     clickParent(item, header) {
       console.log(123)
-      const model = header.meta.relatedModel;
+      const model = header.meta.field.parent;
       model.openRecord(item[model.primaryKey]);
     },
     truncateStr(str) {

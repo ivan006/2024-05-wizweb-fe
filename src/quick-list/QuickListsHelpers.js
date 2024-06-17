@@ -153,7 +153,7 @@ class QuickListsHelpers {
             if (computedAttr.usageType.startsWith('relForeignKey')) {
                 // do nothing
             } else if (computedAttr.usageType.startsWith('relLookup')) {
-                const relatedAttrs = this.computedAttrs(computedAttr.meta.relatedModel, excludedCols);
+                const relatedAttrs = this.computedAttrs(computedAttr.meta.field.parent, excludedCols);
                 let headerChildren = [];
                 for (const relatedAttr of relatedAttrs) {
                     if (relatedAttr.important === true) {

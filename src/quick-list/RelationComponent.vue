@@ -21,7 +21,7 @@
               :canEdit="false"
               :modelValue="modelValue"
               @update:modelValue="input"
-              :model="configs.meta.relatedModel"
+              :model="configs.meta.field.parent"
           ></SuperTable>
         </q-card-section>
       </q-card>
@@ -63,11 +63,11 @@ export default {
   },
   computed: {
     isNullable() {
-      return this.configs.meta.relatedModel.fields()[this.foreignKey]
+      return this.configs.meta.field.parent.fields()[this.foreignKey]
           .isNullable;
     },
     displayNameField() {
-      const relatedModelFields = this.configs.meta.relatedModel.fields();
+      const relatedModelFields = this.configs.meta.field.parent.fields();
       return Object.keys(relatedModelFields).find(
           (fName) => fName !== "id" && relatedModelFields[fName] instanceof Attribute
       );
@@ -75,7 +75,9 @@ export default {
     computedValue: {
       get() {
         let result = "";
-        const entities = this.configs.meta.relatedModel
+        console.log("this.configs.meta.field")
+        console.log(this.configs.meta)
+        const entities = this.configs.meta.field.parent
             .query()
             .whereId(+this.modelValue)
             .get();

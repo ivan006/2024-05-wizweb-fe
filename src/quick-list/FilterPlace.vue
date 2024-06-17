@@ -28,7 +28,7 @@
                     allowAll
                     v-if="typeof filtersData[childFilter.name] !== 'undefined'"
                     :modelField="childFilter"
-                    :model="childFilter.meta.relatedModel"
+                    :model="childFilter.meta.field.parent"
                     :filters="getFilters(childFilter)"
                     v-model="filtersData[childFilter.name]"
                     :disabled="
@@ -107,7 +107,7 @@ export default {
             this.filtersData[placeField.name]
         ) {
           let displayName = this.fetchDisplayNameFromVuex(
-              placeField.meta.relatedModel,
+              placeField.meta.field.parent,
               this.filtersData[placeField.name]
           );
           if (displayName) {
