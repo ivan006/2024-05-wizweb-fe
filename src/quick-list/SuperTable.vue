@@ -159,7 +159,7 @@
       <div class="q-my-md">
         <template v-if="activeTab.value == 'table'">
           <SuperTableTable
-              :items="items"
+              :items="itemsQueried"
               :loading="loading"
               :superOptions="{
                 headers: headers,
@@ -170,6 +170,7 @@
                 currentParentRel: currentParentRel,
                 user: user,
               }"
+              @clickRow="clickRow"
           />
           <!--:itemsLength="itemsLength"-->
           <!--@clickRow="clickRow"-->
@@ -487,17 +488,17 @@ export default {
       );
       return result;
     },
-    // items() {
-    //   const result = this.model
-    //       .query()
-    //       .where((item) => {
-    //         return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
-    //       })
-    //       .withAll()
-    //       .orderBy(`${this.model.primaryKey}`, "desc")
-    //       .get();
-    //   return result;
-    // },
+    itemsQueried() {
+      const result = this.model
+          .query()
+          .where((item) => {
+            return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
+          })
+          .withAll()
+          .orderBy(`${this.model.primaryKey}`, "desc")
+          .get();
+      return result;
+    },
     pKey() {
       return this.model.primaryKey;
     },
