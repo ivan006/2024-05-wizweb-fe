@@ -106,6 +106,7 @@
         <template v-if="activeTab.value == 'table'">
           <SuperTableTable
               :items="items"
+              :loading="loading"
               :superOptions="{
                 headers: headers,
                 modelFields: modelFields,

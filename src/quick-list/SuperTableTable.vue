@@ -69,6 +69,12 @@ export default {
         return null;
       },
     },
+    loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     superOptions: {
       type: Object,
       default() {
@@ -86,7 +92,7 @@ export default {
   data() {
     return {
       sortBy: [],
-      loading: false,
+      // loading: false,
       pagination: {
         page: 1,
         rowsPerPage: 10,
@@ -194,7 +200,6 @@ export default {
 .qTable .q-tr {
   cursor: pointer;
 }
-
 
 .qTable {
   box-shadow: none !important;
