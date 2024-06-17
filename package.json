@@ -54,7 +54,7 @@
   },
   "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.4",
-    "vite": "^5.2.11"
+    "vite": "^2.9.18",
+    "@vitejs/plugin-vue": "^2.0.0"
   }
 }
