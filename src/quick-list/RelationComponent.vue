@@ -22,6 +22,8 @@
               :modelValue="modelValue"
               @update:modelValue="input"
               :model="configs.meta.field.parent"
+              :rules="rules"
+
           ></SuperTable>
         </q-card-section>
       </q-card>
@@ -53,6 +55,12 @@ export default {
     readonly: {
       type: Boolean,
       default: false,
+    },
+    rules: {
+      type: Array,
+      default() {
+        return [() => true];
+      },
     },
   },
   data() {

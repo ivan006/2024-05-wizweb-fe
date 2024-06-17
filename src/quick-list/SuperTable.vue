@@ -22,20 +22,41 @@
       </template>
     </div>
     <template v-if="isForSelectingRelation">
-      <SuperTableList
+      <!--<SuperTableList-->
+      <!--    :items="items"-->
+      <!--    :modelValue="modelValue"-->
+      <!--    @update:modelValue="clickRow"-->
+      <!--    :superOptions="{-->
+      <!--    headers: headers,-->
+      <!--    modelFields: modelFields,-->
+      <!--    displayMapField: displayMapField,-->
+      <!--    model: model,-->
+      <!--    canEdit: canEdit,-->
+      <!--    currentParentRel: currentParentRel,-->
+      <!--    user: user,-->
+      <!--  }"-->
+      <!--/>-->
+      <SuperSelect
+          allowAll
+          dense
+
+          :page="options.page"
+          @update:page="pageUpdate"
+          :maxPages="maxPages"
+          @click="activateAndFetchData"
           :items="items"
+          :loading="loading"
+          :rules="rules"
           :modelValue="modelValue"
           @update:modelValue="clickRow"
-          :superOptions="{
-          headers: headers,
-          modelFields: modelFields,
-          displayMapField: displayMapField,
-          model: model,
-          canEdit: canEdit,
-          currentParentRel: currentParentRel,
-          user: user,
-        }"
+          :model="model"
+          :modelField="modelField"
       />
+
+      <!--:key="filterInput.name"-->
+      <!--:model="filterInput.meta.field.parent"-->
+      <!--:modelField="filterInput"-->
+      <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
       <DestructableExpansionPanels
@@ -68,16 +89,50 @@
               <template
                   v-if="filterInput.usageType.startsWith('relForeignKey')"
               >
-                <SuperSelect
-                    allowAll
-                    :key="filterInput.name"
-                    :modelField="filterInput"
+                <!--<SuperSelect-->
+                <!--    allowAll-->
+                <!--    :key="filterInput.name"-->
+                <!--    :modelField="filterInput"-->
+                <!--    v-model="filters[filterInput.name]"-->
+                <!--    :model="filterInput.meta.field.parent"-->
+                <!--    class="q-ma-sm col-grow"-->
+                <!--    dense-->
+                <!--    :user="user"-->
+
+
+                <!--    :page="options.page"-->
+                <!--    @update:page="pageUpdate"-->
+                <!--    :maxPages="maxPages"-->
+                <!--    @click="activateAndFetchData"-->
+                <!--    :items="items"-->
+                <!--    :loading="loading"-->
+                <!--    :rules="rules"-->
+                <!--/>-->
+
+                <!--<RelationComponent-->
+                <!--  :modelField="filterInput"-->
+                <!--  v-model="filters[filterInput.name].value"-->
+
+                <!--  :page="options.page"-->
+                <!--  @update:page="pageUpdate"-->
+                <!--  :maxPages="maxPages"-->
+                <!--  @click="activateAndFetchData"-->
+                <!--  :items="items"-->
+                <!--  :loading="loading"-->
+                <!--  :rules="rules"-->
+                <!--/>-->
+
+                <SuperTable
+                    :isForSelectingRelation="true"
+                    :canEdit="false"
                     v-model="filters[filterInput.name]"
                     :model="filterInput.meta.field.parent"
-                    class="q-ma-sm col-grow"
-                    dense
-                    :user="user"
+                    :rules="[() => true]"
+                    :modelField="filterInput"
+                    class="q-mr-sm"
+
                 />
+                <!--v-model="filters[filterInput.name].value"-->
               </template>
               <template v-if="filterInput.usageType == 'timeRangeStart'">
                 <FilterTime
@@ -205,7 +260,7 @@
 <script>
 import moment from "moment";
 import "moment-timezone";
-import CreateEditForm from "./CreateEditForm.vue";
+// import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperTableCalendar from "./SuperTableCalendar.vue";
 import SuperTableGrid from "./SuperTableGrid.vue";
@@ -217,10 +272,21 @@ import FilterTime from "./FilterTime.vue";
 import FilterPlace from "./FilterPlace.vue";
 import DestructableExpansionPanels from "./DestructableExpansionPanels.vue";
 import CreateButton from "./CreateButton.vue";
+import RelationComponent from "./RelationComponent.vue";
+
+import { defineAsyncComponent } from 'vue'
+
+const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
+    import('./CreateEditForm.vue')
+);
+const AsyncComponentSuperTable = defineAsyncComponent(() =>
+    import('./SuperTable.vue')
+);
 
 export default {
   name: "SuperTable",
   components: {
+    RelationComponent,
     CreateButton,
     DestructableExpansionPanels,
     FilterPlace,
@@ -231,7 +297,8 @@ export default {
     SuperTableTable,
     SuperTableGrid,
     SuperTableCalendar,
-    CreateEditForm,
+    CreateEditForm: AsyncComponentCreateEditForm,
+    SuperTable: AsyncComponentSuperTable,
   },
   props: {
     forcedFilters: {
@@ -291,6 +358,16 @@ export default {
       default() {
         return "";
       },
+    },
+    rules: {
+      type: Array,
+      default() {
+        return [() => true];
+      },
+    },
+    modelField: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -513,6 +590,8 @@ export default {
       this.createItemData.showModal = false;
     },
     async fetchData() {
+      if (!this.activated && this.isForSelectingRelation) return;
+
       this.loading = true;
       let rules = [];
       if (this.model.rules?.readables) {
@@ -565,6 +644,12 @@ export default {
       }
       this.itemsLength = count; // Assuming your API returns a total count
     },
+    activateAndFetchData() {
+      if (!this.activated) {
+        this.activated = true;
+        this.fetchData();
+      }
+    },
   },
   watch: {
     filters: {
@@ -609,8 +694,10 @@ export default {
         };
       }
     }
-    if (!this.loading) {
-      this.fetchData();
+    if (this.activated || !this.isForSelectingRelation){
+      if (!this.loading) {
+        this.fetchData();
+      }
     }
   },
 };

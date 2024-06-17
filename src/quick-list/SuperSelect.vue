@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-select
+        style="min-width: 200px;"
         v-model="internalModelValue"
         @input="updateValue"
         :options="items"
@@ -14,8 +15,8 @@
         outlined
         :menu-props="{ offsetY: true }"
         :rules="rules"
-        @click="activateAndFetchData"
     >
+      <!--@click="activateAndFetchData"-->
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
           <q-item-section>
@@ -32,12 +33,16 @@
         </q-item>
         <q-item v-else-if="scope.index === items.length - 1" class="text-center q-pa-md">
           <q-pagination
-              v-model="pagination.page"
-              :max="totalPages"
-              @input="fetchData"
+              :modelValue="page"
+              :max="maxPages"
+              @update:modelValue="pageUpdate"
               input
               class="q-ma-md"
           />
+
+          <!--@update:modelValue="fetchData"-->
+          <!--v-model="pagination.page"-->
+          <!--:max="totalPages"-->
         </q-item>
         <q-item v-else v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
           <q-item-section>
@@ -71,6 +76,14 @@ import QuickListsHelpers from "./QuickListsHelpers";
 export default {
   name: "SuperSelect",
   props: {
+    maxPages: {
+      type: [Number, Object],
+      default: 1,
+    },
+    page: {
+      type: [Number, Object],
+      default: 1,
+    },
     modelValue: {
       type: [Number, Object],
       default: null,
@@ -115,26 +128,35 @@ export default {
       type: Boolean,
       default: false,
     },
-    user: {
-      type: Object,
-      default: () => ({}),
-    },
+
     rules: {
       type: Array,
       default: () => ([() => true]),
+    },
+    items: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
     },
   },
   data() {
     return {
       timeout: null,
       search: "",
-      pagination: {
-        page: 1,
-        limit: 5,
-      },
+      // pagination: {
+      //   page: 1,
+      //   limit: 5,
+      // },
       totalPages: 1,
-      loading: false,
-      fetchedItems: [],
+      // loading: false,
+      // fetchedItems: [],
       internalModelValue: this.modelValue,
       activated: false,
     };
@@ -157,11 +179,11 @@ export default {
           this.displayMapField
       );
     },
-    items() {
+    itemsComp() {
       let result = [];
       if (!this.disabled) {
         result.push({ label: "", id: null });  // Empty item for search input
-        result = [...result, ...this.fetchedItems.map(item => ({
+        result = [...result, ...this.items.map(item => ({
           label: item[this.title.field],
           id: item.id
         }))];
@@ -171,49 +193,20 @@ export default {
       }
       return result;
     },
-    filtersComp() {
-      const filters = JSON.parse(this.filters);
-      if (this.title && this.search) {
-        filters[this.title.field] = this.search;
-      }
-      return filters;
-    },
+    // filtersComp() {
+    //   const filters = JSON.parse(this.filters);
+    //   if (this.title && this.search) {
+    //     filters[this.title.field] = this.search;
+    //   }
+    //   return filters;
+    // },
   },
   methods: {
+    pageUpdate(value) {
+      this.$emit('update:page', value);
+    },
     updateValue(value) {
       this.$emit('update:modelValue', value);
-    },
-    async fetchData() {
-      if (!this.activated) return;
-
-      let linkables = [];
-      if (this.modelField.fieldExtras?.relationRules?.linkables) {
-        linkables = this.modelField.fieldExtras.relationRules.linkables(this.user);
-      }
-
-      this.loading = true;
-
-      const response = await this.model.FetchAll(
-          [],
-          { ...linkables, order: "id.desc" },
-          { Prefer: "count=exact" },
-          {
-            page: this.pagination.page,
-            limit: this.pagination.limit,
-            filters: this.filtersComp,
-            clearPrimaryModelOnly: false,
-          }
-      );
-
-      this.fetchedItems = response.response.data.data;
-      this.totalPages = Math.ceil(response.response.data.total / this.pagination.limit);
-      this.loading = false;
-    },
-    activateAndFetchData() {
-      if (!this.activated) {
-        this.activated = true;
-        this.fetchData();
-      }
     },
   },
   watch: {

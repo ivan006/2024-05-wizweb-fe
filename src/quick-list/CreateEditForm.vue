@@ -11,14 +11,30 @@
             <template v-else-if="field.usageType.startsWith('rel')">
               <template v-if="field.usageType.startsWith('relLookup')"></template>
               <template v-else-if="field.usageType.startsWith('relForeignKeyNormal')">
-                <SuperSelect
-                    :modelField="field"
+                <!--<SuperSelect-->
+                <!--    :modelField="field"-->
+                <!--    v-model="itemData[field.name]"-->
+                <!--    :model="field.meta.field.parent"-->
+                <!--    variant="outlined"-->
+                <!--    density="default"-->
+                <!--    :user="superOptions.user"-->
+                <!--    :rules="[() => true]"-->
+                <!--/>-->
+
+                <!--<RelationComponent-->
+                <!--    :configs="field"-->
+                <!--    v-model="itemData[field.name]"-->
+                <!--    readonly-->
+                <!--    :rules="[() => true]"-->
+                <!--/>-->
+
+                <SuperTable
+                    :isForSelectingRelation="true"
+                    :canEdit="false"
                     v-model="itemData[field.name]"
                     :model="field.meta.field.parent"
-                    variant="outlined"
-                    density="default"
-                    :user="superOptions.user"
                     :rules="[() => true]"
+                    :modelField="field"
                 />
               </template>
               <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
@@ -98,6 +114,7 @@
                   readonly
                   style="display: none"
                   outlined
+                  dense
               />
             </template>
             <template v-else-if="field.usageType == 'normal'">
@@ -107,6 +124,7 @@
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
                     outlined
+                    dense
                 />
               </template>
               <template v-else-if="field.dataType === 'boolean'">
@@ -123,6 +141,7 @@
                     :rules="field.meta.rules"
                     type="number"
                     outlined
+                    dense
                 />
               </template>
               <template v-else-if="field.dataType === 'attr'">
@@ -131,6 +150,7 @@
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
                     outlined
+                    dense
                 />
               </template>
             </template>
@@ -140,6 +160,7 @@
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
                   outlined
+                  dense
               />
             </template>
           </div>
@@ -161,6 +182,12 @@ import moment from "moment";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperSelect from "./SuperSelect.vue";
+// import SuperTable from "./SuperTable.vue";
+import { defineAsyncComponent } from 'vue'
+
+const AsyncSuperTableComponent = defineAsyncComponent(() =>
+    import('./SuperTable.vue')
+);
 
 export default {
   name: "CreateEditForm",
@@ -170,6 +197,9 @@ export default {
     DateAndTimePicker,
     DateAndTimeRangePicker,
     RelationComponent,
+    // SuperTable,
+    // SuperTable: () => import("./SuperTable.vue"),
+    SuperTable: AsyncSuperTableComponent
   },
   props: {
     title: {
