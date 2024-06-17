@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="canEdit" class="row items-center q-mb-md q-gutter-sm">
+    <div v-if="canEdit && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -10,14 +10,14 @@
             @createItem="createItem"
             :model="model"
             :superOptions="{
-            headers: headers,
-            modelFields: modelFields,
-            displayMapField: displayMapField,
-            model: model,
-            canEdit: canEdit,
-            currentParentRel: currentParentRel,
-            user: user,
-          }"
+              headers: headers,
+              modelFields: modelFields,
+              displayMapField: displayMapField,
+              model: model,
+              canEdit: canEdit,
+              currentParentRel: currentParentRel,
+              user: user,
+            }"
         />
       </template>
     </div>
@@ -48,7 +48,7 @@
           :loading="loading"
           :rules="rules"
           :modelValue="modelValue"
-          @update:modelValue="clickRow"
+          @update:modelValue="(param)=>{clickRow(param.id)}"
           :model="model"
           :modelField="modelField"
       />
@@ -64,23 +64,25 @@
           title="Settings"
       >
         <div class="row items-center wrap">
-          <q-select
-              style="width: 250px"
-              :options="[
+          <div class="q-mr-sm">
+            <q-select
+                style="width: 200px"
+                :options="[
               { label: 'Table', value: 'table' },
               { label: 'Grid', value: 'grid' },
               { label: 'Map', value: 'map' },
               { label: 'Calendar', value: 'calendar' },
             ]"
-              v-model="activeTab"
-              label="View As"
-              option-label="label"
-              option-value="value"
-              dense
-              class="col-grow q-mr-sm"
-              filled
-              :rules="[() => true]"
-          />
+                v-model="activeTab"
+                label="View As"
+                option-label="label"
+                option-value="value"
+                dense
+                class="col-grow "
+                filled
+                :rules="[() => true]"
+            />
+          </div>
           <template
               v-for="filterInput of filterInputs"
               :key="filterInput.name"
@@ -235,7 +237,7 @@
       </div>
     </template>
     <template v-if="canEdit">
-      <q-dialog v-model="createItemData.showModal" max-width="800px">
+      <q-dialog v-model="createItemData.showModal">
         <CreateEditForm
             title="Create Item"
             v-if="createItemData.showModal"
@@ -243,14 +245,15 @@
             @submit="createItemSubmit"
             @cancel="createItemData.showModal = false"
             :superOptions="{
-            headers: headers,
-            modelFields: modelFields,
-            displayMapField: displayMapField,
-            model: model,
-            canEdit: canEdit,
-            currentParentRel: currentParentRel,
-            user: user,
-          }"
+              headers: headers,
+              modelFields: modelFields,
+              displayMapField: displayMapField,
+              model: model,
+              canEdit: canEdit,
+              currentParentRel: currentParentRel,
+              user: user,
+            }"
+            style="width: 700px; max-width: 80vw;"
         />
       </q-dialog>
     </template>
@@ -330,7 +333,7 @@ export default {
       },
     },
     modelValue: {
-      type: [Number, Object],
+      type: [Number, Object, String],
       default() {
         return null;
       },
@@ -341,12 +344,12 @@ export default {
         return false;
       },
     },
-    canEdit: {
-      type: Boolean,
-      default() {
-        return false;
-      },
-    },
+    // canEdit: {
+    //   type: Boolean,
+    //   default() {
+    //     return false;
+    //   },
+    // },
     currentParentRel: {
       type: Object,
       default() {
@@ -416,6 +419,10 @@ export default {
           this.currentParentRel.currentParentRecord.foreignKeyToParentRecord,
         ];
       }
+      return result;
+    },
+    canEdit() {
+      const result = this.model.rules.creatable(this.user)
       return result;
     },
     filtersComp() {
@@ -560,7 +567,9 @@ export default {
       if (this.isForSelectingRelation) {
         this.highlightedRow = item.id;
       }
-      this.model.openRecord(item[this.pKey]);
+      if (!this.isForSelectingRelation){
+        this.model.openRecord(item[this.pKey]);
+      }
 
       this.$emit("update:modelValue", item);
     },

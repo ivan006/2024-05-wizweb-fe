@@ -9,6 +9,13 @@ export default class DBBaseModel extends Model {
 
     static openRecord(id){}
 
+    static rules = {
+        readables: (user) => true,
+        readable: (user, item) => true,
+        editable: (user, item) => true,
+        creatable: (user) => true,
+    };
+
     static NormalizeRecursive(value) {
         const result = this.NormalizeRecursiveChild(
             value,

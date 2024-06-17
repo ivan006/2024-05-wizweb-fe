@@ -93,11 +93,12 @@ export default class DBCrudCacheSet extends Model {
                 (field instanceof BelongsTo || field instanceof MorphTo)
             ) {
                 const relatedModelFields = field.parent.fields()
-                const lookupDisplayField = Object.keys(relatedModelFields).find(
-                    (fName) =>
-                        fName !== 'id' &&
-                        relatedModelFields[fName] instanceof Attribute
-                )
+                // const lookupDisplayField = Object.keys(relatedModelFields).find(
+                //     (fName) =>
+                //         fName !== 'id' &&
+                //         relatedModelFields[fName] instanceof Attribute
+                // )
+                const lookupDisplayField = field.parent.titleKey
 
 
                 let rules = []

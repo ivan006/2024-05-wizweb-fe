@@ -3,7 +3,7 @@
     <q-select
         style="min-width: 200px;"
         v-model="internalModelValue"
-        @input="updateValue"
+        @update:modelValue="updateValue"
         :options="itemsComp"
         :label="modelField.label"
         option-label="label"
@@ -84,7 +84,7 @@ export default {
       default: 1,
     },
     modelValue: {
-      type: [Number, Object],
+      type: [Number, Object, String],
       default: null,
     },
     filters: {

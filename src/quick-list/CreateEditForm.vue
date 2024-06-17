@@ -6,7 +6,7 @@
     <q-card-section>
       <q-form ref="editForm">
         <template v-for="field in superOptions.modelFields" :key="field.name">
-          <div class="q-mb-sm">
+          <div class="q-mb-sm" v-if="superOptions.model.primaryKey !== field.name">
             <template v-if="field.dataType === 'uid'"></template>
             <template v-else-if="field.usageType.startsWith('rel')">
               <template v-if="field.usageType.startsWith('relLookup')"></template>

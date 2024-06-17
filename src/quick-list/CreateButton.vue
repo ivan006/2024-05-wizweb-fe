@@ -1,18 +1,16 @@
 <template>
   <div>
-    <q-tooltip bottom :disable="canCreatePart2">
-      <template v-slot:activator="{ props }">
-        <div v-bind="props">
-          <q-btn
-              @click="emitCreateItem"
-              :disable="!canCreatePart2"
-          >
-            Create
-          </q-btn>
-        </div>
-      </template>
-      <span>{{ canCreateMsg }}</span>
-    </q-tooltip>
+    <q-btn
+        @click="emitCreateItem"
+        :disable="!canEdit"
+    >
+      <!--:disable="!canCreatePart2"-->
+      Create
+      <q-tooltip v-if="canCreateMsg.length" bottom :disable="canCreatePart2">
+        <span>{{ canCreateMsg }}</span>
+      </q-tooltip>
+    </q-btn>
+
   </div>
 </template>
 
@@ -20,6 +18,10 @@
 export default {
   name: "CreateButton",
   props: {
+    model: {
+      type: [Object, Function],
+      required: true,
+    },
     superOptions: {
       type: Object,
       default() {
@@ -27,7 +29,7 @@ export default {
           headers: [],
           modelFields: [],
           displayMapField: false,
-          model: {},
+          // model: {},
           canEdit: false,
           currentParentRecord: {},
           user: {},
@@ -38,43 +40,47 @@ export default {
   computed: {
     canCreate() {
       let result = false;
-      if (this.superOptions.currentParentRel?.field?.fieldExtras?.relationRules?.creatable) {
-        result = this.superOptions.currentParentRel.field.fieldExtras.relationRules.creatable(
-            this.superOptions.user,
-            this.superOptions.currentParentRel.currentParentRecord.item,
-        );
-      }
+      // if (this.superOptions.currentParentRel?.field?.fieldExtras?.relationRules?.creatable) {
+      //   result = this.superOptions.currentParentRel.field.fieldExtras.relationRules.creatable(
+      //       this.superOptions.user,
+      //       this.superOptions.currentParentRel.currentParentRecord.item,
+      //   );
+      // }
       return result;
     },
     canCreateMsgType() {
       let result = "";
-      if (this.superOptions.currentParentRel?.currentParentRecord) {
-        if (this.superOptions.currentParentRel?.currentParentRecord.model.name === "DBProviderGroup") {
-          result = "provider";
-        } else if (this.superOptions.currentParentRel?.currentParentRecord.model.name === "DBCustomerGroup") {
-          result = "customer";
-        }
-      }
+      // if (this.superOptions.currentParentRel?.currentParentRecord) {
+      //   if (this.superOptions.currentParentRel?.currentParentRecord.model.name === "DBProviderGroup") {
+      //     result = "provider";
+      //   } else if (this.superOptions.currentParentRel?.currentParentRecord.model.name === "DBCustomerGroup") {
+      //     result = "customer";
+      //   }
+      // }
       return result;
     },
     canCreatePart2() {
       let result = this.canCreate;
-      if (
-          this.superOptions.currentParentRel?.currentParentRecord &&
-          this.superOptions.currentParentRel.currentParentRecord.relationType === "relChildrenChildrenApplicationType"
-      ) {
-        result = this.canCreate || !!this.customerGroupsAssociatedWithUser.length;
-      }
+      // if (
+      //     this.superOptions.currentParentRel?.currentParentRecord &&
+      //     this.superOptions.currentParentRel.currentParentRecord.relationType === "relChildrenChildrenApplicationType"
+      // ) {
+      //   result = this.canCreate || !!this.customerGroupsAssociatedWithUser.length;
+      // }
+      return result;
+    },
+    canEdit() {
+      const result = this.model.rules.creatable(this.user)
       return result;
     },
     canCreateMsg() {
       let result = this.getMsg(this.canCreateMsgType);
-      if (
-          this.superOptions.currentParentRel?.currentParentRecord &&
-          this.superOptions.currentParentRel.currentParentRecord.relationType === "relChildrenChildrenApplicationType"
-      ) {
-        result = this.getMsg("customer");
-      }
+      // if (
+      //     this.superOptions.currentParentRel?.currentParentRecord &&
+      //     this.superOptions.currentParentRel.currentParentRecord.relationType === "relChildrenChildrenApplicationType"
+      // ) {
+      //   result = this.getMsg("customer");
+      // }
       return result;
     },
   },
@@ -84,13 +90,13 @@ export default {
     },
     getMsg(type) {
       let result = "";
-      if (Array.isArray(type)) {
-        if (type.length > 1) {
-          result = `To create first set your active ${type[0]} group and active ${type[1]} group`;
-        }
-      } else {
-        result = `To create first set your active ${type} group`;
-      }
+      // if (Array.isArray(type)) {
+      //   if (type.length > 1) {
+      //     result = `To create first set your active ${type[0]} group and active ${type[1]} group`;
+      //   }
+      // } else {
+      //   result = `To create first set your active ${type} group`;
+      // }
       return result;
     },
   },
