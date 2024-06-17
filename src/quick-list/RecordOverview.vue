@@ -22,19 +22,15 @@
           </template>
           <template v-else>
             <template v-if="index === 0">
-              <div class="text-h6">
-                <FormattedColumn
-                    :header="header"
-                    :item="item"
-                    :superOptions="superOptions"
-                />
-              </div>
+              <FormattedColumn
+                  :header="header"
+                  :item="item"
+                  :superOptions="superOptions"
+                  isHeading
+              />
             </template>
             <template v-else>
               <div>
-                <div class="text-caption">
-                  {{ header.label }}
-                </div>
                 <FormattedColumn
                     :key="index"
                     :header="header"
@@ -47,9 +43,6 @@
         </template>
         <template v-else>
           <div>
-            <div class="text-caption">
-              {{ header.label }}
-            </div>
             <FormattedColumn
                 :key="index"
                 :header="header"

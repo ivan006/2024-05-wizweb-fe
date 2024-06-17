@@ -16,12 +16,13 @@
     </q-tabs>
     <q-tab-panels v-model="activeTab">
       <q-tab-panel name="tab">
-        <template v-if="model.displayMapFull && model.displayMapFull.rows">
-          <RecordOverviewDynamic
-              :item="item"
-              :childRelations="childRelations"
-              :filteredChildRelations="filteredChildRelations"
-              :superOptions="{
+        <template v-if="!loading">
+          <template v-if="model.displayMapFull && model.displayMapFull.rows">
+            <RecordOverviewDynamic
+                :item="item"
+                :childRelations="childRelations"
+                :filteredChildRelations="filteredChildRelations"
+                :superOptions="{
               headers: headers,
               modelFields: modelFields,
               displayMapField: displayMapField,
@@ -30,25 +31,29 @@
               currentParentRel: {},
               user: user,
             }"
-          >
-            <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-              <slot :name="slotName" v-bind="slotProps"></slot>
-            </template>
-          </RecordOverviewDynamic>
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
+              </template>
+            </RecordOverviewDynamic>
+          </template>
+          <template v-else>
+            <RecordOverview
+                :item="item"
+                :superOptions="{
+              headers: headers,
+              modelFields: modelFields,
+              displayMapField: displayMapField,
+              model: model,
+              canEdit: canEdit,
+              currentParentRel: {},
+              user: user,
+            }"
+            />
+          </template>
         </template>
         <template v-else>
-          <RecordOverview
-              :item="item"
-              :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: {},
-              user: user,
-            }"
-          />
+          Loading...
         </template>
       </q-tab-panel>
       <q-tab-panel
@@ -107,6 +112,7 @@ export default {
   data() {
     return {
       activeTab: 'tab',
+      loading: true,
     };
   },
   computed: {
@@ -197,10 +203,15 @@ export default {
       };
     },
     fetchData() {
+      this.loading = true
       this.model
           .FetchById(this.id, [], { flags: {}, moreHeaders: {}, rels: [] })
-          .then(() => {})
-          .catch(() => {});
+          .then(() => {
+            this.loading = false
+          })
+          .catch(() => {
+            this.loading = false
+          });
     },
   },
   mounted() {

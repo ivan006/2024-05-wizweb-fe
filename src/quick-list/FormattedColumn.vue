@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div :class="isHeading ? 'text-h6' : ''">
+    <template v-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
+      <div class="text-caption">
+        {{ header.label }}
+      </div>
+    </template>
     <template v-if="header.usageType.startsWith('relChildren')"></template>
     <template
         v-else-if="
@@ -105,6 +110,18 @@ export default {
   },
   props: {
     isTag: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    isHeading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    hideLabel: {
       type: Boolean,
       default() {
         return false;

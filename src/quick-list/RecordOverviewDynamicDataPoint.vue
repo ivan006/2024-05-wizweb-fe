@@ -108,6 +108,7 @@
                             :header="compHeader"
                             :item="item"
                             :superOptions="superOptions"
+                            hideLabel
                         />
                     </template>
                 </component>
