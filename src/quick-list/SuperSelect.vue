@@ -12,7 +12,7 @@
         :loading="loading"
         :readonly="readonly"
         :dense="density === 'compact'"
-        outlined
+        filled
         :menu-props="{ offsetY: true }"
         :rules="rules"
     >
@@ -37,7 +37,6 @@
               :max="maxPages"
               @update:modelValue="pageUpdate"
               input
-              class="q-ma-md"
           />
 
           <!--@update:modelValue="fetchData"-->
@@ -189,6 +188,7 @@ export default {
         for (const item of this.items) {
           result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
         }
+        result.push({ label: "", id: null });  // Empty item for search input
         // result = [...result, ...this.items.map(item => ({
         //   label: item[this.model.titleKey],
         //   id: item[this.model.primaryKey]

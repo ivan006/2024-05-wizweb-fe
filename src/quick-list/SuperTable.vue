@@ -78,7 +78,7 @@
               option-value="value"
               dense
               class="col-grow q-mr-sm"
-              outlined
+              filled
               :rules="[() => true]"
           />
           <template

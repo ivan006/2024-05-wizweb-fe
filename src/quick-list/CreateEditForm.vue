@@ -15,7 +15,7 @@
                 <!--    :modelField="field"-->
                 <!--    v-model="itemData[field.name]"-->
                 <!--    :model="field.meta.field.parent"-->
-                <!--    variant="outlined"-->
+                <!--    variant="filled"-->
                 <!--    density="default"-->
                 <!--    :user="superOptions.user"-->
                 <!--    :rules="[() => true]"-->
@@ -50,7 +50,7 @@
                     v-model="itemData[field.name]"
                     :model="field.meta.field.parent"
                     readonly
-                    variant="outlined"
+                    variant="filled"
                     density="default"
                     :user="superOptions.user"
                 />
@@ -113,7 +113,7 @@
                   :rules="field.meta.rules"
                   readonly
                   style="display: none"
-                  outlined
+                  filled
                   dense
               />
             </template>
@@ -123,7 +123,7 @@
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
-                    outlined
+                    filled
                     dense
                 />
               </template>
@@ -140,16 +140,17 @@
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
                     type="number"
-                    outlined
+                    filled
                     dense
                 />
               </template>
               <template v-else-if="field.dataType === 'attr'">
+
                 <q-input
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
-                    outlined
+                    filled
                     dense
                 />
               </template>
@@ -159,7 +160,7 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
-                  outlined
+                  filled
                   dense
               />
             </template>
