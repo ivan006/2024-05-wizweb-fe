@@ -3,13 +3,13 @@
     <template v-if="dataPoint.xOrientation">
       <div class="">
         <div class="row">
-          <div class="q-pr-sm">
-            <template v-if="!dataPoint.hideLabel">
+          <template v-if="!dataPoint.hideLabel">
+            <div class="q-pr-sm">
               <div class="" style="font-weight: bold;">
                 {{ label }}:
               </div>
-            </template>
-          </div>
+            </div>
+          </template>
           <div>
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
               <template v-if="isRelChildren(compHeader)">
@@ -46,7 +46,9 @@
       <div class="row">
         <div class="column" style="height: 100%">
           <template v-if="!dataPoint.hideLabel">
-            <div class="text-caption">{{ label }}</div>
+            <div class="" style="font-weight: bold;">
+              {{ label }}:
+            </div>
           </template>
           <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
             <template v-if="isRelChildren(compHeader)">

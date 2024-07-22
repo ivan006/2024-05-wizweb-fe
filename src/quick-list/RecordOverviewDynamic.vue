@@ -1,12 +1,12 @@
 <template>
   <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="q-pa-sm">
     <template v-for="(row, index) in rows" :key="index">
-      <div class="row q-col-gutter-md">
+      <div class="row q-col-gutter-xs">
         <template v-for="(col, index2) in row.cols" :key="index2">
           <div :class="`col-${col.width}`">
             <template v-if="col.rows">
               <template v-for="(row2, index3) in col.rows" :key="index3">
-                <div class="row q-col-gutter-md">
+                <div class="row q-col-gutter-xs">
                   <template v-for="(col2, index4) in row2.cols" :key="index4">
                     <div :class="`col-${col2.width}`">
                       <RecordOverviewDynamicDataPoint
