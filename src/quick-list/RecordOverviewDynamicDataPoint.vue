@@ -22,20 +22,20 @@
                         :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
                     >
                       <template v-if="!!$slots[compRelation.field.name]" #create>
-                        <slot :name="compRelation.field.name"/>
+                        <slot :name="compRelation.field.name" />
                       </template>
                     </SuperTable>
                   </template>
                 </div>
               </template>
               <template v-else-if="dataPoint.type === 'component'">
-                <component :is="dataPoint.component" :item="item"/>
+                <component :is="asyncComponent" :item="item" />
               </template>
               <template v-else-if="dataPoint.type === 'function'">
                 {{ dataPoint.function(item) }}
               </template>
               <template v-else>
-                <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions"/>
+                <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" />
               </template>
             </component>
           </div>
@@ -58,20 +58,20 @@
                     :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
                 >
                   <template v-if="!!$slots[compRelation.field.name]" #create>
-                    <slot :name="compRelation.field.name"/>
+                    <slot :name="compRelation.field.name" />
                   </template>
                 </SuperTable>
               </template>
             </div>
           </template>
           <template v-else-if="dataPoint.type === 'component'">
-            <component :is="dataPoint.component" :item="item"/>
+            <component :is="asyncComponent" :item="item" />
           </template>
           <template v-else-if="dataPoint.type === 'function'">
             {{ dataPoint.function(item) }}
           </template>
           <template v-else>
-            <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel/>
+            <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
           </template>
         </component>
       </div>
@@ -81,7 +81,7 @@
 
 <script>
 import FormattedColumn from './FormattedColumn.vue'
-import {defineAsyncComponent} from 'vue';
+import { defineAsyncComponent } from 'vue';
 import RecordOverview from "./RecordOverview.vue";
 
 export default {
@@ -125,21 +125,13 @@ export default {
       },
     },
   },
-  methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e)
-    },
-    editItem(e) {
-      this.$emit('editItem', e)
-    },
-    clickRow(e) {
-      this.$emit('clickRow', e)
-    },
-    isRelChildren(header) {
-      return header.usageType && header.usageType.startsWith('relChildren');
-    }
-  },
   computed: {
+    asyncComponent() {
+      if (this.dataPoint.type === 'component' && this.dataPoint.componentPath) {
+        return defineAsyncComponent(this.dataPoint.componentPath);
+      }
+      return null;
+    },
     compHeader() {
       const result = this.superOptions.headers.find((header) => {
         return header.field == this.dataPoint.data
@@ -155,6 +147,20 @@ export default {
       }
       return result
     },
+  },
+  methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e)
+    },
+    editItem(e) {
+      this.$emit('editItem', e)
+    },
+    clickRow(e) {
+      this.$emit('clickRow', e)
+    },
+    isRelChildren(header) {
+      return header.usageType && header.usageType.startsWith('relChildren');
+    }
   },
 }
 </script>
