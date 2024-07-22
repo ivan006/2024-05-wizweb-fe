@@ -7,43 +7,22 @@
             <!-- Content of the first column -->
 
             <template v-if="!dataPoint.hideLabel">
-              <div
-                  class="text-caption"
-                  style="line-height: 1.6rem"
-              >
+              <div class="text-caption" style="line-height: 1.6rem">
                 {{ compHeader.label }}:
               </div>
             </template>
           </div>
           <div>
             <!-- Content of the second column -->
-            <component
-                :is="dataPoint.tag ? dataPoint.tag : 'div'"
-                :class="dataPoint.class ? dataPoint.class : ''"
-            >
-              <template
-                  v-if="
-                                    compHeader.usageType.startsWith(
-                                        'relChildren'
-                                    )
-                                "
-              >
+            <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+              <template v-if=" compHeader.usageType.startsWith( 'relChildren' ) ">
                 <div class="pt-1">
                   <template v-if="compRelation">
                     <SuperTable
-                        :currentParentRel="
-                                                compRelation
-                                            "
-                        :model="
-                                                compRelation.field.meta.field
-                                                    .related
-                                            "
+                        :currentParentRel=" compRelation "
+                        :model=" compRelation.field.meta.field.related "
                         :canEdit="superOptions.canEdit"
-                        :defaultViewModeProp="
-                                                dataPoint.relationViewMode
-                                                    ? dataPoint.relationViewMode
-                                                    : 'table'
-                                            "
+                        :defaultViewModeProp=" dataPoint.relationViewMode  ? dataPoint.relationViewMode : 'table' "
                     >
                       <template v-if="!!$slots[compRelation.field.name]" #create>
                         <slot :name="compRelation.field.name"/>
@@ -83,18 +62,10 @@
             <div class="pt-1">
               <template v-if="compRelation">
                 <SuperTable
-                    :currentParentRel="
-                                        compRelation
-                                    "
-                    :model="
-                                        compRelation.field.meta.field.related
-                                    "
+                    :currentParentRel=" compRelation "
+                    :model=" compRelation.field.meta.field.related "
                     :canEdit="superOptions.canEdit"
-                    :defaultViewModeProp="
-                                        dataPoint.relationViewMode
-                                            ? dataPoint.relationViewMode
-                                            : 'table'
-                                    "
+                    :defaultViewModeProp=" dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table' "
                 >
                   <template v-if="!!$slots[compRelation.field.name]" #create>
                     <slot :name="compRelation.field.name"/>
