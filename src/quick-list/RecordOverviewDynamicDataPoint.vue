@@ -28,6 +28,12 @@
                   </template>
                 </div>
               </template>
+              <template v-else-if="dataPoint.type === 'component'">
+                <component :is="dataPoint.component" :item="item"/>
+              </template>
+              <template v-else-if="dataPoint.type === 'function'">
+                {{ dataPoint.function(item) }}
+              </template>
               <template v-else>
                 <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions"/>
               </template>
@@ -57,6 +63,12 @@
                 </SuperTable>
               </template>
             </div>
+          </template>
+          <template v-else-if="dataPoint.type === 'component'">
+            <component :is="dataPoint.component" :item="item"/>
+          </template>
+          <template v-else-if="dataPoint.type === 'function'">
+            {{ dataPoint.function(item) }}
           </template>
           <template v-else>
             <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel/>
