@@ -4,8 +4,6 @@
       <div class="">
         <div class="d-flex flex-row">
           <div class="pr-2">
-            <!-- Content of the first column -->
-
             <template v-if="!dataPoint.hideLabel">
               <div class="text-caption" style="line-height: 1.6rem">
                 {{ compHeader.label }}:
@@ -13,16 +11,15 @@
             </template>
           </div>
           <div>
-            <!-- Content of the second column -->
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-              <template v-if=" compHeader.usageType.startsWith( 'relChildren' ) ">
+              <template v-if="isRelChildren(compHeader)">
                 <div class="pt-1">
                   <template v-if="compRelation">
                     <SuperTable
-                        :currentParentRel=" compRelation "
-                        :model=" compRelation.field.meta.field.related "
+                        :currentParentRel="compRelation"
+                        :model="compRelation.field.meta.field.related"
                         :canEdit="superOptions.canEdit"
-                        :defaultViewModeProp=" dataPoint.relationViewMode  ? dataPoint.relationViewMode : 'table' "
+                        :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
                     >
                       <template v-if="!!$slots[compRelation.field.name]" #create>
                         <slot :name="compRelation.field.name"/>
@@ -32,11 +29,7 @@
                 </div>
               </template>
               <template v-else>
-                <FormattedColumn
-                    :header="compHeader"
-                    :item="item"
-                    :superOptions="superOptions"
-                />
+                <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions"/>
               </template>
             </component>
           </div>
@@ -46,26 +39,17 @@
     <template v-else>
       <div class="d-flex flex-column" style="height: 100%">
         <template v-if="!dataPoint.hideLabel">
-          <div class="text-caption">
-            {{ compHeader.label }}
-          </div>
+          <div class="text-caption">{{ compHeader.label }}</div>
         </template>
-
-        <!--<component :key="index" :is="dataPoint.tag" :class="dataPoint.class">-->
-        <component
-            :is="dataPoint.tag ? dataPoint.tag : 'div'"
-            :class="dataPoint.class ? dataPoint.class : ''"
-        >
-          <template
-              v-if="compHeader.usageType.startsWith('relChildren')"
-          >
+        <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+          <template v-if="isRelChildren(compHeader)">
             <div class="pt-1">
               <template v-if="compRelation">
                 <SuperTable
-                    :currentParentRel=" compRelation "
-                    :model=" compRelation.field.meta.field.related "
+                    :currentParentRel="compRelation"
+                    :model="compRelation.field.meta.field.related"
                     :canEdit="superOptions.canEdit"
-                    :defaultViewModeProp=" dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table' "
+                    :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
                 >
                   <template v-if="!!$slots[compRelation.field.name]" #create>
                     <slot :name="compRelation.field.name"/>
@@ -75,12 +59,7 @@
             </div>
           </template>
           <template v-else>
-            <FormattedColumn
-                :header="compHeader"
-                :item="item"
-                :superOptions="superOptions"
-                hideLabel
-            />
+            <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel/>
           </template>
         </component>
       </div>
@@ -97,9 +76,7 @@ export default {
   name: 'RecordOverviewDynamicDataPoint',
   components: {
     RecordOverview,
-    SuperTable: defineAsyncComponent(() =>
-        import('./SuperTable.vue')
-    ),
+    SuperTable: defineAsyncComponent(() => import('./SuperTable.vue')),
     FormattedColumn,
   },
   props: {
@@ -146,27 +123,24 @@ export default {
     clickRow(e) {
       this.$emit('clickRow', e)
     },
+    isRelChildren(header) {
+      return header.usageType && header.usageType.startsWith('relChildren');
+    }
   },
   computed: {
     compHeader() {
       const result = this.superOptions.headers.find((header) => {
         return header.field == this.dataPoint.data
       })
-      // console.log(this.dataPoint.data)
-      // console.log("this.superOptions.headers")
-      // console.log(this.superOptions.headers)
-      // console.log(result)
       return result
     },
     compRelation() {
       let result = {}
-
-      if (this.compHeader.usageType.startsWith('relChildren')) {
+      if (this.compHeader && this.isRelChildren(this.compHeader)) {
         result = this.childRelations.find((relation) => {
           return relation.field.name == this.dataPoint.data
         })
       }
-
       return result
     },
   },
