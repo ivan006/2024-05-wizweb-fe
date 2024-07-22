@@ -3,9 +3,9 @@
     <template v-if="dataPoint.xOrientation">
       <div class="">
         <div class="row">
-          <div class="pr-2">
+          <div class="q-pr-sm">
             <template v-if="!dataPoint.hideLabel">
-              <div class="text-caption" style="line-height: 1.6rem">
+              <div class="" style="font-weight: bold;">
                 {{ label }}:
               </div>
             </template>
@@ -13,7 +13,7 @@
           <div>
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
               <template v-if="isRelChildren(compHeader)">
-                <div class="pt-1">
+                <div class="q-pt-sm">
                   <template v-if="compRelation">
                     <SuperTable
                         :currentParentRel="compRelation"
@@ -50,7 +50,7 @@
           </template>
           <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
             <template v-if="isRelChildren(compHeader)">
-              <div class="pt-1">
+              <div class="q-pt-sm">
                 <template v-if="compRelation">
                   <SuperTable
                       :currentParentRel="compRelation"
@@ -136,7 +136,7 @@ export default {
     },
     compHeader() {
       if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
-        return {label: this.dataPoint.customLabel};
+        return { label: this.dataPoint.customLabel };
       }
       const result = this.superOptions.headers.find((header) => {
         return header.field == this.dataPoint.data
