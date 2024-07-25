@@ -6,8 +6,8 @@
           <div class="q-card q-mx-auto" style="height: 100%">
             <template
                 v-if="
-                superOptions.displayMapSummary &&
-                superOptions.displayMapSummary.rows
+                superOptions.templateListGrid &&
+                superOptions.templateListGrid.rows
               "
             >
               <RecordOverviewDynamic
@@ -67,7 +67,7 @@ export default {
           canEdit: false,
           currentParentRecord: {},
           user: {},
-          displayMapSummary: {},
+          templateListGrid: {},
         };
       },
     },

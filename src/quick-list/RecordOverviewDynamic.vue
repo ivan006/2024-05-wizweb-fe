@@ -104,7 +104,7 @@ export default {
           canEdit: false,
           currentParentRecord: {},
           user: {},
-          displayMapSummary: {},
+          templateListGrid: {},
         };
       },
     },
@@ -131,10 +131,10 @@ export default {
       let result = [];
       if (this.isSummary) {
         if (
-            this.superOptions.displayMapSummary &&
-            this.superOptions.displayMapSummary.rows
+            this.superOptions.templateListGrid &&
+            this.superOptions.templateListGrid.rows
         ) {
-          result = this.superOptions.displayMapSummary.rows;
+          result = this.superOptions.templateListGrid.rows;
         }
       } else {
         if (

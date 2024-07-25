@@ -277,7 +277,7 @@ export default {
         return {};
       },
     },
-    displayMapSummary: {
+    templateListGrid: {
       type: Object,
       default() {
         return {};
@@ -395,7 +395,7 @@ export default {
         canEdit: this.canEdit,
         currentParentRel: this.currentParentRel,
         user: this.user,
-        displayMapSummary: this.displayMapSummary,
+        templateListGrid: this.templateListGrid,
       }
     },
     excludedCols() {
