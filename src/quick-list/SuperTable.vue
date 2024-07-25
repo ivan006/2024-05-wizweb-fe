@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="canEdit && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
+    <div v-if="canEdit && !create.hideButton && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -43,107 +43,113 @@
       <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
-      <DestructableExpansionPanels
-          :destroy="!quickListsIsMobile"
-          title="Settings"
-      >
-        <div class="row items-center wrap">
-          <div class="q-mr-sm">
-            <q-select
-                style="width: 200px"
-                :options="[
-              { label: 'Table', value: 'table' },
-              { label: 'Grid', value: 'grid' },
-              { label: 'Map', value: 'map' },
-              { label: 'Calendar', value: 'calendar' },
-            ]"
-                v-model="activeTab"
-                label="View As"
-                option-label="label"
-                option-value="value"
-                dense
-                class="col-grow "
-                filled
-                :rules="[() => true]"
-            />
-          </div>
-          <template
-              v-for="filterInput of filterInputs"
-              :key="filterInput.name"
-          >
-            <template v-if="typeof filters[filterInput.name] !== 'undefined'">
-              <template
-                  v-if="filterInput.usageType.startsWith('relForeignKey')"
-              >
-                <!--<SuperSelect-->
-                <!--    allowAll-->
-                <!--    :key="filterInput.name"-->
-                <!--    :modelField="filterInput"-->
-                <!--    v-model="filters[filterInput.name]"-->
-                <!--    :model="filterInput.meta.field.parent"-->
-                <!--    class="q-ma-sm col-grow"-->
-                <!--    dense-->
-                <!--    :user="user"-->
-
-
-                <!--    :page="options.page"-->
-                <!--    @update:page="pageUpdate"-->
-                <!--    :maxPages="maxPages"-->
-                <!--    @click="activateAndFetchData"-->
-                <!--    :items="items"-->
-                <!--    :loading="loading"-->
-                <!--    :rules="rules"-->
-                <!--/>-->
-
-                <!--<RelationComponent-->
-                <!--  :modelField="filterInput"-->
-                <!--  v-model="filters[filterInput.name].value"-->
-
-                <!--  :page="options.page"-->
-                <!--  @update:page="pageUpdate"-->
-                <!--  :maxPages="maxPages"-->
-                <!--  @click="activateAndFetchData"-->
-                <!--  :items="items"-->
-                <!--  :loading="loading"-->
-                <!--  :rules="rules"-->
-                <!--/>-->
-                <SuperTable
-                    :isForSelectingRelation="true"
-                    :canEdit="false"
-                    v-model="filters[filterInput.name]"
-                    :model="filterInput.meta.field.parent"
+      <template v-if="filterInputs.length && !viewAs.hideSelector">
+        <DestructableExpansionPanels
+            :destroy="!quickListsIsMobile"
+            title="Settings"
+        >
+          <div class="row items-center wrap">
+            <template v-if="!viewAs.hideSelector">
+              <div class="q-mr-sm">
+                <q-select
+                    style="width: 200px"
+                    :options="[
+                  { label: 'Table', value: 'table' },
+                  { label: 'Grid', value: 'grid' },
+                  { label: 'Map', value: 'map' },
+                  { label: 'Calendar', value: 'calendar' },
+                ]"
+                    v-model="activeTab"
+                    label="View As"
+                    option-label="label"
+                    option-value="value"
+                    emit-value
+                    map-options
+                    dense
+                    class="col-grow "
+                    filled
                     :rules="[() => true]"
-                    :modelField="filterInput"
-                    class="q-mr-sm"
+                />
+              </div>
+            </template>
+            <template
+                v-for="filterInput of filterInputs"
+                :key="filterInput.name"
+            >
+              <template v-if="typeof filters[filterInput.name] !== 'undefined'">
+                <template
+                    v-if="filterInput.usageType.startsWith('relForeignKey')"
+                >
+                  <!--<SuperSelect-->
+                  <!--    allowAll-->
+                  <!--    :key="filterInput.name"-->
+                  <!--    :modelField="filterInput"-->
+                  <!--    v-model="filters[filterInput.name]"-->
+                  <!--    :model="filterInput.meta.field.parent"-->
+                  <!--    class="q-ma-sm col-grow"-->
+                  <!--    dense-->
+                  <!--    :user="user"-->
 
-                />
-                <!--v-model="filters[filterInput.name].value"-->
+
+                  <!--    :page="options.page"-->
+                  <!--    @update:page="pageUpdate"-->
+                  <!--    :maxPages="maxPages"-->
+                  <!--    @click="activateAndFetchData"-->
+                  <!--    :items="items"-->
+                  <!--    :loading="loading"-->
+                  <!--    :rules="rules"-->
+                  <!--/>-->
+
+                  <!--<RelationComponent-->
+                  <!--  :modelField="filterInput"-->
+                  <!--  v-model="filters[filterInput.name].value"-->
+
+                  <!--  :page="options.page"-->
+                  <!--  @update:page="pageUpdate"-->
+                  <!--  :maxPages="maxPages"-->
+                  <!--  @click="activateAndFetchData"-->
+                  <!--  :items="items"-->
+                  <!--  :loading="loading"-->
+                  <!--  :rules="rules"-->
+                  <!--/>-->
+                  <SuperTable
+                      :isForSelectingRelation="true"
+                      :canEdit="false"
+                      v-model="filters[filterInput.name]"
+                      :model="filterInput.meta.field.parent"
+                      :rules="[() => true]"
+                      :modelField="filterInput"
+                      class="q-mr-sm"
+
+                  />
+                  <!--v-model="filters[filterInput.name].value"-->
+                </template>
+                <template v-if="filterInput.usageType == 'timeRangeStart'">
+                  <FilterTime
+                      :key="filterInput.name"
+                      :modelField="filterInput"
+                      v-model="filters[filterInput.name].value"
+                      class="q-ma-sm col-grow"
+                  />
+                </template>
               </template>
-              <template v-if="filterInput.usageType == 'timeRangeStart'">
-                <FilterTime
-                    :key="filterInput.name"
-                    :modelField="filterInput"
-                    v-model="filters[filterInput.name].value"
-                    class="q-ma-sm col-grow"
-                />
+              <template v-else>
+                <template v-if="filterInput.usageType == 'mapFilter'">
+                  <FilterPlace
+                      :key="filterInput.name"
+                      :filterField="filterInput"
+                      v-model="filters"
+                      class="q-ma-sm col-grow"
+                      :user="user"
+                  />
+                </template>
               </template>
             </template>
-            <template v-else>
-              <template v-if="filterInput.usageType == 'mapFilter'">
-                <FilterPlace
-                    :key="filterInput.name"
-                    :filterField="filterInput"
-                    v-model="filters"
-                    class="q-ma-sm col-grow"
-                    :user="user"
-                />
-              </template>
-            </template>
-          </template>
-        </div>
-      </DestructableExpansionPanels>
-      <div class="q-my-md">
-        <template v-if="activeTab.value == 'table'">
+          </div>
+        </DestructableExpansionPanels>
+      </template>
+      <div class="q-mb-md">
+        <template v-if="activeTab == 'table'">
           <SuperTableTable
               :items="itemsQueried"
               :loading="loading"
@@ -162,8 +168,8 @@
           />
           <!--@update:rows-per-page="updateRowsPerPage"-->
         </template>
-        <template v-if="activeTab.value == 'grid'">
-          <div class="q-my-md">
+        <template v-if="activeTab == 'grid'">
+          <div class="">
             <SuperTableGrid
                 :items="items"
                 @clickRow="clickRow"
@@ -171,7 +177,7 @@
             />
           </div>
         </template>
-        <template v-if="activeTab.value == 'map'">
+        <template v-if="activeTab == 'map'">
           <SuperTableMap
               :mapHeaders="mapHeaders"
               :items="items"
@@ -179,7 +185,7 @@
               :superOptions="superOptions"
           />
         </template>
-        <template v-if="activeTab.value == 'calendar'">
+        <template v-if="activeTab == 'calendar'">
           <SuperTableCalendar
               :items="items"
               @clickRow="clickRow"
@@ -248,6 +254,23 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    viewAs: {
+      type: Object,
+      default() {
+        return {
+          hideSelector: false,
+          default: "table"
+        };
+      },
+    },
+    create: {
+      type: Object,
+      default() {
+        return {
+          hideButton: false,
+        };
+      },
+    },
     forcedFilters: {
       type: Object,
       default() {
@@ -344,10 +367,11 @@ export default {
       highlightedRow: null,
       filters: {},
       items: [],
-      activeTab: {
-        "label": "Table",
-        "value": "table"
-      },
+      // activeTab: {
+      //   "label": "Table",
+      //   "value": "table"
+      // },
+      activeTab: "table",
     };
   },
   computed: {
@@ -507,9 +531,6 @@ export default {
     quickListsGetIfMatchesAllChecks(item, filters) {
       return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters);
     },
-    openRecord(e) {
-      this.$emit("openRecord", e);
-    },
     formatTimestamp(timestamp) {
       if (timestamp) {
         const timezone = "Africa/Johannesburg"; // replace with desired timezone
@@ -529,9 +550,10 @@ export default {
       if (this.isForSelectingRelation) {
         this.highlightedRow = item.id;
       }
-      if (!this.isForSelectingRelation){
-        this.model.openRecord(item[this.pKey]);
-      }
+      // if (!this.isForSelectingRelation){
+      //   this.model.openRecord(item[this.pKey]);
+      // }
+      this.$emit("clickRow", item);
 
       this.$emit("update:modelValue", item);
     },
@@ -647,6 +669,9 @@ export default {
     },
   },
   mounted() {
+
+    this.activeTab = this.viewAs.default
+
     if (this.quickListsIsMobile) {
       this.activeTab = "grid";
     } else if (this.defaultViewModeProp !== "") {

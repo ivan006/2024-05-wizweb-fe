@@ -41,14 +41,14 @@
             <RecordOverview
                 :item="item"
                 :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: {},
-              user: user,
-            }"
+                  headers: headers,
+                  modelFields: modelFields,
+                  displayMapField: displayMapField,
+                  model: model,
+                  canEdit: canEdit,
+                  currentParentRel: {},
+                  user: user,
+                }"
             />
           </template>
         </template>
@@ -68,6 +68,7 @@
             :canEdit="canEdit"
             :user="user"
             :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
+            @clickRow="(e) => {relation.field.meta.field.related.openRecord(e)}"
         >
           <template v-if="$slots[relation.field.name]" v-slot:create>
             <slot :name="relation.field.name" />
@@ -83,10 +84,12 @@ import SuperTable from "./SuperTable.vue";
 import RecordOverview from "./RecordOverview.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import SuperTableTable from "./SuperTableTable.vue";
 
 export default {
   name: "SuperRecord",
   components: {
+    SuperTableTable,
     RecordOverviewDynamic,
     RecordOverview,
     SuperTable,
