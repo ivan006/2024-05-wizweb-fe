@@ -131,10 +131,10 @@ export default {
       let result = [];
       if (this.isSummary) {
         if (
-            this.superOptions.model.displayMapSummary &&
-            this.superOptions.model.displayMapSummary.rows
+            this.superOptions.displayMapSummary &&
+            this.superOptions.displayMapSummary.rows
         ) {
-          result = this.superOptions.model.displayMapSummary.rows;
+          result = this.superOptions.displayMapSummary.rows;
         }
       } else {
         if (

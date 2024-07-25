@@ -1,11 +1,16 @@
 <template>
   <div :class="isHeading ? 'text-h6' : ''">
-    <template v-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
+    <template v-if="typeof header.usageType == 'undefined'"></template>
+    <template v-else-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
       <div class="text-caption">
         {{ header.label }}
       </div>
     </template>
-    <template v-if="header.usageType.startsWith('relChildren')"></template>
+
+    <template v-if="typeof header.usageType == 'undefined'">
+      {{typeof header.usageType}}
+    </template>
+    <template v-else-if="header.usageType.startsWith('relChildren')"></template>
     <template
         v-else-if="
         header.usageType == 'readOnlyTimestampType' ||

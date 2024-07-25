@@ -6,8 +6,8 @@
           <div class="q-card q-mx-auto" style="height: 100%">
             <template
                 v-if="
-                superOptions.model.displayMapSummary &&
-                superOptions.model.displayMapSummary.rows
+                superOptions.displayMapSummary &&
+                superOptions.displayMapSummary.rows
               "
             >
               <RecordOverviewDynamic

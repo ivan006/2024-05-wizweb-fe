@@ -9,16 +9,7 @@
             :modelFields="modelFields"
             @createItem="createItem"
             :model="model"
-            :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: currentParentRel,
-              user: user,
-              displayMapSummary: displayMapSummary,
-            }"
+            :superOptions="superOptions"
         />
       </template>
     </div>
@@ -27,15 +18,7 @@
       <!--    :items="items"-->
       <!--    :modelValue="modelValue"-->
       <!--    @update:modelValue="clickRow"-->
-      <!--    :superOptions="{-->
-      <!--    headers: headers,-->
-      <!--    modelFields: modelFields,-->
-      <!--    displayMapField: displayMapField,-->
-      <!--    model: model,-->
-      <!--    canEdit: canEdit,-->
-      <!--    currentParentRel: currentParentRel,-->
-      <!--    user: user,-->
-      <!--  }"-->
+      <!--    :superOptions="superOptions"-->
       <!--/>-->
       <SuperSelect
           allowAll
@@ -164,16 +147,7 @@
           <SuperTableTable
               :items="itemsQueried"
               :loading="loading"
-              :superOptions="{
-                headers: headers,
-                modelFields: modelFields,
-                displayMapField: displayMapField,
-                model: model,
-                canEdit: canEdit,
-                currentParentRel: currentParentRel,
-                user: user,
-                displayMapSummary: displayMapSummary,
-              }"
+              :superOptions="superOptions"
               @clickRow="clickRow"
           />
           <!--:itemsLength="itemsLength"-->
@@ -193,16 +167,7 @@
             <SuperTableGrid
                 :items="items"
                 @clickRow="clickRow"
-                :superOptions="{
-                  headers: headers,
-                  modelFields: modelFields,
-                  displayMapField: displayMapField,
-                  model: model,
-                  canEdit: canEdit,
-                  currentParentRel: currentParentRel,
-                  user: user,
-                  displayMapSummary: displayMapSummary,
-                }"
+                :superOptions="superOptions"
             />
           </div>
         </template>
@@ -211,32 +176,14 @@
               :mapHeaders="mapHeaders"
               :items="items"
               @clickRow="clickRow"
-              :superOptions="{
-                headers: headers,
-                modelFields: modelFields,
-                displayMapField: displayMapField,
-                model: model,
-                canEdit: canEdit,
-                currentParentRel: currentParentRel,
-                user: user,
-                displayMapSummary: displayMapSummary,
-              }"
+              :superOptions="superOptions"
           />
         </template>
         <template v-if="activeTab.value == 'calendar'">
           <SuperTableCalendar
               :items="items"
               @clickRow="clickRow"
-              :superOptions="{
-                headers: headers,
-                modelFields: modelFields,
-                displayMapField: displayMapField,
-                model: model,
-                canEdit: canEdit,
-                currentParentRel: currentParentRel,
-                user: user,
-                displayMapSummary: displayMapSummary,
-              }"
+              :superOptions="superOptions"
           />
         </template>
       </div>
@@ -249,16 +196,7 @@
             v-model="createItemData.data"
             @submit="createItemSubmit"
             @cancel="createItemData.showModal = false"
-            :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: currentParentRel,
-              user: user,
-              displayMapSummary: displayMapSummary,
-            }"
+            :superOptions="superOptions"
             style="width: 700px; max-width: 80vw;"
         />
       </q-dialog>
@@ -423,6 +361,18 @@ export default {
         }
         this.options = value;
       },
+    },
+    superOptions() {
+      return {
+        headers: this.headers,
+        modelFields: this.modelFields,
+        displayMapField: this.displayMapField,
+        model: this.model,
+        canEdit: this.canEdit,
+        currentParentRel: this.currentParentRel,
+        user: this.user,
+        displayMapSummary: this.displayMapSummary,
+      }
     },
     excludedCols() {
       let result = [];
