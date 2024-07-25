@@ -17,6 +17,7 @@
               canEdit: canEdit,
               currentParentRel: currentParentRel,
               user: user,
+              displayMapSummary: displayMapSummary,
             }"
         />
       </template>
@@ -171,6 +172,7 @@
                 canEdit: canEdit,
                 currentParentRel: currentParentRel,
                 user: user,
+                displayMapSummary: displayMapSummary,
               }"
               @clickRow="clickRow"
           />
@@ -192,14 +194,15 @@
                 :items="items"
                 @clickRow="clickRow"
                 :superOptions="{
-                headers: headers,
-                modelFields: modelFields,
-                displayMapField: displayMapField,
-                model: model,
-                canEdit: canEdit,
-                currentParentRel: currentParentRel,
-                user: user,
-              }"
+                  headers: headers,
+                  modelFields: modelFields,
+                  displayMapField: displayMapField,
+                  model: model,
+                  canEdit: canEdit,
+                  currentParentRel: currentParentRel,
+                  user: user,
+                  displayMapSummary: displayMapSummary,
+                }"
             />
           </div>
         </template>
@@ -209,14 +212,15 @@
               :items="items"
               @clickRow="clickRow"
               :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: currentParentRel,
-              user: user,
-            }"
+                headers: headers,
+                modelFields: modelFields,
+                displayMapField: displayMapField,
+                model: model,
+                canEdit: canEdit,
+                currentParentRel: currentParentRel,
+                user: user,
+                displayMapSummary: displayMapSummary,
+              }"
           />
         </template>
         <template v-if="activeTab.value == 'calendar'">
@@ -224,14 +228,15 @@
               :items="items"
               @clickRow="clickRow"
               :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: currentParentRel,
-              user: user,
-            }"
+                headers: headers,
+                modelFields: modelFields,
+                displayMapField: displayMapField,
+                model: model,
+                canEdit: canEdit,
+                currentParentRel: currentParentRel,
+                user: user,
+                displayMapSummary: displayMapSummary,
+              }"
           />
         </template>
       </div>
@@ -252,6 +257,7 @@
               canEdit: canEdit,
               currentParentRel: currentParentRel,
               user: user,
+              displayMapSummary: displayMapSummary,
             }"
             style="width: 700px; max-width: 80vw;"
         />
@@ -305,6 +311,12 @@ export default {
   },
   props: {
     forcedFilters: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    displayMapSummary: {
       type: Object,
       default() {
         return {};
