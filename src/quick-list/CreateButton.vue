@@ -29,10 +29,11 @@ export default {
           headers: [],
           modelFields: [],
           displayMapField: false,
-          // model: {},
+          model: {},
           canEdit: false,
           currentParentRecord: {},
           user: {},
+          displayMapSummary: {},
         };
       },
     },

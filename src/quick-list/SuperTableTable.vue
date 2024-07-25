@@ -87,6 +87,8 @@ export default {
           model: {},
           canEdit: false,
           currentParentRecord: {},
+          user: {},
+          displayMapSummary: {},
         };
       },
     },

@@ -213,15 +213,18 @@ export default {
     },
     superOptions: {
       type: Object,
-      default: () => ({
-        headers: [],
-        modelFields: [],
-        displayMapField: false,
-        model: {},
-        canEdit: false,
-        currentParentRecord: {},
-        user: {},
-      }),
+      default() {
+        return {
+          headers: [],
+          modelFields: [],
+          displayMapField: false,
+          model: {},
+          canEdit: false,
+          currentParentRecord: {},
+          user: {},
+          displayMapSummary: {},
+        };
+      },
     },
   },
   data() {
