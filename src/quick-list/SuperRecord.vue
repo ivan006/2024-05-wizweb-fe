@@ -19,41 +19,17 @@
       <q-tab-panels v-model="activeTab">
         <q-tab-panel name="tab">
           <template v-if="!loading">
-            <template v-if="templateOverview && templateOverview.rows">
-              <RecordOverviewDynamic
-                  :item="item"
-                  :childRelations="childRelations"
-                  :filteredChildRelations="filteredChildRelations"
-                  :superOptions="{
-                    headers: headers,
-                    modelFields: modelFields,
-                    displayMapField: displayMapField,
-                    model: model,
-                    canEdit: canEdit,
-                    currentParentRel: {},
-                    user: user,
-                  }"
-                  :template="templateOverview"
-              >
-                <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                  <slot :name="slotName" v-bind="slotProps"></slot>
-                </template>
-              </RecordOverviewDynamic>
-            </template>
-            <template v-else>
-              <RecordOverview
-                  :item="item"
-                  :superOptions="{
-                    headers: headers,
-                    modelFields: modelFields,
-                    displayMapField: displayMapField,
-                    model: model,
-                    canEdit: canEdit,
-                    currentParentRel: {},
-                    user: user,
-                  }"
-              />
-            </template>
+            <RecordOverviewWrapper
+                :item="item"
+                :superOptions="superOptions"
+                :templateOverview="templateOverview"
+                :filteredChildRelations="filteredChildRelations"
+                :childRelations="childRelations"
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
+              </template>
+            </RecordOverviewWrapper>
           </template>
           <template v-else>
             Loading...
@@ -81,25 +57,17 @@
       </q-tab-panels>
     </template>
     <template v-else>
-      <RecordOverviewDynamic
-          :item="item"
-          :childRelations="childRelations"
-          :filteredChildRelations="filteredChildRelations"
-          :superOptions="{
-            headers: headers,
-            modelFields: modelFields,
-            displayMapField: displayMapField,
-            model: model,
-            canEdit: canEdit,
-            currentParentRel: {},
-            user: user,
-          }"
-          :template="templateOverview"
+      <RecordOverviewWrapper
+        :item="item"
+        :superOptions="superOptions"
+        :templateOverview="templateOverview"
+        :filteredChildRelations="filteredChildRelations"
+        :childRelations="childRelations"
       >
         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
           <slot :name="slotName" v-bind="slotProps"></slot>
         </template>
-      </RecordOverviewDynamic>
+      </RecordOverviewWrapper>
     </template>
   </div>
 </template>
@@ -110,10 +78,12 @@ import RecordOverview from "./RecordOverview.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 import SuperTableTable from "./SuperTableTable.vue";
+import RecordOverviewWrapper from "./RecordOverviewWrapper.vue";
 
 export default {
   name: "SuperRecord",
   components: {
+    RecordOverviewWrapper,
     SuperTableTable,
     RecordOverviewDynamic,
     RecordOverview,
@@ -150,6 +120,17 @@ export default {
     };
   },
   computed: {
+    superOptions() {
+      return {
+        headers: this.headers,
+        modelFields: this.modelFields,
+        displayMapField: this.displayMapField,
+        model: this.model,
+        canEdit: this.canEdit,
+        currentParentRel: {},
+        user: this.user,
+      };
+    },
     rowsAndDataIndicators() {
       let result = {
         dataIndicators: [],
