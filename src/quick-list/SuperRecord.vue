@@ -25,14 +25,14 @@
                   :childRelations="childRelations"
                   :filteredChildRelations="filteredChildRelations"
                   :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: {},
-              user: user,
-            }"
+                    headers: headers,
+                    modelFields: modelFields,
+                    displayMapField: displayMapField,
+                    model: model,
+                    canEdit: canEdit,
+                    currentParentRel: {},
+                    user: user,
+                  }"
               >
                 <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                   <slot :name="slotName" v-bind="slotProps"></slot>
@@ -43,14 +43,14 @@
               <RecordOverview
                   :item="item"
                   :superOptions="{
-                  headers: headers,
-                  modelFields: modelFields,
-                  displayMapField: displayMapField,
-                  model: model,
-                  canEdit: canEdit,
-                  currentParentRel: {},
-                  user: user,
-                }"
+                    headers: headers,
+                    modelFields: modelFields,
+                    displayMapField: displayMapField,
+                    model: model,
+                    canEdit: canEdit,
+                    currentParentRel: {},
+                    user: user,
+                  }"
               />
             </template>
           </template>
@@ -85,14 +85,14 @@
           :childRelations="childRelations"
           :filteredChildRelations="filteredChildRelations"
           :superOptions="{
-              headers: headers,
-              modelFields: modelFields,
-              displayMapField: displayMapField,
-              model: model,
-              canEdit: canEdit,
-              currentParentRel: {},
-              user: user,
-            }"
+            headers: headers,
+            modelFields: modelFields,
+            displayMapField: displayMapField,
+            model: model,
+            canEdit: canEdit,
+            currentParentRel: {},
+            user: user,
+          }"
       >
         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
           <slot :name="slotName" v-bind="slotProps"></slot>
