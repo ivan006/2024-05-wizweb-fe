@@ -672,13 +672,13 @@ export default {
 
     this.activeTab = this.viewAs.default
 
-    if (this.quickListsIsMobile) {
-      this.activeTab = "grid";
-    } else if (this.defaultViewModeProp !== "") {
-      this.activeTab = this.defaultViewModeProp;
-    } else if (this.model?.templateOverview?.defaultViewMode) {
-      this.activeTab = this.model.templateOverview.defaultViewMode;
-    }
+    // if (this.quickListsIsMobile) {
+    //   this.activeTab = "grid";
+    // } else if (this.defaultViewModeProp !== "") {
+    //   this.activeTab = this.defaultViewModeProp;
+    // } else if (this.templateOverview?.defaultViewMode) {
+    //   this.activeTab = this.templateOverview.defaultViewMode;
+    // }
 
     for (const modelField of this.modelFields) {
       if (

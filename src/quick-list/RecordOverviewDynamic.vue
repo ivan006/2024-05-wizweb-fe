@@ -134,20 +134,12 @@ export default {
   computed: {
     rows() {
       let result = [];
-      if (this.isSummary) {
-        if (
-            this.template &&
-            this.template.rows
-        ) {
-          result = this.template.rows;
-        }
-      } else {
-        if (
-            this.superOptions.model.templateOverview &&
-            this.superOptions.model.templateOverview.rows
-        ) {
-          result = this.superOptions.model.templateOverview.rows;
-        }
+
+      if (
+          this.template &&
+          this.template.rows
+      ) {
+        result = this.template.rows;
       }
       return result;
     },

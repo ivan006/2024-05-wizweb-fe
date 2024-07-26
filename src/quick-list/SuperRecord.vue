@@ -19,7 +19,7 @@
       <q-tab-panels v-model="activeTab">
         <q-tab-panel name="tab">
           <template v-if="!loading">
-            <template v-if="model.templateOverview && model.templateOverview.rows">
+            <template v-if="templateOverview && templateOverview.rows">
               <RecordOverviewDynamic
                   :item="item"
                   :childRelations="childRelations"
@@ -33,6 +33,7 @@
                     currentParentRel: {},
                     user: user,
                   }"
+                  :template="templateOverview"
               >
                 <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                   <slot :name="slotName" v-bind="slotProps"></slot>
@@ -93,6 +94,7 @@
             currentParentRel: {},
             user: user,
           }"
+          :template="templateOverview"
       >
         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
           <slot :name="slotName" v-bind="slotProps"></slot>
@@ -118,6 +120,12 @@ export default {
     SuperTable,
   },
   props: {
+    templateOverview: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     model: {
       type: [Object, Function],
       required: true,
@@ -147,8 +155,8 @@ export default {
         dataIndicators: [],
         rows: [],
       };
-      if (this.model.templateOverview && this.model.templateOverview.rows) {
-        result.rows = this.model.templateOverview.rows;
+      if (this.templateOverview && this.templateOverview.rows) {
+        result.rows = this.templateOverview.rows;
       }
 
       for (const rowKey in result.rows) {
