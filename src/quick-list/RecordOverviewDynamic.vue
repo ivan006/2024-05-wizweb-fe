@@ -143,10 +143,10 @@ export default {
         }
       } else {
         if (
-            this.superOptions.model.displayMapFull &&
-            this.superOptions.model.displayMapFull.rows
+            this.superOptions.model.templateOverview &&
+            this.superOptions.model.templateOverview.rows
         ) {
-          result = this.superOptions.model.displayMapFull.rows;
+          result = this.superOptions.model.templateOverview.rows;
         }
       }
       return result;

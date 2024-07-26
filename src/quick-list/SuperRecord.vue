@@ -19,7 +19,7 @@
       <q-tab-panels v-model="activeTab">
         <q-tab-panel name="tab">
           <template v-if="!loading">
-            <template v-if="model.displayMapFull && model.displayMapFull.rows">
+            <template v-if="model.templateOverview && model.templateOverview.rows">
               <RecordOverviewDynamic
                   :item="item"
                   :childRelations="childRelations"
@@ -147,8 +147,8 @@ export default {
         dataIndicators: [],
         rows: [],
       };
-      if (this.model.displayMapFull && this.model.displayMapFull.rows) {
-        result.rows = this.model.displayMapFull.rows;
+      if (this.model.templateOverview && this.model.templateOverview.rows) {
+        result.rows = this.model.templateOverview.rows;
       }
 
       for (const rowKey in result.rows) {

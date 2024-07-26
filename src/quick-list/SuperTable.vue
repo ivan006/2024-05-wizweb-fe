@@ -676,8 +676,8 @@ export default {
       this.activeTab = "grid";
     } else if (this.defaultViewModeProp !== "") {
       this.activeTab = this.defaultViewModeProp;
-    } else if (this.model?.displayMapFull?.defaultViewMode) {
-      this.activeTab = this.model.displayMapFull.defaultViewMode;
+    } else if (this.model?.templateOverview?.defaultViewMode) {
+      this.activeTab = this.model.templateOverview.defaultViewMode;
     }
 
     for (const modelField of this.modelFields) {
