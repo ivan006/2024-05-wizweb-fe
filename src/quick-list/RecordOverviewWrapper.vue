@@ -1,24 +1,30 @@
 <template>
   <div>
-    <template v-if="templateOverview && templateOverview.rows">
-      <RecordOverviewDynamic
-        :item="item"
-        :childRelations="childRelations"
-        :filteredChildRelations="filteredChildRelations"
-        :superOptions="superOptions"
-        :template="templateOverview"
-      >
-        <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-          <slot :name="slotName" v-bind="slotProps"></slot>
-        </template>
-      </RecordOverviewDynamic>
+    <template v-if="Object.keys(item).length === 0 && item.constructor === Object ">
+      <div class="text-center">No data available</div>
     </template>
     <template v-else>
-      <RecordOverview
-        :item="item"
-        :superOptions="superOptions"
-      />
+      <template v-if="templateOverview && templateOverview.rows">
+        <RecordOverviewDynamic
+            :item="item"
+            :childRelations="childRelations"
+            :filteredChildRelations="filteredChildRelations"
+            :superOptions="superOptions"
+            :template="templateOverview"
+        >
+          <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+            <slot :name="slotName" v-bind="slotProps"></slot>
+          </template>
+        </RecordOverviewDynamic>
+      </template>
+      <template v-else>
+        <RecordOverview
+            :item="item"
+            :superOptions="superOptions"
+        />
+      </template>
     </template>
+
   </div>
 </template>
 
