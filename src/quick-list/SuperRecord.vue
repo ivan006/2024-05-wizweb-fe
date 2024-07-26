@@ -1,28 +1,30 @@
 <template>
   <div>
-    <!--      <pre>{{headers}}</pre>-->
-    <q-tabs
-        v-model="activeTab"
-        align="left"
-    >
-      <q-tab :name="'tab'"> Overview </q-tab>
-      <q-tab
-          v-for="(relation, index) in filteredChildRelations"
-          :key="index"
-          :name="'tab-' + index"
+    <template v-if="filteredChildRelations.length">
+
+      <!--      <pre>{{headers}}</pre>-->
+      <q-tabs
+          v-model="activeTab"
+          align="left"
       >
-        {{ relation.field.label }}
-      </q-tab>
-    </q-tabs>
-    <q-tab-panels v-model="activeTab">
-      <q-tab-panel name="tab">
-        <template v-if="!loading">
-          <template v-if="model.displayMapFull && model.displayMapFull.rows">
-            <RecordOverviewDynamic
-                :item="item"
-                :childRelations="childRelations"
-                :filteredChildRelations="filteredChildRelations"
-                :superOptions="{
+        <q-tab :name="'tab'"> Overview </q-tab>
+        <q-tab
+            v-for="(relation, index) in filteredChildRelations"
+            :key="index"
+            :name="'tab-' + index"
+        >
+          {{ relation.field.label }}
+        </q-tab>
+      </q-tabs>
+      <q-tab-panels v-model="activeTab">
+        <q-tab-panel name="tab">
+          <template v-if="!loading">
+            <template v-if="model.displayMapFull && model.displayMapFull.rows">
+              <RecordOverviewDynamic
+                  :item="item"
+                  :childRelations="childRelations"
+                  :filteredChildRelations="filteredChildRelations"
+                  :superOptions="{
               headers: headers,
               modelFields: modelFields,
               displayMapField: displayMapField,
@@ -31,16 +33,16 @@
               currentParentRel: {},
               user: user,
             }"
-            >
-              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                <slot :name="slotName" v-bind="slotProps"></slot>
-              </template>
-            </RecordOverviewDynamic>
-          </template>
-          <template v-else>
-            <RecordOverview
-                :item="item"
-                :superOptions="{
+              >
+                <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                  <slot :name="slotName" v-bind="slotProps"></slot>
+                </template>
+              </RecordOverviewDynamic>
+            </template>
+            <template v-else>
+              <RecordOverview
+                  :item="item"
+                  :superOptions="{
                   headers: headers,
                   modelFields: modelFields,
                   displayMapField: displayMapField,
@@ -49,33 +51,54 @@
                   currentParentRel: {},
                   user: user,
                 }"
-            />
+              />
+            </template>
           </template>
-        </template>
-        <template v-else>
-          Loading...
-        </template>
-      </q-tab-panel>
-      <q-tab-panel
-          v-for="(relation, index) in filteredChildRelations"
-          :key="index"
-          :name="'tab-' + index"
-      >
-        <SuperTable
-            :ref="`tab-${index}`"
-            :currentParentRel="relation"
-            :model="relation.field.meta.field.related"
-            :canEdit="canEdit"
-            :user="user"
-            :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
-            @clickRow="(e) => {relation.field.meta.field.related.openRecord(e)}"
+          <template v-else>
+            Loading...
+          </template>
+        </q-tab-panel>
+        <q-tab-panel
+            v-for="(relation, index) in filteredChildRelations"
+            :key="index"
+            :name="'tab-' + index"
         >
-          <template v-if="$slots[relation.field.name]" v-slot:create>
-            <slot :name="relation.field.name" />
-          </template>
-        </SuperTable>
-      </q-tab-panel>
-    </q-tab-panels>
+          <SuperTable
+              :ref="`tab-${index}`"
+              :currentParentRel="relation"
+              :model="relation.field.meta.field.related"
+              :canEdit="canEdit"
+              :user="user"
+              :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
+              @clickRow="(e) => {relation.field.meta.field.related.openRecord(e)}"
+          >
+            <template v-if="$slots[relation.field.name]" v-slot:create>
+              <slot :name="relation.field.name" />
+            </template>
+          </SuperTable>
+        </q-tab-panel>
+      </q-tab-panels>
+    </template>
+    <template v-else>
+      <RecordOverviewDynamic
+          :item="item"
+          :childRelations="childRelations"
+          :filteredChildRelations="filteredChildRelations"
+          :superOptions="{
+              headers: headers,
+              modelFields: modelFields,
+              displayMapField: displayMapField,
+              model: model,
+              canEdit: canEdit,
+              currentParentRel: {},
+              user: user,
+            }"
+      >
+        <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+          <slot :name="slotName" v-bind="slotProps"></slot>
+        </template>
+      </RecordOverviewDynamic>
+    </template>
   </div>
 </template>
 

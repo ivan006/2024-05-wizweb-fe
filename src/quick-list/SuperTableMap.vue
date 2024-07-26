@@ -60,7 +60,6 @@ export default {
           canEdit: false,
           currentParentRecord: {},
           user: {},
-          templateListGrid: {},
         };
       },
     },

@@ -6,8 +6,8 @@
           <div class="q-card q-mx-auto" style="height: 100%">
             <template
                 v-if="
-                superOptions.templateListGrid &&
-                superOptions.templateListGrid.rows
+                templateListGrid &&
+                templateListGrid.rows
               "
             >
               <RecordOverviewDynamic
@@ -18,6 +18,7 @@
                   :childRelations="[]"
                   isSummary
                   :superOptions="superOptions"
+                  :template="templateListGrid"
               />
             </template>
             <template v-else>
@@ -50,6 +51,12 @@ export default {
     RecordOverviewDynamic,
   },
   props: {
+    templateListGrid: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     items: {
       type: Array,
       default() {
@@ -67,7 +74,6 @@ export default {
           canEdit: false,
           currentParentRecord: {},
           user: {},
-          templateListGrid: {},
         };
       },
     },

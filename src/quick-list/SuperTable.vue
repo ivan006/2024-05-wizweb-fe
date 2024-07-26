@@ -174,6 +174,7 @@
                 :items="items"
                 @clickRow="clickRow"
                 :superOptions="superOptions"
+                :templateListGrid="templateListGrid"
             />
           </div>
         </template>
@@ -395,7 +396,6 @@ export default {
         canEdit: this.canEdit,
         currentParentRel: this.currentParentRel,
         user: this.user,
-        templateListGrid: this.templateListGrid,
       }
     },
     excludedCols() {

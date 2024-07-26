@@ -57,6 +57,12 @@ export default {
   name: 'RecordOverviewDynamic',
   components: {RecordOverviewDynamicDataPoint},
   props: {
+    template: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     isSummary: {
       type: Boolean,
       default() {
@@ -104,7 +110,6 @@ export default {
           canEdit: false,
           currentParentRecord: {},
           user: {},
-          templateListGrid: {},
         };
       },
     },
@@ -131,10 +136,10 @@ export default {
       let result = [];
       if (this.isSummary) {
         if (
-            this.superOptions.templateListGrid &&
-            this.superOptions.templateListGrid.rows
+            this.template &&
+            this.template.rows
         ) {
-          result = this.superOptions.templateListGrid.rows;
+          result = this.template.rows;
         }
       } else {
         if (
