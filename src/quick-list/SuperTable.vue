@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="canEdit && !create.hide && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
+    <div v-if="canEdit && !hideCreate && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -267,12 +267,10 @@ export default {
         };
       },
     },
-    create: {
-      type: Object,
+    hideCreate: {
+      type: Boolean,
       default() {
-        return {
-          hide: false,
-        };
+        return false;
       },
     },
     forcedFilters: {

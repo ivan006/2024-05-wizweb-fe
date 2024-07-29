@@ -162,16 +162,16 @@ export default {
 
             addableField = validField
 
-            if (typeof field.customLabel !== "undefined"){
-              addableField.label = field.customLabel
+            if (typeof field.label !== "undefined"){
+              addableField.label = field.label
             }
             addableField.userConfig = field
 
           } else {
 
             let label = "";
-            if (typeof field.customLabel !== "undefined"){
-              label = field.customLabel
+            if (typeof field.label !== "undefined"){
+              label = field.label
             }
 
             let fieldName = "";
@@ -195,6 +195,14 @@ export default {
 
           result.push(addableField);
         }
+
+        let actionField = this.superOptions.headers.find((field) => {
+          return field.usageType == "actions";
+        });
+        result.push({
+          ...actionField
+        });
+
       } else {
         for (const header of this.superOptions.headers) {
           result.push(header);

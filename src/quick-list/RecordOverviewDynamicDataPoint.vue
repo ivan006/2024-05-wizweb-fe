@@ -149,7 +149,7 @@ export default {
       if (this.header){
         return this.header;
       } else if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
-        return { label: this.dataPoint.customLabel };
+        return { label: this.dataPoint.label };
       } else {
         const result = this.superOptions.headers.find((header) => {
           return header.field == this.dataPoint.field
@@ -168,7 +168,7 @@ export default {
     },
     label() {
       if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
-        return this.dataPoint.customLabel;
+        return this.dataPoint.label;
       }
       return this.compHeader ? this.compHeader.label : '';
     }
