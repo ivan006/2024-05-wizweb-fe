@@ -141,7 +141,7 @@ export default {
         return { label: this.dataPoint.customLabel };
       }
       const result = this.superOptions.headers.find((header) => {
-        return header.field == this.dataPoint.data
+        return header.field == this.dataPoint.field
       })
       return result
     },
@@ -149,7 +149,7 @@ export default {
       let result = {}
       if (this.compHeader && this.isRelChildren(this.compHeader)) {
         result = this.childRelations.find((relation) => {
-          return relation.field.name == this.dataPoint.data
+          return relation.field.name == this.dataPoint.field
         })
       }
       return result
@@ -167,9 +167,6 @@ export default {
     },
     editItem(e) {
       this.$emit('editItem', e)
-    },
-    clickRow(e) {
-      this.$emit('clickRow', e)
     },
     isRelChildren(header) {
       return header?.usageType && header?.usageType.startsWith('relChildren');

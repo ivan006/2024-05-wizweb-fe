@@ -152,14 +152,14 @@ export default {
           if (col.rows) {
             for (const row of col.rows) {
               for (const col2 of row.cols) {
-                if (col2.dataPoint.data) {
-                  result.dataIndicators.push(col2.dataPoint.data);
+                if (col2.dataPoint.field) {
+                  result.dataIndicators.push(col2.dataPoint.field);
                 }
               }
             }
           } else {
-            if (col.dataPoint.data) {
-              result.dataIndicators.push(col.dataPoint.data);
+            if (col.dataPoint.field) {
+              result.dataIndicators.push(col.dataPoint.field);
             }
           }
         }
