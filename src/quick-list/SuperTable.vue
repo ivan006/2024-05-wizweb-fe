@@ -151,16 +151,19 @@
       <div class="">
         <template v-if="activeTab == 'table'">
           <SuperTableTable
-              :items="itemsQueried"
+              :items="items"
               :loading="loading"
               :superOptions="superOptions"
               @clickRow="clickRow"
+              :templateListTable="templateListTable"
+              :hidePagination="hidePagination"
           />
           <!--:itemsLength="itemsLength"-->
           <!--@clickRow="clickRow"-->
           <!--:pagination="options"-->
           <!--@update:pagination="updatePagination"-->
           <q-pagination
+              v-if="!hidePagination"
               v-model="options.page"
               @update:modelValue="pageUpdate"
               :max="maxPages"
@@ -278,6 +281,12 @@ export default {
         return {};
       },
     },
+    templateListTable: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     templateListGrid: {
       type: Object,
       default() {
@@ -293,6 +302,12 @@ export default {
     model: {
       type: [Object, Function],
       required: true,
+    },
+    hidePagination: {
+      type: Boolean,
+      default() {
+        return false;
+      },
     },
     displayMapField: {
       type: Boolean,
@@ -481,17 +496,17 @@ export default {
       );
       return result;
     },
-    itemsQueried() {
-      const result = this.model
-          .query()
-          .where((item) => {
-            return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
-          })
-          .withAll()
-          .orderBy(`${this.model.primaryKey}`, "desc")
-          .get();
-      return result;
-    },
+    // itemsQueried() {
+    //   const result = this.model
+    //       .query()
+    //       .where((item) => {
+    //         return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
+    //       })
+    //       .withAll()
+    //       .orderBy(`${this.model.primaryKey}`, "desc")
+    //       .get();
+    //   return result;
+    // },
     pKey() {
       return this.model.primaryKey;
     },

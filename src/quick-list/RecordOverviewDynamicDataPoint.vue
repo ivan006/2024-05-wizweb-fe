@@ -43,42 +43,39 @@
       </div>
     </template>
     <template v-else>
-      <div class="row">
-        <div class="column" style="height: 100%">
-          <template v-if="!dataPoint.hideLabel">
-            <div class="" style="font-weight: bold;">
-              {{ label }}:
-            </div>
-          </template>
-          <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-            <template v-if="isRelChildren(compHeader)">
-              <div class="q-pt-sm">
-                <template v-if="compRelation">
-                  <SuperTable
-                      :currentParentRel="compRelation"
-                      :model="compRelation.field.meta.field.related"
-                      :canEdit="superOptions.canEdit"
-                      :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
-                  >
-                    <template v-if="!!$slots[compRelation.field.name]" #create>
-                      <slot :name="compRelation.field.name" />
-                    </template>
-                  </SuperTable>
-                </template>
-              </div>
-            </template>
-            <template v-else-if="dataPoint.type === 'component'">
-              <component :is="asyncComponent" :item="item" />
-            </template>
-            <template v-else-if="dataPoint.type === 'function'">
-              {{ dataPoint.function(item) }}
-            </template>
-            <template v-else>
-              <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
-            </template>
-          </component>
+
+      <template v-if="!dataPoint.hideLabel && !hideLabel">
+        <div class="" style="font-weight: bold;">
+          {{ label }}:
         </div>
-      </div>
+      </template>
+      <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+        <template v-if="isRelChildren(compHeader)">
+          <div class="q-pt-sm">
+            <template v-if="compRelation">
+              <SuperTable
+                  :currentParentRel="compRelation"
+                  :model="compRelation.field.meta.field.related"
+                  :canEdit="superOptions.canEdit"
+                  :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
+              >
+                <template v-if="!!$slots[compRelation.field.name]" #create>
+                  <slot :name="compRelation.field.name" />
+                </template>
+              </SuperTable>
+            </template>
+          </div>
+        </template>
+        <template v-else-if="dataPoint.type === 'component'">
+          <component :is="asyncComponent" :item="item" />
+        </template>
+        <template v-else-if="dataPoint.type === 'function'">
+          {{ dataPoint.function(item) }}
+        </template>
+        <template v-else>
+          <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
+        </template>
+      </component>
     </template>
   </div>
 </template>
@@ -96,6 +93,18 @@ export default {
     FormattedColumn,
   },
   props: {
+    header: {
+      type: Object,
+      default() {
+        return null;
+      },
+    },
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     dataPoint: {
       type: Object,
       default() {
@@ -137,13 +146,16 @@ export default {
       return null;
     },
     compHeader() {
-      if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
+      if (this.header){
+        return this.header;
+      } else if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
         return { label: this.dataPoint.customLabel };
+      } else {
+        const result = this.superOptions.headers.find((header) => {
+          return header.field == this.dataPoint.field
+        })
+        return result
       }
-      const result = this.superOptions.headers.find((header) => {
-        return header.field == this.dataPoint.field
-      })
-      return result
     },
     compRelation() {
       let result = {}

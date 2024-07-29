@@ -10,6 +10,7 @@
         :pagination.sync="pagination"
         :loading="loading"
         @request="onRequest"
+        :hideBottom="hidePagination"
     >
       <template v-slot:body="props">
         <q-tr :props="props" @click="clickRow(props.row)">
@@ -20,23 +21,41 @@
           >
             <template v-if="header.isChildOf">
               <div>
-                <FormattedColumn
-                    :isTag="true"
-                    :header="header"
+
+                <RecordOverviewDynamicDataPoint
                     :item="props.row[header.isChildOf.value]"
                     :superOptions="superOptions"
+                    :childRelations="[]"
+                    :dataPoint="header.userConfig"
+                    :header="header"
                     hideLabel
                 />
+                <!--<FormattedColumn-->
+                <!--    :isTag="true"-->
+                <!--    :header="header"-->
+                <!--    :item="props.row[header.isChildOf.value]"-->
+                <!--    :superOptions="superOptions"-->
+                <!--    hideLabel-->
+                <!--/>-->
               </div>
             </template>
             <template v-else>
               <div>
-                <FormattedColumn
-                    :header="header"
+
+                <RecordOverviewDynamicDataPoint
                     :item="props.row"
                     :superOptions="superOptions"
+                    :childRelations="[]"
+                    :dataPoint="header.userConfig"
+                    :header="header"
                     hideLabel
                 />
+                <!--<FormattedColumn-->
+                <!--    :header="header"-->
+                <!--    :item="props.row"-->
+                <!--    :superOptions="superOptions"-->
+                <!--    hideLabel-->
+                <!--/>-->
               </div>
             </template>
           </q-td>
@@ -48,11 +67,24 @@
 
 <script>
 import FormattedColumn from "./FormattedColumn.vue";
+import RecordOverviewDynamicDataPoint from "./RecordOverviewDynamicDataPoint.vue";
 
 export default {
   name: "SuperTableTable",
-  components: { FormattedColumn },
+  components: {RecordOverviewDynamicDataPoint, FormattedColumn },
   props: {
+    hidePagination: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    templateListTable: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     items: {
       type: Array,
       default() {
@@ -117,15 +149,63 @@ export default {
       },
     },
     flattenedHeaders() {
+
       let result = [];
-      for (const header of this.superOptions.headers) {
-        result.push(header);
-        if (header.headerChildren) {
-          for (const childHeader of header.headerChildren) {
-            result.push({
-              // isChildOf: header,
-              ...childHeader,
-            });
+      if (this.templateListTable.length){
+        for (const field of this.templateListTable) {
+
+          const validField = this.superOptions.headers.find((header) => header.field === field.field);
+
+          let addableField = {}
+
+          if (typeof validField !== "undefined"){
+
+            addableField = validField
+
+            if (typeof field.customLabel !== "undefined"){
+              addableField.label = field.customLabel
+            }
+            addableField.userConfig = field
+
+          } else {
+
+            let label = "";
+            if (typeof field.customLabel !== "undefined"){
+              label = field.customLabel
+            }
+
+            let fieldName = "";
+            if (typeof field.field !== "undefined"){
+              fieldName = field.field
+            }
+
+            addableField = {
+              align: "left",
+              dataType: "attr",
+              field: fieldName,
+              label: label,
+              meta: {},
+              name: fieldName,
+              sortable: fieldName.length ? true : false,
+              usageType: "normal",
+              userConfig: field
+            }
+
+          }
+
+          result.push(addableField);
+        }
+      } else {
+        for (const header of this.superOptions.headers) {
+          result.push(header);
+          if (header.headerChildren) {
+            for (const childHeader of header.headerChildren) {
+              result.push({
+                // isChildOf: header,
+                ...childHeader,
+                userConfig: {}
+              });
+            }
           }
         }
       }
