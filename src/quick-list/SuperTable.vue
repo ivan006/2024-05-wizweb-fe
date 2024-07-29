@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="canEdit && !create.hideButton && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
+    <div v-if="canEdit && !create.hide && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -43,13 +43,13 @@
       <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
-      <template v-if="filterInputs.length && !viewAs.hideSelector">
+      <template v-if="filterInputs.length && !viewAs.hide">
         <DestructableExpansionPanels
             :destroy="!quickListsIsMobile"
             title="Settings"
         >
           <div class="row items-center wrap">
-            <template v-if="!viewAs.hideSelector">
+            <template v-if="!viewAs.hide">
               <div class="q-mr-sm">
                 <q-select
                     style="width: 200px"
@@ -262,7 +262,7 @@ export default {
       type: Object,
       default() {
         return {
-          hideSelector: false,
+          hide: false,
           default: "table"
         };
       },
@@ -271,7 +271,7 @@ export default {
       type: Object,
       default() {
         return {
-          hideButton: false,
+          hide: false,
         };
       },
     },
