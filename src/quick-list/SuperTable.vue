@@ -148,7 +148,7 @@
           </div>
         </DestructableExpansionPanels>
       </template>
-      <div class="q-mb-md">
+      <div class="">
         <template v-if="activeTab == 'table'">
           <SuperTableTable
               :items="itemsQueried"

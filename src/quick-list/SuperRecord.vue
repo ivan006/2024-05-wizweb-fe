@@ -123,6 +123,7 @@ export default {
     return {
       activeTab: 'tab',
       loading: true,
+      initialLoadHappened: false,
     };
   },
   computed: {
@@ -231,9 +232,13 @@ export default {
           .FetchById(this.id, [], { flags: {}, moreHeaders: {}, rels: [] })
           .then(() => {
             this.loading = false
+            this.initialLoadHappened = true;
+            this.$emit("initialLoadHappened", true);
           })
           .catch(() => {
             this.loading = false
+            this.initialLoadHappened = true;
+            this.$emit("initialLoadHappened", true);
           });
     },
   },
