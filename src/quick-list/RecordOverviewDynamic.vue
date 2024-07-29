@@ -13,9 +13,7 @@
                           :item="item"
                           :dataPoint="col2.dataPoint"
                           :childRelations="childRelations"
-                          @clickRow="clickRow"
                           :superOptions="superOptions"
-                          :filteredChildRelations="filteredChildRelations"
                       >
                         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                           <slot :name="slotName" v-bind="slotProps"></slot>
@@ -31,9 +29,7 @@
                   :item="item"
                   :dataPoint="col.dataPoint"
                   :childRelations="childRelations"
-                  @clickRow="clickRow"
                   :superOptions="superOptions"
-                  :filteredChildRelations="filteredChildRelations"
               >
                 <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                   <slot :name="slotName" v-bind="slotProps"></slot>

@@ -83,8 +83,7 @@ export default {
     computedValue: {
       get() {
         let result = "";
-        console.log("this.configs.meta.field")
-        console.log(this.configs.meta)
+
         const entities = this.configs.meta.field.parent
             .query()
             .whereId(+this.modelValue)

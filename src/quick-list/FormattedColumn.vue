@@ -1,5 +1,7 @@
 <template>
   <div :class="isHeading ? 'text-h6' : ''">
+
+
     <template v-if="typeof header.usageType == 'undefined'"></template>
     <template v-else-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
       <div class="text-caption">
@@ -173,7 +175,6 @@ export default {
   },
   methods: {
     clickParent(item, header) {
-      console.log(123)
       const model = header.meta.field.parent;
       model.openRecord(item[model.primaryKey]);
     },
@@ -212,8 +213,7 @@ export default {
           this.editItemData.data,
           this.superOptions.modelFields
       );
-      console.log("payload")
-      console.log(payload)
+
       this.superOptions.model.Update(payload).then(() => {
         this.fetchData();
       });

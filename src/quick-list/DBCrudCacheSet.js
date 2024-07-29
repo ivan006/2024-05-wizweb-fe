@@ -102,8 +102,7 @@ export default class DBCrudCacheSet extends Model {
 
 
                 let rules = []
-                console.log(fields)
-                console.log(field)
+
                 if (!fields[field.foreignKey].isNullable) {
                     rules = [(v) => !!v || `${label} is required.`]
                 }
