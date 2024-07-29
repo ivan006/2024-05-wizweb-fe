@@ -90,6 +90,12 @@ export default {
     SuperTable,
   },
   props: {
+    hideRelations: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     templateOverview: {
       type: Object,
       default() {
@@ -185,9 +191,11 @@ export default {
     },
     filteredChildRelations() {
       let result = [];
-      for (const childRelation of this.childRelations) {
-        if (!this.rowsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
-          result.push(childRelation);
+      if (!this.hideRelations){
+        for (const childRelation of this.childRelations) {
+          if (!this.rowsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
+            result.push(childRelation);
+          }
         }
       }
       return result;
