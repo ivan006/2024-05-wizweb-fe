@@ -343,6 +343,12 @@ export default {
         return null;
       },
     },
+    relationships: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
     defaultViewModeProp: {
       type: String,
       default() {
@@ -624,7 +630,7 @@ export default {
       }
 
       const response = await this.model.FetchAll(
-          [],
+          this.relationships,
           {
             ...rules,
             ...flagsComputed,
