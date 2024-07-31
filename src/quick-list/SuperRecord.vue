@@ -118,12 +118,19 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    relationships: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
     return {
       activeTab: 'tab',
       loading: true,
       initialLoadHappened: false,
+      item: {},
     };
   },
   computed: {
@@ -204,9 +211,9 @@ export default {
     headers() {
       return QuickListsHelpers.SupaerTableHeaders(this.model, [], this.canEdit, this.displayMapField);
     },
-    item() {
-      return this.model.query().whereId(this.id).withAll().get()[0];
-    },
+    // item() {
+    //   return this.model.query().whereId(this.id).withAll().get()[0];
+    // },
     modelFields() {
       return QuickListsHelpers.computedAttrs(this.model, this.excludedCols);
     },
@@ -229,8 +236,14 @@ export default {
     fetchData() {
       this.loading = true
       this.model
-          .FetchById(this.id, [], { flags: {}, moreHeaders: {}, rels: [] })
-          .then(() => {
+          .FetchById(
+              this.id,
+              this.relationships,
+              { flags: {}, moreHeaders: {}, rels: [] }
+          )
+          .then((response) => {
+
+            this.item = response.response.data.data
             this.loading = false
             this.initialLoadHappened = true;
             this.$emit("initialLoadHappened", true);

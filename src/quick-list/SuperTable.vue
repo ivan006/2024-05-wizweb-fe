@@ -349,6 +349,12 @@ export default {
         return [];
       },
     },
+    fetchFlags: {
+      type: Array,
+      default() {
+        return {};
+      },
+    },
     defaultViewModeProp: {
       type: String,
       default() {
@@ -634,6 +640,7 @@ export default {
           {
             ...rules,
             ...flagsComputed,
+            ...this.fetchFlags,
           },
           extraHeaderComputed,
           {
