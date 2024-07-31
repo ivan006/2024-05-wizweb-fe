@@ -88,7 +88,7 @@
                   <!--    :model="filterInput.meta.field.parent"-->
                   <!--    class="q-ma-sm col-grow"-->
                   <!--    dense-->
-                  <!--    :user="user"-->
+                  <!--    :user="use"-->
 
 
                   <!--    :page="options.page"-->
@@ -140,7 +140,6 @@
                       :filterField="filterInput"
                       v-model="filters"
                       class="q-ma-sm col-grow"
-                      :user="user"
                   />
                 </template>
               </template>
@@ -153,11 +152,15 @@
           <SuperTableTable
               :items="items"
               :loading="loading"
-              :superOptions="superOptions"
               @clickRow="clickRow"
               :templateListTable="templateListTable"
               :hidePagination="hidePagination"
+              :excludedCols="excludedCols"
+              :model="model"
+              :displayMapField="displayMapField"
+              :canEdit="canEdit"
           />
+          <!--:superOptions="superOptions"-->
           <!--:itemsLength="itemsLength"-->
           <!--@clickRow="clickRow"-->
           <!--:pagination="options"-->
@@ -291,12 +294,6 @@ export default {
         return {};
       },
     },
-    user: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
     model: {
       type: [Object, Function],
       required: true,
@@ -419,8 +416,6 @@ export default {
         displayMapField: this.displayMapField,
         model: this.model,
         canEdit: this.canEdit,
-        currentParentRel: this.currentParentRel,
-        user: this.user,
       }
     },
     excludedCols() {
@@ -433,7 +428,7 @@ export default {
       return result;
     },
     canEdit() {
-      const result = this.model.rules.creatable(this.user)
+      const result = this.model.rules.creatable()
       return result;
     },
     filtersComp() {
@@ -614,7 +609,7 @@ export default {
       this.loading = true;
       let rules = [];
       if (this.model.rules?.readables) {
-        rules = this.model.rules.readables(this.user);
+        rules = this.model.rules.readables();
       }
 
       let extraHeaderComputed = {};

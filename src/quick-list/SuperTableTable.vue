@@ -68,6 +68,7 @@
 <script>
 import FormattedColumn from "./FormattedColumn.vue";
 import RecordOverviewDynamicDataPoint from "./RecordOverviewDynamicDataPoint.vue";
+import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
   name: "SuperTableTable",
@@ -109,19 +110,37 @@ export default {
         return false;
       },
     },
-    superOptions: {
-      type: Object,
+    // superOptions: {
+    //   type: Object,
+    //   default() {
+    //     return {
+    //       headers: [],
+    //       modelFields: [],
+    //       displayMapField: false,
+    //       model: {},
+    //       canEdit: false,
+    //       currentParentRecord: {},
+    //       user: {},
+    //     };
+    //   },
+    // },
+    excludedCols: {
+      type: Array,
       default() {
-        return {
-          headers: [],
-          modelFields: [],
-          displayMapField: false,
-          model: {},
-          canEdit: false,
-          currentParentRecord: {},
-          user: {},
-        };
+        return [];
       },
+    },
+    model: {
+      type: [Object, Function],
+      required: true,
+    },
+    displayMapField: {
+      type: Boolean,
+      required: false,
+    },
+    canEdit: {
+      type: Boolean,
+      required: false,
     },
   },
   data() {
@@ -137,6 +156,31 @@ export default {
     };
   },
   computed: {
+    superOptions() {
+      return {
+        headers: this.headers,
+        modelFields: this.modelFields,
+        displayMapField: this.displayMapField,
+        model: this.model,
+        canEdit: this.canEdit,
+      }
+    },
+    headers() {
+      const result = QuickListsHelpers.SupaerTableHeaders(
+          this.model,
+          this.excludedCols,
+          this.canEdit,
+          this.displayMapField,
+      );
+      return result;
+    },
+    modelFields() {
+      const result = QuickListsHelpers.computedAttrs(
+          this.model,
+          this.excludedCols,
+      );
+      return result;
+    },
     pKey() {
       return this.superOptions.model.primaryKey;
     },

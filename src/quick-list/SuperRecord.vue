@@ -45,7 +45,6 @@
               :currentParentRel="relation"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
-              :user="user"
               :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
               @clickRow="(e) => {relation.field.meta.field.related.openRecord(e)}"
           >
@@ -114,10 +113,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    user: {
-      type: Object,
-      default: () => ({}),
-    },
     relationships: {
       type: Array,
       default() {
@@ -141,8 +136,6 @@ export default {
         displayMapField: this.displayMapField,
         model: this.model,
         canEdit: this.canEdit,
-        currentParentRel: {},
-        user: this.user,
       };
     },
     rowsAndDataIndicators() {
