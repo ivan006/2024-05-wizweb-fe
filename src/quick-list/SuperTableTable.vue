@@ -199,7 +199,6 @@ export default {
         for (const field of this.templateListTable) {
 
           const validField = this.superOptions.headers.find((header) => header.field === field.field);
-
           let addableField = {}
 
           if (typeof validField !== "undefined"){
@@ -243,9 +242,11 @@ export default {
         let actionField = this.superOptions.headers.find((field) => {
           return field.usageType == "actions";
         });
-        result.push({
-          ...actionField
-        });
+        if (actionField){
+          result.push({
+            ...actionField
+          });
+        }
 
       } else {
         for (const header of this.superOptions.headers) {
@@ -261,10 +262,12 @@ export default {
           }
         }
       }
+
       return result;
     },
     flattenedHeadersHideMapField() {
       let result = [];
+
       for (const header of this.flattenedHeaders) {
         if (!this.superOptions.superOptions) {
           if (
