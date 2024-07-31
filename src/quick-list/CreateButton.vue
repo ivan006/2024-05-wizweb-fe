@@ -32,7 +32,6 @@ export default {
           model: {},
           canEdit: false,
           currentParentRecord: {},
-          user: {},
         };
       },
     },
@@ -70,7 +69,7 @@ export default {
       return result;
     },
     canEdit() {
-      const result = this.model.rules.creatable(this.user)
+      const result = this.model.rules.creatable()
       return result;
     },
     canCreateMsg() {

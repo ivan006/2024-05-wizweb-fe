@@ -156,7 +156,6 @@ export default {
           model: {},
           canEdit: false,
           currentParentRecord: {},
-          user: {},
         };
       },
     },
@@ -190,7 +189,7 @@ export default {
       let result = false;
 
       if (this.superOptions.model.rules?.editable) {
-        result = this.superOptions.model.rules.editable(this.superOptions.user, this.item);
+        result = this.superOptions.model.rules.editable(this.item);
       }
       return !result;
     },

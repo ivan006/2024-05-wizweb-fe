@@ -46,7 +46,6 @@ export default {
           model: {},
           canEdit: false,
           currentParentRecord: {},
-          user: {},
         };
       },
     },

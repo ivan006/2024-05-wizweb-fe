@@ -52,8 +52,8 @@
                     readonly
                     variant="filled"
                     density="default"
-                    :user="superOptions.user"
                 />
+                <!--:user="superOptions.user"-->
               </template>
               <template v-else-if="field.usageType !== 'relChildrenNormal'">
                 <RelationComponent
@@ -221,7 +221,6 @@ export default {
           model: {},
           canEdit: false,
           currentParentRecord: {},
-          user: {},
         };
       },
     },
@@ -266,10 +265,10 @@ export default {
   },
   mounted() {
     this.itemData = this.modelValue;
-    const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
-    if (creatorKey) {
-      this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
-    }
+    // const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
+    // if (creatorKey) {
+    //   this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
+    // }
   },
   watch: {
     itemData: {

@@ -10,10 +10,10 @@ export default class DBBaseModel extends Model {
     static openRecord(id){}
 
     static rules = {
-        readables: (user) => true,
-        readable: (user, item) => true,
-        editable: (user, item) => true,
-        creatable: (user) => true,
+        readables: () => true,
+        readable: (item) => true,
+        editable: (item) => true,
+        creatable: () => true,
     };
 
     static NormalizeRecursive(value) {

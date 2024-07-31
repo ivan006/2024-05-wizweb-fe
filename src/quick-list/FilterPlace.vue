@@ -36,7 +36,6 @@
                     !modelValue[filterParentName(childFilter)]
                   "
                     @update:modelValue="handleSelectChange(childFilter.name)"
-                    :user="user"
                 />
               </div>
             </template>
@@ -63,10 +62,6 @@ export default {
       default: () => ({}),
     },
     modelValue: {
-      type: Object,
-      default: () => ({}),
-    },
-    user: {
       type: Object,
       default: () => ({}),
     },
