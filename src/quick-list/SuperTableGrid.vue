@@ -10,7 +10,7 @@
               "
         >
           <div class="col-12 col-md-3 q-pa-sm" >
-            <div class="q-card q-mx-auto" style="height: 100%">
+            <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordOverviewDynamic
                   :item="item"
                   @clickRow="clickRow"
