@@ -109,25 +109,25 @@ export default {
     //   const sm = 12;
     //   return `col-${baseWidth} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${sm}`;
     // },methods: {
-    colClasses(col) {
+
+    colClasses() {
       const baseWidth = this.template.width || 12;
 
       // Coefficients for each breakpoint
       const coefficients = {
-        // lg: 1,   // Large screens
-        md: 1, // Medium screens
+        lg: 1,   // Large screens
+        md: 1.5, // Medium screens
         sm: 2,   // Small screens
         xs: 4    // Extra small screens
       };
 
-      // Calculate widths based on coefficients and the provided formula
-      const lg = baseWidth;
-      const md = Math.round(baseWidth + (12 - baseWidth) * coefficients.md * baseWidth / 12);
-      const sm = Math.round(baseWidth + (12 - baseWidth) * coefficients.sm * baseWidth  / 12);
-      const xs = Math.round(baseWidth + (12 - baseWidth) * coefficients.xs * baseWidth  / 12);
+      // Calculate widths based on coefficients
+      const lg = Math.min(Math.round(baseWidth * coefficients.lg), 12);
+      const md = Math.min(Math.round(baseWidth * coefficients.md), 12);
+      const sm = Math.min(Math.round(baseWidth * coefficients.sm), 12);
+      const xs = Math.min(Math.round(baseWidth * coefficients.xs), 12);
 
-      // Ensure widths do not exceed 12
-      return `col-${baseWidth} col-lg-${Math.min(lg, 12)} col-md-${Math.min(md, 12)} col-sm-${Math.min(sm, 12)} col-xs-${Math.min(xs, 12)}`;
+      return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
     }
   },
   methods: {
