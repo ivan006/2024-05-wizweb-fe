@@ -11,25 +11,19 @@
         <div class="row q-col-gutter-xs" :class="row.class?.length ? row.class : ''">
           <template v-for="(col, index2) in row.cols" :key="index2">
             <div :class="`col-${col.width}`">
-              <template v-if="col.rows">
-                <template v-for="(row2, index3) in col.rows" :key="index3">
-                  <div class="row q-col-gutter-xs">
-                    <template v-for="(col2, index4) in row2.cols" :key="index4">
-                      <div :class="`col-${col2.width}`">
-                        <RecordOverviewDynamicDataPoint
-                            :item="item"
-                            :dataPoint="col2.dataPoint"
-                            :childRelations="childRelations"
-                            :superOptions="superOptions"
-                        >
-                          <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                            <slot :name="slotName" v-bind="slotProps"></slot>
-                          </template>
-                        </RecordOverviewDynamicDataPoint>
-                      </div>
-                    </template>
-                  </div>
-                </template>
+              <template v-if="col.rows && col.rows.length">
+                <!-- Recursively call the same component for nested rows -->
+                <RecordOverviewDynamic
+                    :template="{ rows: col.rows }"
+                    :item="item"
+                    :childRelations="childRelations"
+                    :superOptions="superOptions"
+                    :clickable="clickable"
+                >
+                  <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                    <slot :name="slotName" v-bind="slotProps"></slot>
+                  </template>
+                </RecordOverviewDynamic>
               </template>
               <template v-else>
                 <RecordOverviewDynamicDataPoint
@@ -105,12 +99,6 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
-    },
     clickRow(item) {
       this.$emit('clickRow', item);
     },
