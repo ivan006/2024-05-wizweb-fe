@@ -4,18 +4,22 @@
       <div class="text-center q-pa-md">No data available</div>
     </template>
     <template v-else>
-      <template v-if="templateOverview && templateOverview.rows">
-        <RecordOverviewDynamic
-            :item="item"
-            :childRelations="childRelations"
-            :filteredChildRelations="filteredChildRelations"
-            :superOptions="superOptions"
-            :template="templateOverview"
-        >
-          <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-            <slot :name="slotName" v-bind="slotProps"></slot>
-          </template>
-        </RecordOverviewDynamic>
+      <template v-if="templateOverview && templateOverview.cols">
+        <div style="padding-top:0.03px;">
+          <div class="row q-col-gutter-xs">
+            <RecordOverviewDynamic
+                :item="item"
+                :childRelations="childRelations"
+                :filteredChildRelations="filteredChildRelations"
+                :superOptions="superOptions"
+                :template="templateOverview"
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
+              </template>
+            </RecordOverviewDynamic>
+          </div>
+        </div>
       </template>
       <template v-else>
         <RecordOverview

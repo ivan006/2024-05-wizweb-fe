@@ -2,11 +2,10 @@
   <div>
     <div class="row q-mx-n2 justify-center">
       <template v-for="item in items" :key="item.name">
-
         <template
             v-if="
                 templateListGrid &&
-                templateListGrid.rows
+                templateListGrid.cols
               "
         >
           <div class="col-12 col-md-3 q-pa-sm" >

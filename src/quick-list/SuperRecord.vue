@@ -138,33 +138,29 @@ export default {
         canEdit: this.canEdit,
       };
     },
-    rowsAndDataIndicators() {
+    colsAndDataIndicators() {
       let result = {
         dataIndicators: [],
-        rows: [],
+        cols: [],
       };
-      if (this.templateOverview && this.templateOverview.rows) {
-        result.rows = this.templateOverview.rows;
+      if (this.templateOverview && this.templateOverview.cols) {
+        result.cols = this.templateOverview.cols;
       }
 
-      for (const rowKey in result.rows) {
-        for (const col of result.rows[rowKey].cols) {
-          if (col.rows) {
-            for (const row of col.rows) {
-              for (const col2 of row.cols) {
-                if (col2.dataPoint.field) {
-                  result.dataIndicators.push(col2.dataPoint.field);
-                }
-              }
+
+      for (const col of result.cols) {
+        if (col.cols) {
+          for (const col2 of col.cols) {
+            if (col2.dataPoint.field) {
+              result.dataIndicators.push(col2.dataPoint.field);
             }
-          } else {
-            if (col.dataPoint.field) {
-              result.dataIndicators.push(col.dataPoint.field);
-            }
+          }
+        } else {
+          if (col.dataPoint.field) {
+            result.dataIndicators.push(col.dataPoint.field);
           }
         }
       }
-
       return result;
     },
     canEdit() {
@@ -194,7 +190,7 @@ export default {
       let result = [];
       if (!this.hideRelations){
         for (const childRelation of this.childRelations) {
-          if (!this.rowsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
+          if (!this.colsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
             result.push(childRelation);
           }
         }

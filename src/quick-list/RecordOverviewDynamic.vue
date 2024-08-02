@@ -2,49 +2,47 @@
   <div
       :style="clickable ? 'cursor: pointer' : ''"
       @click="clickRow(item)"
-      :class="template.paddingClass?.length ? template.paddingClass : 'q-pa-sm'"
+      :class="` col-${template.width ? template.width : '12'} `"
   >
-    <template v-for="(row, index) in rows" :key="index">
-      <!-- this accounts for margin collapsing! -->
-      <!-- see https://stackoverflow.com/questions/78824507/child-elements-negative-margin-ignored-when-parent-has-zero-padding-due-to-col -->
-      <div style="padding-top:0.03px;">
-        <div class="row q-col-gutter-xs" :class="row.class?.length ? row.class : ''">
-          <template v-for="(col, index2) in row.cols" :key="index2">
-            <div :class="`col-${col.width}`">
-              <template v-if="col.rows && col.rows.length">
-                <!-- Recursively call the same component for nested rows -->
-                <RecordOverviewDynamic
-                    :template="{ rows: col.rows }"
-                    :item="item"
-                    :childRelations="childRelations"
-                    :superOptions="superOptions"
-                    :clickable="clickable"
-                >
-                  <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                    <slot :name="slotName" v-bind="slotProps"></slot>
-                  </template>
-                </RecordOverviewDynamic>
+
+    <div style="padding-top:0.03px;">
+      <div class="row "  :class="`${template.unsetGutters ? '' : 'q-col-gutter-xs'} ${template.class?.length ? template.class : ''} `">
+
+        <template v-if="template.cols?.length">
+
+          <template v-for="(col, index2) in template.cols" :key="index2">
+
+
+            <RecordOverviewDynamic
+                :template="col"
+                :item="item"
+                :childRelations="childRelations"
+                :superOptions="superOptions"
+                :clickable="clickable"
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
               </template>
-              <template v-else>
-                <RecordOverviewDynamicDataPoint
-                    :item="item"
-                    :dataPoint="col.dataPoint"
-                    :childRelations="childRelations"
-                    :superOptions="superOptions"
-                >
-                  <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                    <slot :name="slotName" v-bind="slotProps"></slot>
-                  </template>
-                </RecordOverviewDynamicDataPoint>
-              </template>
-            </div>
+            </RecordOverviewDynamic>
           </template>
-        </div>
+        </template>
+        <template v-else-if="template.dataPoint">
+          <div class="col-12">
+
+            <RecordOverviewDynamicDataPoint
+                :item="item"
+                :dataPoint="template.dataPoint"
+                :childRelations="childRelations"
+                :superOptions="superOptions"
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
+              </template>
+            </RecordOverviewDynamicDataPoint>
+          </div>
+        </template>
       </div>
-    </template>
-    <template v-if="!rows.length">
-      <div class="text-center q-pa-md">No data available</div>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -93,11 +91,11 @@ export default {
       },
     },
   },
-  computed: {
-    rows() {
-      return this.template?.rows || [];
-    },
-  },
+  // computed: {
+  //   cols() {
+  //     return this.template?.cols || [];
+  //   },
+  // },
   methods: {
     clickRow(item) {
       this.$emit('clickRow', item);
