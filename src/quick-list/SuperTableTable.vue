@@ -2,6 +2,7 @@
   <div>
     <!--<pre>{{flattenedHeadersHideMapField}}</pre>-->
     <q-table
+        :table-row-class-fn="tableRowClassFn"
         class="qTable"
         :rows="items"
         :columns="flattenedHeadersHideMapField"
@@ -13,7 +14,7 @@
         :hideBottom="hidePagination"
     >
       <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)">
+        <q-tr :props="props" @click="clickRow(props.row)" :no-hover="!model.rules.readable(props.row)">
           <q-td
               v-for="header in flattenedHeaders"
               :key="header.field"
@@ -284,6 +285,13 @@ export default {
     },
   },
   methods: {
+    tableRowClassFn(props) {
+      let result = 'ccc'
+      if (this.model.rules.readable(props.row)){
+        result = "hhh"
+      }
+      return result
+    },
     updateOptions(e) {
       this.$emit("update:options", e);
     },
@@ -294,7 +302,9 @@ export default {
       this.$emit("editItem", e);
     },
     clickRow(row) {
-      this.$emit("clickRow", row);
+      if (this.model.rules.readable(row)){
+        this.$emit("clickRow", row);
+      }
     },
     onRequest(props) {
       const { page, rowsPerPage, sortBy, descending } = props.pagination;
@@ -337,6 +347,10 @@ export default {
 
 .qTable .q-tr {
   cursor: pointer;
+}
+
+.qTable .q-tr.q-tr--no-hover {
+  cursor: unset;
 }
 
 .qTable {
