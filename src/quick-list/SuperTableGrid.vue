@@ -40,7 +40,7 @@
       </template>
     </div>
     <template v-if="!items.length">
-      <div class="text-center">No data available</div>
+      <div class="text-center q-pa-md">No data available</div>
     </template>
   </div>
 </template>

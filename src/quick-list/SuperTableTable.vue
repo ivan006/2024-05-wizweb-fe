@@ -239,14 +239,14 @@ export default {
           result.push(addableField);
         }
 
-        let actionField = this.superOptions.headers.find((field) => {
-          return field.usageType == "actions";
-        });
-        if (actionField){
-          result.push({
-            ...actionField
-          });
-        }
+        // let actionField = this.superOptions.headers.find((field) => {
+        //   return field.usageType == "actions";
+        // });
+        // if (actionField){
+        //   result.push({
+        //     ...actionField
+        //   });
+        // }
 
       } else {
         for (const header of this.superOptions.headers) {
