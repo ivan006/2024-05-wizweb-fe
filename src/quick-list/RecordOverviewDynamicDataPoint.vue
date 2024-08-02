@@ -32,7 +32,8 @@
                 <component :is="asyncComponent" :item="item" />
               </template>
               <template v-else-if="dataPoint.type === 'function'">
-                {{ dataPoint.function(item) }}
+                <!--{{ dataPoint.function(item) }}-->
+                <div v-html="dataPoint.function(item)"></div>
               </template>
               <template v-else>
                 <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
@@ -70,7 +71,8 @@
           <component :is="asyncComponent" :item="item" :superOptions="superOptions" />
         </template>
         <template v-else-if="dataPoint.type === 'function'">
-          {{ dataPoint.function(item) }}
+          <!--{{ dataPoint.function(item) }}-->
+          <div v-html="dataPoint.function(item)"></div>
         </template>
         <template v-else>
           <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
@@ -166,10 +168,13 @@ export default {
       return result
     },
     label() {
-      if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
+      if (this.dataPoint.label) {
         return this.dataPoint.label;
+      } else if(this.dataPoint.type === 'component' || this.dataPoint.type === 'function'){
+        return "";
+      } else {
+        return this.compHeader ? this.compHeader.label : '';
       }
-      return this.compHeader ? this.compHeader.label : '';
     }
   },
   methods: {
