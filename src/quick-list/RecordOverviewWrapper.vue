@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="Object.keys(item).length === 0 && item.constructor === Object ">
-      <div class="text-center">No data available</div>
+      <div class="text-center q-pa-md">No data available</div>
     </template>
     <template v-else>
       <template v-if="templateOverview && templateOverview.rows">
