@@ -1,10 +1,14 @@
 <template>
-  <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="" :class="template.paddingClass?.length ? template.paddingClass : `q-pa-sm`">
+  <div
+      :style="clickable ? 'cursor: pointer' : ''"
+      @click="clickRow(item)"
+      :class="template.paddingClass?.length ? template.paddingClass : 'q-pa-sm'"
+  >
     <template v-for="(row, index) in rows" :key="index">
-      <!--this accounts for margin collapsing!-->
-      <!--see https://stackoverflow.com/questions/78824507/child-elements-negative-margin-ignored-when-parent-has-zero-padding-due-to-col-->
-      <div  style="padding-top:0.03px;">
-        <div class="row q-col-gutter-xs " :class="row.class?.length ? row.class : ``">
+      <!-- this accounts for margin collapsing! -->
+      <!-- see https://stackoverflow.com/questions/78824507/child-elements-negative-margin-ignored-when-parent-has-zero-padding-due-to-col -->
+      <div style="padding-top:0.03px;">
+        <div class="row q-col-gutter-xs" :class="row.class?.length ? row.class : ''">
           <template v-for="(col, index2) in row.cols" :key="index2">
             <div :class="`col-${col.width}`">
               <template v-if="col.rows">
@@ -55,24 +59,12 @@ import RecordOverviewDynamicDataPoint from './RecordOverviewDynamicDataPoint.vue
 
 export default {
   name: 'RecordOverviewDynamic',
-  components: {RecordOverviewDynamicDataPoint},
+  components: { RecordOverviewDynamicDataPoint },
   props: {
     template: {
       type: Object,
       default() {
         return {};
-      },
-    },
-    isSummary: {
-      type: Boolean,
-      default() {
-        return false;
-      },
-    },
-    childRelations: {
-      type: Array,
-      default() {
-        return [];
       },
     },
     item: {
@@ -87,16 +79,10 @@ export default {
         return false;
       },
     },
-    maxFields: {
-      type: Number,
+    childRelations: {
+      type: Array,
       default() {
-        return 999;
-      },
-    },
-    rowsAndDataIndicators: {
-      type: Object,
-      default() {
-        return {};
+        return [];
       },
     },
     superOptions: {
@@ -112,11 +98,10 @@ export default {
         };
       },
     },
-    filteredChildRelations: {
-      type: Array,
-      default() {
-        return [];
-      },
+  },
+  computed: {
+    rows() {
+      return this.template?.rows || [];
     },
   },
   methods: {
@@ -126,24 +111,9 @@ export default {
     editItem(e) {
       this.$emit('editItem', e);
     },
-    clickRow(e) {
-      this.$emit('clickRow', e);
+    clickRow(item) {
+      this.$emit('clickRow', item);
     },
-  },
-  computed: {
-    rows() {
-      let result = [];
-
-      if (
-          this.template &&
-          this.template.rows
-      ) {
-        result = this.template.rows;
-      }
-      return result;
-    },
-  },
-  mounted() {
   },
 };
 </script>
