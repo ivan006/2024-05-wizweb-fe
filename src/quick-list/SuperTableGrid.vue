@@ -2,14 +2,15 @@
   <div>
     <div class="row q-mx-n2 justify-center">
       <template v-for="item in items" :key="item.name">
-        <div class="col-12 col-md-3 q-pa-sm">
-          <div class="q-card q-mx-auto" style="height: 100%">
-            <template
-                v-if="
+
+        <template
+            v-if="
                 templateListGrid &&
                 templateListGrid.rows
               "
-            >
+        >
+          <div class="col-12 col-md-3 q-pa-sm" >
+            <div class="q-card q-mx-auto" style="height: 100%">
               <RecordOverviewDynamic
                   :item="item"
                   @clickRow="clickRow"
@@ -20,8 +21,12 @@
                   :superOptions="superOptions"
                   :template="templateListGrid"
               />
-            </template>
-            <template v-else>
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <div :class="`col-12 col-md-3 q-pa-sm`">
+            <div class="q-card q-mx-auto" style="height: 100%">
               <RecordOverview
                   :item="item"
                   @clickRow="clickRow"
@@ -29,9 +34,9 @@
                   :maxFields="6"
                   :superOptions="superOptions"
               />
-            </template>
+            </div>
           </div>
-        </div>
+        </template>
       </template>
     </div>
     <template v-if="!items.length">
