@@ -30,6 +30,8 @@
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
                 />
                 <!--<FormattedColumn-->
                 <!--    :isTag="true"-->
@@ -50,6 +52,8 @@
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
                 />
                 <!--<FormattedColumn-->
                 <!--    :header="header"-->

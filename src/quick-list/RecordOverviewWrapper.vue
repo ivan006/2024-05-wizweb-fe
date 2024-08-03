@@ -13,6 +13,8 @@
                 :filteredChildRelations="filteredChildRelations"
                 :superOptions="superOptions"
                 :template="templateOverview"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             >
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
@@ -79,17 +81,17 @@ export default {
       },
     },
   },
-  // methods: {
-  //   deleteItem(e) {
-  //     this.$emit('deleteItem', e);
-  //   },
-  //   editItem(e) {
-  //     this.$emit('editItem', e);
-  //   },
-  //   clickRow(e) {
-  //     this.$emit('clickRow', e);
-  //   },
-  // },
+  methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e);
+    },
+    editItem(e) {
+      this.$emit('editItem', e);
+    },
+    clickRow(e) {
+      this.$emit('clickRow', e);
+    },
+  },
 };
 </script>
 

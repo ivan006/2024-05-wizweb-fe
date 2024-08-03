@@ -19,6 +19,8 @@
                   isSummary
                   :superOptions="superOptions"
                   :template="templateListGrid"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
               />
             </div>
           </div>

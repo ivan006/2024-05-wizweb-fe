@@ -68,7 +68,13 @@
           </div>
         </template>
         <template v-else-if="dataPoint.type === 'component'">
-          <component :is="asyncComponent" :item="item" :superOptions="superOptions" />
+          <component
+              :is="asyncComponent"
+              :item="item"
+              :superOptions="superOptions"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
+          />
         </template>
         <template v-else-if="dataPoint.type === 'function'">
           <!--{{ dataPoint.function(item) }}-->

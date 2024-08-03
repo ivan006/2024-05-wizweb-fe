@@ -159,6 +159,8 @@
               :model="model"
               :displayMapField="displayMapField"
               :canEdit="canEdit"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
           <!--:superOptions="superOptions"-->
           <!--:itemsLength="itemsLength"-->
@@ -181,6 +183,8 @@
                 @clickRow="clickRow"
                 :superOptions="superOptions"
                 :templateListGrid="templateListGrid"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             />
           </div>
         </template>
@@ -520,6 +524,14 @@ export default {
     },
   },
   methods: {
+    deleteItem(e) {
+      // do something
+      this.$emit("deleteItem", e);
+    },
+    editItem(e) {
+      // do something
+      this.$emit("editItem", e);
+    },
     pageUpdate(page) {
       this.options = {
         ...this.options,

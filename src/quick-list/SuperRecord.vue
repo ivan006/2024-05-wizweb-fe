@@ -25,6 +25,8 @@
                 :templateOverview="templateOverview"
                 :filteredChildRelations="filteredChildRelations"
                 :childRelations="childRelations"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             >
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
@@ -62,6 +64,8 @@
         :templateOverview="templateOverview"
         :filteredChildRelations="filteredChildRelations"
         :childRelations="childRelations"
+        @editItem="editItem"
+        @deleteItem="deleteItem"
       >
         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
           <slot :name="slotName" v-bind="slotProps"></slot>
@@ -208,6 +212,14 @@ export default {
     },
   },
   methods: {
+    deleteItem(e) {
+      // do something
+      this.$emit("deleteItem", e);
+    },
+    editItem(e) {
+      // do something
+      this.$emit("editItem", e);
+    },
     getMsg(type) {
       if (Array.isArray(type)) {
         return type.length > 1

@@ -19,6 +19,8 @@
                 :childRelations="childRelations"
                 :superOptions="superOptions"
                 :clickable="clickable"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             >
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
@@ -34,6 +36,8 @@
                 :dataPoint="template.dataPoint"
                 :childRelations="childRelations"
                 :superOptions="superOptions"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             >
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
@@ -131,6 +135,12 @@ export default {
     }
   },
   methods: {
+    deleteItem(e) {
+      this.$emit("deleteItem", e);
+    },
+    editItem(e) {
+      this.$emit("editItem", e);
+    },
     clickRow(item) {
       this.$emit('clickRow', item);
     },
