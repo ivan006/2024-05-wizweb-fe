@@ -7,6 +7,8 @@
             label="Place Filter"
             type="text"
             v-model="displayPlace"
+            :error="false"
+            :error-message="''"
             readonly
             dense
             outlined

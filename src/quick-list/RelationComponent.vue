@@ -5,6 +5,8 @@
         :label="configs.label"
         :modelValue="computedValue"
         :rules="configs.meta.rules"
+        :error="false"
+        :error-message="''"
         readonly
         :disable="readonly"
         outlined

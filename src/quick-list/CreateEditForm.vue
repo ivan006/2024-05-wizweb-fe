@@ -67,6 +67,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
               />
             </template>
             <template v-else-if="field.usageType == 'timeRangeStart'">
@@ -74,6 +76,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
                   @update:modelValue="setDefaultForEndTime"
               />
             </template>
@@ -82,6 +86,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
               />
             </template>
             <template v-else-if="field.usageType == 'timestampType'">
@@ -89,6 +95,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
               />
             </template>
             <template v-else-if="field.usageType == 'readOnlyTimestampType'">
@@ -96,6 +104,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
                   disabled
               />
             </template>
@@ -111,6 +121,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
                   readonly
                   style="display: none"
                   filled
@@ -123,6 +135,8 @@
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
+                    :error="false"
+                    :error-message="''"
                     filled
                     dense
                 />
@@ -132,6 +146,8 @@
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
+                    :error="false"
+                    :error-message="''"
                 />
               </template>
               <template v-else-if="field.dataType === 'number'">
@@ -139,6 +155,8 @@
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
+                    :error="false"
+                    :error-message="''"
                     type="number"
                     filled
                     dense
@@ -150,6 +168,8 @@
                     :label="field.label"
                     v-model="itemData[field.name]"
                     :rules="field.meta.rules"
+                    :error="false"
+                    :error-message="''"
                     filled
                     dense
                 />
@@ -160,6 +180,8 @@
                   :label="field.label"
                   v-model="itemData[field.name]"
                   :rules="field.meta.rules"
+                  :error="false"
+                  :error-message="''"
                   filled
                   dense
               />

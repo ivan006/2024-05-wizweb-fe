@@ -6,6 +6,8 @@
         readonly
         @click="click"
         v-model="formattedValue"
+        :error="false"
+        :error-message="''"
         dense
         outlined
         :disable="disabled"
@@ -23,6 +25,8 @@
         <q-input
             label="Date"
             v-model="formattedDate"
+            :error="false"
+            :error-message="''"
             readonly
             @click="showDatePicker = true"
             dense
@@ -46,6 +50,8 @@
         <q-input
             label="Time"
             v-model="formattedTime"
+            :error="false"
+            :error-message="''"
             readonly
             @click="showTimePicker = true"
             dense

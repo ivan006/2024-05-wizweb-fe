@@ -3,6 +3,8 @@
     <q-input
         :label="configs.label"
         v-model="internalModelValue"
+        :error="false"
+        :error-message="''"
         @click="showDialog = true"
         readonly
         outlined
@@ -17,6 +19,8 @@
               class="CustomPlaceSearch"
               label="Place"
               v-model="internalModelValue"
+              :error="false"
+              :error-message="''"
               ref="autocompleteInput"
               outlined
               dense

@@ -4,6 +4,8 @@
         label="Time Filter"
         type="text"
         v-model="displayDate"
+        :error="false"
+        :error-message="''"
         readonly
         dense
         outlined

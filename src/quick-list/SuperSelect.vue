@@ -3,6 +3,8 @@
     <q-select
         style="min-width: 200px;"
         v-model="internalModelValue"
+        :error="false"
+        :error-message="''"
         @update:modelValue="updateValue"
         :options="itemsComp"
         :label="modelField.label"
@@ -22,6 +24,8 @@
           <q-item-section>
             <q-input
                 v-model="search"
+                :error="false"
+                :error-message="''"
                 label="Search"
                 dense
                 outlined

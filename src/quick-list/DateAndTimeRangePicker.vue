@@ -6,6 +6,8 @@
         readonly
         @click="showDialog = true"
         v-model="formattedValue"
+        :error="false"
+        :error-message="''"
         filled
     >
       <template v-slot:append>
@@ -24,6 +26,8 @@
           <q-input
               label="Start Date"
               v-model="formattedStartDate"
+              :error="false"
+              :error-message="''"
               readonly
               @click="showStartDatePicker = true"
               filled
@@ -34,6 +38,8 @@
             <q-date
                 v-model="startDate"
                 @update:modelValue="setDefaultStartTime"
+                :error="false"
+                :error-message="''"
             ></q-date>
           </q-dialog>
 
@@ -41,6 +47,8 @@
           <q-input
               label="Start Time"
               v-model="formattedStartTime"
+              :error="false"
+              :error-message="''"
               readonly
               @click="showStartTimePicker = true"
               filled
@@ -60,6 +68,8 @@
           <q-input
               label="End Date"
               v-model="formattedEndDate"
+              :error="false"
+              :error-message="''"
               readonly
               @click="showEndDatePicker = true"
               filled
@@ -74,6 +84,8 @@
           <q-input
               label="End Time"
               v-model="formattedEndTime"
+              :error="false"
+              :error-message="''"
               readonly
               @click="showEndTimePicker = true"
               filled
