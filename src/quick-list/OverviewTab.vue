@@ -43,7 +43,7 @@ import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
-  name: 'RecordOverviewWrapper',
+  name: 'OverviewTab',
   components: {FormattedColumn, RecordOverviewDynamic, RecordOverview },
   props: {
     templateOverview: {

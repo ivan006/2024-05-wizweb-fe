@@ -19,7 +19,7 @@
       <q-tab-panels v-model="activeTab">
         <q-tab-panel name="tab">
           <template v-if="!loading">
-            <RecordOverviewWrapper
+            <OverviewTab
                 :item="item"
                 :superOptions="superOptions"
                 :templateOverview="templateOverview"
@@ -31,7 +31,7 @@
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
               </template>
-            </RecordOverviewWrapper>
+            </OverviewTab>
           </template>
           <template v-else>
             Loading...
@@ -58,7 +58,7 @@
       </q-tab-panels>
     </template>
     <template v-else>
-      <RecordOverviewWrapper
+      <OverviewTab
         :item="item"
         :superOptions="superOptions"
         :templateOverview="templateOverview"
@@ -70,7 +70,7 @@
         <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
           <slot :name="slotName" v-bind="slotProps"></slot>
         </template>
-      </RecordOverviewWrapper>
+      </OverviewTab>
     </template>
 
     <template v-if="canEdit">
@@ -113,14 +113,14 @@ import RecordOverview from "./RecordOverview.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 import SuperTableTable from "./SuperTableTable.vue";
-import RecordOverviewWrapper from "./RecordOverviewWrapper.vue";
+import OverviewTab from "./OverviewTab.vue";
 import CreateEditForm from "./CreateEditForm.vue";
 
 export default {
   name: "SuperRecord",
   components: {
     CreateEditForm,
-    RecordOverviewWrapper,
+    OverviewTab,
     SuperTableTable,
     RecordOverviewDynamic,
     RecordOverview,
