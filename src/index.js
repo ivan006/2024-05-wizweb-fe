@@ -12,7 +12,7 @@ import MyGoogleMap from './quick-list/MyGoogleMap.vue';
 import QuickListsHelpers from './quick-list/QuickListsHelpers.js';
 import RecordOverview from './quick-list/RecordOverview.vue';
 import RecordOverviewDynamic from './quick-list/RecordOverviewDynamic.vue';
-import RecordOverviewDynamicDataPoint from './quick-list/RecordOverviewDynamicDataPoint.vue';
+import DatapointForDisplay from './quick-list/DatapointForDisplay.vue';
 import RelationComponent from './quick-list/RelationComponent.vue';
 import SearchGooglePlace from './quick-list/SearchGooglePlace.vue';
 import SuperRecord from './quick-list/SuperRecord.vue';
@@ -42,7 +42,7 @@ export {
   QuickListsHelpers,
   RecordOverview,
   RecordOverviewDynamic,
-  RecordOverviewDynamicDataPoint,
+  DatapointForDisplay,
   RelationComponent,
   SearchGooglePlace,
   SuperRecord,

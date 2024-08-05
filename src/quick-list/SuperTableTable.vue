@@ -23,7 +23,7 @@
             <template v-if="header.isChildOf">
               <div>
 
-                <RecordOverviewDynamicDataPoint
+                <DatapointForDisplay
                     :item="props.row[header.isChildOf.value]"
                     :superOptions="superOptions"
                     :childRelations="[]"
@@ -45,7 +45,7 @@
             <template v-else>
               <div>
 
-                <RecordOverviewDynamicDataPoint
+                <DatapointForDisplay
                     :item="props.row"
                     :superOptions="superOptions"
                     :childRelations="[]"
@@ -72,12 +72,12 @@
 
 <script>
 import FormattedColumn from "./FormattedColumn.vue";
-import RecordOverviewDynamicDataPoint from "./RecordOverviewDynamicDataPoint.vue";
+import DatapointForDisplay from "./DatapointForDisplay.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
   name: "SuperTableTable",
-  components: {RecordOverviewDynamicDataPoint, FormattedColumn },
+  components: {DatapointForDisplay, FormattedColumn },
   props: {
     hidePagination: {
       type: Boolean,

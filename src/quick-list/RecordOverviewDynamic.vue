@@ -31,7 +31,7 @@
         <template v-else-if="template.dataPoint">
           <div class="col-12">
 
-            <RecordOverviewDynamicDataPoint
+            <DatapointForDisplay
                 :item="item"
                 :dataPoint="template.dataPoint"
                 :childRelations="childRelations"
@@ -42,7 +42,7 @@
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
               </template>
-            </RecordOverviewDynamicDataPoint>
+            </DatapointForDisplay>
           </div>
         </template>
       </div>
@@ -51,11 +51,11 @@
 </template>
 
 <script>
-import RecordOverviewDynamicDataPoint from './RecordOverviewDynamicDataPoint.vue';
+import DatapointForDisplay from './DatapointForDisplay.vue';
 
 export default {
   name: 'RecordOverviewDynamic',
-  components: { RecordOverviewDynamicDataPoint },
+  components: { DatapointForDisplay },
   props: {
     template: {
       type: Object,

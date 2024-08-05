@@ -108,7 +108,7 @@ import { defineAsyncComponent } from 'vue';
 import RecordOverview from "./RecordOverview.vue";
 
 export default {
-  name: 'RecordOverviewDynamicDataPoint',
+  name: 'DatapointForDisplay',
   components: {
     RecordOverview,
     SuperTable: defineAsyncComponent(() => import('./SuperTable.vue')),
