@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="Object.keys(item).length === 0 && item.constructor === Object ">
+    <template v-if="!item || (item.constructor === Object  && Object.keys(item).length === 0)  ">
       <div class="text-center q-pa-md">No data available</div>
     </template>
     <template v-else>
@@ -27,6 +27,8 @@
         <RecordOverview
             :item="item"
             :superOptions="superOptions"
+            @editItem="editItem"
+            @deleteItem="deleteItem"
         />
       </template>
     </template>
@@ -38,10 +40,11 @@
 
 import RecordOverview from "./RecordOverview.vue";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: 'RecordOverviewWrapper',
-  components: {RecordOverviewDynamic, RecordOverview },
+  components: {FormattedColumn, RecordOverviewDynamic, RecordOverview },
   props: {
     templateOverview: {
       type: Object,

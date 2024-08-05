@@ -72,6 +72,38 @@
         </template>
       </RecordOverviewWrapper>
     </template>
+
+    <template v-if="canEdit">
+
+      <template v-if="superOptions.canEdit">
+        <q-dialog v-model="editItemData.showModal">
+          <CreateEditForm
+              title="Edit Item"
+              v-if="editItemData.showModal"
+              v-model="editItemData.data"
+              @submit="editItemSubmit"
+              @cancel="editItemData.showModal = false"
+              :superOptions="superOptions"
+              style="width: 700px; max-width: 80vw;"
+          />
+        </q-dialog>
+
+        <q-dialog v-model="deleteItemData.showModal" >
+          <q-card style="width: 500px; max-width: 80vw;">
+            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
+              <div class="text-h6">Delete Item</div>
+            </q-card-section>
+            <q-card-section>
+              <p>Are you sure you want to delete this item?</p>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
+              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -82,10 +114,12 @@ import QuickListsHelpers from "./QuickListsHelpers";
 import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import RecordOverviewWrapper from "./RecordOverviewWrapper.vue";
+import CreateEditForm from "./CreateEditForm.vue";
 
 export default {
   name: "SuperRecord",
   components: {
+    CreateEditForm,
     RecordOverviewWrapper,
     SuperTableTable,
     RecordOverviewDynamic,
@@ -126,6 +160,14 @@ export default {
   },
   data() {
     return {
+      deleteItemData: {
+        showModal: false,
+        data: null,
+      },
+      editItemData: {
+        showModal: false,
+        data: null,
+      },
       activeTab: 'tab',
       loading: true,
       initialLoadHappened: false,
@@ -212,13 +254,35 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      // do something
-      this.$emit("deleteItem", e);
+    deleteItem(item) {
+
+      this.$emit("deleteItem", item);
+
+      this.deleteItemData.data = item;
+      this.deleteItemData.showModal = true;
     },
-    editItem(e) {
-      // do something
-      this.$emit("editItem", e);
+    deleteItemSubmit() {
+      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
+        this.fetchData();
+      });
+      this.deleteItemData.showModal = false;
+    },
+    editItem(item) {
+      this.$emit("editItem", item);
+
+      this.editItemData.data = {...item};
+      this.editItemData.showModal = true;
+    },
+    editItemSubmit() {
+      const payload = QuickListsHelpers.preparePayload(
+          this.editItemData.data,
+          this.superOptions.modelFields
+      );
+
+      this.superOptions.model.Update(payload).then(() => {
+        this.fetchData();
+      });
+      this.editItemData.showModal = false;
     },
     getMsg(type) {
       if (Array.isArray(type)) {

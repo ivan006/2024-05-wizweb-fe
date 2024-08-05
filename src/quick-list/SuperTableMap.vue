@@ -13,6 +13,8 @@
           <RecordOverview
               :item="viewItemData.data"
               :superOptions="superOptions"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
         </q-card-section>
 
@@ -29,10 +31,12 @@
 import RecordOverview from "./RecordOverview.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
+import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: "SuperTableMap",
   components: {
+    FormattedColumn,
     MyGoogleMap,
     RecordOverview,
   },

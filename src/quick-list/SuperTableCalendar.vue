@@ -56,6 +56,8 @@
           <RecordOverview
               :item="viewItemData.data"
               :superOptions="superOptions"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
         </q-card-section>
 
@@ -71,10 +73,12 @@
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordOverview from "./RecordOverview.vue";
+import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: "SuperTableCalendar",
   components: {
+    FormattedColumn,
     RecordOverview,
   },
   props: {
@@ -210,6 +214,12 @@ export default {
     },
   },
   methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e);
+    },
+    editItem(e) {
+      this.$emit('editItem', e);
+    },
     clickRow(e) {
       this.viewItemData.showModal = false;
       this.$emit("clickRow", e);

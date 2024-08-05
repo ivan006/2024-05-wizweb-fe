@@ -194,6 +194,8 @@
               :items="items"
               @clickRow="clickRow"
               :superOptions="superOptions"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
         </template>
         <template v-if="activeTab == 'calendar'">
@@ -201,6 +203,8 @@
               :items="items"
               @clickRow="clickRow"
               :superOptions="superOptions"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
         </template>
       </div>
@@ -268,6 +272,7 @@ import CreateButton from "./CreateButton.vue";
 import RelationComponent from "./RelationComponent.vue";
 
 import { defineAsyncComponent } from 'vue'
+import RecordOverview from "./RecordOverview.vue";
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
@@ -279,6 +284,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    RecordOverview,
     RelationComponent,
     CreateButton,
     DestructableExpansionPanels,
