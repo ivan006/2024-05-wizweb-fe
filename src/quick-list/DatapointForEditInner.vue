@@ -213,7 +213,7 @@ const AsyncSuperTableComponent = defineAsyncComponent(() =>
 );
 
 export default {
-  name: "DatapointForEdit",
+  name: "DatapointForEditInner",
   components: {
     SuperSelect,
     SearchGooglePlace,

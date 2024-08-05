@@ -81,12 +81,10 @@
 import moment from 'moment';
 import 'moment-timezone';
 import QuickListsHelpers from './QuickListsHelpers';
-import CreateEditForm from './CreateEditForm.vue';
 
 export default {
   name: 'DatapointForDisplayInner',
   components: {
-    CreateEditForm
   },
   props: {
     isTag: {

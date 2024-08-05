@@ -3,7 +3,7 @@
     <template v-for="field in superOptions.modelFields" :key="field.name">
       <template v-if="superOptions.model.primaryKey !== field.name">
         <div class="q-mb-sm">
-          <DatapointForEdit
+          <DatapointForEditInner
               :modelValue="itemData[field.name]"
               @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
               :superOptions="superOptions"
@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import DatapointForEdit from "./DatapointForEdit.vue";
+import DatapointForEditInner from "./DatapointForEditInner.vue";
 import SuperSelect from "./SuperSelect.vue";
 
 export default {
   name: "RecordFieldsForEditGeneric",
   components: {
     SuperSelect,
-    DatapointForEdit,
+    DatapointForEditInner,
   },
   props: {
     modelValue: {
