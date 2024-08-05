@@ -5,12 +5,27 @@
     </q-card-section>
     <q-card-section>
       <q-form ref="editForm">
-        <RecordFieldsForEditGeneric
-            :modelValue="modelValue"
-            @update:modelValue="updateModelValue"
-            :superOptions="superOptions"
-            @updateSetDefaultEndTime="updateSetDefaultEndTime"
-        />
+        <template v-if="template && template.cols">
+          <div style="padding-top:0.03px;">
+            <div class="row q-col-gutter-xs">
+              <RecordFieldsForEditCustom
+                  :modelValue="modelValue"
+                  @update:modelValue="updateModelValue"
+                  :superOptions="superOptions"
+                  @updateSetDefaultEndTime="updateSetDefaultEndTime"
+                  :template="template"
+              />
+            </div>
+          </div>
+        </template>
+        <template v-else>
+          <RecordFieldsForEditGeneric
+              :modelValue="modelValue"
+              @update:modelValue="updateModelValue"
+              :superOptions="superOptions"
+              @updateSetDefaultEndTime="updateSetDefaultEndTime"
+          />
+        </template>
       </q-form>
     </q-card-section>
     <q-card-actions align="right">
@@ -31,6 +46,10 @@ import SuperSelect from "./SuperSelect.vue";
 // import SuperTable from "./SuperTable.vue";
 import { defineAsyncComponent } from 'vue'
 import RecordFieldsForEditGeneric from "./RecordFieldsForEditGeneric.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import RecordFieldsForEditCustom from "./RecordFieldsForEditCustom.vue";
+import CreateButton from "./CreateButton.vue";
 
 const AsyncSuperTableComponent = defineAsyncComponent(() =>
     import('./SuperTable.vue')
@@ -39,6 +58,9 @@ const AsyncSuperTableComponent = defineAsyncComponent(() =>
 export default {
   name: "CreateEditForm",
   components: {
+    CreateButton,
+    RecordFieldsForEditCustom,
+    RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric,
     RecordFieldsForEditGeneric,
     SuperSelect,
     SearchGooglePlace,
