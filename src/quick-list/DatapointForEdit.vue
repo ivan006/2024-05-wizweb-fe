@@ -26,7 +26,11 @@
       </div>
     </template>
     <template v-else>
-
+      <template v-if="!dataPoint.hideLabel">
+        <div class="" style="font-weight: bold;" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
+          {{ label }}:
+        </div>
+      </template>
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
         <DatapointForEditInner
             v-if="compHeader"
@@ -91,7 +95,7 @@ export default {
       return result
     },
     label() {
-      if (this.dataPoint.label) {
+      if (typeof this.dataPoint.label !== "undefined") {
         return this.dataPoint.label;
       } else {
         return this.compHeader ? this.compHeader.label : '';

@@ -66,6 +66,7 @@
     <template v-else-if="field.usageType == 'timeRangeType'">
       <DateAndTimeRangePicker
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -76,6 +77,7 @@
     <template v-else-if="field.usageType == 'timeRangeStart'">
       <DateAndTimePicker
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateStartTime"
           :rules="field.meta.rules"
@@ -86,6 +88,7 @@
     <template v-else-if="field.usageType == 'timeRangeEnd'">
       <DateAndTimePicker
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -96,6 +99,7 @@
     <template v-else-if="field.usageType == 'timestampType'">
       <DateAndTimePicker
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -106,6 +110,7 @@
     <template v-else-if="field.usageType == 'readOnlyTimestampType'">
       <DateAndTimePicker
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -126,6 +131,7 @@
     <template v-else-if="field.usageType.startsWith('mapExtra')">
       <q-input
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -141,6 +147,7 @@
       <template v-if="field.dataType === 'string'">
         <q-input
             :label="compLabel"
+            :placeholder="compPlaceholder"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -153,6 +160,7 @@
       <template v-else-if="field.dataType === 'boolean'">
         <q-checkbox
             :label="compLabel"
+            :placeholder="compPlaceholder"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -163,6 +171,7 @@
       <template v-else-if="field.dataType === 'number'">
         <q-input
             :label="compLabel"
+            :placeholder="compPlaceholder"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -177,6 +186,7 @@
 
         <q-input
             :label="compLabel"
+            :placeholder="compPlaceholder"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -190,6 +200,7 @@
     <template v-else>
       <q-input
           :label="compLabel"
+            :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -282,11 +293,21 @@ export default {
       return result;
     },
     compLabel() {
-      if (this.hideLabel){
-        return void 0
-      } else {
-        return this.field.label
-      }
+      // if (this.hideLabel){
+      //   return void 0
+      // } else {
+      //   return this.field.label
+      // }
+
+      return void 0
+    },
+    compPlaceholder() {
+      // if (this.hideLabel){
+      //   return this.field.label
+      // } else {
+      //   return void 0
+      // }
+      return this.field.label
     },
   },
   methods: {
