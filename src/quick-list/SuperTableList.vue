@@ -10,7 +10,7 @@
         >
           <q-item-section>
             <q-item-label>
-              <FormattedColumn
+              <DatapointForDisplayInner
                   :header="title"
                   :item="item"
                   @editItem="editItem"
@@ -25,12 +25,12 @@
 </template>
 
 <script>
-import FormattedColumn from "./FormattedColumn.vue";
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableList",
-  components: {RecordFieldsForDisplayCustom, FormattedColumn },
+  components: {RecordFieldsForDisplayCustom, DatapointForDisplayInner },
   props: {
     items: {
       type: Array,

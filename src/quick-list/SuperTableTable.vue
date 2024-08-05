@@ -33,7 +33,7 @@
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                 />
-                <!--<FormattedColumn-->
+                <!--<DatapointForDisplayInner-->
                 <!--    :isTag="true"-->
                 <!--    :header="header"-->
                 <!--    :item="props.row[header.isChildOf.value]"-->
@@ -55,7 +55,7 @@
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                 />
-                <!--<FormattedColumn-->
+                <!--<DatapointForDisplayInner-->
                 <!--    :header="header"-->
                 <!--    :item="props.row"-->
                 <!--    :superOptions="superOptions"-->
@@ -71,13 +71,13 @@
 </template>
 
 <script>
-import FormattedColumn from "./FormattedColumn.vue";
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import DatapointForDisplay from "./DatapointForDisplay.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
   name: "SuperTableTable",
-  components: {DatapointForDisplay, FormattedColumn },
+  components: {DatapointForDisplay, DatapointForDisplayInner },
   props: {
     hidePagination: {
       type: Boolean,

@@ -31,12 +31,12 @@
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
-import FormattedColumn from "./FormattedColumn.vue";
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 
 export default {
   name: "SuperTableMap",
   components: {
-    FormattedColumn,
+    DatapointForDisplayInner,
     MyGoogleMap,
     RecordFieldsForDisplayGeneric,
   },

@@ -73,12 +73,12 @@
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
-import FormattedColumn from "./FormattedColumn.vue";
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 
 export default {
   name: "SuperTableCalendar",
   components: {
-    FormattedColumn,
+    DatapointForDisplayInner,
     RecordFieldsForDisplayGeneric,
   },
   props: {

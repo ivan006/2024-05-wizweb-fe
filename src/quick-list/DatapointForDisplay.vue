@@ -36,7 +36,7 @@
                 <div v-html="dataPoint.function(item)"></div>
               </template>
               <template v-else>
-                <FormattedColumn
+                <DatapointForDisplayInner
                     :header="compHeader"
                     :item="item"
                     :superOptions="superOptions"
@@ -88,7 +88,7 @@
           <div v-html="dataPoint.function(item)"></div>
         </template>
         <template v-else>
-          <FormattedColumn
+          <DatapointForDisplayInner
               :header="compHeader"
               :item="item"
               :superOptions="superOptions"
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import FormattedColumn from './FormattedColumn.vue'
+import DatapointForDisplayInner from './DatapointForDisplayInner.vue'
 import { defineAsyncComponent } from 'vue';
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 
@@ -112,7 +112,7 @@ export default {
   components: {
     RecordFieldsForDisplayGeneric,
     SuperTable: defineAsyncComponent(() => import('./SuperTable.vue')),
-    FormattedColumn,
+    DatapointForDisplayInner,
   },
   props: {
     header: {

@@ -12,7 +12,7 @@
             <template v-if="index === 0"></template>
             <template v-else>
               <div>
-                <FormattedColumn
+                <DatapointForDisplayInner
                     :header="header"
                     :item="item"
                     :superOptions="superOptions"
@@ -24,7 +24,7 @@
           </template>
           <template v-else>
             <template v-if="index === 0">
-              <FormattedColumn
+              <DatapointForDisplayInner
                   :header="header"
                   :item="item"
                   :superOptions="superOptions"
@@ -36,7 +36,7 @@
             </template>
             <template v-else>
               <div>
-                <FormattedColumn
+                <DatapointForDisplayInner
                     :key="index"
                     :header="header"
                     :item="item"
@@ -50,7 +50,7 @@
         </template>
         <template v-else>
           <div>
-            <FormattedColumn
+            <DatapointForDisplayInner
                 :key="index"
                 :header="header"
                 :item="item"
@@ -66,11 +66,11 @@
 </template>
 
 <script>
-import FormattedColumn from './FormattedColumn.vue';
+import DatapointForDisplayInner from './DatapointForDisplayInner.vue';
 
 export default {
   name: 'RecordFieldsForDisplayGeneric',
-  components: { FormattedColumn },
+  components: { DatapointForDisplayInner },
   props: {
     clickable: {
       type: Boolean,

@@ -84,7 +84,7 @@ import QuickListsHelpers from './QuickListsHelpers';
 import CreateEditForm from './CreateEditForm.vue';
 
 export default {
-  name: 'FormattedColumn',
+  name: 'DatapointForDisplayInner',
   components: {
     CreateEditForm
   },

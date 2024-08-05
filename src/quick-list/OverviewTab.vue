@@ -40,11 +40,11 @@
 
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
-import FormattedColumn from "./FormattedColumn.vue";
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 
 export default {
   name: 'OverviewTab',
-  components: {FormattedColumn, RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric },
+  components: {DatapointForDisplayInner, RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric },
   props: {
     templateOverview: {
       type: Object,
