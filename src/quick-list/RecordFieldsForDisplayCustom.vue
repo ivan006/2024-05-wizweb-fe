@@ -99,20 +99,6 @@ export default {
     // cols() {
     //   return this.template?.cols || [];
     // },
-    // colClasses() {
-    //   // const gen = ` col-${template.width ? template.width : '12'} `
-    //   // const lg = ` col-lg-${template.width ? template.width : '12'} `
-    //   // const md = ` col-md-${template.width ? template.width : '12'} `
-    //   // const sm = ` col-sm-${template.width ? template.width : '12'} `
-    //   // const xs = ` col-xs-${template.width ? template.width : '12'} `
-    //
-    //
-    //   const baseWidth = this.template.width || 12;
-    //   const lg = baseWidth;
-    //   const md = baseWidth < 12 ? baseWidth + 2 : 12;
-    //   const sm = 12;
-    //   return `col-${baseWidth} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${sm}`;
-    // },methods: {
 
     colClasses() {
       const baseWidth = this.template.width || 12;

@@ -10,47 +10,55 @@
 
         <template v-if="template.cols?.length">
 
-          <template v-for="(col, index2) in template.cols" :key="index2">
+          <!--<template v-for="(col, index2) in template.cols" :key="index2">-->
 
 
-            <RecordFieldsForDisplayCustom
-                :template="col"
-                :item="item"
-                :childRelations="childRelations"
+          <!--  <RecordFieldsForDisplayCustom-->
+          <!--      :template="col"-->
+          <!--      :item="item"-->
+          <!--      :childRelations="childRelations"-->
+          <!--      :superOptions="superOptions"-->
+          <!--      :clickable="clickable"-->
+          <!--      @editItem="editItem"-->
+          <!--      @deleteItem="deleteItem"-->
+          <!--  >-->
+          <!--    <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">-->
+          <!--      <slot :name="slotName" v-bind="slotProps"></slot>-->
+          <!--    </template>-->
+          <!--  </RecordFieldsForDisplayCustom>-->
+          <!--</template>-->
+
+          <!--<template v-for="field in superOptions.modelFields" :key="field.name">-->
+          <!--  <template v-if="superOptions.model.primaryKey !== field.name">-->
+          <!--    <RecordFieldsForEditCustom-->
+          <!--        :modelValue="modelValue"-->
+          <!--        @update:modelValue="updateModelValue"-->
+          <!--        :superOptions="superOptions"-->
+          <!--        @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"-->
+          <!--        :template="template"-->
+          <!--    />-->
+          <!--  </template>-->
+          <!--</template>-->
+
+          <template  v-for="(col, index2) in template.cols" :key="index2">
+            <RecordFieldsForEditCustom
+                :modelValue="modelValue"
+                @update:modelValue="updateModelValue"
                 :superOptions="superOptions"
-                :clickable="clickable"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-            >
-              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                <slot :name="slotName" v-bind="slotProps"></slot>
-              </template>
-            </RecordFieldsForDisplayCustom>
-          </template>
-
-          <template v-for="field in superOptions.modelFields" :key="field.name">
-            <template v-if="superOptions.model.primaryKey !== field.name">
-              <RecordFieldsForEditCustom
-                  :modelValue="modelValue"
-                  @update:modelValue="updateModelValue"
-                  :superOptions="superOptions"
-                  @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-                  :template="template"
-              />
-            </template>
+                @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                :template="col"
+            />
           </template>
         </template>
         <template v-else-if="template.dataPoint">
           <div class="col-12">
-
             <div class="q-mb-sm">
-
-              <DatapointForEditInner
-                  :modelValue="itemData[field.name]"
-                  @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
+              <DatapointForEdit
+                  :modelValue="modelValue"
+                  @update:modelValue="updateModelValue"
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-                  :field="field"
+                  :dataPoint="template.dataPoint"
               />
             </div>
           </div>
@@ -67,10 +75,12 @@ import DatapointForEditInner from "./DatapointForEditInner.vue";
 import SuperSelect from "./SuperSelect.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import DatapointForDisplay from "./DatapointForDisplay.vue";
+import DatapointForEdit from "./DatapointForEdit.vue";
 
 export default {
   name: "RecordFieldsForEditCustom",
   components: {
+    DatapointForEdit,
     DatapointForDisplay, RecordFieldsForDisplayCustom,
     SuperSelect,
     DatapointForEditInner,
@@ -102,22 +112,21 @@ export default {
   },
   data() {
     return {
-      itemData: {},
+      // itemData: {},
       loading: false,
     };
   },
   mounted() {
-    this.itemData = this.modelValue;
+    // this.itemData = this.modelValue;
     // const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
     // if (creatorKey) {
     //   this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
     // }
   },
   methods: {
-    updateModelValue(fieldValue, fieldName){
-      this.itemData[fieldName] = fieldValue
-      this.$emit('update:modelValue', this.itemData)
-    }
+    updateModelValue(item) {
+      this.$emit("update:modelValue", item);
+    },
   },
   watch: {
     // itemData: {
