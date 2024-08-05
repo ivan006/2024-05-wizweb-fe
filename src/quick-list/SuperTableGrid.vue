@@ -34,6 +34,8 @@
                   :clickable="true"
                   :maxFields="6"
                   :superOptions="superOptions"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
               />
             </div>
           </div>

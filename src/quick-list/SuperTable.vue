@@ -43,7 +43,7 @@
       <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
-      <template v-if="filterInputs.length && !viewAs.hide">
+      <template v-if="!(filterInputs.length === 0 && viewAs.hide)">
         <DestructableExpansionPanels
             :destroy="!quickListsIsMobile"
             title="Settings"
@@ -641,9 +641,9 @@ export default {
       if (this.isForSelectingRelation) {
         this.highlightedRow = item.id;
       }
-      // if (!this.isForSelectingRelation){
-      //   this.model.openRecord(item[this.pKey]);
-      // }
+      if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
+        this.model.openRecord(item[this.pKey]);
+      }
       this.$emit("clickRow", item);
 
       this.$emit("update:modelValue", item);

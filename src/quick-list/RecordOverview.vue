@@ -3,7 +3,7 @@
     <template v-for="(header, index) in superOptions.headers">
       <div
           :key="header.name"
-          v-if="header.field !== 'id' && (index < maxFields || header.type === 'actions') && !header.usageType.startsWith('relChildren')"
+          v-if="header.field !== 'id' && (index < maxFields || header.usageType === 'actions') && !header.usageType.startsWith('relChildren')"
           class="q-pa-xs q-mb-sm"
           style="min-height: 1.375rem"
       >
@@ -16,6 +16,8 @@
                     :header="header"
                     :item="item"
                     :superOptions="superOptions"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
                 />
               </div>
             </template>
@@ -26,6 +28,9 @@
                   :header="header"
                   :item="item"
                   :superOptions="superOptions"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+
                   isHeading
               />
             </template>
@@ -36,6 +41,8 @@
                     :header="header"
                     :item="item"
                     :superOptions="superOptions"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
                 />
               </div>
             </template>
@@ -48,6 +55,8 @@
                 :header="header"
                 :item="item"
                 :superOptions="superOptions"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
             />
           </div>
         </template>
