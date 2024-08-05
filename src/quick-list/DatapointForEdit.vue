@@ -4,14 +4,12 @@
     <template v-if="dataPoint.xOrientation">
       <div class="">
         <div class="row">
-          <template v-if="!dataPoint.hideLabel">
-            <div class="q-pr-sm">
-              <div class="" style="font-weight: bold;">
-                {{ label }}:
-              </div>
+          <div class="q-pr-sm col-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="" style="font-weight: bold; line-height: 3em;">
+              {{ label }}:
             </div>
-          </template>
-          <div>
+          </div>
+          <div class="col-6 col-md-6 col-sm-6 col-xs-6">
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
               <DatapointForEditInner
                   v-if="compHeader"
@@ -20,6 +18,7 @@
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
                   :field="compHeader"
+                  hideLabel
               />
             </component>
           </div>
@@ -28,13 +27,7 @@
     </template>
     <template v-else>
 
-      <template v-if="!dataPoint.hideLabel && !hideLabel">
-        <div class="" style="font-weight: bold;">
-          {{ label }}:
-        </div>
-      </template>
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-
         <DatapointForEditInner
             v-if="compHeader"
             :modelValue="modelValue[compHeader.name]"
@@ -42,7 +35,7 @@
             :superOptions="superOptions"
             @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
             :field="compHeader"
-            hideLabel
+            :hideLabel="dataPoint.hideLabel"
         />
       </component>
     </template>
