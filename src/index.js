@@ -10,7 +10,7 @@ import FilterPlace from './quick-list/FilterPlace.vue';
 import FilterTime from './quick-list/FilterTime.vue';
 import MyGoogleMap from './quick-list/MyGoogleMap.vue';
 import QuickListsHelpers from './quick-list/QuickListsHelpers.js';
-import RecordOverview from './quick-list/RecordOverview.vue';
+import RecordFieldsForDisplayGeneric from './quick-list/RecordFieldsForDisplayGeneric.vue';
 import RecordFieldsForDisplayCustom from './quick-list/RecordFieldsForDisplayCustom.vue';
 import DatapointForDisplay from './quick-list/DatapointForDisplay.vue';
 import RelationComponent from './quick-list/RelationComponent.vue';
@@ -40,7 +40,7 @@ export {
   FilterTime,
   MyGoogleMap,
   QuickListsHelpers,
-  RecordOverview,
+  RecordFieldsForDisplayGeneric,
   RecordFieldsForDisplayCustom,
   DatapointForDisplay,
   RelationComponent,

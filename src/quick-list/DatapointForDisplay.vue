@@ -105,12 +105,12 @@
 <script>
 import FormattedColumn from './FormattedColumn.vue'
 import { defineAsyncComponent } from 'vue';
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 
 export default {
   name: 'DatapointForDisplay',
   components: {
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
     SuperTable: defineAsyncComponent(() => import('./SuperTable.vue')),
     FormattedColumn,
   },

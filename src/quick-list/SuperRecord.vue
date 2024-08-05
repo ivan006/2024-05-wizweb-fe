@@ -109,7 +109,7 @@
 
 <script>
 import SuperTable from "./SuperTable.vue";
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import SuperTableTable from "./SuperTableTable.vue";
@@ -123,7 +123,7 @@ export default {
     OverviewTab,
     SuperTableTable,
     RecordFieldsForDisplayCustom,
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
     SuperTable,
   },
   props: {

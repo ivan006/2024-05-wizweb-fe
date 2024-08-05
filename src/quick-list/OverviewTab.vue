@@ -24,7 +24,7 @@
         </div>
       </template>
       <template v-else>
-        <RecordOverview
+        <RecordFieldsForDisplayGeneric
             :item="item"
             :superOptions="superOptions"
             @editItem="editItem"
@@ -38,13 +38,13 @@
 
 <script>
 
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: 'OverviewTab',
-  components: {FormattedColumn, RecordFieldsForDisplayCustom, RecordOverview },
+  components: {FormattedColumn, RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric },
   props: {
     templateOverview: {
       type: Object,

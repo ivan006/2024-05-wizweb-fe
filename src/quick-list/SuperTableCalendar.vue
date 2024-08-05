@@ -53,7 +53,7 @@
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
       <q-card class="q-pt-md">
         <q-card-section>
-          <RecordOverview
+          <RecordFieldsForDisplayGeneric
               :item="viewItemData.data"
               :superOptions="superOptions"
               @editItem="editItem"
@@ -72,14 +72,14 @@
 
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: "SuperTableCalendar",
   components: {
     FormattedColumn,
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
   },
   props: {
     items: {

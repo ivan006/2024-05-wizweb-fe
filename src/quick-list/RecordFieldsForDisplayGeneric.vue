@@ -69,7 +69,7 @@
 import FormattedColumn from './FormattedColumn.vue';
 
 export default {
-  name: 'RecordOverview',
+  name: 'RecordFieldsForDisplayGeneric',
   components: { FormattedColumn },
   props: {
     clickable: {

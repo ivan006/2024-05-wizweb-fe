@@ -10,7 +10,7 @@
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
       <q-card class="q-pt-md">
         <q-card-section>
-          <RecordOverview
+          <RecordFieldsForDisplayGeneric
               :item="viewItemData.data"
               :superOptions="superOptions"
               @editItem="editItem"
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
 import FormattedColumn from "./FormattedColumn.vue";
@@ -38,7 +38,7 @@ export default {
   components: {
     FormattedColumn,
     MyGoogleMap,
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
   },
   props: {
     items: {

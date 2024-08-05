@@ -272,7 +272,7 @@ import CreateButton from "./CreateButton.vue";
 import RelationComponent from "./RelationComponent.vue";
 
 import { defineAsyncComponent } from 'vue'
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
@@ -284,7 +284,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
     RelationComponent,
     CreateButton,
     DestructableExpansionPanels,

@@ -28,7 +28,7 @@
         <template v-else>
           <div :class="`col-12 col-md-3 q-pa-sm`">
             <div class="q-card q-mx-auto" style="height: 100%">
-              <RecordOverview
+              <RecordFieldsForDisplayGeneric
                   :item="item"
                   @clickRow="clickRow"
                   :clickable="true"
@@ -49,13 +49,13 @@
 </template>
 
 <script>
-import RecordOverview from "./RecordOverview.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableGrid",
   components: {
-    RecordOverview,
+    RecordFieldsForDisplayGeneric,
     RecordFieldsForDisplayCustom,
   },
   props: {
