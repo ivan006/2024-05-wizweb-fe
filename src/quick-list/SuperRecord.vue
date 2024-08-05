@@ -84,6 +84,7 @@
               @submit="editItemSubmit"
               @cancel="editItemData.showModal = false"
               :superOptions="superOptions"
+              :template="templateForm"
               style="width: 700px; max-width: 80vw;"
           />
         </q-dialog>
@@ -134,6 +135,12 @@ export default {
       },
     },
     templateOverview: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    templateForm: {
       type: Object,
       default() {
         return {};

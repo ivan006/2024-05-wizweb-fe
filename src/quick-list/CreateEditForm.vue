@@ -50,6 +50,12 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
+    template: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     title: {
       type: String,
       default: () => "",

@@ -10,6 +10,7 @@
             @createItem="createItem"
             :model="model"
             :superOptions="superOptions"
+            :template="templateForm"
         />
       </template>
     </div>
@@ -219,6 +220,7 @@
             @cancel="createItemData.showModal = false"
             :superOptions="superOptions"
             style="width: 700px; max-width: 80vw;"
+            :template="templateForm"
         />
       </q-dialog>
 
@@ -231,6 +233,7 @@
               @submit="editItemSubmit"
               @cancel="editItemData.showModal = false"
               :superOptions="superOptions"
+              :template="templateForm"
               style="width: 700px; max-width: 80vw;"
           />
         </q-dialog>
@@ -300,6 +303,12 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    templateForm: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     viewAs: {
       type: Object,
       default() {
