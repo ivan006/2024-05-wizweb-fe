@@ -111,7 +111,7 @@
 import SuperTable from "./SuperTable.vue";
 import RecordOverview from "./RecordOverview.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import OverviewTab from "./OverviewTab.vue";
 import CreateEditForm from "./CreateEditForm.vue";
@@ -122,7 +122,7 @@ export default {
     CreateEditForm,
     OverviewTab,
     SuperTableTable,
-    RecordOverviewDynamic,
+    RecordFieldsForDisplayCustom,
     RecordOverview,
     SuperTable,
   },

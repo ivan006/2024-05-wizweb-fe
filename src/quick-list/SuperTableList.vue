@@ -26,11 +26,11 @@
 
 <script>
 import FormattedColumn from "./FormattedColumn.vue";
-import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableList",
-  components: {RecordOverviewDynamic, FormattedColumn },
+  components: {RecordFieldsForDisplayCustom, FormattedColumn },
   props: {
     items: {
       type: Array,

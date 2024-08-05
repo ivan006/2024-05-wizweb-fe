@@ -7,7 +7,7 @@
       <template v-if="templateOverview && templateOverview.cols">
         <div style="padding-top:0.03px;">
           <div class="row q-col-gutter-xs">
-            <RecordOverviewDynamic
+            <RecordFieldsForDisplayCustom
                 :item="item"
                 :childRelations="childRelations"
                 :filteredChildRelations="filteredChildRelations"
@@ -19,7 +19,7 @@
               <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
                 <slot :name="slotName" v-bind="slotProps"></slot>
               </template>
-            </RecordOverviewDynamic>
+            </RecordFieldsForDisplayCustom>
           </div>
         </div>
       </template>
@@ -39,12 +39,12 @@
 <script>
 
 import RecordOverview from "./RecordOverview.vue";
-import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import FormattedColumn from "./FormattedColumn.vue";
 
 export default {
   name: 'OverviewTab',
-  components: {FormattedColumn, RecordOverviewDynamic, RecordOverview },
+  components: {FormattedColumn, RecordFieldsForDisplayCustom, RecordOverview },
   props: {
     templateOverview: {
       type: Object,

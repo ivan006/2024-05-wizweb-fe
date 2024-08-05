@@ -10,7 +10,7 @@
         >
           <div class="col-12 col-md-3 q-pa-sm" >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
-              <RecordOverviewDynamic
+              <RecordFieldsForDisplayCustom
                   :item="item"
                   @clickRow="clickRow"
                   :clickable="true"
@@ -50,13 +50,13 @@
 
 <script>
 import RecordOverview from "./RecordOverview.vue";
-import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableGrid",
   components: {
     RecordOverview,
-    RecordOverviewDynamic,
+    RecordFieldsForDisplayCustom,
   },
   props: {
     templateListGrid: {
