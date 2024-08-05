@@ -1,9 +1,5 @@
 <template>
-  <div
-      :style="clickable ? 'cursor: pointer' : ''"
-      @click="clickRow(item)"
-      :class="colClasses"
-  >
+  <div :class="colClasses" >
 
     <div style="padding-top:0.03px;">
       <div class="row "  :class="`${template.unsetGutters ? '' : 'q-col-gutter-xs'} ${template.class?.length ? template.class : ''} `">
@@ -115,6 +111,27 @@ export default {
       // itemData: {},
       loading: false,
     };
+  },
+  computed:{
+    colClasses() {
+      const baseWidth = this.template.width || 12;
+
+      // Coefficients for each breakpoint
+      const coefficients = {
+        lg: 1,   // Large screens
+        md: 1.5, // Medium screens
+        sm: 2,   // Small screens
+        xs: 4    // Extra small screens
+      };
+
+      // Calculate widths based on coefficients
+      const lg = Math.min(Math.round(baseWidth * coefficients.lg), 12);
+      const md = Math.min(Math.round(baseWidth * coefficients.md), 12);
+      const sm = Math.min(Math.round(baseWidth * coefficients.sm), 12);
+      const xs = Math.min(Math.round(baseWidth * coefficients.xs), 12);
+
+      return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
+    }
   },
   mounted() {
     // this.itemData = this.modelValue;
