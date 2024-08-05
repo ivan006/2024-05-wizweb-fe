@@ -10,7 +10,12 @@
         >
           <q-item-section>
             <q-item-label>
-              <FormattedColumn :header="title" :item="item" />
+              <FormattedColumn
+                  :header="title"
+                  :item="item"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+              />
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -21,10 +26,11 @@
 
 <script>
 import FormattedColumn from "./FormattedColumn.vue";
+import RecordOverviewDynamic from "./RecordOverviewDynamic.vue";
 
 export default {
   name: "SuperTableList",
-  components: { FormattedColumn },
+  components: {RecordOverviewDynamic, FormattedColumn },
   props: {
     items: {
       type: Array,
@@ -53,6 +59,12 @@ export default {
   methods: {
     clickRow(item) {
       this.$emit("update:modelValue", item.id);
+    },
+    deleteItem(e) {
+      this.$emit("deleteItem", e);
+    },
+    editItem(e) {
+      this.$emit("editItem", e);
     },
   },
   computed: {
