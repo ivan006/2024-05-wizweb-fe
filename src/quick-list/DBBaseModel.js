@@ -272,8 +272,8 @@ export default class DBBaseModel extends Model {
         return this.customApiBase(headers)
             .patch(
                 computedUrl,
-                // { ...entity },
-                entity,
+                { ...entity },
+                // entity,
                 {
                     dataTransformer: ({ data }) => {
                         const result =

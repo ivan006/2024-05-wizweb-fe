@@ -43,34 +43,7 @@
         />
       </div>
 
-      <template v-if="superOptions.canEdit">
-        <q-dialog v-model="editItemData.showModal">
-          <CreateEditForm
-              title="Edit Item"
-              v-if="editItemData.showModal"
-              v-model="editItemData.data"
-              @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false"
-              :superOptions="superOptions"
-              style="width: 700px; max-width: 80vw;"
-            />
-        </q-dialog>
 
-        <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: 80vw;">
-            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
-              <div class="text-h6">Delete Item</div>
-            </q-card-section>
-            <q-card-section>
-              <p>Are you sure you want to delete this item?</p>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-      </template>
     </template>
     <template v-else-if="header.usageType.startsWith('relLookup')">
       <div
@@ -160,18 +133,6 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      deleteItemData: {
-        showModal: false,
-        data: null,
-      },
-      editItemData: {
-        showModal: false,
-        data: null,
-      },
-    };
-  },
   methods: {
     clickParent(item, header) {
       const model = header.meta.field.parent;
@@ -193,30 +154,11 @@ export default {
       }
       return !result;
     },
-    deleteItem(item) {
-      this.deleteItemData.data = item;
-      this.deleteItemData.showModal = true;
+    deleteItem(e) {
+      this.$emit("deleteItem", e);
     },
-    deleteItemSubmit() {
-      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
-        this.fetchData();
-      });
-      this.deleteItemData.showModal = false;
-    },
-    editItem(item) {
-      this.editItemData.data = {...item};
-      this.editItemData.showModal = true;
-    },
-    editItemSubmit() {
-      const payload = QuickListsHelpers.preparePayload(
-          this.editItemData.data,
-          this.superOptions.modelFields
-      );
-
-      this.superOptions.model.Update(payload).then(() => {
-        this.fetchData();
-      });
-      this.editItemData.showModal = false;
+    editItem(e) {
+      this.$emit("editItem", e);
     },
     formatTimestamp(timestamp) {
       if (timestamp) {

@@ -36,7 +36,14 @@
                 <div v-html="dataPoint.function(item)"></div>
               </template>
               <template v-else>
-                <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
+                <FormattedColumn
+                    :header="compHeader"
+                    :item="item"
+                    :superOptions="superOptions"
+                    hideLabel
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                />
               </template>
             </component>
           </div>
@@ -81,7 +88,14 @@
           <div v-html="dataPoint.function(item)"></div>
         </template>
         <template v-else>
-          <FormattedColumn :header="compHeader" :item="item" :superOptions="superOptions" hideLabel />
+          <FormattedColumn
+              :header="compHeader"
+              :item="item"
+              :superOptions="superOptions"
+              hideLabel
+              @editItem="editItem"
+              @deleteItem="deleteItem"
+          />
         </template>
       </component>
     </template>
