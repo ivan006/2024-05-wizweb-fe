@@ -61,7 +61,7 @@
     </template>
     <template v-else-if="field.usageType == 'timeRangeType'">
       <DateAndTimeRangePicker
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -71,7 +71,7 @@
     </template>
     <template v-else-if="field.usageType == 'timeRangeStart'">
       <DateAndTimePicker
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateStartTime"
           :rules="field.meta.rules"
@@ -81,7 +81,7 @@
     </template>
     <template v-else-if="field.usageType == 'timeRangeEnd'">
       <DateAndTimePicker
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -91,7 +91,7 @@
     </template>
     <template v-else-if="field.usageType == 'timestampType'">
       <DateAndTimePicker
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -101,7 +101,7 @@
     </template>
     <template v-else-if="field.usageType == 'readOnlyTimestampType'">
       <DateAndTimePicker
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -120,7 +120,7 @@
     </template>
     <template v-else-if="field.usageType.startsWith('mapExtra')">
       <q-input
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -135,7 +135,7 @@
     <template v-else-if="field.usageType == 'normal'">
       <template v-if="field.dataType === 'string'">
         <q-input
-            :label="field.label"
+            :label="compLabel"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -147,7 +147,7 @@
       </template>
       <template v-else-if="field.dataType === 'boolean'">
         <q-checkbox
-            :label="field.label"
+            :label="compLabel"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -157,7 +157,7 @@
       </template>
       <template v-else-if="field.dataType === 'number'">
         <q-input
-            :label="field.label"
+            :label="compLabel"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -171,7 +171,7 @@
       <template v-else-if="field.dataType === 'attr'">
 
         <q-input
-            :label="field.label"
+            :label="compLabel"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
@@ -184,7 +184,7 @@
     </template>
     <template v-else>
       <q-input
-          :label="field.label"
+          :label="compLabel"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -225,6 +225,12 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     modelValue: {
       type: [Object,String,Number,Boolean],
       default() {
@@ -269,6 +275,13 @@ export default {
         }
       }
       return result;
+    },
+    compLabel() {
+      if (this.hideLabel){
+        return ""
+      } else {
+        return this.field.label
+      }
     },
   },
   methods: {
