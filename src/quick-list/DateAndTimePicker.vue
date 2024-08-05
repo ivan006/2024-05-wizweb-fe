@@ -85,6 +85,12 @@ import "moment-timezone";
 export default {
   name: "DateAndTimePicker",
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     modelValue: {
       type: String,
       default: null,

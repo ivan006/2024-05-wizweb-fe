@@ -79,6 +79,12 @@ import QuickListsHelpers from "./QuickListsHelpers";
 export default {
   name: "SuperSelect",
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     maxPages: {
       type: [Number, Object],
       default: 1,

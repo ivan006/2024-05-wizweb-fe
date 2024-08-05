@@ -46,6 +46,12 @@
 export default {
   name: "SearchGooglePlace",
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     modelValue: {
       type: String,
       default: null,

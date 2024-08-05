@@ -22,6 +22,7 @@
         <!--/>-->
 
         <SuperTable
+            :hideLabel="hideLabel"
             :isForSelectingRelation="true"
             :canEdit="false"
             :modelValue="modelValue"
@@ -33,6 +34,7 @@
       </template>
       <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
         <RelationComponent
+            :hideLabel="hideLabel"
             :configs="field"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
@@ -41,6 +43,7 @@
       </template>
       <template v-else-if="field.usageType == 'relForeignKeyOwnerAppliedToProviderType'">
         <SuperSelect
+            :hideLabel="hideLabel"
             :modelField="field"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
@@ -53,6 +56,7 @@
       </template>
       <template v-else-if="field.usageType !== 'relChildrenNormal'">
         <RelationComponent
+            :hideLabel="hideLabel"
             :configs="field"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
@@ -112,6 +116,7 @@
     </template>
     <template v-else-if="field.usageType === 'mapName'">
       <SearchGooglePlace
+          :hideLabel="hideLabel"
           :configs="field"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
@@ -278,7 +283,7 @@ export default {
     },
     compLabel() {
       if (this.hideLabel){
-        return ""
+        return void 0
       } else {
         return this.field.label
       }

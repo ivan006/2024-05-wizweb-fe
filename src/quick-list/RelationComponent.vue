@@ -42,6 +42,12 @@ export default {
     SuperTable: () => import("./SuperTable.vue"),
   },
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     configs: {
       type: Object,
       default: () => ({}),
