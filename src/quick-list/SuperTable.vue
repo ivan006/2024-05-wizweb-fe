@@ -213,30 +213,38 @@
       </div>
     </template>
     <template v-if="canEdit">
-      <q-dialog v-model="createItemData.showModal">
+      <q-dialog
+          v-model="createItemData.showModal"
+          @update:modelValue="formErrors = {};"
+      >
         <CreateEditForm
             title="Create Item"
             v-if="createItemData.showModal"
             v-model="createItemData.data"
             @submit="createItemSubmit"
-            @cancel="createItemData.showModal = false"
+            @cancel="createItemData.showModal = false; formErrors = {};"
             :superOptions="superOptions"
             style="width: 700px; max-width: 80vw;"
             :template="templateForm"
+            :formErrors="formErrors"
         />
       </q-dialog>
 
       <template v-if="superOptions.canEdit">
-        <q-dialog v-model="editItemData.showModal">
+        <q-dialog
+            v-model="editItemData.showModal"
+            @update:modelValue="formErrors = {};"
+        >
           <CreateEditForm
               title="Edit Item"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false"
+              @cancel="editItemData.showModal = false; formErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
               style="width: 700px; max-width: 80vw;"
+              :formErrors="formErrors"
           />
         </q-dialog>
 
@@ -433,6 +441,7 @@ export default {
   },
   data() {
     return {
+      formErrors: {},
       deleteItemData: {
         showModal: false,
         data: null,
@@ -620,10 +629,15 @@ export default {
           this.superOptions.modelFields
       );
 
-      this.superOptions.model.Update(payload).then(() => {
-        this.fetchData();
-      });
-      this.editItemData.showModal = false;
+      this.superOptions.model.Update(payload)
+          .then(() => {
+            this.fetchData();
+            this.editItemData.showModal = false;
+            this.formErrors = {};
+          })
+          .catch((err) => {
+            this.formErrors = err.response.data;
+          });
     },
     pageUpdate(page) {
       this.options = {
@@ -694,19 +708,25 @@ export default {
       delete payload.id;
 
       const inititalItemLength = this.items.length;
-      this.model.Store(payload).then(() => {
-        if (!inititalItemLength) {
-          if (!this.loading) {
-            this.fetchData();
-          }
-        }
-      });
+      this.model.Store(payload)
+          .then(() => {
+            if (!inititalItemLength) {
+              if (!this.loading) {
+                this.fetchData();
 
-      // After handling, reset formData (if needed)
-      this.createItemData.data = {};
+                // After handling, reset formData (if needed)
+                this.createItemData.data = {};
 
-      // Close the dialog after submission
-      this.createItemData.showModal = false;
+                // Close the dialog after submission
+                this.createItemData.showModal = false;
+                this.formErrors = {};
+              }
+            }
+          })
+          .catch((err) => {
+            this.formErrors = err.response.data;
+          });
+
     },
     async fetchData() {
       if (!this.activated && this.isForSelectingRelation) return;

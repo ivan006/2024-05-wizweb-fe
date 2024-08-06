@@ -76,16 +76,20 @@
     <template v-if="canEdit">
 
       <template v-if="superOptions.canEdit">
-        <q-dialog v-model="editItemData.showModal">
+        <q-dialog
+            v-model="editItemData.showModal"
+            @update:modelValue="formErrors = {};"
+        >
           <CreateEditForm
               title="Edit Item"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false"
+              @cancel="editItemData.showModal = false; formErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
               style="width: 700px; max-width: 80vw;"
+              :formErrors="formErrors"
           />
         </q-dialog>
 
@@ -179,6 +183,7 @@ export default {
       loading: true,
       initialLoadHappened: false,
       item: {},
+      formErrors: {},
     };
   },
   computed: {
@@ -286,10 +291,15 @@ export default {
           this.superOptions.modelFields
       );
 
-      this.superOptions.model.Update(payload).then(() => {
-        this.fetchData();
-      });
-      this.editItemData.showModal = false;
+      this.superOptions.model.Update(payload)
+          .then(() => {
+            this.fetchData();
+            this.editItemData.showModal = false;
+            this.formErrors = {};
+          })
+          .catch((err) => {
+            this.formErrors = err.response.data;
+          });
     },
     getMsg(type) {
       if (Array.isArray(type)) {
