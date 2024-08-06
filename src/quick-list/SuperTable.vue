@@ -22,7 +22,7 @@
       <!--    :superOptions="superOptions"-->
       <!--/>-->
       <SuperSelect
-          allowAll
+          :allowAll="allowAll"
           dense
           :hideLabel="hideLabel"
           :page="options.page"
@@ -37,6 +37,7 @@
           :model="model"
           :modelField="modelField"
           :activated="activated"
+          @search="search"
       />
 
       <!--:key="filterInput.name"-->
@@ -306,6 +307,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    allowAll: {
+      type: Boolean,
+      default: false,
+    },
     hideLabel: {
       type: Boolean,
       default() {
@@ -441,6 +446,7 @@ export default {
           (_, index) => new Date().getFullYear() - index,
       ), // last 5 years including this year
       itemsLength: 1,
+      activated: false,
       loading: false,
       options: {
         page: 1,
@@ -585,6 +591,10 @@ export default {
     },
   },
   methods: {
+    search(searchTerm) {
+      this.filters[this.model.titleKey] = searchTerm
+      this.fetchData();
+    },
     deleteItem(item) {
 
       this.$emit("deleteItem", item);

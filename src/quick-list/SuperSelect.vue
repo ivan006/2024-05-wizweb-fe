@@ -20,7 +20,6 @@
         :menu-props="{ offsetY: true }"
         :rules="rules"
     >
-      <!--@click="activateAndFetchData"-->
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
           <q-item-section>
@@ -100,10 +99,10 @@ export default {
       type: [Number, Object, String],
       default: null,
     },
-    filters: {
-      type: String,
-      default: "{}",
-    },
+    // filters: {
+    //   type: String,
+    //   default: "{}",
+    // },
     model: {
       type: [Object, Function],
       required: true,
@@ -253,7 +252,7 @@ export default {
       item[this.model.primaryKey] = value
       this.$emit('update:modelValue', item);
     },
-    fetchData() {
+    fetchDefaultItem() {
       this.loadingInner = true
       this.model
           .FetchById(
@@ -272,23 +271,17 @@ export default {
     },
   },
   watch: {
-    filters() {
+    search(value) {
       if (!this.disabled) {
-        this.fetchData();
-      }
-    },
-    search() {
-      if (!this.disabled) {
-        // this.fetchData();
         if (this.timeout) clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
-          this.fetchData()
+          this.$emit('search', value)
         }, 300)
       }
     },
   },
   mounted() {
-    this.fetchData();
+    this.fetchDefaultItem();
   },
 };
 </script>
