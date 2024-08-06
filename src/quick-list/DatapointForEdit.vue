@@ -11,15 +11,20 @@
           </div>
           <div class="col-6 col-md-6 col-sm-6 col-xs-6">
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-              <DatapointForEditInner
-                  v-if="compField"
-                  :modelValue="modelValue[compField.name]"
-                  @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
-                  :superOptions="superOptions"
-                  @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-                  :field="compField"
-                  hideLabel
-              />
+              <template v-if="dataPoint.type === 'function'">
+                <div v-html="dataPoint.function(modelValue)"></div>
+              </template>
+              <template v-else>
+                <DatapointForEditInner
+                    v-if="compField"
+                    :modelValue="modelValue[compField.name]"
+                    @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
+                    :superOptions="superOptions"
+                    @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                    :field="compField"
+                    hideLabel
+                />
+              </template>
             </component>
           </div>
         </div>
@@ -32,15 +37,20 @@
         </div>
       </template>
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-        <DatapointForEditInner
-            v-if="compField"
-            :modelValue="modelValue[compField.name]"
-            @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
-            :superOptions="superOptions"
-            @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-            :field="compField"
-            :hideLabel="dataPoint.hideLabel"
-        />
+        <template v-if="dataPoint.type === 'function'">
+          <div v-html="dataPoint.function(modelValue)"></div>
+        </template>
+        <template v-else>
+          <DatapointForEditInner
+              v-if="compField"
+              :modelValue="modelValue[compField.name]"
+              @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
+              :superOptions="superOptions"
+              @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+              :field="compField"
+              hideLabel
+          />
+        </template>
       </component>
     </template>
   </div>
@@ -89,15 +99,20 @@ export default {
   },
   computed: {
     compField() {
-      // const result = this.superOptions.headers.find((header) => {
-      const result = this.superOptions.modelFields.find((header) => {
-        return header.field == this.dataPoint.field
-      })
-      return result
+      if (this.dataPoint.type === 'function') {
+        return { label: this.dataPoint.label };
+      } else {
+        const result = this.superOptions.modelFields.find((header) => {
+          return header.field == this.dataPoint.field
+        })
+        return result
+      }
     },
     label() {
       if (typeof this.dataPoint.label !== "undefined") {
         return this.dataPoint.label;
+      } else if(this.dataPoint.type === 'function'){
+        return "";
       } else {
         return this.compField ? this.compField.label : '';
       }

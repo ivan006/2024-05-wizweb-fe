@@ -53,10 +53,11 @@
     <template v-else>
 
       <template v-if="!dataPoint.hideLabel && !hideLabel">
-        <div class="" style="font-weight: bold;">
+        <div class="" style="font-weight: bold;" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
           {{ label }}:
         </div>
       </template>
+
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
         <template v-if="isRelChildren(compField)">
           <div class="q-pt-sm">
@@ -189,7 +190,7 @@ export default {
       return result
     },
     label() {
-      if (this.dataPoint.label) {
+      if (typeof this.dataPoint.label !== "undefined") {
         return this.dataPoint.label;
       } else if(this.dataPoint.type === 'component' || this.dataPoint.type === 'function'){
         return "";
