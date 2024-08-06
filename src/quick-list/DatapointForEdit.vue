@@ -10,7 +10,11 @@
             </div>
           </div>
           <div class="col-6 col-md-6 col-sm-6 col-xs-6">
-            <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+            <component
+                :is="dataPoint.tag ? dataPoint.tag : 'div'"
+                :class="dataPoint.class ? dataPoint.class : ''"
+                :style="dataPoint.style ? dataPoint.style : ''"
+            >
               <template v-if="dataPoint.type === 'function'">
                 <div v-html="dataPoint.function(modelValue)"></div>
               </template>
@@ -37,7 +41,11 @@
           {{ label }}:
         </div>
       </template>
-      <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+      <component
+          :is="dataPoint.tag ? dataPoint.tag : 'div'"
+          :class="dataPoint.class ? dataPoint.class : ''"
+          :style="dataPoint.style ? dataPoint.style : ''"
+      >
         <template v-if="dataPoint.type === 'function'">
           <div v-html="dataPoint.function(modelValue)"></div>
         </template>

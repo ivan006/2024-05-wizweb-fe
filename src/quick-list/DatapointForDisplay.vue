@@ -11,7 +11,11 @@
             </div>
           </template>
           <div>
-            <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+            <component
+                :is="dataPoint.tag ? dataPoint.tag : 'div'"
+                :class="dataPoint.class ? dataPoint.class : ''"
+                :style="dataPoint.style ? dataPoint.style : ''"
+            >
               <template v-if="isRelChildren(compField)">
                 <div class="q-pt-sm">
                   <template v-if="compRelation">
@@ -58,7 +62,11 @@
         </div>
       </template>
 
-      <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
+      <component
+          :is="dataPoint.tag ? dataPoint.tag : 'div'"
+          :class="dataPoint.class ? dataPoint.class : ''"
+          :style="dataPoint.style ? dataPoint.style : ''"
+      >
         <template v-if="isRelChildren(compField)">
           <div class="q-pt-sm">
             <template v-if="compRelation">

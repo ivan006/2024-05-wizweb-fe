@@ -2,7 +2,11 @@
   <div :class="colClasses" >
 
     <div style="padding-top:0.03px;">
-      <div class="row "  :class="`${template.unsetGutters ? '' : 'q-col-gutter-xs'} ${template.class?.length ? template.class : ''} `">
+      <div
+          class="row "
+         :class="`${template.unsetGutters ? '' : 'q-col-gutter-xs'} ${template.class?.length ? template.class : ''} `"
+         :style="`${template.style?.length ? template.style : ''}`"
+      >
 
         <template v-if="template.cols?.length">
 
