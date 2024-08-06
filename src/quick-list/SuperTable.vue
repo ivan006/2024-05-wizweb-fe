@@ -36,6 +36,7 @@
           @update:modelValue="clickRow"
           :model="model"
           :modelField="modelField"
+          :activated="activated"
       />
 
       <!--:key="filterInput.name"-->

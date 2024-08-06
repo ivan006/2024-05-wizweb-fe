@@ -30,6 +30,9 @@
             :model="field.meta.field.parent"
             :rules="[() => true]"
             :modelField="field"
+            :fetchFlags="{
+              sort: field.meta.field.parent.titleKey
+            }"
         />
       </template>
       <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">

@@ -151,6 +151,12 @@ export default {
         return [];
       },
     },
+    activated: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     loading: {
       type: Boolean,
       default() {
@@ -168,10 +174,8 @@ export default {
       // },
       totalPages: 1,
       preSelectedItem: null,
-      itemWasSelected: null,
       loadingInner: false,
       // fetchedItems: [],
-      activated: false,
     };
   },
   computed: {
@@ -212,7 +216,8 @@ export default {
           result.push({ label: "All", id: null });
         }
 
-        if (!this.itemWasSelected){
+        if (!this.activated){
+          result = result.filter(option => option.id !== this.modelValue);
           let preSelectedItemLabel = ""
           if (this.preSelectedItem){
             preSelectedItemLabel = this.preSelectedItem[this.model.titleKey]
@@ -247,7 +252,6 @@ export default {
       const item = {}
       item[this.model.primaryKey] = value
       this.$emit('update:modelValue', item);
-      this.itemWasSelected = true
     },
     fetchData() {
       this.loadingInner = true
