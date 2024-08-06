@@ -110,6 +110,39 @@
           :error-message="''"
       />
     </template>
+    <template v-else-if="field.usageType == 'dateType'">
+      <q-input
+          :label="compLabel"
+          :placeholder="compPlaceholder"
+          :modelValue="modelValue"
+          @update:modelValue="updateModelValue"
+          :rules="field.meta.rules"
+          :error="false"
+          :error-message="''"
+          type="date"
+          filled
+          dense
+      />
+    </template>
+    <template v-else-if="field.usageType.startsWith('staticLookup') && field.fieldExtras.usageTypeExtras?.options">
+      <q-select
+          :label="compLabel"
+          :placeholder="compPlaceholder"
+          :modelValue="modelValue"
+          @update:modelValue="updateModelValue"
+          option-label="label"
+          option-value="value"
+          emitValue
+          mapOptions
+          :rules="field.meta.rules"
+          :error="false"
+          :error-message="''"
+          :options="field.fieldExtras.usageTypeExtras.options"
+          filled
+          dense
+      />
+
+    </template>
     <template v-else-if="field.usageType == 'readOnlyTimestampType'">
       <DateAndTimePicker
           :label="compLabel"
