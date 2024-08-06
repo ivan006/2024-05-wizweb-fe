@@ -111,11 +111,18 @@ export default {
         xs: 4    // Extra small screens
       };
 
-      // Calculate widths based on coefficients
-      const lg = Math.min(Math.round(baseWidth * coefficients.lg), 12);
-      const md = Math.min(Math.round(baseWidth * coefficients.md), 12);
-      const sm = Math.min(Math.round(baseWidth * coefficients.sm), 12);
-      const xs = Math.min(Math.round(baseWidth * coefficients.xs), 12);
+      // Rounding function to the nearest value from the set [1, 2, 3, 4, 6, 12]
+      function roundToNearestSet(value) {
+        // return Math.min(Math.round(value), 12)
+        const set = [1, 2, 3, 4, 6, 12];
+        return set.reduce((prev, curr) => (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev));
+      }
+
+      // Calculate widths based on coefficients and round them
+      const lg = roundToNearestSet(baseWidth * coefficients.lg);
+      const md = roundToNearestSet(baseWidth * coefficients.md);
+      const sm = roundToNearestSet(baseWidth * coefficients.sm);
+      const xs = roundToNearestSet(baseWidth * coefficients.xs);
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
     }
