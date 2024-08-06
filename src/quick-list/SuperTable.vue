@@ -24,7 +24,7 @@
       <SuperSelect
           allowAll
           dense
-
+          :hideLabel="hideLabel"
           :page="options.page"
           @update:page="pageUpdate"
           :maxPages="maxPages"
@@ -276,6 +276,7 @@ import RelationComponent from "./RelationComponent.vue";
 
 import { defineAsyncComponent } from 'vue'
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+import SearchGooglePlace from "./SearchGooglePlace.vue";
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
@@ -287,6 +288,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    SearchGooglePlace,
     RecordFieldsForDisplayGeneric,
     RelationComponent,
     CreateButton,
@@ -303,6 +305,12 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     templateForm: {
       type: Object,
       default() {

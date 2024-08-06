@@ -1,7 +1,6 @@
 <template>
   <div>
     <q-select
-        v-if="currentItem"
         style="min-width: 200px;"
         :error="false"
         :error-message="''"
@@ -12,6 +11,7 @@
         :option-value="model.primaryKey"
         :emit-value="true"
         :map-options="true"
+        :label="compLabel"
         :disable="disabledComp"
         :loading="compLoading"
         :readonly="readonly"
@@ -56,6 +56,7 @@
         </q-item>
       </template>
     </q-select>
+
   </div>
 </template>
 
@@ -166,13 +167,23 @@ export default {
       //   limit: 5,
       // },
       totalPages: 1,
-      currentItem: null,
+      preSelectedItem: null,
+      itemWasSelected: null,
       loadingInner: false,
       // fetchedItems: [],
       activated: false,
     };
   },
   computed: {
+    compLabel() {
+      // if (this.hideLabel){
+      //   return void 0
+      // } else {
+      //   return this.modelField.label
+      // }
+
+      return void 0
+    },
     compLoading() {
       return this.loadingInner || this.loading;
     },
@@ -200,9 +211,15 @@ export default {
         if (this.allowAll) {
           result.push({ label: "All", id: null });
         }
-        if (this.currentItem){
-          result.push({ label: this.currentItem[this.model.titleKey], id: this.currentItem[this.model.primaryKey] });
+
+        if (!this.itemWasSelected){
+          let preSelectedItemLabel = ""
+          if (this.preSelectedItem){
+            preSelectedItemLabel = this.preSelectedItem[this.model.titleKey]
+          }
+          result.push({ label: preSelectedItemLabel, id: this.modelValue });
         }
+
         for (const item of this.items) {
           result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
         }
@@ -230,6 +247,7 @@ export default {
       const item = {}
       item[this.model.primaryKey] = value
       this.$emit('update:modelValue', item);
+      this.itemWasSelected = true
     },
     fetchData() {
       this.loadingInner = true
@@ -241,9 +259,8 @@ export default {
               {},
           )
           .then((response) => {
-            this.currentItem = response.response.data.data
+            this.preSelectedItem = response.response.data.data
             this.loadingInner = false
-            this.updateValue(this.modelValue)
           })
           .catch(() => {
             this.loadingInner = false
