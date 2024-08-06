@@ -12,12 +12,12 @@
           <div class="col-6 col-md-6 col-sm-6 col-xs-6">
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
               <DatapointForEditInner
-                  v-if="compHeader"
-                  :modelValue="modelValue[compHeader.name]"
-                  @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compHeader.name)}"
+                  v-if="compField"
+                  :modelValue="modelValue[compField.name]"
+                  @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-                  :field="compHeader"
+                  :field="compField"
                   hideLabel
               />
             </component>
@@ -33,12 +33,12 @@
       </template>
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
         <DatapointForEditInner
-            v-if="compHeader"
-            :modelValue="modelValue[compHeader.name]"
-            @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compHeader.name)}"
+            v-if="compField"
+            :modelValue="modelValue[compField.name]"
+            @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
             :superOptions="superOptions"
             @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-            :field="compHeader"
+            :field="compField"
             :hideLabel="dataPoint.hideLabel"
         />
       </component>
@@ -88,7 +88,7 @@ export default {
     };
   },
   computed: {
-    compHeader() {
+    compField() {
       // const result = this.superOptions.headers.find((header) => {
       const result = this.superOptions.modelFields.find((header) => {
         return header.field == this.dataPoint.field
@@ -99,7 +99,7 @@ export default {
       if (typeof this.dataPoint.label !== "undefined") {
         return this.dataPoint.label;
       } else {
-        return this.compHeader ? this.compHeader.label : '';
+        return this.compField ? this.compField.label : '';
       }
     }
   },

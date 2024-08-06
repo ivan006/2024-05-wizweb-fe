@@ -12,7 +12,7 @@
           </template>
           <div>
             <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-              <template v-if="isRelChildren(compHeader)">
+              <template v-if="isRelChildren(compField)">
                 <div class="q-pt-sm">
                   <template v-if="compRelation">
                     <SuperTable
@@ -37,7 +37,7 @@
               </template>
               <template v-else>
                 <DatapointForDisplayInner
-                    :header="compHeader"
+                    :header="compField"
                     :item="item"
                     :superOptions="superOptions"
                     hideLabel
@@ -58,7 +58,7 @@
         </div>
       </template>
       <component :is="dataPoint.tag ? dataPoint.tag : 'div'" :class="dataPoint.class ? dataPoint.class : ''">
-        <template v-if="isRelChildren(compHeader)">
+        <template v-if="isRelChildren(compField)">
           <div class="q-pt-sm">
             <template v-if="compRelation">
               <SuperTable
@@ -89,7 +89,7 @@
         </template>
         <template v-else>
           <DatapointForDisplayInner
-              :header="compHeader"
+              :header="compField"
               :item="item"
               :superOptions="superOptions"
               hideLabel
@@ -166,7 +166,7 @@ export default {
       }
       return null;
     },
-    compHeader() {
+    compField() {
       if (this.header){
         return this.header;
       } else if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
@@ -176,19 +176,12 @@ export default {
         const result = this.superOptions.modelFields.find((header) => {
           return header.field == this.dataPoint.field
         })
-        // if (this.dataPoint.field == "country"){
-        //
-        //   console.log("result")
-        //   console.log(this.dataPoint.field)
-        //   console.log(this.superOptions.headers)
-        //   console.log(result)
-        // }
         return result
       }
     },
     compRelation() {
       let result = {}
-      if (this.compHeader && this.isRelChildren(this.compHeader)) {
+      if (this.compField && this.isRelChildren(this.compField)) {
         result = this.childRelations.find((relation) => {
           return relation.field.name == this.dataPoint.field
         })
@@ -201,7 +194,7 @@ export default {
       } else if(this.dataPoint.type === 'component' || this.dataPoint.type === 'function'){
         return "";
       } else {
-        return this.compHeader ? this.compHeader.label : '';
+        return this.compField ? this.compField.label : '';
       }
     }
   },
