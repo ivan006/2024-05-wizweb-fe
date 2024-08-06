@@ -1,17 +1,19 @@
 <template>
   <div>
     <q-select
+        v-if="currentItem"
         style="min-width: 200px;"
-        v-model="internalModelValue"
         :error="false"
         :error-message="''"
+        :modelValue="modelValue"
         @update:modelValue="updateValue"
         :options="itemsComp"
-        :label="modelField.label"
         option-label="label"
         :option-value="model.primaryKey"
+        :emit-value="true"
+        :map-options="true"
         :disable="disabledComp"
-        :loading="loading"
+        :loading="compLoading"
         :readonly="readonly"
         :dense="density === 'compact'"
         filled
@@ -164,13 +166,16 @@ export default {
       //   limit: 5,
       // },
       totalPages: 1,
-      // loading: false,
+      currentItem: null,
+      loadingInner: false,
       // fetchedItems: [],
-      internalModelValue: this.modelValue,
       activated: false,
     };
   },
   computed: {
+    compLoading() {
+      return this.loadingInner || this.loading;
+    },
     disabledComp() {
       return this.disabled || this.readonly;
     },
@@ -194,6 +199,9 @@ export default {
         result.push({ label: "", id: null });  // Empty item for search input
         if (this.allowAll) {
           result.push({ label: "All", id: null });
+        }
+        if (this.currentItem){
+          result.push({ label: this.currentItem[this.model.titleKey], id: this.currentItem[this.model.primaryKey] });
         }
         for (const item of this.items) {
           result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
@@ -219,13 +227,30 @@ export default {
       this.$emit('update:page', value);
     },
     updateValue(value) {
-      this.$emit('update:modelValue', value);
+      const item = {}
+      item[this.model.primaryKey] = value
+      this.$emit('update:modelValue', item);
+    },
+    fetchData() {
+      this.loadingInner = true
+      this.model
+          .FetchById(
+              this.modelValue,
+              [],
+              {},
+              {},
+          )
+          .then((response) => {
+            this.currentItem = response.response.data.data
+            this.loadingInner = false
+            this.updateValue(this.modelValue)
+          })
+          .catch(() => {
+            this.loadingInner = false
+          });
     },
   },
   watch: {
-    modelValue(val) {
-      this.internalModelValue = val;
-    },
     filters() {
       if (!this.disabled) {
         this.fetchData();
@@ -240,6 +265,9 @@ export default {
         }, 300)
       }
     },
+  },
+  mounted() {
+    this.fetchData();
   },
 };
 </script>

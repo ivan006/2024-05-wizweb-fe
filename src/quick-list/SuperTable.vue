@@ -32,8 +32,8 @@
           :items="items"
           :loading="loading"
           :rules="rules"
-          :modelValue="modelValue"
-          @update:modelValue="(param)=>{clickRow(param.id)}"
+          :modelValue="+modelValue"
+          @update:modelValue="clickRow"
           :model="model"
           :modelField="modelField"
       />
@@ -654,14 +654,14 @@ export default {
     },
     clickRow(item) {
       if (this.isForSelectingRelation) {
-        this.highlightedRow = item.id;
+        this.highlightedRow = item[this.pKey];
       }
       if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
         this.model.openRecord(item[this.pKey]);
       }
       this.$emit("clickRow", item);
 
-      this.$emit("update:modelValue", item);
+      this.$emit("update:modelValue", item[this.pKey]);
     },
     createItem() {
       this.createItemData.showModal = true;
