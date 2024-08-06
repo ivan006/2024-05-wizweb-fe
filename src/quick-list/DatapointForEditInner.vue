@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!--<pre>{{formErrors}}</pre>-->
+    <!--<pre>{{compError}}</pre>-->
     <template v-if="field.dataType === 'uid'"></template>
     <template v-else-if="field.usageType.startsWith('rel')">
       <template v-if="field.usageType.startsWith('relLookup')"></template>
@@ -73,8 +75,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
       />
     </template>
     <template v-else-if="field.usageType == 'timeRangeStart'">
@@ -84,8 +86,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateStartTime"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
       />
     </template>
     <template v-else-if="field.usageType == 'timeRangeEnd'">
@@ -95,8 +97,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
       />
     </template>
     <template v-else-if="field.usageType == 'timestampType'">
@@ -106,8 +108,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
       />
     </template>
     <template v-else-if="field.usageType == 'dateType'">
@@ -117,8 +119,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
           type="date"
           filled
           dense
@@ -135,8 +137,8 @@
           emitValue
           mapOptions
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
           :options="field.fieldExtras.usageTypeExtras.options"
           filled
           dense
@@ -150,8 +152,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
           disabled
       />
     </template>
@@ -171,8 +173,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
           readonly
           style="display: none"
           filled
@@ -187,8 +189,8 @@
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
-            :error="false"
-            :error-message="''"
+            :error="!!compError"
+            :error-message="compError"
             filled
             dense
         />
@@ -200,8 +202,8 @@
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
-            :error="false"
-            :error-message="''"
+            :error="!!compError"
+            :error-message="compError"
         />
       </template>
       <template v-else-if="field.dataType === 'number'">
@@ -211,8 +213,8 @@
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
-            :error="false"
-            :error-message="''"
+            :error="!!compError"
+            :error-message="compError"
             type="number"
             filled
             dense
@@ -226,8 +228,8 @@
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
             :rules="field.meta.rules"
-            :error="false"
-            :error-message="''"
+            :error="!!compError"
+            :error-message="compError"
             filled
             dense
         />
@@ -240,8 +242,8 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
-          :error="false"
-          :error-message="''"
+          :error="!!compError"
+          :error-message="compError"
           filled
           dense
       />
@@ -277,6 +279,10 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
+    formErrors: {
+      type: Object,
+      default: () => ({}),
+    },
     hideLabel: {
       type: Boolean,
       default() {
@@ -315,6 +321,18 @@ export default {
     };
   },
   computed: {
+    compError() {
+      let result = null
+      if (
+          this.formErrors &&
+          this.formErrors.errors &&
+          this.formErrors.errors[this.field.name]
+      ){
+        result = this.formErrors.errors[this.field.name]
+      }
+      return result
+
+    },
     placeFieldsWithFieldNames() {
       let result = [];
       const mapName = this.superOptions.modelFields.find((field) => field.usageType == "mapName");
