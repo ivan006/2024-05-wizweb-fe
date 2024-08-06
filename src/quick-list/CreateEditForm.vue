@@ -1,7 +1,7 @@
 <template>
   <q-card class="q-pa-md">
     <q-card-section>
-      <div class="text-h6">{{ template?.title ? template?.title : title }}</div>
+      <div class="text-h6">{{titlePrefix}} {{ template?.entityName ? template?.entityName : "Item" }}</div>
     </q-card-section>
     <q-card-section>
       <q-form ref="editForm">
@@ -87,7 +87,7 @@ export default {
         return {};
       },
     },
-    title: {
+    titlePrefix: {
       type: String,
       default: () => "",
     },

@@ -23,6 +23,27 @@
     >
       {{ formatTimestamp(item[header.field]) }}
     </template>
+    <template v-else-if="header.usageType.startsWith('fileImageType')">
+      <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
+        <q-card-section class="q-pa-sm">
+
+          <!--<img-->
+          <!--    alt="File not found."-->
+          <!--    style="max-width:100%;"-->
+          <!--/>-->
+
+          <q-img
+              alt="File not found."
+              :src="`${superOptions.model?.fileUrlPrefix}/${item[header.field]}`"
+          >
+            <!--:ratio="16/5"-->
+            <div v-if="!item[header.field]" class="absolute-full text-subtitle2 flex flex-center">
+              Oops, no image found!
+            </div>
+          </q-img>
+        </q-card-section>
+      </q-card>
+    </template>
     <template v-else-if="header.usageType == 'actions'">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
         <q-btn

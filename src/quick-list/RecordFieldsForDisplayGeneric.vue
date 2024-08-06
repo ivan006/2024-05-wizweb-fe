@@ -1,5 +1,5 @@
 <template>
-  <div :style="clickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="q-pa-sm">
+  <div :style="!unClickable ? 'cursor: pointer' : ''" @click="clickRow(item)" class="q-pa-sm">
     <template v-for="(header, index) in superOptions.headers">
       <div
           :key="header.name"
@@ -72,7 +72,7 @@ export default {
   name: 'RecordFieldsForDisplayGeneric',
   components: { DatapointForDisplayInner },
   props: {
-    clickable: {
+    unClickable: {
       type: Boolean,
       default() {
         return false;

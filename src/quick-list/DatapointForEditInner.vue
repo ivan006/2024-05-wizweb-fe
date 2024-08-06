@@ -71,7 +71,7 @@
     <template v-else-if="field.usageType == 'timeRangeType'">
       <DateAndTimeRangePicker
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -125,6 +125,42 @@
           filled
           dense
       />
+    </template>
+    <template v-else-if="field.usageType.startsWith('fileImageType')">
+      <template  v-if="typeof modelValue === 'string'">
+        <div
+            class="q-mb-md"
+        >
+          <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
+            <q-card-section class="q-pa-sm">
+
+              <img
+                  :src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"
+                  alt="File not found."
+                  style="max-width:100%;"
+              />
+            </q-card-section>
+          </q-card>
+        </div>
+      </template>
+      <template v-else>
+        <q-file
+            :modelValue="modelValue"
+            @update:modelValue="handleFileUpload"
+            :label="compLabel"
+            accept=".pdf,.jpg,.jpeg,.png"
+            :error="!!compError"
+            :error-message="compError"
+            class="q-mb-md"
+            filled
+            dense
+        >
+          <!--@change="handleFileUpload"-->
+          <template v-slot:prepend>
+            <q-icon name="attach_file" />
+          </template>
+        </q-file>
+      </template>
     </template>
     <template v-else-if="field.usageType.startsWith('staticLookup') && field.fieldExtras.usageTypeExtras?.options">
       <q-select
@@ -365,6 +401,11 @@ export default {
     },
   },
   methods: {
+    handleFileUpload(file){
+      if (file) {
+        this.$emit('update:modelValue', file)
+      }
+    },
     updateModelValue(item){
       this.$emit('update:modelValue', item)
     },

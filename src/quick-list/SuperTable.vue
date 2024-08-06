@@ -185,6 +185,7 @@
                 :items="items"
                 @clickRow="clickRow"
                 :superOptions="superOptions"
+                :unClickable="unClickable"
                 :templateListGrid="templateListGrid"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
@@ -218,7 +219,7 @@
           @update:modelValue="formErrors = {};"
       >
         <CreateEditForm
-            title="Create Item"
+            titlePrefix="New"
             v-if="createItemData.showModal"
             v-model="createItemData.data"
             @submit="createItemSubmit"
@@ -236,7 +237,7 @@
             @update:modelValue="formErrors = {};"
         >
           <CreateEditForm
-              title="Edit Item"
+              titlePrefix="Edit"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"
@@ -393,6 +394,12 @@ export default {
       },
     },
     showMap: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    unClickable: {
       type: Boolean,
       default() {
         return false;
@@ -629,7 +636,14 @@ export default {
           this.superOptions.modelFields
       );
 
-      this.superOptions.model.Update(payload)
+      this.superOptions.model.Update(
+          payload,
+          [],
+          {},
+          {
+            'Content-Type': 'multipart/form-data'
+          }
+      )
           .then(() => {
             this.fetchData();
             this.editItemData.showModal = false;
@@ -708,7 +722,22 @@ export default {
       delete payload.id;
 
       const inititalItemLength = this.items.length;
-      this.model.Store(payload)
+
+
+      let headers = {}
+      const hasFileField = this.superOptions.modelFields.find((field) => field.usageType == "fileImageType");
+      if (hasFileField){
+        headers = {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+
+      this.model.Store(
+          payload,
+          [],
+          {},
+          headers
+      )
           .then(() => {
             if (!inititalItemLength) {
               if (!this.loading) {

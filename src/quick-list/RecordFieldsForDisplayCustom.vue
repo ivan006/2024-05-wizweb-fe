@@ -1,6 +1,6 @@
 <template>
   <div
-      :style="clickable ? 'cursor: pointer' : ''"
+      :style="!unClickable ? 'cursor: pointer' : ''"
       @click="clickRow(item)"
       :class="colClasses"
   >
@@ -22,7 +22,7 @@
                 :item="item"
                 :childRelations="childRelations"
                 :superOptions="superOptions"
-                :clickable="clickable"
+                :unClickable="unClickable"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
             >
@@ -73,7 +73,7 @@ export default {
         return {};
       },
     },
-    clickable: {
+    unClickable: {
       type: Boolean,
       default() {
         return false;

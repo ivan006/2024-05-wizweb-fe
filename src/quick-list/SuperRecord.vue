@@ -81,7 +81,7 @@
             @update:modelValue="formErrors = {};"
         >
           <CreateEditForm
-              title="Edit Item"
+              titlePrefix="Edit"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"

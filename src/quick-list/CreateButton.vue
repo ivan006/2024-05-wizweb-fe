@@ -3,9 +3,10 @@
     <q-btn
         @click="emitCreateItem"
         :disable="!canEdit"
+        outline
     >
       <!--:disable="!canCreatePart2"-->
-      Create
+      New
       <q-tooltip v-if="canCreateMsg.length" bottom :disable="canCreatePart2">
         <span>{{ canCreateMsg }}</span>
       </q-tooltip>

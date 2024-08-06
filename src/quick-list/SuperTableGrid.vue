@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row q-mx-n2 justify-center">
+    <div class="row q-col-gutter-md q-mx-n2 justify-center">
       <template v-for="item in items" :key="item.name">
         <template
             v-if="
@@ -8,12 +8,11 @@
                 templateListGrid.cols
               "
         >
-          <div class="col-12 col-md-3 q-pa-sm" >
+          <div class="col-12 col-md-3 " >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordFieldsForDisplayCustom
                   :item="item"
                   @clickRow="clickRow"
-                  :clickable="true"
                   :maxFields="6"
                   :childRelations="[]"
                   isSummary
@@ -21,21 +20,22 @@
                   :template="templateListGrid"
                   @editItem="editItem"
                   @deleteItem="deleteItem"
+                  :unClickable="unClickable"
               />
             </div>
           </div>
         </template>
         <template v-else>
-          <div :class="`col-12 col-md-3 q-pa-sm`">
+          <div :class="`col-12 col-md-3 `">
             <div class="q-card q-mx-auto" style="height: 100%">
               <RecordFieldsForDisplayGeneric
                   :item="item"
                   @clickRow="clickRow"
-                  :clickable="true"
                   :maxFields="6"
                   :superOptions="superOptions"
                   @editItem="editItem"
                   @deleteItem="deleteItem"
+                  :unClickable="unClickable"
               />
             </div>
           </div>
@@ -59,6 +59,12 @@ export default {
     RecordFieldsForDisplayCustom,
   },
   props: {
+    unClickable: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     templateListGrid: {
       type: Object,
       default() {
