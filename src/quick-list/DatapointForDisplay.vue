@@ -172,9 +172,17 @@ export default {
       } else if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
         return { label: this.dataPoint.label };
       } else {
-        const result = this.superOptions.headers.find((header) => {
+        // const result = this.superOptions.headers.find((header) => {
+        const result = this.superOptions.modelFields.find((header) => {
           return header.field == this.dataPoint.field
         })
+        // if (this.dataPoint.field == "country"){
+        //
+        //   console.log("result")
+        //   console.log(this.dataPoint.field)
+        //   console.log(this.superOptions.headers)
+        //   console.log(result)
+        // }
         return result
       }
     },

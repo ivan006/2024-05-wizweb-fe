@@ -89,7 +89,8 @@ export default {
   },
   computed: {
     compHeader() {
-      const result = this.superOptions.headers.find((header) => {
+      // const result = this.superOptions.headers.find((header) => {
+      const result = this.superOptions.modelFields.find((header) => {
         return header.field == this.dataPoint.field
       })
       return result
