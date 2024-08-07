@@ -213,6 +213,9 @@ export default class DBBaseModel extends Model {
                 computedUrl,
                 { ...entity },
                 {
+                    params: {
+                        ...flags,
+                    },
                     dataTransformer: ({ data }) => {
                         const result =
                             this.NormalizeRecursive(data)
@@ -230,11 +233,15 @@ export default class DBBaseModel extends Model {
     }
 
     static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
+
         return this.customApiBase(headers)
             .post(
                 url,
                 { ...entity },
                 {
+                    params: {
+                        ...flags,
+                    },
                     dataTransformer: ({ data }) => {
                         const result =
                             this.NormalizeRecursive(data)
@@ -260,10 +267,10 @@ export default class DBBaseModel extends Model {
             computedUrl = `${url}/${entity.id}`
         }
 
-        const queryParams = new URLSearchParams(flags).toString();
-        if (queryParams) {
-            computedUrl += (computedUrl.includes('?') ? '&' : '?') + queryParams;
-        }
+        // const queryParams = new URLSearchParams(flags).toString();
+        // if (queryParams) {
+        //     computedUrl += (computedUrl.includes('?') ? '&' : '?') + queryParams;
+        // }
 
         // if (supportFiles) {
         //   entity = serialize(entity);
@@ -275,6 +282,9 @@ export default class DBBaseModel extends Model {
                 { ...entity },
                 // entity,
                 {
+                    params: {
+                        ...flags,
+                    },
                     dataTransformer: ({ data }) => {
                         const result =
                             this.NormalizeRecursive(data)
