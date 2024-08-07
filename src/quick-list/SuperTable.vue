@@ -748,18 +748,22 @@ export default {
           headers
       )
           .then(() => {
-            if (!inititalItemLength) {
-              if (!this.loading) {
-                this.fetchData();
 
-                // After handling, reset formData (if needed)
-                this.createItemData.data = {};
+            // if (!inititalItemLength) {
+            //   if (!this.loading) {
+            //   }
+            // }
 
-                // Close the dialog after submission
-                this.createItemData.showModal = false;
-                this.formErrors = {};
-              }
-            }
+
+
+            this.fetchData();
+
+            // After handling, reset formData (if needed)
+            this.createItemData.data = {};
+
+            // Close the dialog after submission
+            this.createItemData.showModal = false;
+            this.formErrors = {};
           })
           .catch((err) => {
             this.formErrors = err.response.data;

@@ -130,11 +130,16 @@ export default {
     updateModelValue(item) {
       this.$emit("update:modelValue", item);
     },
-    editItemSubmit() {
-      if (this.$refs.editForm.validate()) {
-        this.$emit("submit");
+    async editItemSubmit() {
+      try {
+        const isValid = await this.$refs.editForm.validate();
+        if (isValid) {
+          this.$emit("submit");
+        }
+      } catch (error) {
+        // console.error("Error during form validation:", error);
       }
-    },
+    }
   },
   mounted(){
   }
