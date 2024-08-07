@@ -417,6 +417,12 @@ export default {
         return null;
       },
     },
+    createPayloadExtras: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     relationships: {
       type: Array,
       default() {
@@ -733,7 +739,10 @@ export default {
       }
 
       this.model.Store(
-          payload,
+          {
+            ...payload,
+            ...this.createPayloadExtras,
+          },
           [],
           {},
           headers
