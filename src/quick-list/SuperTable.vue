@@ -46,8 +46,8 @@
       <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
-      <template v-if="!(filterInputs.length === 0 && viewAs.hide)">
-        <div class="q-px-md">
+      <template v-if="filterInputs.length && viewAs.hide && (allowedFilters == null || filterInputs.some(filterInput =>  allowedFilters.includes(filterInput.name)))">
+        <div class="q-px-sm">
 
           <DestructableExpansionPanels
               :destroy="!quickListsIsMobile"
