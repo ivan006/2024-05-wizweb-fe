@@ -706,13 +706,18 @@ export default {
       return new this.model();
     },
     clickRow(item) {
+
       if (this.isForSelectingRelation) {
         this.highlightedRow = item[this.pKey];
       }
       if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
         this.model.openRecord(item[this.pKey]);
       }
-      this.$emit("clickRow", item);
+
+
+      if (this.model.rules.readable(item)){
+        this.$emit("clickRow", item);
+      }
 
       this.$emit("update:modelValue", item[this.pKey]);
     },
