@@ -784,29 +784,24 @@ export default {
     },
     applyFilters(items, filters) {
       return items.filter(item => {
-        const result = Object.keys(filters).every(filterKey => {
+        return Object.keys(filters).every(filterKey => {
           const filterValue = filters[filterKey];
 
           // Check if the filter is a relationship filter
           if (filterKey.includes('.')) {
             const [relation, attr] = filterKey.split('.');
-            console.log("------relation")
-            console.log(relation)
-            console.log(item[relation])
-            // console.log(item[relation].id)
-            console.log(attr)
-            const result = item[relation].some(relatedItem => relatedItem[attr] === filterValue);
-            console.log(result)
-            return result
+            // Ensure all conditions apply to at least one related record
+            return item[relation].some(relatedItem => {
+              return Object.keys(filters).every(key => {
+                const [rel, attribute] = key.split('.');
+                return relation === rel ? relatedItem[attribute] === filters[key] : true;
+              });
+            });
           } else {
             // Check attribute filters
             return item[filterKey] === filterValue;
           }
         });
-        console.log("------items")
-        console.log(item)
-        console.log(result)
-        return result
       });
     },
     async fetchData() {
