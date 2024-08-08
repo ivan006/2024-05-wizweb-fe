@@ -59,6 +59,7 @@
               :field="compField"
               hideLabel
               :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
           />
         </template>
       </component>
@@ -77,6 +78,10 @@ export default {
     DatapointForEditInner,
   },
   props: {
+    itemErrors: {
+      type: Object,
+      default: () => ({}),
+    },
     formServerErrors: {
       type: Object,
       default: () => ({}),

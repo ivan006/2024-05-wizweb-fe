@@ -48,6 +48,7 @@
                 @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
                 :template="col"
                 :formServerErrors="formServerErrors"
+                :itemErrors="itemErrors"
             />
           </template>
         </template>
@@ -61,6 +62,7 @@
                   @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
                   :dataPoint="template.dataPoint"
                   :formServerErrors="formServerErrors"
+                  :itemErrors="itemErrors"
               />
             </div>
           </div>
@@ -89,6 +91,10 @@ export default {
   },
   props: {
     formServerErrors: {
+      type: Object,
+      default: () => ({}),
+    },
+    itemErrors: {
       type: Object,
       default: () => ({}),
     },

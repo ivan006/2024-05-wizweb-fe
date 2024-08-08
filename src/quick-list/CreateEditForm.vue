@@ -46,8 +46,8 @@
   </q-card>
 </template>
 
-
 <script>
+
 import RelationComponent from "./RelationComponent.vue";
 import DateAndTimeRangePicker from "./DateAndTimeRangePicker.vue";
 import moment from "moment";
@@ -129,6 +129,11 @@ export default {
     updateModelValue(item) {
       this.$emit("update:modelValue", item);
     },
+    getRequiredFields() {
+      return this.superOptions.modelFields
+          .filter(field => field.meta && field.meta.required)
+          .map(field => field.name);
+    },
     validateField(field, value) {
       if (!value) {
         this.itemErrors[field] = 'Required';
@@ -139,9 +144,13 @@ export default {
     validateForm() {
       this.itemErrors = {}; // Clear previous errors
 
-      for (const field in this.modelValue) {
+      // Get required fields from superOptions.modelFields
+      const requiredFields = this.getRequiredFields();
+
+      // Validate only the required fields
+      requiredFields.forEach(field => {
         this.validateField(field, this.modelValue[field]);
-      }
+      });
 
       return Object.keys(this.itemErrors).length === 0;
     },

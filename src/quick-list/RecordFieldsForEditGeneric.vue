@@ -10,6 +10,7 @@
               @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
               :field="field"
               :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
           />
         </div>
       </template>
@@ -20,14 +21,20 @@
 <script>
 import DatapointForEditInner from "./DatapointForEditInner.vue";
 import SuperSelect from "./SuperSelect.vue";
+import RecordFieldsForEditCustom from "./RecordFieldsForEditCustom.vue";
 
 export default {
   name: "RecordFieldsForEditGeneric",
   components: {
+    RecordFieldsForEditCustom,
     SuperSelect,
     DatapointForEditInner,
   },
   props: {
+    itemErrors: {
+      type: Object,
+      default: () => ({}),
+    },
     formServerErrors: {
       type: Object,
       default: () => ({}),
