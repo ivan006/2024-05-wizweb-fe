@@ -783,28 +783,24 @@ export default {
 
     },
     applyFilters(items, filters) {
-      return items.filter(item => {
-        return Object.keys(filters).every(filterKey => {
-          const filterValue = filters[filterKey];
+      const groupedFilters = {};
 
-          // Check if the filter is a relationship filter
-          if (filterKey.includes('.')) {
-            const [relation, attr] = filterKey.split('.');
-            // Skip the check if the related data is not included
-            if (!item[relation]) {
-              return true;
-            }
-            // Ensure all conditions apply to at least one related record
-            return item[relation].some(relatedItem => {
-              return Object.keys(filters).every(key => {
-                const [rel, attribute] = key.split('.');
-                return relation === rel ? relatedItem[attribute] === filters[key] : true;
-              });
-            });
-          } else {
-            // Check attribute filters
-            return item[filterKey] === filterValue;
-          }
+      // Group filters by relation
+      Object.keys(filters).forEach(filterKey => {
+        const [relation, attr] = filterKey.split('.');
+        if (!groupedFilters[relation]) {
+          groupedFilters[relation] = {};
+        }
+        groupedFilters[relation][attr] = filters[filterKey];
+      });
+
+      return items.filter(item => {
+        return Object.keys(groupedFilters).every(relation => {
+          const relationFilters = groupedFilters[relation];
+          if (!item[relation]) return false;
+          return item[relation].some(relatedItem => {
+            return Object.keys(relationFilters).every(attr => relatedItem[attr] === relationFilters[attr]);
+          });
         });
       });
     },
