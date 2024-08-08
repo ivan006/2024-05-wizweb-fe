@@ -782,6 +782,33 @@ export default {
           });
 
     },
+    applyFilters(items, filters) {
+      return items.filter(item => {
+        const result = Object.keys(filters).every(filterKey => {
+          const filterValue = filters[filterKey];
+
+          // Check if the filter is a relationship filter
+          if (filterKey.includes('.')) {
+            const [relation, attr] = filterKey.split('.');
+            console.log("------relation")
+            console.log(relation)
+            console.log(item[relation])
+            // console.log(item[relation].id)
+            console.log(attr)
+            const result = item[relation].some(relatedItem => relatedItem[attr] === filterValue);
+            console.log(result)
+            return result
+          } else {
+            // Check attribute filters
+            return item[filterKey] === filterValue;
+          }
+        });
+        console.log("------items")
+        console.log(item)
+        console.log(result)
+        return result
+      });
+    },
     async fetchData() {
       if (!this.activated && this.isForSelectingRelation) return;
 
@@ -825,7 +852,11 @@ export default {
           },
       );
 
-      this.items = response.response.data.data
+      // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
+      this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
+      console.log("this.items")
+      console.log(this.items)
+      // this.items = response.response.data.data
 
       this.loading = false;
       let count = 0;
