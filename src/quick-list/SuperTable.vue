@@ -790,6 +790,10 @@ export default {
           // Check if the filter is a relationship filter
           if (filterKey.includes('.')) {
             const [relation, attr] = filterKey.split('.');
+            // Skip the check if the related data is not included
+            if (!item[relation]) {
+              return true;
+            }
             // Ensure all conditions apply to at least one related record
             return item[relation].some(relatedItem => {
               return Object.keys(filters).every(key => {
