@@ -15,6 +15,7 @@
                   @updateSetDefaultEndTime="updateSetDefaultEndTime"
                   :template="template"
                   :formServerErrors="formServerErrors"
+                  :itemErrors="itemErrors"
               />
             </div>
           </div>
@@ -26,13 +27,14 @@
               :superOptions="superOptions"
               @updateSetDefaultEndTime="updateSetDefaultEndTime"
               :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
           />
         </template>
       </q-form>
     </q-card-section>
-    <q-card-actions >
+    <q-card-actions>
       <div style="width:100%;">
-        <div class="text-right text-negative" >
+        <div class="text-right text-negative">
           {{formServerErrors.message ? formServerErrors.message : ''}}
         </div>
         <div class="text-right">
@@ -44,15 +46,14 @@
   </q-card>
 </template>
 
+
 <script>
 import RelationComponent from "./RelationComponent.vue";
 import DateAndTimeRangePicker from "./DateAndTimeRangePicker.vue";
-import DateAndTimePicker from "./DateAndTimePicker.vue";
 import moment from "moment";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperSelect from "./SuperSelect.vue";
-// import SuperTable from "./SuperTable.vue";
 import { defineAsyncComponent } from 'vue'
 import RecordFieldsForEditGeneric from "./RecordFieldsForEditGeneric.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
@@ -73,11 +74,8 @@ export default {
     RecordFieldsForEditGeneric,
     SuperSelect,
     SearchGooglePlace,
-    DateAndTimePicker,
     DateAndTimeRangePicker,
     RelationComponent,
-    // SuperTable,
-    // SuperTable: () => import("./SuperTable.vue"),
     SuperTable: AsyncSuperTableComponent
   },
   props: {
@@ -117,6 +115,7 @@ export default {
     return {
       itemData: {},
       loading: false,
+      itemErrors: {}, // Track individual field errors
     };
   },
   methods: {
@@ -130,20 +129,28 @@ export default {
     updateModelValue(item) {
       this.$emit("update:modelValue", item);
     },
+    validateField(field, value) {
+      if (!value) {
+        this.itemErrors[field] = 'Required';
+      } else {
+        delete this.itemErrors[field];
+      }
+    },
+    validateForm() {
+      this.itemErrors = {}; // Clear previous errors
+
+      for (const field in this.modelValue) {
+        this.validateField(field, this.modelValue[field]);
+      }
+
+      return Object.keys(this.itemErrors).length === 0;
+    },
     async editItemSubmit() {
-      try {
-        const isValid = await this.$refs.editForm.validate();
-        if (isValid) {
-          this.$emit("submit");
-        }
-      } catch (error) {
-        // console.error("Error during form validation:", error);
+      if (this.validateForm()) {
+        this.$emit("submit");
       }
     }
-  },
-  mounted(){
   }
 };
 </script>
 
-<style scoped></style>
