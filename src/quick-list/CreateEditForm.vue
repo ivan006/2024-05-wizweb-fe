@@ -14,7 +14,7 @@
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="updateSetDefaultEndTime"
                   :template="template"
-                  :formErrors="formErrors"
+                  :formServerErrors="formServerErrors"
               />
             </div>
           </div>
@@ -25,7 +25,7 @@
               @update:modelValue="updateModelValue"
               :superOptions="superOptions"
               @updateSetDefaultEndTime="updateSetDefaultEndTime"
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
           />
         </template>
       </q-form>
@@ -33,7 +33,7 @@
     <q-card-actions >
       <div style="width:100%;">
         <div class="text-right text-negative" >
-          {{formErrors.message ? formErrors.message : ''}}
+          {{formServerErrors.message ? formServerErrors.message : ''}}
         </div>
         <div class="text-right">
           <q-btn flat label="Cancel" @click="cancel" />
@@ -95,7 +95,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    formErrors: {
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },

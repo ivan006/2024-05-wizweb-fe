@@ -216,36 +216,36 @@
     <template v-if="canEdit">
       <q-dialog
           v-model="createItemData.showModal"
-          @update:modelValue="formErrors = {};"
+          @update:modelValue="formServerErrors = {};"
       >
         <CreateEditForm
             titlePrefix="New"
             v-if="createItemData.showModal"
             v-model="createItemData.data"
             @submit="createItemSubmit"
-            @cancel="createItemData.showModal = false; formErrors = {};"
+            @cancel="createItemData.showModal = false; formServerErrors = {};"
             :superOptions="superOptions"
             style="width: 700px; max-width: 80vw;"
             :template="templateForm"
-            :formErrors="formErrors"
+            :formServerErrors="formServerErrors"
         />
       </q-dialog>
 
       <template v-if="superOptions.canEdit">
         <q-dialog
             v-model="editItemData.showModal"
-            @update:modelValue="formErrors = {};"
+            @update:modelValue="formServerErrors = {};"
         >
           <CreateEditForm
               titlePrefix="Edit"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false; formErrors = {};"
+              @cancel="editItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
               style="width: 700px; max-width: 80vw;"
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
@@ -454,7 +454,7 @@ export default {
   },
   data() {
     return {
-      formErrors: {},
+      formServerErrors: {},
       deleteItemData: {
         showModal: false,
         data: null,
@@ -653,10 +653,10 @@ export default {
           .then(() => {
             this.fetchData();
             this.editItemData.showModal = false;
-            this.formErrors = {};
+            this.formServerErrors = {};
           })
           .catch((err) => {
-            this.formErrors = err.response.data;
+            this.formServerErrors = err.response.data;
           });
     },
     pageUpdate(page) {
@@ -768,10 +768,10 @@ export default {
 
             // Close the dialog after submission
             this.createItemData.showModal = false;
-            this.formErrors = {};
+            this.formServerErrors = {};
           })
           .catch((err) => {
-            this.formErrors = err.response.data;
+            this.formServerErrors = err.response.data;
           });
 
     },

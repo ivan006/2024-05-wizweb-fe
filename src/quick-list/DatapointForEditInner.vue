@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--<pre>{{formErrors}}</pre>-->
+    <!--<pre>{{formServerErrors}}</pre>-->
     <!--<pre>{{compError}}</pre>-->
     <template v-if="field.dataType === 'uid'"></template>
     <template v-else-if="field.usageType.startsWith('rel')">
@@ -315,7 +315,7 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
-    formErrors: {
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },
@@ -360,11 +360,11 @@ export default {
     compError() {
       let result = null
       if (
-          this.formErrors &&
-          this.formErrors.errors &&
-          this.formErrors.errors[this.field.name]
+          this.formServerErrors &&
+          this.formServerErrors.errors &&
+          this.formServerErrors.errors[this.field.name]
       ){
-        result = this.formErrors.errors[this.field.name]
+        result = this.formServerErrors.errors[this.field.name]
       }
       return result
 

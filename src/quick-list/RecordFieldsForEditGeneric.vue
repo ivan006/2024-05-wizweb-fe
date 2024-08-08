@@ -9,7 +9,7 @@
               :superOptions="superOptions"
               @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
               :field="field"
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
           />
         </div>
       </template>
@@ -28,7 +28,7 @@ export default {
     DatapointForEditInner,
   },
   props: {
-    formErrors: {
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },
