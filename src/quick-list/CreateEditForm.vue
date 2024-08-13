@@ -35,7 +35,9 @@
     <q-card-actions>
       <div style="width:100%;">
         <div class="text-right text-negative">
-          {{formServerErrors.message ? formServerErrors.message : ''}}
+          <!--{{formServerErrors.message ? formServerErrors.message : ''}}-->
+
+          {{Object.keys(itemErrors).length ? `${Object.keys(itemErrors)[0]} is required${Object.keys(itemErrors).length > 1 ? ' and '+ (Object.keys(itemErrors).length-1) +' more errors.' : '.'  } ` : ''}}
         </div>
         <div class="text-right">
           <q-btn flat label="Cancel" @click="cancel" />

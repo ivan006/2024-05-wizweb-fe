@@ -104,10 +104,10 @@ export default class DBCrudCacheSet extends Model {
                 let rules = []
                 let required = false
 
-                if (!fields[field.foreignKey].isNullable) {
-                    rules = [(v) => !!v || `${label} is required.`]
-                    required = true
-                }
+                // if (!fields[field.foreignKey].isNullable) {
+                //     rules = [(v) => !!v || `${label} is required.`]
+                //     required = true
+                // }
 
                 newField = {
                     name: fieldName,
@@ -132,8 +132,18 @@ export default class DBCrudCacheSet extends Model {
                 }
 
                 // if (!excludedCols.includes(field.foreignKey)) {
-                result.push(newField)
-                lookupKeys.push(newField)
+                result.push({
+                    ...newField,
+                    meta: {
+                        ...newField.meta
+                    }
+                })
+                lookupKeys.push({
+                    ...newField,
+                    meta: {
+                        ...newField.meta
+                    }
+                })
                 // }
                 // } else if (usageType == 'creatorType') {
                 //     let rules = []
@@ -212,11 +222,16 @@ export default class DBCrudCacheSet extends Model {
                         originalForeignKeyValue.usageType
                     ),
                 dataType: dataType,
+                meta: {
+                    ...lookupKey.meta,
+                    ...originalForeignKeyValue.meta
+                },
                 important: originalForeignKeyValue.important,
                 fieldExtras: originalForeignKeyValue.fieldExtras,
                 name: lookupKey.meta.foreignKey,
                 field: lookupKey.meta.foreignKey,
             }
+
             result[foreignKeyKey] = foreignKeyValue
         }
         const payload = {
