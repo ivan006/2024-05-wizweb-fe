@@ -27,7 +27,7 @@
                     @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
                     :field="compField"
                     hideLabel
-                    :formErrors="formErrors"
+                    :formServerErrors="formServerErrors"
                 />
               </template>
             </component>
@@ -58,7 +58,8 @@
               @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
               :field="compField"
               hideLabel
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
           />
         </template>
       </component>
@@ -77,7 +78,11 @@ export default {
     DatapointForEditInner,
   },
   props: {
-    formErrors: {
+    itemErrors: {
+      type: Object,
+      default: () => ({}),
+    },
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },

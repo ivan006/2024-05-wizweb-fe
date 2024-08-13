@@ -8,7 +8,8 @@
         <template v-slot:header>
           <div class="text-h6">{{ title }}</div>
         </template>
-        <div class="q-pa-md">
+        <!--<div class="q-pa-md">-->
+        <div class="">
           <slot></slot>
         </div>
       </q-expansion-item>

@@ -102,9 +102,11 @@ export default class DBCrudCacheSet extends Model {
 
 
                 let rules = []
+                let required = false
 
                 if (!fields[field.foreignKey].isNullable) {
                     rules = [(v) => !!v || `${label} is required.`]
+                    required = true
                 }
 
                 newField = {
@@ -118,6 +120,7 @@ export default class DBCrudCacheSet extends Model {
                     fieldExtras,
                     meta: {
                         rules,
+                        required,
                         foreignKey: field.foreignKey,
                         foreignKeyField: fields[field.foreignKey],
                         relation: field.constructor.name,
@@ -150,9 +153,13 @@ export default class DBCrudCacheSet extends Model {
                 //
                 //     result.push(newField)
             } else {
+
                 let rules = []
+                let required = false
+
                 if (!field.isNullable) {
                     rules = [(v) => !!v || `${label} is required.`]
+                    required = true
                 }
 
                 newField = {
@@ -165,6 +172,7 @@ export default class DBCrudCacheSet extends Model {
                     fieldExtras,
                     meta: {
                         rules,
+                        required,
                     },
                 }
 

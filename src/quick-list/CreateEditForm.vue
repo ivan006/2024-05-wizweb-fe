@@ -14,7 +14,8 @@
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="updateSetDefaultEndTime"
                   :template="template"
-                  :formErrors="formErrors"
+                  :formServerErrors="formServerErrors"
+                  :itemErrors="itemErrors"
               />
             </div>
           </div>
@@ -25,15 +26,16 @@
               @update:modelValue="updateModelValue"
               :superOptions="superOptions"
               @updateSetDefaultEndTime="updateSetDefaultEndTime"
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
           />
         </template>
       </q-form>
     </q-card-section>
-    <q-card-actions >
+    <q-card-actions>
       <div style="width:100%;">
-        <div class="text-right text-negative" >
-          {{formErrors.message ? formErrors.message : ''}}
+        <div class="text-right text-negative">
+          {{formServerErrors.message ? formServerErrors.message : ''}}
         </div>
         <div class="text-right">
           <q-btn flat label="Cancel" @click="cancel" />
@@ -45,14 +47,13 @@
 </template>
 
 <script>
+
 import RelationComponent from "./RelationComponent.vue";
 import DateAndTimeRangePicker from "./DateAndTimeRangePicker.vue";
-import DateAndTimePicker from "./DateAndTimePicker.vue";
 import moment from "moment";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperSelect from "./SuperSelect.vue";
-// import SuperTable from "./SuperTable.vue";
 import { defineAsyncComponent } from 'vue'
 import RecordFieldsForEditGeneric from "./RecordFieldsForEditGeneric.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
@@ -73,11 +74,8 @@ export default {
     RecordFieldsForEditGeneric,
     SuperSelect,
     SearchGooglePlace,
-    DateAndTimePicker,
     DateAndTimeRangePicker,
     RelationComponent,
-    // SuperTable,
-    // SuperTable: () => import("./SuperTable.vue"),
     SuperTable: AsyncSuperTableComponent
   },
   props: {
@@ -95,7 +93,7 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    formErrors: {
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },
@@ -117,6 +115,7 @@ export default {
     return {
       itemData: {},
       loading: false,
+      itemErrors: {}, // Track individual field errors
     };
   },
   methods: {
@@ -130,20 +129,37 @@ export default {
     updateModelValue(item) {
       this.$emit("update:modelValue", item);
     },
+    getRequiredFields() {
+      return this.superOptions.modelFields
+          .filter(field => field.meta && field.meta.required)
+          .map(field => field.name);
+    },
+    validateField(field, value) {
+      if (!value) {
+        this.itemErrors[field] = 'Required';
+      } else {
+        delete this.itemErrors[field];
+      }
+    },
+    validateForm() {
+      this.itemErrors = {}; // Clear previous errors
+
+      // Get required fields from superOptions.modelFields
+      const requiredFields = this.getRequiredFields();
+
+      // Validate only the required fields
+      requiredFields.forEach(field => {
+        this.validateField(field, this.modelValue[field]);
+      });
+
+      return Object.keys(this.itemErrors).length === 0;
+    },
     async editItemSubmit() {
-      try {
-        const isValid = await this.$refs.editForm.validate();
-        if (isValid) {
-          this.$emit("submit");
-        }
-      } catch (error) {
-        // console.error("Error during form validation:", error);
+      if (this.validateForm()) {
+        this.$emit("submit");
       }
     }
-  },
-  mounted(){
   }
 };
 </script>
 
-<style scoped></style>

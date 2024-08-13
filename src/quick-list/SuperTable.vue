@@ -46,109 +46,112 @@
       <!--v-model="filters[filterInput.name]"-->
     </template>
     <template v-else>
-      <template v-if="!(filterInputs.length === 0 && viewAs.hide)">
-        <DestructableExpansionPanels
-            :destroy="!quickListsIsMobile"
-            title="Settings"
-        >
-          <div class="row items-center wrap">
-            <template v-if="!viewAs.hide">
-              <div class="q-mr-sm">
-                <q-select
-                    style="width: 200px"
-                    :options="[
+      <template v-if="filterInputs.length && viewAs.hide && (allowedFilters == null || filterInputs.some(filterInput =>  allowedFilters.includes(filterInput.name)))">
+        <div class="q-px-sm">
+
+          <DestructableExpansionPanels
+              :destroy="!quickListsIsMobile"
+              title="Settings"
+          >
+            <div class="row items-center wrap">
+              <template v-if="!viewAs.hide">
+                <div class="q-mr-sm">
+                  <q-select
+                      style="width: 200px"
+                      :options="[
                   { label: 'Table', value: 'table' },
                   { label: 'Grid', value: 'grid' },
                   { label: 'Map', value: 'map' },
                   { label: 'Calendar', value: 'calendar' },
                 ]"
-                    v-model="activeTab"
-                    label="View As"
-                    option-label="label"
-                    option-value="value"
-                    emit-value
-                    map-options
-                    dense
-                    class="col-grow "
-                    filled
-                    :rules="[() => true]"
-                />
-              </div>
-            </template>
-            <template
-                v-for="filterInput of filterInputs"
-                :key="filterInput.name"
-            >
-              <template v-if="typeof filters[filterInput.name] !== 'undefined'">
-                <template
-                    v-if="filterInput.usageType.startsWith('relForeignKey')"
-                >
-                  <!--<SuperSelect-->
-                  <!--    allowAll-->
-                  <!--    :key="filterInput.name"-->
-                  <!--    :modelField="filterInput"-->
-                  <!--    v-model="filters[filterInput.name]"-->
-                  <!--    :model="filterInput.meta.field.parent"-->
-                  <!--    class="q-ma-sm col-grow"-->
-                  <!--    dense-->
-                  <!--    :user="use"-->
-
-
-                  <!--    :page="options.page"-->
-                  <!--    @update:page="pageUpdate"-->
-                  <!--    :maxPages="maxPages"-->
-                  <!--    @click="activateAndFetchData"-->
-                  <!--    :items="items"-->
-                  <!--    :loading="loading"-->
-                  <!--    :rules="rules"-->
-                  <!--/>-->
-
-                  <!--<RelationComponent-->
-                  <!--  :modelField="filterInput"-->
-                  <!--  v-model="filters[filterInput.name].value"-->
-
-                  <!--  :page="options.page"-->
-                  <!--  @update:page="pageUpdate"-->
-                  <!--  :maxPages="maxPages"-->
-                  <!--  @click="activateAndFetchData"-->
-                  <!--  :items="items"-->
-                  <!--  :loading="loading"-->
-                  <!--  :rules="rules"-->
-                  <!--/>-->
-                  <SuperTable
-                      :isForSelectingRelation="true"
-                      :canEdit="false"
-                      v-model="filters[filterInput.name]"
-                      :model="filterInput.meta.field.parent"
+                      v-model="activeTab"
+                      label="View As"
+                      option-label="label"
+                      option-value="value"
+                      emit-value
+                      map-options
+                      dense
+                      class="col-grow "
+                      filled
                       :rules="[() => true]"
-                      :modelField="filterInput"
-                      class="q-mr-sm"
+                  />
+                </div>
+              </template>
+              <template
+                  v-for="filterInput of filterInputs"
+                  :key="filterInput.name"
+              >
+                <template v-if="typeof filters[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
+                  <template
+                      v-if="filterInput.usageType.startsWith('relForeignKey')"
+                  >
+                    <!--<SuperSelect-->
+                    <!--    allowAll-->
+                    <!--    :key="filterInput.name"-->
+                    <!--    :modelField="filterInput"-->
+                    <!--    v-model="filters[filterInput.name]"-->
+                    <!--    :model="filterInput.meta.field.parent"-->
+                    <!--    class="q-ma-sm col-grow"-->
+                    <!--    dense-->
+                    <!--    :user="use"-->
 
-                  />
-                  <!--v-model="filters[filterInput.name].value"-->
+
+                    <!--    :page="options.page"-->
+                    <!--    @update:page="pageUpdate"-->
+                    <!--    :maxPages="maxPages"-->
+                    <!--    @click="activateAndFetchData"-->
+                    <!--    :items="items"-->
+                    <!--    :loading="loading"-->
+                    <!--    :rules="rules"-->
+                    <!--/>-->
+
+                    <!--<RelationComponent-->
+                    <!--  :modelField="filterInput"-->
+                    <!--  v-model="filters[filterInput.name].value"-->
+
+                    <!--  :page="options.page"-->
+                    <!--  @update:page="pageUpdate"-->
+                    <!--  :maxPages="maxPages"-->
+                    <!--  @click="activateAndFetchData"-->
+                    <!--  :items="items"-->
+                    <!--  :loading="loading"-->
+                    <!--  :rules="rules"-->
+                    <!--/>-->
+                    <SuperTable
+                        :isForSelectingRelation="true"
+                        :canEdit="false"
+                        v-model="filters[filterInput.name]"
+                        :model="filterInput.meta.field.parent"
+                        :rules="[() => true]"
+                        :modelField="filterInput"
+                        class="q-mr-sm"
+
+                    />
+                    <!--v-model="filters[filterInput.name].value"-->
+                  </template>
+                  <template v-if="filterInput.usageType == 'timeRangeStart'">
+                    <FilterTime
+                        :key="filterInput.name"
+                        :modelField="filterInput"
+                        v-model="filters[filterInput.name].value"
+                        class="q-ma-sm col-grow"
+                    />
+                  </template>
                 </template>
-                <template v-if="filterInput.usageType == 'timeRangeStart'">
-                  <FilterTime
-                      :key="filterInput.name"
-                      :modelField="filterInput"
-                      v-model="filters[filterInput.name].value"
-                      class="q-ma-sm col-grow"
-                  />
+                <template v-else>
+                  <template v-if="filterInput.usageType == 'mapFilter'">
+                    <FilterPlace
+                        :key="filterInput.name"
+                        :filterField="filterInput"
+                        v-model="filters"
+                        class="q-ma-sm col-grow"
+                    />
+                  </template>
                 </template>
               </template>
-              <template v-else>
-                <template v-if="filterInput.usageType == 'mapFilter'">
-                  <FilterPlace
-                      :key="filterInput.name"
-                      :filterField="filterInput"
-                      v-model="filters"
-                      class="q-ma-sm col-grow"
-                  />
-                </template>
-              </template>
-            </template>
-          </div>
-        </DestructableExpansionPanels>
+            </div>
+          </DestructableExpansionPanels>
+        </div>
       </template>
       <div class="">
         <template v-if="activeTab == 'table'">
@@ -216,36 +219,36 @@
     <template v-if="canEdit">
       <q-dialog
           v-model="createItemData.showModal"
-          @update:modelValue="formErrors = {};"
+          @update:modelValue="formServerErrors = {};"
       >
         <CreateEditForm
             titlePrefix="New"
             v-if="createItemData.showModal"
             v-model="createItemData.data"
             @submit="createItemSubmit"
-            @cancel="createItemData.showModal = false; formErrors = {};"
+            @cancel="createItemData.showModal = false; formServerErrors = {};"
             :superOptions="superOptions"
             style="width: 700px; max-width: 80vw;"
             :template="templateForm"
-            :formErrors="formErrors"
+            :formServerErrors="formServerErrors"
         />
       </q-dialog>
 
       <template v-if="superOptions.canEdit">
         <q-dialog
             v-model="editItemData.showModal"
-            @update:modelValue="formErrors = {};"
+            @update:modelValue="formServerErrors = {};"
         >
           <CreateEditForm
               titlePrefix="Edit"
               v-if="editItemData.showModal"
               v-model="editItemData.data"
               @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false; formErrors = {};"
+              @cancel="editItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
               style="width: 700px; max-width: 80vw;"
-              :formErrors="formErrors"
+              :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
@@ -316,6 +319,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    allowedFilters: {
+      type: Array,
+      default: null,
+    },
     allowAll: {
       type: Boolean,
       default: false,
@@ -454,7 +461,7 @@ export default {
   },
   data() {
     return {
-      formErrors: {},
+      formServerErrors: {},
       deleteItemData: {
         showModal: false,
         data: null,
@@ -653,10 +660,10 @@ export default {
           .then(() => {
             this.fetchData();
             this.editItemData.showModal = false;
-            this.formErrors = {};
+            this.formServerErrors = {};
           })
           .catch((err) => {
-            this.formErrors = err.response.data;
+            this.formServerErrors = err.response.data;
           });
     },
     pageUpdate(page) {
@@ -706,13 +713,18 @@ export default {
       return new this.model();
     },
     clickRow(item) {
+
       if (this.isForSelectingRelation) {
         this.highlightedRow = item[this.pKey];
       }
       if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
         this.model.openRecord(item[this.pKey]);
       }
-      this.$emit("clickRow", item);
+
+
+      if (this.model.rules.readable(item)){
+        this.$emit("clickRow", item);
+      }
 
       this.$emit("update:modelValue", item[this.pKey]);
     },
@@ -763,12 +775,34 @@ export default {
 
             // Close the dialog after submission
             this.createItemData.showModal = false;
-            this.formErrors = {};
+            this.formServerErrors = {};
           })
           .catch((err) => {
-            this.formErrors = err.response.data;
+            this.formServerErrors = err.response.data;
           });
 
+    },
+    applyFilters(items, filters) {
+      const groupedFilters = {};
+
+      // Group filters by relation
+      Object.keys(filters).forEach(filterKey => {
+        const [relation, attr] = filterKey.split('.');
+        if (!groupedFilters[relation]) {
+          groupedFilters[relation] = {};
+        }
+        groupedFilters[relation][attr] = filters[filterKey];
+      });
+
+      return items.filter(item => {
+        return Object.keys(groupedFilters).every(relation => {
+          const relationFilters = groupedFilters[relation];
+          if (!item[relation]) return false;
+          return item[relation].some(relatedItem => {
+            return Object.keys(relationFilters).every(attr => relatedItem[attr] === relationFilters[attr]);
+          });
+        });
+      });
     },
     async fetchData() {
       if (!this.activated && this.isForSelectingRelation) return;
@@ -813,7 +847,11 @@ export default {
           },
       );
 
-      this.items = response.response.data.data
+      // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
+      this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
+      console.log("this.items")
+      console.log(this.items)
+      // this.items = response.response.data.data
 
       this.loading = false;
       let count = 0;

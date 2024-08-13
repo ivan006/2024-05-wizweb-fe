@@ -1,7 +1,7 @@
 <template>
   <div>
-    <!--<pre>{{formErrors}}</pre>-->
-    <!--<pre>{{compError}}</pre>-->
+    <!--<pre>{{formServerErrors}}</pre>-->
+    <!--<pre>{{compServerError}}</pre>-->
     <template v-if="field.dataType === 'uid'"></template>
     <template v-else-if="field.usageType.startsWith('rel')">
       <template v-if="field.usageType.startsWith('relLookup')"></template>
@@ -315,7 +315,11 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
-    formErrors: {
+    itemErrors: {
+      type: Object,
+      default: () => ({}),
+    },
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },
@@ -357,14 +361,27 @@ export default {
     };
   },
   computed: {
-    compError() {
+    compServerError() {
       let result = null
       if (
-          this.formErrors &&
-          this.formErrors.errors &&
-          this.formErrors.errors[this.field.name]
+          this.formServerErrors &&
+          this.formServerErrors.errors &&
+          this.formServerErrors.errors[this.field.name]
       ){
-        result = this.formErrors.errors[this.field.name]
+        result = this.formServerErrors.errors[this.field.name]
+      }
+      return result
+
+    },
+    compError() {
+
+      let result = null
+      if (
+          this.itemErrors &&
+          this.itemErrors &&
+          this.itemErrors[this.field.name]
+      ){
+        result = `${this.field.label} is required.`
       }
       return result
 

@@ -3,21 +3,15 @@
     <template v-for="field in superOptions.modelFields" :key="field.name">
       <template v-if="superOptions.model.primaryKey !== field.name">
         <div class="q-mb-sm">
-          <template v-if="field.usageType !== 'relLookupNormal'">
-
-            <!--<pre>{{field}}</pre>-->
-            <div  class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
-              {{ field.label }}:
-            </div>
-            <DatapointForEditInner
-                :modelValue="itemData[field.name]"
-                @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
-                :superOptions="superOptions"
-                @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
-                :field="field"
-                :formErrors="formErrors"
-            />
-          </template>
+          <DatapointForEditInner
+              :modelValue="itemData[field.name]"
+              @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
+              :superOptions="superOptions"
+              @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+              :field="field"
+              :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
+          />
         </div>
       </template>
     </template>
@@ -27,15 +21,21 @@
 <script>
 import DatapointForEditInner from "./DatapointForEditInner.vue";
 import SuperSelect from "./SuperSelect.vue";
+import RecordFieldsForEditCustom from "./RecordFieldsForEditCustom.vue";
 
 export default {
   name: "RecordFieldsForEditGeneric",
   components: {
+    RecordFieldsForEditCustom,
     SuperSelect,
     DatapointForEditInner,
   },
   props: {
-    formErrors: {
+    itemErrors: {
+      type: Object,
+      default: () => ({}),
+    },
+    formServerErrors: {
       type: Object,
       default: () => ({}),
     },
