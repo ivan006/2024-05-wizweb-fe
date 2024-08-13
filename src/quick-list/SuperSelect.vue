@@ -2,8 +2,6 @@
   <div>
     <q-select
         style="min-width: 200px;"
-        :error="false"
-        :error-message="''"
         :modelValue="modelValue"
         @update:modelValue="updateValue"
         :options="itemsComp"
@@ -19,6 +17,8 @@
         filled
         :menu-props="{ offsetY: true }"
         :rules="rules"
+        :error="!!errorMessage"
+        :errorMessage="errorMessage"
     >
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
@@ -81,6 +81,12 @@ import QuickListsHelpers from "./QuickListsHelpers";
 export default {
   name: "SuperSelect",
   props: {
+    errorMessage: {
+      type: String,
+      default() {
+        return null;
+      },
+    },
     hideLabel: {
       type: Boolean,
       default() {
@@ -179,13 +185,13 @@ export default {
   },
   computed: {
     compLabel() {
-      // if (this.hideLabel){
-      //   return void 0
-      // } else {
-      //   return this.modelField.label
-      // }
+      if (this.hideLabel){
+        return void 0
+      } else {
+        return this.modelField.label
+      }
 
-      return void 0
+      // return void 0
     },
     compLoading() {
       return this.loadingInner || this.loading;

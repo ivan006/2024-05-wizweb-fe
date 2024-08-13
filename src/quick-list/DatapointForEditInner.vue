@@ -22,7 +22,6 @@
         <!--    readonly-->
         <!--    :rules="[() => true]"-->
         <!--/>-->
-
         <SuperTable
             :hideLabel="hideLabel"
             :isForSelectingRelation="true"
@@ -35,6 +34,8 @@
             :fetchFlags="{
               sort: field.meta.field.parent.titleKey
             }"
+            @superTableMounted="$emit('superTableMounted')"
+            :errorMessage="compError"
         />
       </template>
       <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">

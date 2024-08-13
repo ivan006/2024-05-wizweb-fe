@@ -3,13 +3,12 @@
     <template v-for="field in superOptions.modelFields" :key="field.name">
       <template v-if="superOptions.model.primaryKey !== field.name">
         <div class="q-mb-sm">
-          <template v-if="field.usageType !== 'relLookupNormal'">
-
-            <!--<pre>{{field}}</pre>-->
-            <div  class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
+          <template v-if="!['relLookupNormal','relChildrenNormal'].includes(field.usageType) ">
+            <div v-if="rendered" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
               {{ field.label }}:
             </div>
             <DatapointForEditInner
+                @superTableMounted="rendered = true"
                 :modelValue="itemData[field.name]"
                 @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
                 :superOptions="superOptions"
@@ -17,6 +16,7 @@
                 :field="field"
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
+                hideLabel
             />
           </template>
         </div>
@@ -66,6 +66,7 @@ export default {
   },
   data() {
     return {
+      rendered: false,
       itemData: {},
       loading: false,
     };

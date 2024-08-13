@@ -38,6 +38,7 @@
           :modelField="modelField"
           :activated="activated"
           @search="search"
+          :errorMessage="errorMessage"
       />
 
       <!--:key="filterInput.name"-->
@@ -457,6 +458,12 @@ export default {
     modelField: {
       type: Object,
       default: () => ({}),
+    },
+    errorMessage: {
+      type: String,
+      default() {
+        return null;
+      },
     },
   },
   data() {
@@ -895,6 +902,8 @@ export default {
     },
   },
   mounted() {
+
+    this.$emit('superTableMounted');
 
     this.activeTab = this.viewAs.default
 
