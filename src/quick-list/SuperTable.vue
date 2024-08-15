@@ -527,8 +527,6 @@ export default {
     },
     excludedCols() {
       let result = [];
-      console.log("this.parentKeyValuePair")
-      console.log(this.parentKeyValuePair)
       if (this.parentKeyValuePair.key) {
         result = [this.parentKeyValuePair.key];
       }

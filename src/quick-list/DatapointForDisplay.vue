@@ -178,8 +178,6 @@ export default {
         key: fKey,
         value: this.compRelation.currentParentRecord.item[pKey],
       }
-      console.log("111111111")
-      console.log(result)
       return result
     },
     asyncComponent() {

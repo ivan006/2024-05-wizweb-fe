@@ -273,8 +273,6 @@ export default {
         key: fKey,
         value: relation.currentParentRecord.item[pKey],
       }
-      console.log("22222")
-      console.log(result)
       return result
     },
     deleteItem(item) {
