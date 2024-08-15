@@ -847,9 +847,10 @@ export default {
       );
 
       // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
-      this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
-      console.log("this.items")
-      console.log(this.items)
+      // this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
+      this.items = response.response.data.data;
+      // console.log("this.items")
+      // console.log(this.items)
       // this.items = response.response.data.data
 
       this.loading = false;

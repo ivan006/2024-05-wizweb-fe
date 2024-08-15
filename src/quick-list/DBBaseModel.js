@@ -7,7 +7,7 @@ export default class DBBaseModel extends Model {
     static adapator = 'supabase'
     static primaryKey = 'id';
 
-    static openRecord(id){}
+    static openRecord(pKeyValue, item, router){}
 
     static rules = {
         readables: () => true,

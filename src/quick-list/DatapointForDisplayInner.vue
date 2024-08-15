@@ -155,7 +155,7 @@ export default {
   methods: {
     clickParent(item, header) {
       const model = header.meta.field.parent;
-      model.openRecord(item[model.primaryKey]);
+      model.openRecord(item[model.primaryKey], item, this.$router);
     },
     truncateStr(str) {
       let truncatedStr = "";
