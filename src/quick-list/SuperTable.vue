@@ -419,7 +419,7 @@ export default {
     //     return false;
     //   },
     // },
-    currentParentRel: {
+    parentKeyValuePair: {
       type: Object,
       default() {
         return null;
@@ -527,10 +527,9 @@ export default {
     },
     excludedCols() {
       let result = [];
-      if (this.currentParentRel?.currentParentRecord) {
-        result = [
-          this.currentParentRel.currentParentRecord.foreignKeyToParentRecord,
-        ];
+
+      if (this.parentKeyValuePair.key) {
+        result = [this.parentKeyValuePair.key];
       }
       return result;
     },
@@ -543,14 +542,8 @@ export default {
         ...this.filters,
         ...this.forcedFilters,
       };
-      if (
-          this.currentParentRel?.currentParentRecord &&
-          this.currentParentRel.currentParentRecord.item
-      ) {
-        const pKey = this.currentParentRel.currentParentRecord.model.primaryKey;
-        result[
-            this.currentParentRel.currentParentRecord.foreignKeyToParentRecord
-            ] = this.currentParentRel.currentParentRecord.item[pKey];
+      if (this.parentKeyValuePair.key && this.parentKeyValuePair.value) {
+        result[this.parentKeyValuePair.key] = this.parentKeyValuePair.value;
       }
       return result;
     },
@@ -724,9 +717,9 @@ export default {
       if (this.isForSelectingRelation) {
         this.highlightedRow = item[this.pKey];
       }
-      if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
-        this.model.openRecord(item[this.pKey]);
-      }
+      // if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
+      //   this.model.openRecord(item[this.pKey]);
+      // }
 
 
       if (this.model.rules.readable(item)){
@@ -893,10 +886,8 @@ export default {
       if (arg) {
         this.createItemData.data = this.createNewInstance();
 
-        if (this.currentParentRel?.currentParentRecord) {
-          this.createItemData.data[
-              this.currentParentRel.currentParentRecord.foreignKeyToParentRecord
-              ] = this.currentParentRel.currentParentRecord.item.id;
+        if (this.parentKeyValuePair.key && this.parentKeyValuePair.value) {
+          this.createItemData.data[this.parentKeyValuePair.key] = this.parentKeyValuePair.value;
         }
       }
     },

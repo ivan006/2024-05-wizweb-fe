@@ -15,6 +15,9 @@ class FieldUsageTypes {
     static timestampType() {
         return 'timestampType' // You might apply some date-time specific processing here if necessary
     }
+    static dateType() {
+        return 'dateType' // You might apply some date-time specific processing here if necessary
+    }
 
     static mapName() {
         return 'mapName'
