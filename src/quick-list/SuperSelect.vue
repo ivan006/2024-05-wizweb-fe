@@ -259,21 +259,24 @@ export default {
       this.$emit('update:modelValue', item);
     },
     fetchDefaultItem() {
-      this.loadingInner = true
-      this.model
-          .FetchById(
-              this.modelValue,
-              [],
-              {},
-              {},
-          )
-          .then((response) => {
-            this.preSelectedItem = response.response.data.data
-            this.loadingInner = false
-          })
-          .catch(() => {
-            this.loadingInner = false
-          });
+      if (this.modelValue){
+
+        this.loadingInner = true
+        this.model
+            .FetchById(
+                this.modelValue,
+                [],
+                {},
+                {},
+            )
+            .then((response) => {
+              this.preSelectedItem = response.response.data.data
+              this.loadingInner = false
+            })
+            .catch(() => {
+              this.loadingInner = false
+            });
+      }
     },
   },
   watch: {
