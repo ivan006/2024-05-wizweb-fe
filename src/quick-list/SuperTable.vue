@@ -722,7 +722,7 @@ export default {
 
 
       if (this.model.rules.readable(item)){
-        this.$emit("clickRow", item);
+        this.$emit("clickRow", item[this.pKey], item, this.$router);
       }
 
       this.$emit("update:modelValue", item[this.pKey]);
