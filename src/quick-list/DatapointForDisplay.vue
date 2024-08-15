@@ -19,8 +19,9 @@
               <template v-if="isRelChildren(compField)">
                 <div class="q-pt-sm">
                   <template v-if="compRelation">
+                    <pre>{{compRelation}}</pre>
                     <SuperTable
-                        :currentParentRel="compRelation"
+                        :parentKeyValuePair="parentKeyValuePair"
                         :model="compRelation.field.meta.field.related"
                         :canEdit="superOptions.canEdit"
                         :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
@@ -71,7 +72,7 @@
           <div class="q-pt-sm">
             <template v-if="compRelation">
               <SuperTable
-                  :currentParentRel="compRelation"
+                  :parentKeyValuePair="parentKeyValuePair"
                   :model="compRelation.field.meta.field.related"
                   :canEdit="superOptions.canEdit"
                   :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
@@ -169,6 +170,18 @@ export default {
     },
   },
   computed: {
+    parentKeyValuePair() {
+      const pKey = this.compRelation.currentParentRecord.model.primaryKey
+      const fKey = this.compRelation.currentParentRecord.foreignKeyToParentRecord
+
+      const result = {
+        key: fKey,
+        value: this.compRelation.currentParentRecord.item[pKey],
+      }
+      console.log("111111111")
+      console.log(result)
+      return result
+    },
     asyncComponent() {
       if (this.dataPoint.type === 'component' && this.dataPoint.componentPath) {
         return defineAsyncComponent(this.dataPoint.componentPath);

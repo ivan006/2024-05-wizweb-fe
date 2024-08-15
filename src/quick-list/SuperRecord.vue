@@ -44,7 +44,7 @@
         >
           <SuperTable
               :ref="`tab-${index}`"
-              :currentParentRel="relation"
+              :parentKeyValuePair="parentKeyValuePair(relation)"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
               :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
@@ -225,7 +225,7 @@ export default {
       return true;
     },
     childRelations() {
-      const fields = QuickListsHelpers.computedAttrs(this.model, this.excludedCols);
+      const fields = QuickListsHelpers.computedAttrs(this.model, []);
       const result = [];
 
       for (let fieldName in fields) {
@@ -262,10 +262,21 @@ export default {
     //   return this.model.query().whereId(this.id).withAll().get()[0];
     // },
     modelFields() {
-      return QuickListsHelpers.computedAttrs(this.model, this.excludedCols);
+      return QuickListsHelpers.computedAttrs(this.model, []);
     },
   },
   methods: {
+    parentKeyValuePair(relation) {
+      const pKey = relation.currentParentRecord.model.primaryKey
+      const fKey = relation.currentParentRecord.foreignKeyToParentRecord
+      const result = {
+        key: fKey,
+        value: relation.currentParentRecord.item[pKey],
+      }
+      console.log("22222")
+      console.log(result)
+      return result
+    },
     deleteItem(item) {
 
       this.$emit("deleteItem", item);

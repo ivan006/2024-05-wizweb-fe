@@ -422,7 +422,7 @@ export default {
     parentKeyValuePair: {
       type: Object,
       default() {
-        return null;
+        return {};
       },
     },
     createPayloadExtras: {
@@ -438,7 +438,7 @@ export default {
       },
     },
     fetchFlags: {
-      type: Array,
+      type: Object,
       default() {
         return {};
       },
@@ -527,7 +527,8 @@ export default {
     },
     excludedCols() {
       let result = [];
-
+      console.log("this.parentKeyValuePair")
+      console.log(this.parentKeyValuePair)
       if (this.parentKeyValuePair.key) {
         result = [this.parentKeyValuePair.key];
       }
@@ -893,7 +894,6 @@ export default {
     },
   },
   mounted() {
-
     this.$emit('superTableMounted');
 
     this.activeTab = this.viewAs.default
