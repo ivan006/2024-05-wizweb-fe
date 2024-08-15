@@ -48,7 +48,7 @@
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
               :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
-              @clickRow="(e) => {clickRow(e, relation)}"
+              @clickRow="(pVal, item) => {clickRow(pVal, item, relation)}"
           >
             <template v-if="$slots[relation.field.name]" v-slot:create>
               <slot :name="relation.field.name" />
@@ -266,9 +266,8 @@ export default {
     },
   },
   methods: {
-    clickRow(item, relation) {
-      const pKey = relation.field.meta.field.related.primaryKey
-      relation.field.meta.field.related.openRecord(item[pKey], item, this.$router)
+    clickRow(pVal, item, relation) {
+      relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },
     parentKeyValuePair(relation) {
       const pKey = relation.currentParentRecord.model.primaryKey
