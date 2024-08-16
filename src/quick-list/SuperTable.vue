@@ -6,6 +6,7 @@
       </template>
       <template v-else>
         <CreateButton
+            v-if="superOptions.model.rules.creatable()"
             :modelFields="modelFields"
             @createItem="createItem"
             :model="model"
@@ -39,7 +40,16 @@
           :activated="activated"
           @search="search"
           :errorMessage="errorMessage"
-      />
+      >
+        <CreateButton
+            v-if="superOptions.model.rules.creatable()"
+            :modelFields="modelFields"
+            @createItem="createItem"
+            :model="model"
+            :superOptions="superOptions"
+            :template="templateForm"
+        />
+      </SuperSelect>
 
       <!--:key="filterInput.name"-->
       <!--:model="filterInput.meta.field.parent"-->

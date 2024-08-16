@@ -23,6 +23,9 @@
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
           <q-item-section>
+            <div class="q-mb-md">
+              <slot />
+            </div>
             <q-input
                 v-model="search"
                 :error="false"
