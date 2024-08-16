@@ -9,7 +9,7 @@
           <div style="padding-top:0.03px;">
             <div class="row q-col-gutter-xs">
               <RecordFieldsForEditCustom
-                  :modelValue="modelValue"
+                  :modelValue="itemData"
                   @update:modelValue="updateModelValue"
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="updateSetDefaultEndTime"
@@ -22,7 +22,7 @@
         </template>
         <template v-else>
           <RecordFieldsForEditGeneric
-              :modelValue="modelValue"
+              :modelValue="itemData"
               @update:modelValue="updateModelValue"
               :superOptions="superOptions"
               @updateSetDefaultEndTime="updateSetDefaultEndTime"
@@ -81,6 +81,10 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
+    // parentKeyValuePair: {
+    //   type: Object,
+    //   default: {},
+    // },
     template: {
       type: Object,
       default() {
@@ -115,7 +119,7 @@ export default {
   },
   data() {
     return {
-      itemData: {},
+      itemData: this.modelValue,
       loading: false,
       itemErrors: {}, // Track individual field errors
     };
@@ -161,6 +165,9 @@ export default {
         this.$emit("submit");
       }
     }
+  },
+  mounted(){
+    // this.itemData[this.parentKeyValuePair.key] = this.parentKeyValuePair.value
   }
 };
 </script>

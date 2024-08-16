@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       rendered: false,
-      itemData: {},
+      itemData: this.modelValue,
       loading: false,
     };
   },

@@ -256,7 +256,7 @@ export default {
     updateValue(value) {
       const item = {}
       item[this.model.primaryKey] = value
-      this.$emit('update:modelValue', item);
+      this.$emit('update:modelValue', value, item);
     },
     fetchDefaultItem() {
       if (this.modelValue){
