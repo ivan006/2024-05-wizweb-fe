@@ -99,7 +99,7 @@ export default {
       this.$emit("editItem", e);
     },
     clickRow(e) {
-      this.$emit("clickRow", e);
+      this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);
     },
   },
 };

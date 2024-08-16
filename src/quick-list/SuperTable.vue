@@ -711,7 +711,7 @@ export default {
     createNewInstance() {
       return new this.model();
     },
-    clickRow(item) {
+    clickRow(pVal, item) {
 
       if (this.isForSelectingRelation) {
         this.highlightedRow = item[this.pKey];
@@ -719,7 +719,6 @@ export default {
       // if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
       //   this.model.openRecord(item[this.pKey]);
       // }
-
 
       if (this.model.rules.readable(item)){
         this.$emit("clickRow", item[this.pKey], item, this.$router);

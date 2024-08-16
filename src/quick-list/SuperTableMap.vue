@@ -171,7 +171,7 @@ export default {
     },
     clickRow(e) {
       this.viewItemData.showModal = false;
-      this.$emit("clickRow", e);
+      this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);
     },
     position(m) {
       return { lng: Number(m.lng), lat: Number(m.lat) };

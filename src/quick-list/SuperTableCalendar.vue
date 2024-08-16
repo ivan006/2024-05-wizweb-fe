@@ -222,7 +222,7 @@ export default {
     },
     clickRow(e) {
       this.viewItemData.showModal = false;
-      this.$emit("clickRow", e);
+      this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);
     },
     updateTimeWindow() {
     },

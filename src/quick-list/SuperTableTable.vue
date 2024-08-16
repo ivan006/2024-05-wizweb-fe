@@ -307,7 +307,7 @@ export default {
     },
     clickRow(row) {
       if (this.model.rules.readable(row)){
-        this.$emit("clickRow", row);
+        this.$emit("clickRow", row[this.model.primaryKey], row);
       }
     },
     onRequest(props) {
