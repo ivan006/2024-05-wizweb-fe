@@ -714,17 +714,17 @@ export default {
     clickRow(pVal, item) {
 
       if (this.isForSelectingRelation) {
-        this.highlightedRow = item[this.pKey];
+        this.highlightedRow = pVal;
       }
       // if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
       //   this.model.openRecord(item[this.pKey]);
       // }
 
       if (this.model.rules.readable(item)){
-        this.$emit("clickRow", item[this.pKey], item, this.$router);
+        this.$emit("clickRow", pVal, item, this.$router);
       }
 
-      this.$emit("update:modelValue", item[this.pKey]);
+      this.$emit("update:modelValue", pVal);
     },
     createItem() {
       this.createItemData.showModal = true;

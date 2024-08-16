@@ -274,15 +274,18 @@ export default {
       let result = [];
 
       for (const header of this.flattenedHeaders) {
-        if (!this.superOptions.superOptions) {
-          if (
-              !header.usageType.startsWith("relLookupMapExtra") &&
-              !header.usageType.startsWith("mapExtra")
-          ) {
+        if (!header.meta || !header.meta.hideField){
+
+          if (!this.superOptions.superOptions) {
+            if (
+                !header.usageType.startsWith("relLookupMapExtra") &&
+                !header.usageType.startsWith("mapExtra")
+            ) {
+              result.push(header);
+            }
+          } else {
             result.push(header);
           }
-        } else {
-          result.push(header);
         }
       }
       return result;

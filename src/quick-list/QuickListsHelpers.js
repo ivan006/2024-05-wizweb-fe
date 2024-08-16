@@ -121,26 +121,54 @@ class QuickListsHelpers {
         let result = []
 
         for (const field of fields) {
-            // if (!excludedCols.includes(field.name)) {
-            //     if (field.usageType.startsWith('relForeignKey')) {
-            //         if (!excludedCols.includes(field.meta.foreignKey)) {
-            //             result.push(field)
-            //             lookupKeys.push(field)
-            //         }
-            //     } else {
-            //         result.push(field)
-            //     }
-            // }
 
-            excludedCols
-            if (field.usageType.startsWith('relForeignKey')) {
-                result.push(field)
-                lookupKeys.push(field)
+            if (field.usageType.startsWith('relLookupNormal')) {
+                if (!excludedCols.includes(field.meta.foreignKey)){
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: false,
+                        }
+                    })
+                    lookupKeys.push(field)
+                } else {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: true,
+                        }
+                    })
+                }
             } else {
-                result.push(field)
+                if(!excludedCols.includes(field.name)) {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: false,
+                        }
+                    })
+                } else {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: true,
+                        }
+                    })
+                }
             }
-        }
 
+            // excludedCols
+            // if (field.usageType.startsWith('relForeignKey')) {
+            //     result.push(field)
+            //     lookupKeys.push(field)
+            // } else {
+            //     result.push(field)
+            // }
+        }
         return result
     }
 
