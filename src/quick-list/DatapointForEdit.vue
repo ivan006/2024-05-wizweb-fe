@@ -86,6 +86,12 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    compField: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
     dataPoint: {
       type: Object,
       default() {
@@ -117,16 +123,6 @@ export default {
     };
   },
   computed: {
-    compField() {
-      if (this.dataPoint.type === 'function') {
-        return { label: this.dataPoint.label };
-      } else {
-        const result = this.superOptions.modelFields.find((header) => {
-          return header.field == this.dataPoint.field
-        })
-        return result
-      }
-    },
     label() {
       if (typeof this.dataPoint.label !== "undefined") {
         return this.dataPoint.label;

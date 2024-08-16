@@ -52,11 +52,12 @@
             />
           </template>
         </template>
-        <template v-else-if="template.dataPoint">
+        <template v-else-if="template.dataPoint && !compField.meta.hideField">
           <div class="col-12">
             <div :class="template.dataPoint.noMargin ? '' : 'q-mb-sm'">
               <DatapointForEdit
                   :modelValue="modelValue"
+                  :compField="compField"
                   @update:modelValue="updateModelValue"
                   :superOptions="superOptions"
                   @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
@@ -130,6 +131,16 @@ export default {
   },
   computed:{
 
+    compField() {
+      if (this.dataPoint.type === 'function') {
+        return { label: this.dataPoint.label };
+      } else {
+        const result = this.superOptions.modelFields.find((header) => {
+          return header.field == this.dataPoint.field
+        })
+        return result
+      }
+    },
     colClasses() {
       const baseWidth = this.template.width || 12;
 
