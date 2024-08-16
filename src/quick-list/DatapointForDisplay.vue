@@ -19,7 +19,6 @@
               <template v-if="isRelChildren(compField)">
                 <div class="q-pt-sm">
                   <template v-if="compRelation">
-                    <pre>{{compRelation}}</pre>
                     <SuperTable
                         :parentKeyValuePair="parentKeyValuePair"
                         :model="compRelation.field.meta.field.related"

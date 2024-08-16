@@ -839,7 +839,6 @@ export default {
           page: this.options.page,
         };
       }
-
       const response = await this.model.FetchAll(
           this.relationships,
           {

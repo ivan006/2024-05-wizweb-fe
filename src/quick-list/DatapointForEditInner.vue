@@ -34,6 +34,7 @@
             :fetchFlags="{
               sort: field.meta.field.parent.titleKey
             }"
+            :forcedFilters="field.fieldExtras.relationRules?.linkables()"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
         />
