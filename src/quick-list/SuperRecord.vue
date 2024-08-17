@@ -270,7 +270,7 @@ export default {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },
     parentKeyValuePair(relation) {
-      const fKey = relation.meta.field.foreignKey
+      const fKey = relation.field.meta.field.foreignKey
 
       const result = {
         parentFKey: fKey,
