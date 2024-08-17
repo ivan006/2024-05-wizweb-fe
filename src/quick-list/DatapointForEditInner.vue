@@ -34,7 +34,7 @@
             :fetchFlags="{
               sort: field.meta.field.parent.titleKey
             }"
-            :forcedFilters="field.fieldExtras.linkablesRule()"
+            :forcedFilters="getForcedFilters(field)"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
         />
@@ -421,6 +421,12 @@ export default {
     },
   },
   methods: {
+    getForcedFilters(field) {
+      if (typeof field.fieldExtras.linkablesRule === 'function') {
+        return field.fieldExtras.linkablesRule();
+      }
+      return {};
+    },
     handleFileUpload(file){
       if (file) {
         this.$emit('update:modelValue', file)
