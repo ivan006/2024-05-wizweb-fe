@@ -53,7 +53,12 @@
         </q-item>
         <q-item v-else v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
           <q-item-section>
-            {{ scope.opt.label }}
+            <div>
+              <!--<q-chip >-->
+              <!--  {{scope.opt.id}}-->
+              <!--</q-chip> -->
+              {{ scope.opt.label }}
+            </div>
           </q-item-section>
         </q-item>
       </template>
