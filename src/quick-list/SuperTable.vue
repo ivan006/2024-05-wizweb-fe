@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="canEdit && !hideCreate && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
+    <div v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation" class="row items-center q-mb-md q-gutter-sm">
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -23,6 +23,8 @@
       <!--    :superOptions="superOptions"-->
       <!--/>-->
       <SuperSelect
+          @abortEdit="$emit('abortEdit')"
+          :forcedFilters="forcedFilters"
           :readonly="disabled"
           :allowAll="allowAll"
           dense
@@ -43,7 +45,7 @@
           :errorMessage="errorMessage"
       >
         <CreateButton
-            v-if="superOptions.model.rules.creatable()"
+            v-if="superOptions.model.rules.creatable() && canCreateComputed"
             :modelFields="modelFields"
             @createItem="createItem"
             :model="model"
@@ -531,6 +533,24 @@ export default {
         }
         this.options = value;
       },
+    },
+    parentField() {
+      const result = this.superOptions.modelFields.find((field) => {
+        return field.name == this.parentKeyValuePair.parentFKey
+      })
+      return result
+    },
+    canCreateComputed() {
+      if (this.parentField && typeof this.parentField.fieldExtras.linkablesRule === 'function') {
+        const linkablesRule =  this.parentField.fieldExtras.linkablesRule();
+        if (linkablesRule[this.model.primaryKey] && this.parentKeyValuePair.parentFVal){
+          const array = linkablesRule[this.model.primaryKey].split(",").map(Number);
+          if (!array.includes(this.parentKeyValuePair.parentFVal)){
+            return false
+          }
+        }
+      }
+      return true
     },
     superOptions() {
       return {
