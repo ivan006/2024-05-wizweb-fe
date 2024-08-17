@@ -47,7 +47,7 @@
               :parentKeyValuePair="parentKeyValuePair(relation)"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
-              :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
+              :forcedFilters="filters(relation)"
               @clickRow="(pVal, item) => {clickRow(pVal, item, relation)}"
           >
             <template v-if="$slots[relation.field.name]" v-slot:create>
@@ -233,12 +233,12 @@ export default {
         if (field.usageType.startsWith("relChildren")) {
           result.push({
             field,
-            currentParentRecord: {
-              item: this.item,
-              model: this.model,
-              relationType: field.usageType,
-              foreignKeyToParentRecord: field.meta.field.foreignKey,
-            },
+            // currentParentRecord: {
+            //   item: this.item,
+            //   model: this.model,
+            //   relationType: field.usageType,
+            //   foreignKeyToParentRecord: field.meta.field.foreignKey,
+            // },
           });
         }
       }
@@ -270,11 +270,12 @@ export default {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },
     parentKeyValuePair(relation) {
-      const pKey = relation.currentParentRecord.model.primaryKey
-      const fKey = relation.currentParentRecord.foreignKeyToParentRecord
+      const fKey = relation.meta.field.foreignKey
+
       const result = {
-        key: fKey,
-        value: relation.currentParentRecord.item[pKey],
+        parentFKey: fKey,
+        parentFVal: this.item[this.model.primaryKey],
+        parentItem: this.item,
       }
       return result
     },
@@ -322,9 +323,11 @@ export default {
         return `To create first set your active ${type} group`;
       }
     },
-    filters(foreignKey) {
+    filters(relation) {
+      const parentKeyValuePair = this.parentKeyValuePair(relation)
+
       return {
-        [foreignKey]: this.id,
+        [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
       };
     },
     fetchData() {

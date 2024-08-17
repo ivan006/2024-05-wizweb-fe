@@ -16,23 +16,23 @@
                 :class="dataPoint.class ? dataPoint.class : ''"
                 :style="dataPoint.style ? dataPoint.style : ''"
             >
-              <template v-if="isRelChildren(compField)">
-                <div class="q-pt-sm">
-                  <template v-if="compRelation">
-                    <SuperTable
-                        :parentKeyValuePair="parentKeyValuePair"
-                        :model="compRelation.field.meta.field.related"
-                        :canEdit="superOptions.canEdit"
-                        :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
-                    >
-                      <template v-if="!!$slots[compRelation.field.name]" #create>
-                        <slot :name="compRelation.field.name" />
-                      </template>
-                    </SuperTable>
-                  </template>
-                </div>
-              </template>
-              <template v-else-if="dataPoint.type === 'component'">
+              <!--<template v-if="isRelChildren(compField)">-->
+              <!--  <div class="q-pt-sm">-->
+              <!--    <template v-if="compRelation">-->
+              <!--      <SuperTable-->
+              <!--          :parentKeyValuePair="parentKeyValuePair"-->
+              <!--          :model="compRelation.field.meta.field.related"-->
+              <!--          :canEdit="superOptions.canEdit"-->
+              <!--          :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"-->
+              <!--      >-->
+              <!--        <template v-if="!!$slots[compRelation.field.name]" #create>-->
+              <!--          <slot :name="compRelation.field.name" />-->
+              <!--        </template>-->
+              <!--      </SuperTable>-->
+              <!--    </template>-->
+              <!--  </div>-->
+              <!--</template>-->
+              <template v-if="dataPoint.type === 'component'">
                 <component :is="asyncComponent" :item="item" />
               </template>
               <template v-else-if="dataPoint.type === 'function'">
@@ -67,23 +67,23 @@
           :class="dataPoint.class ? dataPoint.class : ''"
           :style="dataPoint.style ? dataPoint.style : ''"
       >
-        <template v-if="isRelChildren(compField)">
-          <div class="q-pt-sm">
-            <template v-if="compRelation">
-              <SuperTable
-                  :parentKeyValuePair="parentKeyValuePair"
-                  :model="compRelation.field.meta.field.related"
-                  :canEdit="superOptions.canEdit"
-                  :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"
-              >
-                <template v-if="!!$slots[compRelation.field.name]" #create>
-                  <slot :name="compRelation.field.name" />
-                </template>
-              </SuperTable>
-            </template>
-          </div>
-        </template>
-        <template v-else-if="dataPoint.type === 'component'">
+        <!--<template v-if="isRelChildren(compField)">-->
+        <!--  <div class="q-pt-sm">-->
+        <!--    <template v-if="compRelation">-->
+        <!--      <SuperTable-->
+        <!--          :parentKeyValuePair="parentKeyValuePair"-->
+        <!--          :model="compRelation.field.meta.field.related"-->
+        <!--          :canEdit="superOptions.canEdit"-->
+        <!--          :defaultViewModeProp="dataPoint.relationViewMode ? dataPoint.relationViewMode : 'table'"-->
+        <!--      >-->
+        <!--        <template v-if="!!$slots[compRelation.field.name]" #create>-->
+        <!--          <slot :name="compRelation.field.name" />-->
+        <!--        </template>-->
+        <!--      </SuperTable>-->
+        <!--    </template>-->
+        <!--  </div>-->
+        <!--</template>-->
+        <template v-if="dataPoint.type === 'component'">
           <component
               :is="asyncComponent"
               :item="item"
@@ -169,16 +169,18 @@ export default {
     },
   },
   computed: {
-    parentKeyValuePair() {
-      const pKey = this.compRelation.currentParentRecord.model.primaryKey
-      const fKey = this.compRelation.currentParentRecord.foreignKeyToParentRecord
-
-      const result = {
-        key: fKey,
-        value: this.compRelation.currentParentRecord.item[pKey],
-      }
-      return result
-    },
+    // parentKeyValuePair() {
+    //   const pKey = this.compRelation.currentParentRecord.model.primaryKey
+    //   const fKey = this.compRelation.currentParentRecord.foreignKeyToParentRecord
+    //
+    //   const result = {
+    //     key: fKey,
+    //     value: this.compRelation.currentParentRecord.item[pKey],
+    //   }
+    //   console.log("result")
+    //   console.log(result)
+    //   return result
+    // },
     asyncComponent() {
       if (this.dataPoint.type === 'component' && this.dataPoint.componentPath) {
         return defineAsyncComponent(this.dataPoint.componentPath);
@@ -205,6 +207,7 @@ export default {
           return relation.field.name == this.dataPoint.field
         })
       }
+      console.log(result)
       return result
     },
     label() {

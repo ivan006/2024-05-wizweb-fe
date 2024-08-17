@@ -38,6 +38,7 @@
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
         />
+        <!--parentKeyValuePair-->
       </template>
       <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
         <RelationComponent

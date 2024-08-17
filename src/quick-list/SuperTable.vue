@@ -538,8 +538,8 @@ export default {
     },
     excludedCols() {
       let result = [];
-      if (this.parentKeyValuePair.key) {
-        result = [this.parentKeyValuePair.key];
+      if (this.parentKeyValuePair.parentFKey) {
+        result = [this.parentKeyValuePair.parentFKey];
       }
       return result;
     },
@@ -552,8 +552,8 @@ export default {
         ...this.filters,
         ...this.forcedFilters,
       };
-      if (this.parentKeyValuePair.key && this.parentKeyValuePair.value) {
-        result[this.parentKeyValuePair.key] = this.parentKeyValuePair.value;
+      if (this.parentKeyValuePair.parentFKey && this.parentKeyValuePair.parentFVal) {
+        result[this.parentKeyValuePair.parentFKey] = this.parentKeyValuePair.parentFVal;
       }
       return result;
     },
@@ -895,8 +895,8 @@ export default {
       if (arg) {
         this.createItemData.data = this.createNewInstance();
 
-        if (this.parentKeyValuePair.key && this.parentKeyValuePair.value) {
-          this.createItemData.data[this.parentKeyValuePair.key] = this.parentKeyValuePair.value;
+        if (this.parentKeyValuePair.parentFKey && this.parentKeyValuePair.parentFVal) {
+          this.createItemData.data[this.parentKeyValuePair.parentFKey] = this.parentKeyValuePair.parentFVal;
         }
       }
     },
