@@ -262,7 +262,7 @@ export default {
       this.$emit('update:modelValue', value, item);
     },
     fetchDefaultItem() {
-      if (this.modelValue){
+      if (this.modelValue && !this.items.length){
 
         this.loadingInner = true
         this.model

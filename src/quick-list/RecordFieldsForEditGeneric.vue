@@ -87,6 +87,7 @@ export default {
     },
     autoFillAll(){
       for (const field of this.superOptions.modelFields) {
+        // if (typeof field.fieldExtras.autoFill === 'function' && !this.itemData[field.name]) {
         if (typeof field.fieldExtras.autoFill === 'function') {
           this.itemData[field.name] = field.fieldExtras.autoFill(this.itemData);
         }
