@@ -2,13 +2,16 @@
   <div>
     <template v-for="field in superOptions.modelFields" :key="field.name">
       <template v-if="superOptions.model.primaryKey !== field.name && !field.meta.hideField">
-        <div class="q-mb-sm">
+        <div
+          class="q-mb-sm"
+         v-show="!(typeof field.fieldExtras.autoFill === 'function')"
+        >
           <template v-if="!['relLookupNormal','relChildrenNormal'].includes(field.usageType) ">
             <div v-if="rendered" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
               {{ field.label }}:
             </div>
+            <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->
             <DatapointForEditInner
-                :disabled="typeof field.fieldExtras.autoFill === 'function'"
                 @superTableMounted="rendered = true"
                 :modelValue="itemData[field.name]"
                 @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
