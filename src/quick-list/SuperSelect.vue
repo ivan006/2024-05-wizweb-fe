@@ -291,6 +291,9 @@ export default {
         }, 300)
       }
     },
+    modelValue(newVal){
+      this.fetchDefaultItem();
+    }
   },
   mounted() {
     this.fetchDefaultItem();

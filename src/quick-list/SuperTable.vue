@@ -23,6 +23,7 @@
       <!--    :superOptions="superOptions"-->
       <!--/>-->
       <SuperSelect
+          :readonly="disabled"
           :allowAll="allowAll"
           dense
           :hideLabel="hideLabel"
@@ -331,6 +332,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     allowedFilters: {
       type: Array,
       default: null,
@@ -876,7 +881,7 @@ export default {
       this.itemsLength = count; // Assuming your API returns a total count
     },
     activateAndFetchData() {
-      if (!this.activated) {
+      if (!this.activated && !this.disabled) {
         this.activated = true;
         this.fetchData();
       }

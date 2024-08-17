@@ -22,7 +22,11 @@
         <!--    readonly-->
         <!--    :rules="[() => true]"-->
         <!--/>-->
+
+
+
         <SuperTable
+            :disabled="disabled"
             :hideLabel="hideLabel"
             :isForSelectingRelation="true"
             :canEdit="false"
@@ -318,6 +322,10 @@ export default {
     SuperTable: AsyncSuperTableComponent
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     itemErrors: {
       type: Object,
       default: () => ({}),

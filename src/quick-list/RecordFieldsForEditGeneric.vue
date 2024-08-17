@@ -8,6 +8,7 @@
               {{ field.label }}:
             </div>
             <DatapointForEditInner
+                :disabled="typeof field.fieldExtras.autoFill === 'function'"
                 @superTableMounted="rendered = true"
                 :modelValue="itemData[field.name]"
                 @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
@@ -73,6 +74,7 @@ export default {
   },
   mounted() {
     this.itemData = this.modelValue;
+    this.autoFillAll()
     // const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
     // if (creatorKey) {
     //   this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
@@ -82,16 +84,24 @@ export default {
     updateModelValue(fieldValue, fieldName){
       this.itemData[fieldName] = fieldValue
       this.$emit('update:modelValue', this.itemData)
-    }
+    },
+    autoFillAll(){
+      for (const field of this.superOptions.modelFields) {
+        if (typeof field.fieldExtras.autoFill === 'function') {
+          this.itemData[field.name] = field.fieldExtras.autoFill(this.itemData);
+        }
+      }
+      this.$emit("update:modelValue", this.itemData);
+    },
   },
   watch: {
-    // itemData: {
-    //   handler(newValue) {
-    //     this.$emit("update:modelValue", newValue);
-    //   },
-    //   deep: true,
-    // },
-  },
+    itemData: {
+      handler() {
+        this.autoFillAll()
+      },
+      deep: true,
+    },
+  }
 };
 </script>
 
