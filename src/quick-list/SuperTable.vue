@@ -15,272 +15,275 @@
         />
       </template>
     </div>
-    <template v-if="isForSelectingRelation">
-      <!--<SuperTableList-->
-      <!--    :items="items"-->
-      <!--    :modelValue="modelValue"-->
-      <!--    @update:modelValue="clickRow"-->
-      <!--    :superOptions="superOptions"-->
-      <!--/>-->
-      <SuperSelect
-          @abortEdit="$emit('abortEdit')"
-          :forcedFilters="forcedFilters"
-          :readonly="disabled"
-          :allowAll="allowAll"
-          dense
-          :hideLabel="hideLabel"
-          :page="options.page"
-          @update:page="pageUpdate"
-          :maxPages="maxPages"
-          @click="activateAndFetchData"
-          :items="items"
-          :loading="loading"
-          :rules="rules"
-          :modelValue="+modelValue"
-          @update:modelValue="clickRow"
-          :model="model"
-          :modelField="modelField"
-          :activated="activated"
-          @search="search"
-          :errorMessage="errorMessage"
-      >
-        <CreateButton
-            v-if="superOptions.model.rules.creatable() && canCreateComputed"
-            :modelFields="modelFields"
-            @createItem="createItem"
+    <template v-if="!justCreateButton">
+
+      <template v-if="isForSelectingRelation">
+        <!--<SuperTableList-->
+        <!--    :items="items"-->
+        <!--    :modelValue="modelValue"-->
+        <!--    @update:modelValue="clickRow"-->
+        <!--    :superOptions="superOptions"-->
+        <!--/>-->
+        <SuperSelect
+            @abortEdit="$emit('abortEdit')"
+            :forcedFilters="forcedFilters"
+            :readonly="disabled"
+            :allowAll="allowAll"
+            dense
+            :hideLabel="hideLabel"
+            :page="options.page"
+            @update:page="pageUpdate"
+            :maxPages="maxPages"
+            @click="activateAndFetchData"
+            :items="items"
+            :loading="loading"
+            :rules="rules"
+            :modelValue="+modelValue"
+            @update:modelValue="clickRow"
             :model="model"
-            :superOptions="superOptions"
-            :template="templateForm"
-        />
-      </SuperSelect>
+            :modelField="modelField"
+            :activated="activated"
+            @search="search"
+            :errorMessage="errorMessage"
+        >
+          <CreateButton
+              v-if="superOptions.model.rules.creatable() && canCreateComputed"
+              :modelFields="modelFields"
+              @createItem="createItem"
+              :model="model"
+              :superOptions="superOptions"
+              :template="templateForm"
+          />
+        </SuperSelect>
 
-      <!--:key="filterInput.name"-->
-      <!--:model="filterInput.meta.field.parent"-->
-      <!--:modelField="filterInput"-->
-      <!--v-model="filters[filterInput.name]"-->
-    </template>
-    <template v-else>
-      <template v-if="filterInputs.length && viewAs.hide && (allowedFilters == null || filterInputs.some(filterInput =>  allowedFilters.includes(filterInput.name)))">
-        <div class="q-px-sm">
+        <!--:key="filterInput.name"-->
+        <!--:model="filterInput.meta.field.parent"-->
+        <!--:modelField="filterInput"-->
+        <!--v-model="filters[filterInput.name]"-->
+      </template>
+      <template v-else>
+        <template v-if="filterInputs.length && viewAs.hide && (allowedFilters == null || filterInputs.some(filterInput =>  allowedFilters.includes(filterInput.name)))">
+          <div class="q-px-sm">
 
-          <DestructableExpansionPanels
-              :destroy="!quickListsIsMobile"
-              title="Settings"
-          >
-            <div class="row items-center wrap">
-              <template v-if="!viewAs.hide">
-                <div class="q-mr-sm">
-                  <q-select
-                      style="width: 200px"
-                      :options="[
+            <DestructableExpansionPanels
+                :destroy="!quickListsIsMobile"
+                title="Settings"
+            >
+              <div class="row items-center wrap">
+                <template v-if="!viewAs.hide">
+                  <div class="q-mr-sm">
+                    <q-select
+                        style="width: 200px"
+                        :options="[
                   { label: 'Table', value: 'table' },
                   { label: 'Grid', value: 'grid' },
                   { label: 'Map', value: 'map' },
                   { label: 'Calendar', value: 'calendar' },
                 ]"
-                      v-model="activeTab"
-                      label="View As"
-                      option-label="label"
-                      option-value="value"
-                      emit-value
-                      map-options
-                      dense
-                      class="col-grow "
-                      filled
-                      :rules="[() => true]"
-                  />
-                </div>
-              </template>
-              <template
-                  v-for="filterInput of filterInputs"
-                  :key="filterInput.name"
-              >
-                <template v-if="typeof filters[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
-                  <template
-                      v-if="filterInput.usageType.startsWith('relForeignKey')"
-                  >
-                    <!--<SuperSelect-->
-                    <!--    allowAll-->
-                    <!--    :key="filterInput.name"-->
-                    <!--    :modelField="filterInput"-->
-                    <!--    v-model="filters[filterInput.name]"-->
-                    <!--    :model="filterInput.meta.field.parent"-->
-                    <!--    class="q-ma-sm col-grow"-->
-                    <!--    dense-->
-                    <!--    :user="use"-->
-
-
-                    <!--    :page="options.page"-->
-                    <!--    @update:page="pageUpdate"-->
-                    <!--    :maxPages="maxPages"-->
-                    <!--    @click="activateAndFetchData"-->
-                    <!--    :items="items"-->
-                    <!--    :loading="loading"-->
-                    <!--    :rules="rules"-->
-                    <!--/>-->
-
-                    <!--<RelationComponent-->
-                    <!--  :modelField="filterInput"-->
-                    <!--  v-model="filters[filterInput.name].value"-->
-
-                    <!--  :page="options.page"-->
-                    <!--  @update:page="pageUpdate"-->
-                    <!--  :maxPages="maxPages"-->
-                    <!--  @click="activateAndFetchData"-->
-                    <!--  :items="items"-->
-                    <!--  :loading="loading"-->
-                    <!--  :rules="rules"-->
-                    <!--/>-->
-                    <SuperTable
-                        :isForSelectingRelation="true"
-                        :canEdit="false"
-                        v-model="filters[filterInput.name]"
-                        :model="filterInput.meta.field.parent"
+                        v-model="activeTab"
+                        label="View As"
+                        option-label="label"
+                        option-value="value"
+                        emit-value
+                        map-options
+                        dense
+                        class="col-grow "
+                        filled
                         :rules="[() => true]"
-                        :modelField="filterInput"
-                        class="q-mr-sm"
+                    />
+                  </div>
+                </template>
+                <template
+                    v-for="filterInput of filterInputs"
+                    :key="filterInput.name"
+                >
+                  <template v-if="typeof filters[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
+                    <template
+                        v-if="filterInput.usageType.startsWith('relForeignKey')"
+                    >
+                      <!--<SuperSelect-->
+                      <!--    allowAll-->
+                      <!--    :key="filterInput.name"-->
+                      <!--    :modelField="filterInput"-->
+                      <!--    v-model="filters[filterInput.name]"-->
+                      <!--    :model="filterInput.meta.field.parent"-->
+                      <!--    class="q-ma-sm col-grow"-->
+                      <!--    dense-->
+                      <!--    :user="use"-->
 
-                    />
-                    <!--v-model="filters[filterInput.name].value"-->
+
+                      <!--    :page="options.page"-->
+                      <!--    @update:page="pageUpdate"-->
+                      <!--    :maxPages="maxPages"-->
+                      <!--    @click="activateAndFetchData"-->
+                      <!--    :items="items"-->
+                      <!--    :loading="loading"-->
+                      <!--    :rules="rules"-->
+                      <!--/>-->
+
+                      <!--<RelationComponent-->
+                      <!--  :modelField="filterInput"-->
+                      <!--  v-model="filters[filterInput.name].value"-->
+
+                      <!--  :page="options.page"-->
+                      <!--  @update:page="pageUpdate"-->
+                      <!--  :maxPages="maxPages"-->
+                      <!--  @click="activateAndFetchData"-->
+                      <!--  :items="items"-->
+                      <!--  :loading="loading"-->
+                      <!--  :rules="rules"-->
+                      <!--/>-->
+                      <SuperTable
+                          :isForSelectingRelation="true"
+                          :canEdit="false"
+                          v-model="filters[filterInput.name]"
+                          :model="filterInput.meta.field.parent"
+                          :rules="[() => true]"
+                          :modelField="filterInput"
+                          class="q-mr-sm"
+
+                      />
+                      <!--v-model="filters[filterInput.name].value"-->
+                    </template>
+                    <template v-if="filterInput.usageType == 'timeRangeStart'">
+                      <FilterTime
+                          :key="filterInput.name"
+                          :modelField="filterInput"
+                          v-model="filters[filterInput.name].value"
+                          class="q-ma-sm col-grow"
+                      />
+                    </template>
                   </template>
-                  <template v-if="filterInput.usageType == 'timeRangeStart'">
-                    <FilterTime
-                        :key="filterInput.name"
-                        :modelField="filterInput"
-                        v-model="filters[filterInput.name].value"
-                        class="q-ma-sm col-grow"
-                    />
+                  <template v-else>
+                    <template v-if="filterInput.usageType == 'mapFilter'">
+                      <FilterPlace
+                          :key="filterInput.name"
+                          :filterField="filterInput"
+                          v-model="filters"
+                          class="q-ma-sm col-grow"
+                      />
+                    </template>
                   </template>
                 </template>
-                <template v-else>
-                  <template v-if="filterInput.usageType == 'mapFilter'">
-                    <FilterPlace
-                        :key="filterInput.name"
-                        :filterField="filterInput"
-                        v-model="filters"
-                        class="q-ma-sm col-grow"
-                    />
-                  </template>
-                </template>
-              </template>
-            </div>
-          </DestructableExpansionPanels>
-        </div>
-      </template>
-      <div class="">
-        <template v-if="activeTab == 'table'">
-          <SuperTableTable
-              :items="items"
-              :loading="loading"
-              @clickRow="clickRow"
-              :templateListTable="templateListTable"
-              :hidePagination="hidePagination"
-              :excludedCols="excludedCols"
-              :model="model"
-              :displayMapField="displayMapField"
-              :canEdit="canEdit"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-          />
-          <!--:superOptions="superOptions"-->
-          <!--:itemsLength="itemsLength"-->
-          <!--@clickRow="clickRow"-->
-          <!--:pagination="options"-->
-          <!--@update:pagination="updatePagination"-->
-          <q-pagination
-              v-if="!hidePagination"
-              v-model="options.page"
-              @update:modelValue="pageUpdate"
-              :max="maxPages"
-              input
-          />
-          <!--@update:rows-per-page="updateRowsPerPage"-->
+              </div>
+            </DestructableExpansionPanels>
+          </div>
         </template>
-        <template v-if="activeTab == 'grid'">
-          <div class="">
-            <SuperTableGrid
+        <div class="">
+          <template v-if="activeTab == 'table'">
+            <SuperTableTable
                 :items="items"
+                :loading="loading"
                 @clickRow="clickRow"
-                :superOptions="superOptions"
-                :unClickable="unClickable"
-                :templateListGrid="templateListGrid"
+                :templateListTable="templateListTable"
+                :hidePagination="hidePagination"
+                :excludedCols="excludedCols"
+                :model="model"
+                :displayMapField="displayMapField"
+                :canEdit="canEdit"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
             />
-          </div>
-        </template>
-        <template v-if="activeTab == 'map'">
-          <SuperTableMap
-              :mapHeaders="mapHeaders"
-              :items="items"
-              @clickRow="clickRow"
-              :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-          />
-        </template>
-        <template v-if="activeTab == 'calendar'">
-          <SuperTableCalendar
-              :items="items"
-              @clickRow="clickRow"
-              :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-          />
-        </template>
-      </div>
-    </template>
-    <template v-if="canEdit">
-      <q-dialog
-          v-model="createItemData.showModal"
-          @update:modelValue="formServerErrors = {};"
-      >
-        <!--:parentKeyValuePair="parentKeyValuePair"-->
-        <CreateEditForm
-            titlePrefix="New"
-            v-if="createItemData.showModal"
-            v-model="createItemData.data"
-            @submit="createItemSubmit"
-            @cancel="createItemData.showModal = false; formServerErrors = {};"
-            :superOptions="superOptions"
-            style="width: 700px; max-width: 80vw;"
-            :template="templateForm"
-            :formServerErrors="formServerErrors"
-        />
-      </q-dialog>
-
-      <template v-if="superOptions.canEdit">
+            <!--:superOptions="superOptions"-->
+            <!--:itemsLength="itemsLength"-->
+            <!--@clickRow="clickRow"-->
+            <!--:pagination="options"-->
+            <!--@update:pagination="updatePagination"-->
+            <q-pagination
+                v-if="!hidePagination"
+                v-model="options.page"
+                @update:modelValue="pageUpdate"
+                :max="maxPages"
+                input
+            />
+            <!--@update:rows-per-page="updateRowsPerPage"-->
+          </template>
+          <template v-if="activeTab == 'grid'">
+            <div class="">
+              <SuperTableGrid
+                  :items="items"
+                  @clickRow="clickRow"
+                  :superOptions="superOptions"
+                  :unClickable="unClickable"
+                  :templateListGrid="templateListGrid"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+              />
+            </div>
+          </template>
+          <template v-if="activeTab == 'map'">
+            <SuperTableMap
+                :mapHeaders="mapHeaders"
+                :items="items"
+                @clickRow="clickRow"
+                :superOptions="superOptions"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
+            />
+          </template>
+          <template v-if="activeTab == 'calendar'">
+            <SuperTableCalendar
+                :items="items"
+                @clickRow="clickRow"
+                :superOptions="superOptions"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
+            />
+          </template>
+        </div>
+      </template>
+      <template v-if="canEdit">
         <q-dialog
-            v-model="editItemData.showModal"
+            v-model="createItemData.showModal"
             @update:modelValue="formServerErrors = {};"
         >
+          <!--:parentKeyValuePair="parentKeyValuePair"-->
           <CreateEditForm
-              titlePrefix="Edit"
-              v-if="editItemData.showModal"
-              v-model="editItemData.data"
-              @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false; formServerErrors = {};"
+              titlePrefix="New"
+              v-if="createItemData.showModal"
+              v-model="createItemData.data"
+              @submit="createItemSubmit"
+              @cancel="createItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
-              :template="templateForm"
               style="width: 700px; max-width: 80vw;"
+              :template="templateForm"
               :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
-        <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: 80vw;">
-            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
-              <div class="text-h6">Delete Item</div>
-            </q-card-section>
-            <q-card-section>
-              <p>Are you sure you want to delete this item?</p>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+        <template v-if="superOptions.canEdit">
+          <q-dialog
+              v-model="editItemData.showModal"
+              @update:modelValue="formServerErrors = {};"
+          >
+            <CreateEditForm
+                titlePrefix="Edit"
+                v-if="editItemData.showModal"
+                v-model="editItemData.data"
+                @submit="editItemSubmit"
+                @cancel="editItemData.showModal = false; formServerErrors = {};"
+                :superOptions="superOptions"
+                :template="templateForm"
+                style="width: 700px; max-width: 80vw;"
+                :formServerErrors="formServerErrors"
+            />
+          </q-dialog>
+
+          <q-dialog v-model="deleteItemData.showModal" >
+            <q-card style="width: 500px; max-width: 80vw;">
+              <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
+                <div class="text-h6">Delete Item</div>
+              </q-card-section>
+              <q-card-section>
+                <p>Are you sure you want to delete this item?</p>
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
+                <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </template>
       </template>
     </template>
   </div>
@@ -334,6 +337,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    justCreateButton: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
