@@ -12,7 +12,62 @@
             :model="model"
             :superOptions="superOptions"
             :template="templateForm"
+            :createButtonText="createButtonText"
         />
+      </template>
+
+      <template v-if="canEdit">
+        <q-dialog
+            v-model="createItemData.showModal"
+            @update:modelValue="formServerErrors = {};"
+        >
+          <!--:parentKeyValuePair="parentKeyValuePair"-->
+          <CreateEditForm
+              titlePrefix="New"
+              v-if="createItemData.showModal"
+              v-model="createItemData.data"
+              @submit="createItemSubmit"
+              @cancel="createItemData.showModal = false; formServerErrors = {};"
+              :superOptions="superOptions"
+              style="width: 700px; max-width: 80vw;"
+              :template="templateForm"
+              :formServerErrors="formServerErrors"
+          />
+        </q-dialog>
+
+        <template v-if="superOptions.canEdit">
+          <q-dialog
+              v-model="editItemData.showModal"
+              @update:modelValue="formServerErrors = {};"
+          >
+            <CreateEditForm
+                titlePrefix="Edit"
+                v-if="editItemData.showModal"
+                v-model="editItemData.data"
+                @submit="editItemSubmit"
+                @cancel="editItemData.showModal = false; formServerErrors = {};"
+                :superOptions="superOptions"
+                :template="templateForm"
+                style="width: 700px; max-width: 80vw;"
+                :formServerErrors="formServerErrors"
+            />
+          </q-dialog>
+
+          <q-dialog v-model="deleteItemData.showModal" >
+            <q-card style="width: 500px; max-width: 80vw;">
+              <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
+                <div class="text-h6">Delete Item</div>
+              </q-card-section>
+              <q-card-section>
+                <p>Are you sure you want to delete this item?</p>
+              </q-card-section>
+              <q-card-actions align="right">
+                <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
+                <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </template>
       </template>
     </div>
     <template v-if="!justCreateButton">
@@ -53,6 +108,7 @@
               :model="model"
               :superOptions="superOptions"
               :template="templateForm"
+              :createButtonText="createButtonText"
           />
         </SuperSelect>
 
@@ -232,59 +288,6 @@
           </template>
         </div>
       </template>
-      <template v-if="canEdit">
-        <q-dialog
-            v-model="createItemData.showModal"
-            @update:modelValue="formServerErrors = {};"
-        >
-          <!--:parentKeyValuePair="parentKeyValuePair"-->
-          <CreateEditForm
-              titlePrefix="New"
-              v-if="createItemData.showModal"
-              v-model="createItemData.data"
-              @submit="createItemSubmit"
-              @cancel="createItemData.showModal = false; formServerErrors = {};"
-              :superOptions="superOptions"
-              style="width: 700px; max-width: 80vw;"
-              :template="templateForm"
-              :formServerErrors="formServerErrors"
-          />
-        </q-dialog>
-
-        <template v-if="superOptions.canEdit">
-          <q-dialog
-              v-model="editItemData.showModal"
-              @update:modelValue="formServerErrors = {};"
-          >
-            <CreateEditForm
-                titlePrefix="Edit"
-                v-if="editItemData.showModal"
-                v-model="editItemData.data"
-                @submit="editItemSubmit"
-                @cancel="editItemData.showModal = false; formServerErrors = {};"
-                :superOptions="superOptions"
-                :template="templateForm"
-                style="width: 700px; max-width: 80vw;"
-                :formServerErrors="formServerErrors"
-            />
-          </q-dialog>
-
-          <q-dialog v-model="deleteItemData.showModal" >
-            <q-card style="width: 500px; max-width: 80vw;">
-              <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
-                <div class="text-h6">Delete Item</div>
-              </q-card-section>
-              <q-card-section>
-                <p>Are you sure you want to delete this item?</p>
-              </q-card-section>
-              <q-card-actions align="right">
-                <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-                <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
-        </template>
-      </template>
     </template>
   </div>
 </template>
@@ -340,6 +343,10 @@ export default {
     justCreateButton: {
       type: Boolean,
       default: false,
+    },
+    createButtonText: {
+      type: String,
+      default: "",
     },
     disabled: {
       type: Boolean,

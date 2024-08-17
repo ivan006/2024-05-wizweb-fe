@@ -6,7 +6,7 @@
         outline
     >
       <!--:disable="!canCreatePart2"-->
-      New
+      {{ createButtonText ? createButtonText : 'New'}}
       <q-tooltip v-if="canCreateMsg.length" bottom :disable="canCreatePart2">
         <span>{{ canCreateMsg }}</span>
       </q-tooltip>
@@ -19,6 +19,10 @@
 export default {
   name: "CreateButton",
   props: {
+    createButtonText: {
+      type: String,
+      default: "",
+    },
     model: {
       type: [Object, Function],
       required: true,
