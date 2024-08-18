@@ -2,10 +2,10 @@
   <div>
     <template v-if="dataPoint.xOrientation">
       <div class="">
-        <div class="row">
+        <div class="row" style="align-items: center;">
           <template v-if="!dataPoint.hideLabel">
             <div class="q-pr-sm">
-              <div  class="text-subtitle2">
+              <div  class="text-subtitle2" style="display: flex; align-items: center;">
                 {{ label }}:
               </div>
             </div>

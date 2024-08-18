@@ -109,14 +109,26 @@
       />
     </template>
     <template v-else-if="field.usageType == 'timestampType'">
-      <DateAndTimePicker
+      <!--<DateAndTimePicker-->
+      <!--    :label="compLabel"-->
+      <!--      :placeholder="compPlaceholder"-->
+      <!--    :modelValue="modelValue"-->
+      <!--    @update:modelValue="updateModelValue"-->
+      <!--    :rules="field.meta.rules"-->
+      <!--    :error="!!compError"-->
+      <!--    :error-message="compError"-->
+      <!--/>-->
+      <q-input
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
           :error="!!compError"
           :error-message="compError"
+          type="datetime-local"
+          filled
+          dense
       />
     </template>
     <template v-else-if="field.usageType == 'dateType'">
@@ -134,7 +146,7 @@
       />
     </template>
     <template v-else-if="field.usageType.startsWith('fileImageType')">
-      <template  v-if="typeof modelValue === 'string'">
+      <template  v-if="typeof modelValue === 'string' && modelValue.length">
         <div
             class="q-mb-md"
         >
