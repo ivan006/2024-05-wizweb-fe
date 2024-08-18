@@ -80,7 +80,6 @@
         <!--    :superOptions="superOptions"-->
         <!--/>-->
         <SuperSelect
-            @abortEdit="$emit('abortEdit')"
             :forcedFilters="forcedFilters"
             :readonly="disabled"
             :allowAll="allowAll"
@@ -118,7 +117,7 @@
         <!--v-model="filters[filterInput.name]"-->
       </template>
       <template v-else>
-        <template v-if="filterInputs.length && viewAs.hide && (allowedFilters == null || filterInputs.some(filterInput =>  allowedFilters.includes(filterInput.name)))">
+        <template v-if="shouldWeShowTopBar()">
           <div class="q-px-sm">
 
             <DestructableExpansionPanels
@@ -669,6 +668,24 @@ export default {
     },
   },
   methods: {
+    shouldWeShowTopBar() {
+      let result = true
+      if (
+          !this.viewAs.hide &&
+          (
+              this.filterInputs.length &&
+              (
+                  this.allowedFilters == null ||
+                  this.filterInputs.some(
+                      filterInput =>  this.allowedFilters.includes(filterInput.name)
+                  )
+              )
+          )
+      ){
+        result = true
+      }
+      return result
+    },
     search(searchTerm) {
       this.filters[this.model.titleKey] = searchTerm
       this.fetchData();
