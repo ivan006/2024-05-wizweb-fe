@@ -1,16 +1,20 @@
 import { Model } from '@vuex-orm/core'
-
-// import { DefaultSISHeadersAndBaseUrl } from '@v2/models/sis/SISHeaders'
-import CustonMixins from '../mixins/CustonMixins'
 import Helpers from '../utils/Helpers'
+// import { serialize } from 'object-to-formdata';
 
 export default class DBBaseModel extends Model {
 
     static adapator = 'supabase'
     static primaryKey = 'id';
 
-    static openRecord(id){}
+    static openRecord(pKeyValue, item, router){}
 
+    static rules = {
+        readables: () => true,
+        readable: (item) => true,
+        editable: (item) => true,
+        creatable: () => true,
+    };
 
     static NormalizeRecursive(value) {
         const result = this.NormalizeRecursiveChild(
@@ -88,7 +92,7 @@ export default class DBBaseModel extends Model {
 
     static customApiBase(moreHeaders) {
         // const baseUrlAndHeaders =
-        //     CustonMixins.methods.DefaultHeadersAndBaseUrl()
+        //   CustonMixins.methods.DefaultHeadersAndBaseUrl()
         this.apiConfig = {
             // ...DefaultSISHeadersAndBaseUrl(),
             // baseURL: baseUrlAndHeaders.baseURL,
@@ -101,6 +105,8 @@ export default class DBBaseModel extends Model {
         return this.api()
     }
 
+    static titleKey = this.primaryKey;
+
     static customSupabaseApiFetchAll(
         url,
         relationships = [],
@@ -112,7 +118,7 @@ export default class DBBaseModel extends Model {
             filters: {},
             clearPrimaryModelOnly: false
         },
-        adapator = "supabase"
+        modelClass
     ) {
         let offset = (options.page - 1) * options.limit
         // todo: note - i hade to put the filters in line because urls can have duplicates keys and objects cans and i needed duplicates key support for the date range filter
@@ -120,12 +126,12 @@ export default class DBBaseModel extends Model {
         let computedUrl = url
         let preparedRels = {}
 
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
 
             computedUrl= `${url}?${Helpers.prepareFiltersForSupabase(options.filters)}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
 
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
 
             computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
@@ -151,24 +157,24 @@ export default class DBBaseModel extends Model {
                     return result
                 },
             })
-            // .then((res) => {
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            //     // return error // < would this be needed maybe?
-            // })
+        // .then((res) => {
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        //   // return error // < would this be needed maybe?
+        // })
     }
 
-    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiFetchById(url, id, relationships = [], flags = {}, headers = {} , modelClass) {
         relationships
 
         let computedUrl = url
         let preparedRels = {}
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
             computedUrl= `${url}?id=eq.${id}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
             computedUrl = `${url}/${id}`
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
         }
@@ -183,72 +189,102 @@ export default class DBBaseModel extends Model {
                     return result
                 },
             })
-            // .then((res) => {
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 
-    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
-        return this.customApiBase(headers)
-            .post(
-                url,
-                { ...entity },
-                {
-                    dataTransformer: ({ data }) => {
-                        const result =
-                            this.NormalizeRecursive(data)
-                        return result
-                    },
-                }
-            )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
-    }
-
-    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
-        return this.customApiBase(headers)
-            .post(
-                url,
-                { ...entity },
-                {
-                    dataTransformer: ({ data }) => {
-                        const result =
-                            this.NormalizeRecursive(data)
-                        return result
-                    },
-                }
-            )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
-    }
-
-    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {} , adapator = "supabase") {
-
+    static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , modelClass, supportFiles = false) {
         let computedUrl = url
-        if (adapator === "supabase"){
+        // if (modelClass.adapator === "supabase"){
+        //   computedUrl = `${url}?id=eq.${entity.id}`
+        // } else if(modelClass.adapator === "laravel") {
+        //   computedUrl = `${url}/${entity.id}`
+        // }
+        if (supportFiles) {
+            entity = serialize(entity);
+        }
+
+        return this.customApiBase(headers)
+            .post(
+                computedUrl,
+                { ...entity },
+                {
+                    params: {
+                        ...flags,
+                    },
+                    dataTransformer: ({ data }) => {
+                        const result =
+                            this.NormalizeRecursive(data)
+                        return result
+                    },
+                }
+            )
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
+    }
+
+    static customSupabaseApiUpsert(url, entity, relationships = [], flags = {}, headers = {} , modelClass) {
+
+        return this.customApiBase(headers)
+            .post(
+                url,
+                { ...entity },
+                {
+                    params: {
+                        ...flags,
+                    },
+                    dataTransformer: ({ data }) => {
+                        const result =
+                            this.NormalizeRecursive(data)
+                        return result
+                    },
+                }
+            )
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
+    }
+
+
+    static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {}, modelClass, supportFiles = false) {
+        let computedUrl = url
+        if (modelClass.adapator === "supabase"){
             computedUrl = `${url}?id=eq.${entity.id}`
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
             computedUrl = `${url}/${entity.id}`
         }
+
+        // const queryParams = new URLSearchParams(flags).toString();
+        // if (queryParams) {
+        //     computedUrl += (computedUrl.includes('?') ? '&' : '?') + queryParams;
+        // }
+
+        // if (supportFiles) {
+        //   entity = serialize(entity);
+        // }
 
         return this.customApiBase(headers)
             .patch(
                 computedUrl,
                 { ...entity },
+                // entity,
                 {
+                    params: {
+                        ...flags,
+                    },
                     dataTransformer: ({ data }) => {
                         const result =
                             this.NormalizeRecursive(data)
@@ -256,22 +292,15 @@ export default class DBBaseModel extends Model {
                     },
                     save: true,
                 }
-            )
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+            );
     }
 
-    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , adapator = "supabase") {
+    static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , modelClass) {
 
         let computedUrl = url
-        if (adapator === "supabase"){
+        if (modelClass.adapator === "supabase"){
             computedUrl = `${url}?id=eq.${entityId}`
-        } else if(adapator === "laravel") {
+        } else if(modelClass.adapator === "laravel") {
             computedUrl = `${url}/${entityId}`
         }
 
@@ -279,12 +308,12 @@ export default class DBBaseModel extends Model {
             .delete(computedUrl, {
                 delete: entityId,
             })
-            // .then((res) => {
-            //     CustonMixins.methods.logNetworkSuccess(res)
-            //     return res
-            // })
-            // .catch((error) => {
-            //     // CustonMixins.methods.logNetworkError(error)
-            // })
+        // .then((res) => {
+        //   // CustonMixins.methods.logNetworkSuccess(res)
+        //   return res
+        // })
+        // .catch((error) => {
+        //   // CustonMixins.methods.logNetworkError(error)
+        // })
     }
 }

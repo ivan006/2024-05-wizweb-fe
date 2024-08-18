@@ -121,114 +121,143 @@ class QuickListsHelpers {
         let result = []
 
         for (const field of fields) {
-            // if (!excludedCols.includes(field.name)) {
-            //     if (field.usageType.startsWith('relForeignKey')) {
-            //         if (!excludedCols.includes(field.meta.foreignKey)) {
-            //             result.push(field)
-            //             lookupKeys.push(field)
-            //         }
-            //     } else {
-            //         result.push(field)
-            //     }
-            // }
 
-            excludedCols
-            if (field.usageType.startsWith('relForeignKey')) {
-                result.push(field)
-                lookupKeys.push(field)
+            if (field.usageType.startsWith('relLookupNormal')) {
+                if (!excludedCols.includes(field.meta.foreignKey)){
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: false,
+                        }
+                    })
+                    lookupKeys.push(field)
+                } else {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: true,
+                        }
+                    })
+                }
             } else {
-                result.push(field)
+                if(!excludedCols.includes(field.name)) {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: false,
+                        }
+                    })
+                } else {
+                    result.push({
+                        ...field,
+                        meta: {
+                            ...field.meta,
+                            hideField: true,
+                        }
+                    })
+                }
             }
-        }
 
+            // excludedCols
+            // if (field.usageType.startsWith('relForeignKey')) {
+            //     result.push(field)
+            //     lookupKeys.push(field)
+            // } else {
+            //     result.push(field)
+            // }
+        }
         return result
     }
 
-    static SupaerTableHeaders(
-        model,
-        excludedCols = [],
-        canEdit,
-        displayMapField = false
-    ) {
-        let result = []
-        const computedAttrs = this.computedAttrs(model, excludedCols)
+
+    static SupaerTableHeaders(model, excludedCols = [], canEdit, displayMapField = false) {
+        let result = [];
+        const computedAttrs = this.computedAttrs(model, excludedCols);
 
         for (const computedAttr of computedAttrs) {
-            if (
-                // !computedAttr.dataType.startsWith('mapExtra') &&
-                // computedAttr.dataType !== 'foreignKey'
-                computedAttr.usageType.startsWith('relForeignKey')
-            ) {
+            if (computedAttr.usageType.startsWith('relForeignKey')) {
                 // do nothing
             } else if (computedAttr.usageType.startsWith('relLookup')) {
-                const relatedAttrs = this.computedAttrs(
-                    computedAttr.meta.relatedModel,
-                    excludedCols
-                )
-                let headerChildren = []
+                const relatedAttrs = this.computedAttrs(computedAttr.meta.field.parent, excludedCols);
+                let headerChildren = [];
                 for (const relatedAttr of relatedAttrs) {
-                    if (relatedAttr.important == true) {
+                    if (relatedAttr.important === true) {
                         if (relatedAttr.usageType.startsWith('relForeignKey')) {
                             // do nothing
                         } else {
                             headerChildren.push({
-                                title: relatedAttr.label,
-                                key: relatedAttr.name,
                                 usageType: relatedAttr.usageType,
                                 dataType: relatedAttr.dataType,
                                 meta: relatedAttr.meta,
+                                name: `${computedAttr.name}.${relatedAttr.name}`,
+                                align: 'left',
+                                label: relatedAttr.label,
+                                field: row => row[computedAttr.name] && row[computedAttr.name][relatedAttr.name],
+                                format: val => `${val}`,
                                 sortable: true,
-                            })
+                            });
                         }
                     }
                 }
 
                 result.push({
-                    title: computedAttr.label,
-                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
                     headerChildren: headerChildren,
+                    name: computedAttr.name,
+                    align: 'left',
+                    label: computedAttr.label,
+                    field: computedAttr.name,
                     sortable: true,
-                })
+                    children: headerChildren,
+                });
             } else {
                 result.push({
-                    title: computedAttr.label,
-                    key: computedAttr.name,
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
+                    name: computedAttr.name,
+                    align: 'left',
+                    label: computedAttr.label,
+                    field: computedAttr.name,
                     sortable: true,
-                })
+                });
             }
         }
+
         if (canEdit) {
             result.push({
-                title: 'Actions',
-                key: 'actions',
                 usageType: 'actions',
                 dataType: 'actions',
-            })
+                name: 'actions',
+                align: 'right',
+                label: 'Actions',
+                field: 'actions',
+                sortable: false,
+            });
         }
 
-        result = result.filter((item) => {
+        result = result.filter(item => {
             if (displayMapField) {
                 if (!item.usageType.startsWith('relForeignKey')) {
-                    return true
+                    return true;
                 }
             } else {
                 return (
                     !item.usageType.startsWith('relForeignKey') &&
                     !item.usageType.startsWith('relLookupMapExtra') &&
                     !item.usageType.startsWith('mapExtra')
-                )
+                );
             }
-        })
-        // console.log(result)
+        });
 
-        return result
+        return result;
     }
+
 
     static preparePayload(input, modelFields) {
         let result = []

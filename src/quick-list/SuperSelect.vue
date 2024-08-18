@@ -1,284 +1,309 @@
 <template>
-    <div>
-        <v-select
-            :menu-props="{ offsetY: true }"
-            :modelValue="modelValue"
-            @update:modelValue="
-                (e) => {
-                    $emit('update:modelValue', e)
-                }
-            "
-            :variant="variant"
-            :density="density"
-            :items="items"
-            :label="modelField.label"
-            :item-title="title.value"
-            item-value="id"
-            :disabled="disabledComp"
-            :loading="loading"
-            :readonly="readonly"
-        >
-            <template v-slot:prepend-item>
-                <v-text-field
-                    v-model="search"
-                    label="Search"
-                    density="compact"
-                    variant="outlined"
-                    single-line
-                    hide-details
-                    class="ma-2 mt-0 pa-0"
-                ></v-text-field>
-                <v-divider class="mt-2"></v-divider>
-            </template>
-            <template v-slot:append-item>
-                <div
-                    v-if="showMoreButtonVisible"
-                    @click="showMore"
-                    class="text-center pa-2"
-                >
-                    Show More
-                </div>
-            </template>
-        </v-select>
-    </div>
+  <div>
+    <q-select
+        style="min-width: 200px;"
+        :modelValue="modelValue"
+        @update:modelValue="updateValue"
+        :options="itemsComp"
+        option-label="label"
+        :option-value="model.primaryKey"
+        :emit-value="true"
+        :map-options="true"
+        :label="compLabel"
+        :disable="disabledComp"
+        :loading="compLoading"
+        :readonly="readonly"
+        :dense="density === 'compact'"
+        filled
+        :menu-props="{ offsetY: true }"
+        :rules="rules"
+        :error="!!errorMessage"
+        :errorMessage="errorMessage"
+    >
+      <template v-slot:option="scope">
+        <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
+          <q-item-section>
+            <div class="q-mb-md">
+              <slot />
+            </div>
+            <q-input
+                v-model="search"
+                :error="false"
+                :error-message="''"
+                label="Search"
+                dense
+                outlined
+                single-line
+                hide-bottom-space
+                class="q-mt-none q-pa-none"
+            ></q-input>
+          </q-item-section>
+        </q-item>
+        <q-item v-else-if="scope.index === itemsComp.length - 1" class="text-center q-pa-md">
+          <q-pagination
+              :modelValue="page"
+              :max="maxPages"
+              @update:modelValue="pageUpdate"
+              input
+          />
+
+          <!--@update:modelValue="fetchData"-->
+          <!--v-model="pagination.page"-->
+          <!--:max="totalPages"-->
+        </q-item>
+        <q-item v-else v-bind="scope.itemProps" :key="scope.index" :label="scope.opt.label" :value="scope.opt.id">
+          <q-item-section>
+            <div>
+              <!--<q-chip >-->
+              <!--  {{scope.opt.id}}-->
+              <!--</q-chip> -->
+              {{ scope.opt.label }}
+            </div>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-select>
+
+  </div>
 </template>
 
 <script>
-import QuickListsHelpers from './QuickListsHelpers'
+
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function() {
+    const context = this, args = arguments;
+    const later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
-    name: 'SuperSelect',
-    components: {},
-    props: {
-        modelValue: {
-            type: [Number, Object],
-            default() {
-                return null
-            },
-        },
-        filters: {
-            type: String,
-            default() {
-                return '{}'
-            },
-        },
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        disabled: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        modelField: {
-            type: Object,
-            default() {
-                return {}
-            },
-        },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        excludedCols: {
-            type: Array,
-            default() {
-                return []
-            },
-        },
-        readonly: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        variant: {
-            type: String,
-            default() {
-                return "outlined"
-            },
-        },
-        density: {
-            type: String,
-            default() {
-                return "compact"
-            },
-        },
-        allowAll: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        user: {
-          type: Object,
-          default() {
-            return {}
-          },
-        },
+  name: "SuperSelect",
+  props: {
+    errorMessage: {
+      type: String,
+      default() {
+        return null;
+      },
     },
-    data() {
-        return {
-            search: '',
-            // filteredItems: [],
-            pagination: {
-                page: 1,
-                limit: 5,
-            },
-            loading: false,
-            noMoreShowMore: false,
-            fetchedItems: [],
+    hideLabel: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    maxPages: {
+      type: [Number, Object],
+      default: 1,
+    },
+    page: {
+      type: [Number, Object],
+      default: 1,
+    },
+    modelValue: {
+      type: [Number, Object, String],
+      default: null,
+    },
+    // filters: {
+    //   type: String,
+    //   default: "{}",
+    // },
+    model: {
+      type: [Object, Function],
+      required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    modelField: {
+      type: Object,
+      default: () => ({}),
+    },
+    displayMapField: {
+      type: Boolean,
+      default: false,
+    },
+    excludedCols: {
+      type: Array,
+      default: () => [],
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    variant: {
+      type: String,
+      default: "outlined",
+    },
+    density: {
+      type: String,
+      default: "compact",
+    },
+    allowAll: {
+      type: Boolean,
+      default: false,
+    },
+
+    rules: {
+      type: Array,
+      default: () => ([() => true]),
+    },
+    items: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+    activated: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+  },
+  data() {
+    return {
+      timeout: null,
+      search: "",
+      // pagination: {
+      //   page: 1,
+      //   limit: 5,
+      // },
+      totalPages: 1,
+      preSelectedItem: null,
+      loadingInner: false,
+      // fetchedItems: [],
+    };
+  },
+  computed: {
+    compLabel() {
+      if (this.hideLabel){
+        return void 0
+      } else {
+        return this.modelField.label
+      }
+
+      // return void 0
+    },
+    compLoading() {
+      return this.loadingInner || this.loading;
+    },
+    disabledComp() {
+      return this.disabled || this.readonly;
+    },
+    quickListsIsMobile() {
+      return QuickListsHelpers.quickListsIsMobile();
+    },
+    // title() {
+    //   return this.headers.find((header) => header.field !== "id");
+    // },
+    headers() {
+      return QuickListsHelpers.SupaerTableHeaders(
+          this.model,
+          this.excludedCols,
+          false,
+          this.displayMapField
+      );
+    },
+    itemsComp() {
+      let result = [];
+      if (!this.disabled) {
+        result.push({ label: "", id: null });  // Empty item for search input
+        if (this.allowAll) {
+          result.push({ label: "All", id: null });
         }
+
+        if (!this.activated){
+          result = result.filter(option => option.id !== this.modelValue);
+          let preSelectedItemLabel = ""
+          if (this.preSelectedItem){
+            preSelectedItemLabel = this.preSelectedItem[this.model.titleKey]
+          }
+          result.push({ label: preSelectedItemLabel, id: this.modelValue });
+        }
+
+        for (const item of this.items) {
+          result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
+        }
+        result.push({ label: "", id: null });  // Empty item for search input
+        // result = [...result, ...this.items.map(item => ({
+        //   label: item[this.model.titleKey],
+        //   id: item[this.model.primaryKey]
+        // }))];
+      }
+      return result;
     },
-    computed: {
-        disabledComp() {
-            if (this.disabled || this.readonly) {
-                return true
-            } else {
-                return false
-            }
-        },
-        showMoreButtonVisible() {
-            let result = true
-            if (
-                this.pagination.limit >= this.items.length ||
-                this.noMoreShowMore
-            ) {
-                result = false
-            }
-            return result
-        },
-        quickListsIsMobile() {
-            return QuickListsHelpers.quickListsIsMobile()
-        },
-        title() {
-            const result = this.headers.find((header) => header.key !== 'id')
-            return result
-        },
-        headers() {
-            return QuickListsHelpers.SupaerTableHeaders(
-                this.model,
-                this.excludedCols,
-                false,
-                this.displayMapField
+    // filtersComp() {
+    //   const filters = JSON.parse(this.filters);
+    //   if (this.title && this.search) {
+    //     filters[this.title.field] = this.search;
+    //   }
+    //   return filters;
+    // },
+  },
+  methods: {
+    pageUpdate(value) {
+      this.$emit('update:page', value);
+    },
+    updateValue(value) {
+      const item = {}
+      item[this.model.primaryKey] = value
+      this.$emit('update:modelValue', value, item);
+    },
+    fetchDefaultItem() {
+      if (this.modelValue && !this.items.length){
+
+        this.loadingInner = true
+        this.model
+            .FetchById(
+                this.modelValue,
+                [],
+                {},
+                {},
             )
-        },
-        items() {
-            let result = []
-            if (!this.disabled) {
-                if (this.allowAll) {
-                    result.push({
-                        [this.title.value]: `All`,
-                        id: null,
-                    })
-                }
-                // const data = this.model
-                //     .query()
-                //     .where((item) => {
-                //         return this.quickListsGetIfMatchesAllChecks(
-                //             item,
-                //             this.filtersComp
-                //         )
-                //     })
-                //     .withAll()
-                //     .get()
-              const data = this.fetchedItems
-                result = [...result, ...data]
-            }
-            return result
-        },
-        // displayedItems() {
-        //     let itemsFilteredBySearch = this.items
-        //     if (this.search) {
-        //         itemsFilteredBySearch = itemsFilteredBySearch.filter((item) =>
-        //             item[this.title.value]
-        //                 .toLowerCase()
-        //                 .includes(this.search.toLowerCase())
-        //         )
-        //     }
-        //     return itemsFilteredBySearch.filter((item) =>
-        //         this.quickListsGetIfMatchesAllChecks(item, JSON.parse(this.filters))
-        //     )
-        // },
-        filtersComp() {
-            const filters = JSON.parse(this.filters)
-            let result = filters
-            if (this.title.value && this.search) {
-                result = {
-                    ...filters,
-                    [this.title.value]: this.search,
-                }
-            }
-            return result
-        },
-    },
-    methods: {
-        showMore() {
-            this.pagination.page = this.pagination.page + 1
-            this.fetchData()
-        },
-        quickListsGetIfMatchesAllChecks(item, filters) {
-            return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters)
-        },
-        async fetchData() {
-
-            let linkables = []
-            if (this.modelField.fieldExtras?.relationRules?.linkables){
-              linkables = this.modelField.fieldExtras.relationRules.linkables(this.user)
-            }
-
-            this.loading = true
-
-            const response = await this.model.FetchAll([], {
-                  ...linkables,
-                  order: 'id.desc',
-              }, {
-                  Prefer: 'count=exact',
-              }, {
-              page: this.pagination.page,
-              limit: this.pagination.limit,
-              filters: this.filtersComp,
-              clearPrimaryModelOnly: false
+            .then((response) => {
+              this.preSelectedItem = response.response.data.data
+              this.loadingInner = false
             })
-            if (response.response.data.length == 0) {
-                this.noMoreShowMore = true
-            }
-            this.fetchedItems = response.response.data.data
-            // this.pagination.totalItems = response.total // Assuming your API returns a total count
-            this.loading = false
-        },
-        // filterItems() {
-        //     this.filteredItems = this.displayedItems
-        // },
+            .catch(() => {
+              this.loadingInner = false
+            });
+      }
     },
-    watch: {
-        // items: {
-        //     immediate: true,
-        //     handler() {
-        //         this.filteredItems = this.items
-        //     },
-        // },
-        filters() {
-            if (!this.disabled) {
-                this.fetchData()
-            }
-        },
-        search() {
-            if (!this.disabled) {
-                this.fetchData()
-            }
-        },
+  },
+  watch: {
+    search(value) {
+      if (!this.disabled) {
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.$emit('search', value)
+        }, 300)
+      }
     },
-    mounted() {
-        if (!this.disabled) {
-            this.fetchData()
-        }
-    },
-}
+    modelValue(newVal){
+      this.fetchDefaultItem();
+    }
+  },
+  mounted() {
+    this.fetchDefaultItem();
+  },
+};
 </script>
 
-<style></style>
+<style scoped></style>

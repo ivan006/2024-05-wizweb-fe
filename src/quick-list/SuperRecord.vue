@@ -1,284 +1,370 @@
 <template>
-    <div>
-        <!--      <pre>{{headers}}</pre>-->
-        <v-tabs v-model="activeTab">
-            <v-tab :value="'tab'"> Overview </v-tab>
-            <v-tab
-                v-for="(relation, index) in filteredChildRelations"
-                :key="index"
-                :value="'tab-' + index"
-            >
-                {{ relation.field.label }}
-            </v-tab>
+  <div>
+    <template v-if="filteredChildRelations.length">
 
-
-        </v-tabs>
-        <v-tabs-window v-model="activeTab">
-
-          <v-tabs-window-item value="tab">
-            <template
-              v-if="model.displayMapFull && model.displayMapFull.rows"
-            >
-              <RecordOverviewDynamic
-                :item="item"
-                :childRelations="childRelations"
-                :filteredChildRelations="filteredChildRelations"
-                :superOptions="{
-                    headers: headers,
-                    modelFields: modelFields,
-                    displayMapField: displayMapField,
-                    model: model,
-                    canEdit: canEdit,
-                    currentParentRel: {},
-                    user: user,
-                }"
-              >
-                <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                  <slot :name="slotName" v-bind="slotProps"></slot>
-                </template>
-              </RecordOverviewDynamic>
-            </template>
-            <template v-else>
-              <RecordOverview
-                :item="item"
-                :superOptions="{
-                    headers: headers,
-                    modelFields: modelFields,
-                    displayMapField: displayMapField,
-                    model: model,
-                    canEdit: canEdit,
-                    currentParentRel: {},
-                    user: user,
-                }"
-              />
-            </template>
-            <!--              @deleteItem="deleteItem"-->
-            <!--              @editItem="editItem"-->
-            <!--              @clickRow="clickRow"-->
-            <!--              :clickable="true"-->
-          </v-tabs-window-item>
-          <v-tabs-window-item
+      <!--      <pre>{{headers}}</pre>-->
+      <q-tabs
+          v-model="activeTab"
+          align="left"
+      >
+        <q-tab :name="'tab'"> Overview </q-tab>
+        <q-tab
             v-for="(relation, index) in filteredChildRelations"
             :key="index"
-            :value="'tab-' + index"
-          >
-                            <!--<pre>{{ relation.currentParentRecord.foreignKeyToParentRecord }}</pre>-->
-            <SuperTable
+            :name="'tab-' + index"
+        >
+          {{ relation.field.label }}
+        </q-tab>
+      </q-tabs>
+      <q-tab-panels v-model="activeTab">
+        <q-tab-panel name="tab">
+          <template v-if="!loading">
+            <OverviewTab
+                :item="item"
+                :superOptions="superOptions"
+                :templateOverview="templateOverview"
+                :filteredChildRelations="filteredChildRelations"
+                :childRelations="childRelations"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
+            >
+              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+                <slot :name="slotName" v-bind="slotProps"></slot>
+              </template>
+            </OverviewTab>
+          </template>
+          <template v-else>
+            Loading...
+          </template>
+        </q-tab-panel>
+        <q-tab-panel
+            v-for="(relation, index) in filteredChildRelations"
+            :key="index"
+            :name="'tab-' + index"
+        >
+          <SuperTable
               :ref="`tab-${index}`"
-              :currentParentRel="relation"
+              :parentKeyValuePair="parentKeyValuePair(relation)"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
-              :user="user"
-              :forcedFilters="filters(relation.currentParentRecord.foreignKeyToParentRecord)"
-            >
-              <template v-if="!!$slots[relation.field.name]" #create>
-                <slot :name="relation.field.name" />
-              </template>
-            </SuperTable>
-          </v-tabs-window-item>
-        </v-tabs-window>
-    </div>
+              :forcedFilters="filters(relation)"
+              @clickRow="(pVal, item) => {clickRow(pVal, item, relation)}"
+          >
+            <template v-if="$slots[relation.field.name]" v-slot:create>
+              <slot :name="relation.field.name" />
+            </template>
+          </SuperTable>
+        </q-tab-panel>
+      </q-tab-panels>
+    </template>
+    <template v-else>
+      <OverviewTab
+        :item="item"
+        :superOptions="superOptions"
+        :templateOverview="templateOverview"
+        :filteredChildRelations="filteredChildRelations"
+        :childRelations="childRelations"
+        @editItem="editItem"
+        @deleteItem="deleteItem"
+      >
+        <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
+          <slot :name="slotName" v-bind="slotProps"></slot>
+        </template>
+      </OverviewTab>
+    </template>
+
+    <template v-if="canEdit">
+
+      <template v-if="superOptions.canEdit">
+        <q-dialog
+            v-model="editItemData.showModal"
+            @update:modelValue="formServerErrors = {};"
+        >
+          <CreateEditForm
+              titlePrefix="Edit"
+              v-if="editItemData.showModal"
+              v-model="editItemData.data"
+              @submit="editItemSubmit"
+              @cancel="editItemData.showModal = false; formServerErrors = {};"
+              :superOptions="superOptions"
+              :template="templateForm"
+              style="width: 700px; max-width: 80vw;"
+              :formServerErrors="formServerErrors"
+          />
+        </q-dialog>
+
+        <q-dialog v-model="deleteItemData.showModal" >
+          <q-card style="width: 500px; max-width: 80vw;">
+            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
+              <div class="text-h6">Delete Item</div>
+            </q-card-section>
+            <q-card-section>
+              <p>Are you sure you want to delete this item?</p>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
+              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+      </template>
+    </template>
+  </div>
 </template>
 
 <script>
-import SuperTable from './SuperTable.vue'
-import RecordOverview from './RecordOverview.vue'
-import QuickListsHelpers from './QuickListsHelpers'
-// import LoginSession from '@/models/LoginSession'
-import RecordOverviewDynamic from './RecordOverviewDynamic.vue'
-import SuperTableList from "./SuperTableList.vue";
+import SuperTable from "./SuperTable.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+import QuickListsHelpers from "./QuickListsHelpers";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import SuperTableTable from "./SuperTableTable.vue";
+import OverviewTab from "./OverviewTab.vue";
+import CreateEditForm from "./CreateEditForm.vue";
 
 export default {
-    name: 'SuperRecord',
-    components: {
-      SuperTableList,
-        RecordOverviewDynamic,
-        RecordOverview,
-        SuperTable,
+  name: "SuperRecord",
+  components: {
+    CreateEditForm,
+    OverviewTab,
+    SuperTableTable,
+    RecordFieldsForDisplayCustom,
+    RecordFieldsForDisplayGeneric,
+    SuperTable,
+  },
+  props: {
+    hideRelations: {
+      type: Boolean,
+      default() {
+        return false;
+      },
     },
+    templateOverview: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    templateForm: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    model: {
+      type: [Object, Function],
+      required: true,
+    },
+    id: {
+      type: Number,
+      required: true,
+    },
+    displayMapField: {
+      type: Boolean,
+      default: false,
+    },
+    relationships: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
+  },
+  data() {
+    return {
+      deleteItemData: {
+        showModal: false,
+        data: null,
+      },
+      editItemData: {
+        showModal: false,
+        data: null,
+      },
+      activeTab: 'tab',
+      loading: true,
+      initialLoadHappened: false,
+      item: {},
+      formServerErrors: {},
+    };
+  },
+  computed: {
+    superOptions() {
+      return {
+        headers: this.headers,
+        modelFields: this.modelFields,
+        displayMapField: this.displayMapField,
+        model: this.model,
+        canEdit: this.canEdit,
+      };
+    },
+    colsAndDataIndicators() {
+      let result = {
+        dataIndicators: [],
+        cols: [],
+      };
+      if (this.templateOverview && this.templateOverview.cols) {
+        result.cols = this.templateOverview.cols;
+      }
 
-    props: {
-        model: {
-            type: [Object, Function],
-            required: true,
-        },
-        id: {
-            type: Number,
-            required: true,
-        },
-        displayMapField: {
-            type: Boolean,
-            default() {
-                return false
-            },
-        },
-        user: {
-          type: Object,
-          default() {
-            return {}
-          },
-        },
-    },
-    data() {
-        return {
-            activeTab: null,
-            // childRelations: [],
+
+      for (const col of result.cols) {
+        if (col.cols) {
+          for (const col2 of col.cols) {
+            if (col2.dataPoint.field) {
+              result.dataIndicators.push(col2.dataPoint.field);
+            }
+          }
+        } else {
+          if (col.dataPoint.field) {
+            result.dataIndicators.push(col.dataPoint.field);
+          }
         }
+      }
+      return result;
     },
-    computed: {
-        rowsAndDataIndicators() {
-            // const result = QuickListsHelpers.rowsAndDataIndicators(
-            //     false,
-            //     this.model,
-            //     this.headers,
-            //     this.childRelations
-            // )
-            // return result
+    canEdit() {
+      return true;
+    },
+    childRelations() {
+      const fields = QuickListsHelpers.computedAttrs(this.model, []);
+      const result = [];
 
-            let result = {
-                dataIndicators: [],
-                rows: [],
-            }
-            if (this.model.displayMapFull && this.model.displayMapFull.rows) {
-                result.rows = this.model.displayMapFull.rows
-            }
+      for (let fieldName in fields) {
+        const field = fields[fieldName];
+        if (field.usageType.startsWith("relChildren")) {
+          result.push({
+            field,
+            // currentParentRecord: {
+            //   item: this.item,
+            //   model: this.model,
+            //   relationType: field.usageType,
+            //   foreignKeyToParentRecord: field.meta.field.foreignKey,
+            // },
+          });
+        }
+      }
+      return result;
+    },
+    filteredChildRelations() {
+      let result = [];
+      if (!this.hideRelations){
+        for (const childRelation of this.childRelations) {
+          if (!this.colsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
+            result.push(childRelation);
+          }
+        }
+      }
+      return result;
+    },
+    headers() {
+      return QuickListsHelpers.SupaerTableHeaders(this.model, [], this.canEdit, this.displayMapField);
+    },
+    // item() {
+    //   return this.model.query().whereId(this.id).withAll().get()[0];
+    // },
+    modelFields() {
+      return QuickListsHelpers.computedAttrs(this.model, []);
+    },
+  },
+  methods: {
+    clickRow(pVal, item, relation) {
+      relation.field.meta.field.related.openRecord(pVal, item, this.$router)
+    },
+    parentKeyValuePair(relation) {
+      const fKey = relation.field.meta.field.foreignKey
 
-            for (const rowKey in result.rows) {
-                for (const col of result.rows[rowKey].cols) {
-                    if (col.rows) {
-                        for (const row of col.rows) {
-                            for (const col2 of row.cols) {
-                                if (col2.dataPoint.data) {
-                                    result.dataIndicators.push(
-                                        col2.dataPoint.data
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        if (col.dataPoint.data) {
-                            result.dataIndicators.push(
-                                col.dataPoint.data
-                            )
-                        }
-                    }
-                }
-            }
+      const result = {
+        parentFKey: fKey,
+        parentFVal: this.item[this.model.primaryKey],
+        parentItem: this.item,
+      }
+      return result
+    },
+    deleteItem(item) {
 
-            return result
-        },
-        canEdit() {
-          return true
-            // return !!this.loginSession
-        },
-        childRelations() {
-            const fields = QuickListsHelpers.computedAttrs(
-                this.model,
-                this.excludedCols
-            )
-            const result = []
+      this.$emit("deleteItem", item);
 
-            for (let fieldName in fields) {
-                const field = fields[fieldName]
-                if (field.usageType.startsWith('relChildren')) {
-                    result.push({
-                        field,
-                        currentParentRecord: {
-                            item: this.item,
-                            model: this.model,
-                            relationType: field.usageType,
-                            foreignKeyToParentRecord:
-                                field.meta.field.foreignKey,
-                        },
-                    })
-                }
-            }
-            return result
-        },
-        filteredChildRelations() {
-            let result = []
-            for (const childRelation of this.childRelations) {
-                if (
-                    !this.rowsAndDataIndicators.dataIndicators.includes(
-                        childRelation.field.name
-                    )
-                ) {
-                    result.push(childRelation)
-                }
-            }
-            return result
-        },
-        // loginSession() {
-        //     return LoginSession.query().withAllRecursive().first()
-        // },
-        headers() {
-            return QuickListsHelpers.SupaerTableHeaders(
-                this.model,
-                [],
-                this.canEdit,
-                this.displayMapField
-            )
-        },
-        item() {
-            const result = this.model
-                .query()
-                .whereId(this.id)
-                .withAll()
-                .get()[0]
-            return result
-        },
-        modelFields() {
-            const result = QuickListsHelpers.computedAttrs(
-                this.model,
-                this.excludedCols
-            )
-            return result
-        },
+      this.deleteItemData.data = item;
+      this.deleteItemData.showModal = true;
     },
-    methods: {
-        getMsg(type) {
-            let result = ''
-            if (Array.isArray(type)) {
-                if (type.length > 1) {
-                    result = `To create first set your active ${type[0]} group and  active ${type[1]}  group`
-                }
-            } else {
-                result = `To create first set your active ${type} group`
-            }
-            return result
-        },
-        filters(foreignKey) {
-            let result = {}
-            result[foreignKey] = this.id
-            return result
-        },
-        // getChildRelations() {
-        // },
-        fetchData() {
-            this.model
-                .FetchById(
-                    this.id,
-                    [],
-                    { flags: {}, moreHeaders: {}, rels: [] }
-                )
-                .then(() => {})
-                .catch(() => {})
-        },
+    deleteItemSubmit() {
+      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
+        this.fetchData();
+      });
+      this.deleteItemData.showModal = false;
     },
-    mounted() {
-        // this.getChildRelations()
-        this.fetchData()
+    editItem(item) {
+      this.$emit("editItem", item);
+
+      this.editItemData.data = {...item};
+      this.editItemData.showModal = true;
     },
-    watch: {
-        activeTab(newVal) {
-            this.$nextTick(() => {
-                if (this.$refs[newVal]) {
-                    this.$refs[newVal][0].fetchData()
-                }
-            })
-        },
+    editItemSubmit() {
+      const payload = QuickListsHelpers.preparePayload(
+          this.editItemData.data,
+          this.superOptions.modelFields
+      );
+
+      this.superOptions.model.Update(payload)
+          .then(() => {
+            this.fetchData();
+            this.editItemData.showModal = false;
+            this.formServerErrors = {};
+          })
+          .catch((err) => {
+            this.formServerErrors = err.response.data;
+          });
     },
-}
+    getMsg(type) {
+      if (Array.isArray(type)) {
+        return type.length > 1
+            ? `To create first set your active ${type[0]} group and active ${type[1]} group`
+            : "";
+      } else {
+        return `To create first set your active ${type} group`;
+      }
+    },
+    filters(relation) {
+      const parentKeyValuePair = this.parentKeyValuePair(relation)
+
+      return {
+        [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
+      };
+    },
+    fetchData() {
+      this.loading = true
+      this.model
+          .FetchById(
+              this.id,
+              this.relationships,
+              { flags: {}, moreHeaders: {}, rels: [] }
+          )
+          .then((response) => {
+
+            this.item = response.response.data.data
+            this.loading = false
+            this.initialLoadHappened = true;
+            this.$emit("initialLoadHappened", true);
+          })
+          .catch(() => {
+            this.loading = false
+            this.initialLoadHappened = true;
+            this.$emit("initialLoadHappened", true);
+          });
+    },
+  },
+  mounted() {
+    this.fetchData();
+  },
+  watch: {
+    activeTab(newVal) {
+      this.$nextTick(() => {
+        if (this.$refs[newVal]) {
+          this.$refs[newVal][0].fetchData();
+        }
+      });
+    },
+  },
+};
 </script>
 
 <style scoped></style>

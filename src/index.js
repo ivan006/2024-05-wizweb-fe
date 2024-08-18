@@ -8,12 +8,11 @@ import DBCrudCacheSet from './quick-list/DBCrudCacheSet.js';
 import DestructableExpansionPanels from './quick-list/DestructableExpansionPanels.vue';
 import FilterPlace from './quick-list/FilterPlace.vue';
 import FilterTime from './quick-list/FilterTime.vue';
-import FormattedColumn from './quick-list/FormattedColumn.vue';
 import MyGoogleMap from './quick-list/MyGoogleMap.vue';
 import QuickListsHelpers from './quick-list/QuickListsHelpers.js';
-import RecordOverview from './quick-list/RecordOverview.vue';
-import RecordOverviewDynamic from './quick-list/RecordOverviewDynamic.vue';
-import RecordOverviewDynamicDataPoint from './quick-list/RecordOverviewDynamicDataPoint.vue';
+import RecordFieldsForDisplayGeneric from './quick-list/RecordFieldsForDisplayGeneric.vue';
+import RecordFieldsForDisplayCustom from './quick-list/RecordFieldsForDisplayCustom.vue';
+import DatapointForDisplay from './quick-list/DatapointForDisplay.vue';
 import RelationComponent from './quick-list/RelationComponent.vue';
 import SearchGooglePlace from './quick-list/SearchGooglePlace.vue';
 import SuperRecord from './quick-list/SuperRecord.vue';
@@ -39,12 +38,11 @@ export {
   DestructableExpansionPanels,
   FilterPlace,
   FilterTime,
-  FormattedColumn,
   MyGoogleMap,
   QuickListsHelpers,
-  RecordOverview,
-  RecordOverviewDynamic,
-  RecordOverviewDynamicDataPoint,
+  RecordFieldsForDisplayGeneric,
+  RecordFieldsForDisplayCustom,
+  DatapointForDisplay,
   RelationComponent,
   SearchGooglePlace,
   SuperRecord,
