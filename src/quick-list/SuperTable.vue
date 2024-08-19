@@ -941,7 +941,7 @@ export default {
   watch: {
     filters: {
       handler() {
-        if (!this.loading) {
+        if (!this.loading && !this.justCreateButton) {
           this.fetchData();
         }
       },
@@ -984,7 +984,7 @@ export default {
       }
     }
     if (this.activated || !this.isForSelectingRelation){
-      if (!this.loading) {
+      if (!this.loading && !this.justCreateButton) {
         this.fetchData();
       }
     }

@@ -32,9 +32,10 @@
           <!--    style="max-width:100%;"-->
           <!--/>-->
 
+          <!--:src="`${superOptions.model?.fileUrlPrefix}/${item[header.field]}`"-->
           <q-img
               alt="File not found."
-              :src="`${superOptions.model?.fileUrlPrefix}/${item[header.field]}`"
+              :src="`${item[header.field]}`"
           >
             <!--:ratio="16/5"-->
             <div v-if="!item[header.field]" class="absolute-full text-subtitle2 flex flex-center">

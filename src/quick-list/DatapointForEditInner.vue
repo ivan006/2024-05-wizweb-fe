@@ -153,8 +153,9 @@
           <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
             <q-card-section class="q-pa-sm">
 
+              <!--:src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"-->
               <img
-                  :src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"
+                  :src="`${modelValue}`"
                   alt="File not found."
                   style="max-width:100%;"
               />
