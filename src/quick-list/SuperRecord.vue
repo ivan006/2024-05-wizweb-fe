@@ -88,13 +88,13 @@
               @cancel="editItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
-              style="width: 700px; max-width: 80vw;"
+              style="width: 700px; max-width: delete me;"
               :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
         <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: 80vw;">
+          <q-card style="width: 500px; max-width: delete me;">
             <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
               <div class="text-h6">Delete Item</div>
             </q-card-section>

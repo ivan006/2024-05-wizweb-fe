@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation" class="">
+    <div
+        v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
+         class="q-mb-sm q-px-sm"
+    >
       <template v-if="!!$slots.create">
         <slot name="create" />
       </template>
@@ -64,7 +67,7 @@
       </template>
       <template v-else>
         <template v-if="shouldWeShowTopBar()">
-          <div class="q-px-sm q-mt-md">
+          <div class="q-px-sm ">
 
             <DestructableExpansionPanels
                 :destroy="!quickListsIsMobile"
@@ -248,7 +251,7 @@
             @submit="createItemSubmit"
             @cancel="createItemData.showModal = false; formServerErrors = {};"
             :superOptions="superOptions"
-            style="width: 700px; max-width: 80vw;"
+            style="width: 700px; max-width: delete me;"
             :template="templateForm"
             :formServerErrors="formServerErrors"
         />
@@ -267,13 +270,13 @@
               @cancel="editItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
-              style="width: 700px; max-width: 80vw;"
+              style="width: 700px; max-width: delete me;"
               :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
         <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: 80vw;">
+          <q-card style="width: 500px; max-width: delete me;">
             <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
               <div class="text-h6">Delete Item</div>
             </q-card-section>
@@ -669,7 +672,7 @@ export default {
   },
   methods: {
     shouldWeShowTopBar() {
-      let result = true
+      let result = false
       if (
           !this.viewAs.hide &&
           (

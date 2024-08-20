@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-pa-md">
+  <q-card class="">
     <q-card-section>
       <div class="text-h6">{{titlePrefix}} {{ superOptions.model?.entityName ? superOptions.model?.entityName : "Item" }}</div>
     </q-card-section>
