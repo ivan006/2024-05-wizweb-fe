@@ -146,19 +146,25 @@
       />
     </template>
     <template v-else-if="field.usageType.startsWith('fileImageType')">
-      <template  v-if="typeof modelValue === 'string' && modelValue.length">
+      <!--<template  v-if="typeof modelValue === 'string' && modelValue.length">-->
+      <template  v-if="itemPVal">
         <div
             class="q-mb-md"
         >
           <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
-            <q-card-section class="q-pa-sm">
+            <q-card-section class="q-pa-sm" style="text-align: center;">
+              <template v-if="typeof modelValue === 'string' && modelValue.length">
 
-              <!--:src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"-->
-              <img
-                  :src="`${modelValue}`"
-                  alt="File not found."
-                  style="max-width:100%;"
-              />
+                <!--:src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"-->
+                <img
+                    :src="`${modelValue}`"
+                    alt="File not found."
+                    style="max-width:100%; max-height: 200px;"
+                />
+              </template>
+              <template v-else>
+                Images can only be set on create.
+              </template>
             </q-card-section>
           </q-card>
         </div>
@@ -180,6 +186,8 @@
             <q-icon name="attach_file" />
           </template>
         </q-file>
+
+
       </template>
     </template>
     <template v-else-if="field.usageType.startsWith('staticLookup') && field.fieldExtras.usageTypeExtras?.options">
@@ -339,6 +347,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    item: {
+      type: Object,
+      default: () => ({}),
+    },
     itemErrors: {
       type: Object,
       default: () => ({}),
@@ -385,6 +397,11 @@ export default {
     };
   },
   computed: {
+    itemPVal() {
+      const result = this.item[this.superOptions.model.primaryKey]
+      return result
+
+    },
     compServerError() {
       let result = null
       if (

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!compField.meta?.hideField">
+  <div v-if="!compField?.meta || !compField.meta?.hideField">
     <template v-if="dataPoint.xOrientation">
       <div class="">
         <div class="row" style="align-items: center;">
@@ -194,7 +194,7 @@ export default {
         return { label: this.dataPoint.label };
       } else {
         // const result = this.superOptions.headers.find((header) => {
-        const result = this.superOptions.modelFields.find((header) => {
+        const result = this.superOptions.headers.find((header) => {
           return header.field == this.dataPoint.field
         })
         return result

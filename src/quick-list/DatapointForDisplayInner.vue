@@ -1,7 +1,6 @@
 <template>
   <div :class="isHeading ? 'text-h6' : ''">
 
-
     <template v-if="typeof header.usageType == 'undefined'"></template>
     <template v-else-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
       <div class="text-caption">

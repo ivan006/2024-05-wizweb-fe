@@ -21,6 +21,7 @@
               <template v-else>
                 <DatapointForEditInner
                     v-if="compField"
+                    :item="modelValue"
                     :modelValue="modelValue[compField.name]"
                     @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
                     :superOptions="superOptions"
@@ -52,6 +53,7 @@
         <template v-else>
           <DatapointForEditInner
               v-if="compField"
+              :item="modelValue"
               :modelValue="modelValue[compField.name]"
               @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
               :superOptions="superOptions"

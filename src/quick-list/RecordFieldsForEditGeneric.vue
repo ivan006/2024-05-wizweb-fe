@@ -13,6 +13,7 @@
             <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->
             <DatapointForEditInner
                 @superTableMounted="rendered = true"
+                :item="itemData"
                 :modelValue="itemData[field.name]"
                 @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
                 :superOptions="superOptions"
