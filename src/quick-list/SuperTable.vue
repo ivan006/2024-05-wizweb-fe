@@ -138,6 +138,7 @@
                   </template>
                 </template>
                 <q-input
+                    v-if="this.model.titleKey !== this.model.primaryKey"
                     v-model="search"
                     :error="false"
                     :error-message="''"
@@ -653,22 +654,23 @@ export default {
   },
   methods: {
     shouldWeShowTopBar() {
-      let result = true
-      // let result = false
-      // if (
-      //     !this.viewAs.hide &&
-      //     (
-      //         this.filterInputs.length &&
-      //         (
-      //             this.allowedFilters == null ||
-      //             this.filterInputs.some(
-      //                 filterInput =>  this.allowedFilters.includes(filterInput.name)
-      //             )
-      //         )
-      //     )
-      // ){
-      //   result = true
-      // }
+      // let result = true
+      let result = false
+      if (
+          !this.viewAs.hide ||
+          (
+              this.filterInputs.length &&
+              (
+                  this.allowedFilters == null ||
+                  this.filterInputs.some(
+                      filterInput =>  this.allowedFilters.includes(filterInput.name)
+                  )
+              )
+          ) ||
+          this.model.titleKey !== this.model.primaryKey
+      ){
+        result = true
+      }
       return result
     },
     doSearch(searchTerm) {
