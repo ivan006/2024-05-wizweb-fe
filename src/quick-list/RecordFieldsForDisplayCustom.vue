@@ -104,9 +104,9 @@ export default {
     //   return this.template?.cols || [];
     // },
 
+  },
+  methods: {
     colClasses(baseWidth = 12) {
-      console.log("baseWidth")
-      console.log(baseWidth)
       baseWidth = +baseWidth
 
 
@@ -132,9 +132,7 @@ export default {
       const xs = roundToNearestSet(baseWidth * coefficients.xs);
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
-    }
-  },
-  methods: {
+    },
     deleteItem(e) {
       this.$emit("deleteItem", e);
     },

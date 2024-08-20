@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!compField.meta?.hideField">
     <template v-if="dataPoint.xOrientation">
       <div class="">
         <div class="row" style="align-items: center;">

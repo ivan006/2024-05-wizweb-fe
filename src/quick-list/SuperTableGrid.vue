@@ -8,7 +8,7 @@
                 templateListGrid.cols
               "
         >
-          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 12)" >
+          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordFieldsForDisplayCustom
                   :item="item"
@@ -20,7 +20,7 @@
                   :template="templateListGrid"
                   @editItem="editItem"
                   @deleteItem="deleteItem"
-                  :unClickable="unClickable"
+                  :unClickable="unClickable || !superOptions.model.rules.readable(item)"
               />
             </div>
           </div>
@@ -59,6 +59,12 @@ export default {
     RecordFieldsForDisplayCustom,
   },
   props: {
+    excludedCols: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
     unClickable: {
       type: Boolean,
       default() {
