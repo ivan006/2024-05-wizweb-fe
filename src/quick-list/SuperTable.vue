@@ -213,6 +213,7 @@
                   @editItem="editItem"
                   @deleteItem="deleteItem"
                   :excludedCols="excludedCols"
+                  :loading="loading"
               />
             </div>
           </template>

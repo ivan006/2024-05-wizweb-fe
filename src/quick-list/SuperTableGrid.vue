@@ -43,7 +43,12 @@
       </template>
     </div>
     <template v-if="!items.length">
-      <div class="text-center q-pa-md">No data available</div>
+      <template v-if="loading">
+        <div class="text-center q-pa-md">Loading...</div>
+      </template>
+      <template v-else>
+        <div class="text-center q-pa-md">No data available</div>
+      </template>
     </template>
   </div>
 </template>
@@ -59,6 +64,12 @@ export default {
     RecordFieldsForDisplayCustom,
   },
   props: {
+    loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     excludedCols: {
       type: Array,
       default() {
