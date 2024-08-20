@@ -2,7 +2,7 @@
   <div>
     <div
         v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
-         class="q-mb-md"
+         class="q-mb-sm q-px-sm"
     >
       <template v-if="!!$slots.create">
         <slot name="create" />
@@ -67,7 +67,7 @@
       </template>
       <template v-else>
         <template v-if="shouldWeShowTopBar()">
-          <div class="">
+          <div class="q-px-sm ">
 
             <DestructableExpansionPanels
                 :destroy="!quickListsIsMobile"
@@ -212,7 +212,6 @@
                   :templateListGrid="templateListGrid"
                   @editItem="editItem"
                   @deleteItem="deleteItem"
-                  :excludedCols="excludedCols"
               />
             </div>
           </template>

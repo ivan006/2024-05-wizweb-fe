@@ -16,7 +16,7 @@
                 :class="dataPoint.class ? dataPoint.class : ''"
                 :style="dataPoint.style ? dataPoint.style : ''"
             >
-              <!--<template v-if="isRelChildren(header)">-->
+              <!--<template v-if="isRelChildren(compField)">-->
               <!--  <div class="q-pt-sm">-->
               <!--    <template v-if="compRelation">-->
               <!--      <SuperTable-->
@@ -41,7 +41,7 @@
               </template>
               <template v-else>
                 <DatapointForDisplayInner
-                    :header="header"
+                    :header="compField"
                     :item="item"
                     :superOptions="superOptions"
                     hideLabel
@@ -67,7 +67,7 @@
           :class="dataPoint.class ? dataPoint.class : ''"
           :style="dataPoint.style ? dataPoint.style : ''"
       >
-        <!--<template v-if="isRelChildren(header)">-->
+        <!--<template v-if="isRelChildren(compField)">-->
         <!--  <div class="q-pt-sm">-->
         <!--    <template v-if="compRelation">-->
         <!--      <SuperTable-->
@@ -98,7 +98,7 @@
         </template>
         <template v-else>
           <DatapointForDisplayInner
-              :header="header"
+              :header="compField"
               :item="item"
               :superOptions="superOptions"
               hideLabel
@@ -187,9 +187,22 @@ export default {
       }
       return null;
     },
+    compField() {
+      if (this.header){
+        return this.header;
+      } else if (this.dataPoint.type === 'component' || this.dataPoint.type === 'function') {
+        return { label: this.dataPoint.label };
+      } else {
+        // const result = this.superOptions.headers.find((header) => {
+        const result = this.superOptions.modelFields.find((header) => {
+          return header.field == this.dataPoint.field
+        })
+        return result
+      }
+    },
     compRelation() {
       let result = {}
-      if (this.header && this.isRelChildren(this.header)) {
+      if (this.compField && this.isRelChildren(this.compField)) {
         result = this.childRelations.find((relation) => {
           return relation.field.name == this.dataPoint.field
         })
@@ -203,7 +216,7 @@ export default {
       } else if(this.dataPoint.type === 'component' || this.dataPoint.type === 'function'){
         return "";
       } else {
-        return this.header ? this.header.label : '';
+        return this.compField ? this.compField.label : '';
       }
     }
   },

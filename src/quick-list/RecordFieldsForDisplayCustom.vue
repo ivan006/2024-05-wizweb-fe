@@ -33,14 +33,13 @@
           </template>
         </template>
         <template v-else-if="template.dataPoint">
-          <div class="col-12" v-if="!compHeader(template.dataPoint).meta?.hideField">
+          <div class="col-12">
 
             <DatapointForDisplay
                 :item="item"
                 :dataPoint="template.dataPoint"
                 :childRelations="childRelations"
                 :superOptions="superOptions"
-                :header="compHeader(template.dataPoint)"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
             >
@@ -105,9 +104,9 @@ export default {
     //   return this.template?.cols || [];
     // },
 
-  },
-  methods: {
     colClasses(baseWidth = 12) {
+      console.log("baseWidth")
+      console.log(baseWidth)
       baseWidth = +baseWidth
 
 
@@ -133,18 +132,9 @@ export default {
       const xs = roundToNearestSet(baseWidth * coefficients.xs);
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
-    },
-    compHeader(dataPoint) {
-      if (dataPoint.type === 'component' || dataPoint.type === 'function') {
-        return { label: dataPoint.label };
-      } else {
-        // const result = this.superOptions.headers.find((header) => {
-        const result = this.superOptions.modelFields.find((header) => {
-          return header.field == dataPoint.field
-        })
-        return result
-      }
-    },
+    }
+  },
+  methods: {
     deleteItem(e) {
       this.$emit("deleteItem", e);
     },

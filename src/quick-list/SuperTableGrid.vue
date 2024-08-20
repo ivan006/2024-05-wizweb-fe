@@ -8,7 +8,7 @@
                 templateListGrid.cols
               "
         >
-          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >
+          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 12)" >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordFieldsForDisplayCustom
                   :item="item"
@@ -59,12 +59,6 @@ export default {
     RecordFieldsForDisplayCustom,
   },
   props: {
-    excludedCols: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
     unClickable: {
       type: Boolean,
       default() {
