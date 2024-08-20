@@ -46,7 +46,7 @@
             :model="model"
             :modelField="modelField"
             :activated="activated"
-            @search="search"
+            @search="doSearch"
             :errorMessage="errorMessage"
         >
           <CreateButton
@@ -79,11 +79,11 @@
                     <q-select
                         style="width: 200px"
                         :options="[
-                  { label: 'Table', value: 'table' },
-                  { label: 'Grid', value: 'grid' },
-                  { label: 'Map', value: 'map' },
-                  { label: 'Calendar', value: 'calendar' },
-                ]"
+                          { label: 'Table', value: 'table' },
+                          { label: 'Grid', value: 'grid' },
+                          { label: 'Map', value: 'map' },
+                          { label: 'Calendar', value: 'calendar' },
+                        ]"
                         v-model="activeTab"
                         label="View As"
                         option-label="label"
@@ -105,38 +105,6 @@
                     <template
                         v-if="filterInput.usageType.startsWith('relForeignKey')"
                     >
-                      <!--<SuperSelect-->
-                      <!--    allowAll-->
-                      <!--    :key="filterInput.name"-->
-                      <!--    :modelField="filterInput"-->
-                      <!--    v-model="filters[filterInput.name]"-->
-                      <!--    :model="filterInput.meta.field.parent"-->
-                      <!--    class="q-ma-sm col-grow"-->
-                      <!--    dense-->
-                      <!--    :user="use"-->
-
-
-                      <!--    :page="options.page"-->
-                      <!--    @update:page="pageUpdate"-->
-                      <!--    :maxPages="maxPages"-->
-                      <!--    @click="activateAndFetchData"-->
-                      <!--    :items="items"-->
-                      <!--    :loading="loading"-->
-                      <!--    :rules="rules"-->
-                      <!--/>-->
-
-                      <!--<RelationComponent-->
-                      <!--  :modelField="filterInput"-->
-                      <!--  v-model="filters[filterInput.name].value"-->
-
-                      <!--  :page="options.page"-->
-                      <!--  @update:page="pageUpdate"-->
-                      <!--  :maxPages="maxPages"-->
-                      <!--  @click="activateAndFetchData"-->
-                      <!--  :items="items"-->
-                      <!--  :loading="loading"-->
-                      <!--  :rules="rules"-->
-                      <!--/>-->
                       <SuperTable
                           :isForSelectingRelation="true"
                           :canEdit="false"
@@ -169,12 +137,21 @@
                     </template>
                   </template>
                 </template>
+                <q-input
+                    v-model="search"
+                    :error="false"
+                    :error-message="''"
+                    label="Search"
+                    dense
+                    filled
+                ></q-input>
               </div>
             </DestructableExpansionPanels>
           </div>
         </template>
         <div class="">
           <template v-if="activeTab == 'table'">
+
             <SuperTableTable
                 :items="items"
                 :loading="loading"
@@ -504,6 +481,8 @@ export default {
   },
   data() {
     return {
+      saving: false,
+      search: "",
       formServerErrors: {},
       deleteItemData: {
         showModal: false,
@@ -674,24 +653,25 @@ export default {
   },
   methods: {
     shouldWeShowTopBar() {
-      let result = false
-      if (
-          !this.viewAs.hide &&
-          (
-              this.filterInputs.length &&
-              (
-                  this.allowedFilters == null ||
-                  this.filterInputs.some(
-                      filterInput =>  this.allowedFilters.includes(filterInput.name)
-                  )
-              )
-          )
-      ){
-        result = true
-      }
+      let result = true
+      // let result = false
+      // if (
+      //     !this.viewAs.hide &&
+      //     (
+      //         this.filterInputs.length &&
+      //         (
+      //             this.allowedFilters == null ||
+      //             this.filterInputs.some(
+      //                 filterInput =>  this.allowedFilters.includes(filterInput.name)
+      //             )
+      //         )
+      //     )
+      // ){
+      //   result = true
+      // }
       return result
     },
-    search(searchTerm) {
+    doSearch(searchTerm) {
       this.filters[this.model.titleKey] = searchTerm
       this.fetchData();
     },
@@ -802,6 +782,10 @@ export default {
       this.createItemData.showModal = true;
     },
     createItemSubmit() {
+      if (this.saving){
+        return
+      }
+      this.saving = true
       let payload = QuickListsHelpers.preparePayload(
           this.createItemData.data,
           this.modelFields,
@@ -831,6 +815,9 @@ export default {
       )
           .then(() => {
 
+
+            this.saving = false
+
             // if (!inititalItemLength) {
             //   if (!this.loading) {
             //   }
@@ -848,6 +835,7 @@ export default {
             this.formServerErrors = {};
           })
           .catch((err) => {
+            this.saving = false
             this.formServerErrors = err.response.data;
           });
 
@@ -944,6 +932,14 @@ export default {
     },
   },
   watch: {
+    search(value) {
+      if (!this.disabled) {
+        if (this.timeout) clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.doSearch(value)
+        }, 300)
+      }
+    },
     filters: {
       handler() {
         if (!this.loading && !this.justCreateButton) {
