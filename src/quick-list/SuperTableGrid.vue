@@ -8,7 +8,7 @@
                 templateListGrid.cols
               "
         >
-          <div class="col-12 col-md-3 " >
+          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 12)" >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordFieldsForDisplayCustom
                   :item="item"
@@ -92,6 +92,33 @@ export default {
     },
   },
   methods: {
+
+    colClasses(baseWidth = 12) {
+      baseWidth = +baseWidth
+
+      // Coefficients for each breakpoint
+      const coefficients = {
+        lg: 1,   // Large screens
+        md: 1.5, // Medium screens
+        sm: 2,   // Small screens
+        xs: 4    // Extra small screens
+      };
+
+      // Rounding function to the nearest value from the set [1, 2, 3, 4, 6, 12]
+      function roundToNearestSet(value) {
+        // return Math.min(Math.round(value), 12)
+        const set = [1, 2, 3, 4, 6, 12];
+        return set.reduce((prev, curr) => (Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev));
+      }
+
+      // Calculate widths based on coefficients and round them
+      const lg = roundToNearestSet(baseWidth * coefficients.lg);
+      const md = roundToNearestSet(baseWidth * coefficients.md);
+      const sm = roundToNearestSet(baseWidth * coefficients.sm);
+      const xs = roundToNearestSet(baseWidth * coefficients.xs);
+
+      return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
+    },
     deleteItem(e) {
       this.$emit("deleteItem", e);
     },

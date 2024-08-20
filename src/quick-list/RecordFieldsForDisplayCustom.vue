@@ -2,7 +2,7 @@
   <div
       :style="!unClickable ? 'cursor: pointer' : ''"
       @click="clickRow(item)"
-      :class="colClasses"
+      :class="colClasses(template.width ? template.width : 12)"
   >
 
     <div style="padding-top:0.03px;">
@@ -104,8 +104,11 @@ export default {
     //   return this.template?.cols || [];
     // },
 
-    colClasses() {
-      const baseWidth = this.template.width || 12;
+    colClasses(baseWidth = 12) {
+      console.log("baseWidth")
+      console.log(baseWidth)
+      baseWidth = +baseWidth
+
 
       // Coefficients for each breakpoint
       const coefficients = {
