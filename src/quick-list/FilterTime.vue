@@ -371,4 +371,9 @@ export default {
 .FilterTimeTrigger > div {
   cursor: pointer !important;
 }
+
+
+.FilterTimeTrigger.q-field--disabled .q-field__control > div {
+  opacity: 1 !important;
+}
 </style>
