@@ -36,10 +36,7 @@
         <!-- Date Picker Modal -->
         <q-dialog v-model="showDatePicker" max-width="290px">
           <q-card>
-            <q-date
-                v-model="selectedDate"
-                @update:modelValue="setDefaultStartTime"
-            />
+            <q-date v-model="selectedDate" @update:modelValue="setDefaultStartTime" />
             <div class="q-pa-md text-right">
               <q-btn color="primary" @click="showDatePicker = false">OK</q-btn>
             </div>
@@ -87,9 +84,7 @@ export default {
   props: {
     hideLabel: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     modelValue: {
       type: String,
@@ -102,6 +97,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    useTimezone: {
+      type: Boolean,
+      default: false, // Default to false for local time
     },
   },
   data() {
@@ -117,22 +116,28 @@ export default {
   computed: {
     formattedValue() {
       if (this.formattedDate && this.formattedTime) {
-        return `${this.formattedDate} ${this.formattedTime} (${this.selectedTimezone})`;
+        return `${this.formattedDate} ${this.formattedTime}${
+            this.useTimezone ? ` (${this.selectedTimezone})` : ""
+        }`;
       }
       return "";
     },
     formattedDate() {
       return this.selectedDate
-          ? moment
-              .tz(this.selectedDate, this.selectedTimezone)
-              .format("dddd, MMMM D, YYYY")
+          ? this.useTimezone
+              ? moment
+                  .tz(this.selectedDate, this.selectedTimezone)
+                  .format("dddd, MMMM D, YYYY")
+              : moment(this.selectedDate).format("dddd, MMMM D, YYYY")
           : "";
     },
     formattedTime() {
       return this.selectedTime
-          ? moment
-              .tz(this.selectedTime, "HH:mm:ss", this.selectedTimezone)
-              .format("h:mm A")
+          ? this.useTimezone
+              ? moment
+                  .tz(this.selectedTime, "HH:mm:ss", this.selectedTimezone)
+                  .format("h:mm A")
+              : moment(this.selectedTime, "HH:mm:ss").format("h:mm A")
           : "";
     },
   },
@@ -143,7 +148,9 @@ export default {
       }
     },
     setDefaultStartTime() {
-      const now = moment.tz(this.selectedTimezone);
+      const now = this.useTimezone
+          ? moment.tz(this.selectedTimezone)
+          : moment();
 
       // Set minutes, seconds, and milliseconds to 0 and add 1 hour
       now.minutes(0).seconds(0).milliseconds(0).add(1, "hours");
@@ -152,18 +159,25 @@ export default {
     },
     parseTimestamptz(value) {
       if (value) {
-        const dateTime = moment.tz(value, this.selectedTimezone);
+        const dateTime = this.useTimezone
+            ? moment.tz(value, this.selectedTimezone)
+            : moment(value);
+
         this.selectedDate = dateTime.format("YYYY-MM-DD");
         this.selectedTime = dateTime.format("HH:mm:ss");
       }
     },
     getTimestampForDatabase() {
-      return moment
-          .tz(`${this.selectedDate} ${this.selectedTime}`, this.selectedTimezone)
-          .toISOString();
+      return this.useTimezone
+          ? moment
+              .tz(`${this.selectedDate} ${this.selectedTime}`, this.selectedTimezone)
+              .toISOString()
+          : moment(`${this.selectedDate} ${this.selectedTime}`).toISOString();
     },
     finalizeDateTime() {
       const dateTimeForDB = this.getTimestampForDatabase();
+
+      console.log(dateTimeForDB)
       this.$emit("update:modelValue", dateTimeForDB);
       this.showDialog = false;
     },
