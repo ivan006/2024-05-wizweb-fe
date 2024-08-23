@@ -473,9 +473,9 @@ export default {
     updateModelValue(item){
       this.$emit('update:modelValue', item)
     },
-    updateStartTime(arg) {
-      // this.$emit('update:modelValue', arg);
-      this.$emit('updateSetDefaultEndTime', arg);
+    updateStartTime(item) {
+      this.$emit('update:modelValue', item)
+      this.$emit('updateSetDefaultEndTime', item);
     },
     async searchGooglePlace(arg) {
       // Implement the necessary logic
