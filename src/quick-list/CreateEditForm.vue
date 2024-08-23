@@ -126,8 +126,25 @@ export default {
   },
   methods: {
     updateSetDefaultEndTime(arg) {
-      const timeRangeEndField = this.superOptions.modelFields.find((field) => field.usageType == "timeRangeEnd");
-      this.itemData[timeRangeEndField.name] = moment(arg).add(2, "hours").toISOString();
+      const timeRangeEndField = this.superOptions.modelFields.find(
+          (field) => field.usageType === "timeRangeEnd"
+      );
+
+      // // Check if the argument contains timezone information (e.g., "Z" or offset like "+02:00")
+      // const isTimezoneAware = /Z|[+-]\d{2}:\d{2}/.test(arg);
+      //
+      // if (isTimezoneAware) {
+      //   // If the time is timezone-aware, handle it with timezone
+      //   this.itemData[timeRangeEndField.name] = moment
+      //       .tz(arg, this.selectedTimezone)
+      //       .add(2, "hours")
+      //       .toISOString();
+      // } else {
+        // If the time is not timezone-aware, handle it as local time
+        this.itemData[timeRangeEndField.name] = moment(arg)
+            .add(2, "hours")
+            .format('YYYY-MM-DDTHH:mm:ss.SSS');
+      // }
     },
     cancel() {
       this.$emit("cancel");

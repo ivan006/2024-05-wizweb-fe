@@ -34,7 +34,7 @@
           <!--        :modelValue="modelValue"-->
           <!--        @update:modelValue="updateModelValue"-->
           <!--        :superOptions="superOptions"-->
-          <!--        @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"-->
+          <!--        @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"-->
           <!--        :template="template"-->
           <!--    />-->
           <!--  </template>-->
@@ -45,7 +45,7 @@
                 :modelValue="modelValue"
                 @update:modelValue="updateModelValue"
                 :superOptions="superOptions"
-                @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
                 :template="col"
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
@@ -60,7 +60,7 @@
                   :compField="compField"
                   @update:modelValue="updateModelValue"
                   :superOptions="superOptions"
-                  @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                  @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
                   :dataPoint="template.dataPoint"
                   :formServerErrors="formServerErrors"
                   :itemErrors="itemErrors"

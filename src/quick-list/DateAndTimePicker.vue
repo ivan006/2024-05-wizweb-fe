@@ -172,12 +172,11 @@ export default {
           ? moment
               .tz(`${this.selectedDate} ${this.selectedTime}`, this.selectedTimezone)
               .toISOString()
-          : moment(`${this.selectedDate} ${this.selectedTime}`).toISOString();
+          : moment(`${this.selectedDate} ${this.selectedTime}`)
+              .format('YYYY-MM-DDTHH:mm:ss.SSS');
     },
     finalizeDateTime() {
       const dateTimeForDB = this.getTimestampForDatabase();
-
-      console.log(dateTimeForDB)
       this.$emit("update:modelValue", dateTimeForDB);
       this.showDialog = false;
     },

@@ -25,7 +25,7 @@
                     :modelValue="modelValue[compField.name]"
                     @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
                     :superOptions="superOptions"
-                    @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                    @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
                     :field="compField"
                     hideLabel
                     :formServerErrors="formServerErrors"
@@ -57,7 +57,7 @@
               :modelValue="modelValue[compField.name]"
               @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,compField.name)}"
               :superOptions="superOptions"
-              @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+              @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
               :field="compField"
               hideLabel
               :formServerErrors="formServerErrors"

@@ -17,7 +17,7 @@
                 :modelValue="itemData[field.name]"
                 @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
                 :superOptions="superOptions"
-                @updateSetDefaultEndTime="$emit('updateSetDefaultEndTime')"
+                @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
                 :field="field"
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
