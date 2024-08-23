@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!--<pre>{{selectedMonth}}</pre>-->
     <q-input
         label="Time Filter"
         type="text"
@@ -11,8 +10,8 @@
         filled
         dense
         @click="toggleMenu"
+        class="FilterTimeTrigger"
     />
-
     <q-menu
         v-model="menu"
         fit
@@ -29,9 +28,10 @@
               option-label="label"
               option-value="value"
               dense
-              outlined
+              filled
               emitValue
               mapOptions
+              class="q-mb-sm"
           ></q-select>
 
           <q-select
@@ -42,9 +42,10 @@
               option-label="label"
               option-value="value"
               dense
-              outlined
+              filled
               emitValue
               mapOptions
+              class="q-mb-sm"
           ></q-select>
 
           <q-select
@@ -55,9 +56,10 @@
               option-label="label"
               option-value="value"
               dense
-              outlined
+              filled
               emitValue
               mapOptions
+              class="q-mb-sm"
           ></q-select>
 
           <q-select
@@ -68,9 +70,10 @@
               option-label="label"
               option-value="value"
               dense
-              outlined
+              filled
               emitValue
               mapOptions
+              class="q-mb-sm"
           ></q-select>
 
           <q-card-actions>
@@ -300,17 +303,18 @@ export default {
         value: null,
       });
 
+      let weekNum = 1
       while (startOfMonth <= endOfMonth) {
         const startOfWeek = startOfMonth.clone().startOf('isoWeek');
         const endOfWeek = startOfWeek.clone().endOf('isoWeek');
         let label;
 
         if (startOfWeek.month() === endOfWeek.month()) {
-          label = `${startOfWeek.format('MMM D')} - ${endOfWeek.format('D')}`;
+          label = `Week ${weekNum} (${startOfWeek.format('MMM D')} - ${endOfWeek.format('D')})`;
         } else {
-          label = `${startOfWeek.format('MMM D')} - ${endOfWeek.format(
+          label = `Week ${weekNum} (${startOfWeek.format('MMM D')} - ${endOfWeek.format(
               'MMM D'
-          )}`;
+          )})`;
         }
 
         result.push({
@@ -319,6 +323,7 @@ export default {
         });
 
         startOfMonth.add(1, 'week');
+        ++weekNum
       }
 
       return result;
@@ -361,4 +366,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style>
+
+.FilterTimeTrigger > div {
+  cursor: pointer !important;
+}
+</style>
