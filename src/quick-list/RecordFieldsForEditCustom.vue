@@ -132,15 +132,24 @@ export default {
   computed:{
 
     compField() {
-      if (this.dataPoint.type === 'function') {
-        return { label: this.dataPoint.label };
+      if (this.template.dataPoint?.type === 'function') {
+        return { label: this.template.dataPoint.label };
       } else {
         const result = this.superOptions.modelFields.find((header) => {
-          return header.field == this.dataPoint.field
+          return header.field == this.template.dataPoint.field
         })
         return result
       }
     },
+  },
+  mounted() {
+    // this.itemData = this.modelValue;
+    // const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
+    // if (creatorKey) {
+    //   this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
+    // }
+  },
+  methods: {
     colClasses(baseWidth = 12) {
       baseWidth = +baseWidth
 
@@ -167,16 +176,7 @@ export default {
       const xs = roundToNearestSet(baseWidth * coefficients.xs);
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
-    }
-  },
-  mounted() {
-    // this.itemData = this.modelValue;
-    // const creatorKey = this.superOptions.modelFields.find((field) => field.usageType == "relForeignKeyCreatorType");
-    // if (creatorKey) {
-    //   this.itemData[creatorKey.name] = this.superOptions.user.id; // Assuming user has an id property
-    // }
-  },
-  methods: {
+    },
     updateModelValue(item) {
       this.$emit("update:modelValue", item);
     },
