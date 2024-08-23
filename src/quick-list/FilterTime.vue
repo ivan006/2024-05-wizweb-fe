@@ -231,7 +231,11 @@ export default {
     computeRange(values) {
       let startDate, endDate;
       if (values.day) {
-        startDate = endDate = moment(values.day);
+
+        startDate = moment(values.day).startOf('day');
+        endDate = moment(values.day).add(1, 'day').startOf('day');
+
+        // startDate = endDate = moment(values.day);
       } else if (values.week) {
         startDate = moment()
             .year(values.year)
@@ -302,10 +306,10 @@ export default {
         let label;
 
         if (startOfWeek.month() === endOfWeek.month()) {
-          label = `${startOfWeek.format('D')} - ${endOfWeek.format('D MMM')}`;
+          label = `${startOfWeek.format('MMM D')} - ${endOfWeek.format('D')}`;
         } else {
-          label = `${startOfWeek.format('D MMM')} - ${endOfWeek.format(
-              'D MMM'
+          label = `${startOfWeek.format('MMM D')} - ${endOfWeek.format(
+              'MMM D'
           )}`;
         }
 
@@ -331,7 +335,7 @@ export default {
 
       while (start <= end) {
         days.push({
-          label: start.format('Do'),
+          label: start.format('dd, Do'),
           value: start.format('YYYY-MM-DD'),
         });
         start.add(1, 'day');
