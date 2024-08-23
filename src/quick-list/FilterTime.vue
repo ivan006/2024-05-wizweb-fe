@@ -1,14 +1,15 @@
 <template>
   <div>
+    <!--<pre>{{selectedMonth}}</pre>-->
     <q-input
         label="Time Filter"
         type="text"
         v-model="displayDate"
         :error="false"
         :error-message="''"
-        readonly
+        disable
+        filled
         dense
-        outlined
         @click="toggleMenu"
     />
 
@@ -29,6 +30,8 @@
               option-value="value"
               dense
               outlined
+              emitValue
+              mapOptions
           ></q-select>
 
           <q-select
@@ -40,6 +43,8 @@
               option-value="value"
               dense
               outlined
+              emitValue
+              mapOptions
           ></q-select>
 
           <q-select
@@ -51,6 +56,8 @@
               option-value="value"
               dense
               outlined
+              emitValue
+              mapOptions
           ></q-select>
 
           <q-select
@@ -62,6 +69,8 @@
               option-value="value"
               dense
               outlined
+              emitValue
+              mapOptions
           ></q-select>
 
           <q-card-actions>
