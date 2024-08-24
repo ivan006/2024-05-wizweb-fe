@@ -74,16 +74,11 @@
                 title="Settings"
             >
               <div class="row items-center wrap">
-                <template v-if="!viewAs.hide">
+                <template v-if="viewAs.show.length">
                   <div class="q-mr-sm">
                     <q-select
                         style="width: 200px"
-                        :options="[
-                          { label: 'Table', value: 'table' },
-                          { label: 'Grid', value: 'grid' },
-                          { label: 'Map', value: 'map' },
-                          { label: 'Calendar', value: 'calendar' },
-                        ]"
+                        :options="tabOptions"
                         v-model="activeTab"
                         label="View As"
                         option-label="label"
@@ -359,7 +354,12 @@ export default {
       type: Object,
       default() {
         return {
-          hide: false,
+          show: [
+              'table',
+              'grid',
+              'map',
+              'calendar',
+          ],
           default: "table"
         };
       },
@@ -522,6 +522,28 @@ export default {
     };
   },
   computed: {
+    tabOptions() {
+      let result = []
+      // let result = [
+      //   { label: 'Table', value: 'table' },
+      //   { label: 'Grid', value: 'grid' },
+      //   { label: 'Map', value: 'map' },
+      //   { label: 'Calendar', value: 'calendar' },
+      // ]
+      if(this.viewAs.show.includes('grid')){
+        result.push({ label: 'Grid', value: 'grid' })
+      }
+      if(this.viewAs.show.includes('map')){
+        result.push({ label: 'Map', value: 'map' })
+      }
+      if(this.viewAs.show.includes('calendar')){
+        result.push({ label: 'Calendar', value: 'calendar' })
+      }
+      if(this.viewAs.show.includes('table')){
+        result.push({ label: 'Table', value: 'table' })
+      }
+      return result
+    },
     optionsComputed: {
       get() {
         return this.options;
@@ -658,7 +680,7 @@ export default {
       // let result = true
       let result = false
       if (
-          !this.viewAs.hide ||
+          this.viewAs.show.length ||
           (
               this.filterInputs.length &&
               (
