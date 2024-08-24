@@ -9,7 +9,7 @@
         :error="false"
         :error-message="''"
         dense
-        outlined
+        filled
         :disable="disabled"
         v-slot:append
     >
@@ -30,7 +30,7 @@
             readonly
             @click="showDatePicker = true"
             dense
-            outlined
+            filled
         ></q-input>
 
         <!-- Date Picker Modal -->
@@ -52,7 +52,7 @@
             readonly
             @click="showTimePicker = true"
             dense
-            outlined
+            filled
         ></q-input>
 
         <!-- Time Picker Modal -->

@@ -267,9 +267,17 @@ export default {
       });
 
       for (let yearsBack = 0; yearsBack < 10; yearsBack++) {
+        let year = currentYear - yearsBack;
+        let label = year;
+
+        // Append " (Current)" if this is the current year
+        if (year === currentYear) {
+          label = `${year} (Current Year)`;
+        }
+
         result.push({
-          label: currentYear - yearsBack,
-          value: currentYear - yearsBack,
+          label: label,
+          value: year,
         });
       }
 
@@ -283,18 +291,26 @@ export default {
         value: null,
       });
 
+      const currentMonth = moment().month(); // Get the current month (0-11)
+
       for (let month = 0; month < 12; month++) {
+        let label = moment().month(month).format('MMMM');
+
+        // Append " (Current)" if this is the current month
+        if (month === currentMonth) {
+          label = `${label} (Current Month)`;
+        }
+
         result.push({
-          label: moment().month(month).format('MMMM'),
+          label: label,
           value: +moment().month(month).format('MM'),
         });
       }
+
       return result;
     },
     generateWeeks(year, month) {
-      const startOfMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD').startOf(
-          'month'
-      );
+      const startOfMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD').startOf('month');
       const endOfMonth = startOfMonth.clone().endOf('month');
       const result = [];
 
@@ -303,18 +319,23 @@ export default {
         value: null,
       });
 
-      let weekNum = 1
+      let weekNum = 1;
+      const today = moment(); // Get today's date
+
       while (startOfMonth <= endOfMonth) {
         const startOfWeek = startOfMonth.clone().startOf('isoWeek');
         const endOfWeek = startOfWeek.clone().endOf('isoWeek');
         let label;
 
         if (startOfWeek.month() === endOfWeek.month()) {
-          label = `Week ${weekNum} (${startOfWeek.format('MMM D')} - ${endOfWeek.format('D')})`;
+          label = `Week ${weekNum} (${startOfWeek.format('MMM D dd')} - ${endOfWeek.format('D dd')})`;
         } else {
-          label = `Week ${weekNum} (${startOfWeek.format('MMM D')} - ${endOfWeek.format(
-              'MMM D'
-          )})`;
+          label = `Week ${weekNum} (${startOfWeek.format('MMM D dd')} - ${endOfWeek.format('MMM D dd')})`;
+        }
+
+        // Check if today's date falls within this week
+        if (today.isBetween(startOfWeek, endOfWeek, null, '[]')) {
+          label = `${label} (Current Week)`
         }
 
         result.push({
@@ -323,7 +344,7 @@ export default {
         });
 
         startOfMonth.add(1, 'week');
-        ++weekNum
+        ++weekNum;
       }
 
       return result;
@@ -337,12 +358,21 @@ export default {
 
       const end = start.clone().endOf('isoWeek');
       const days = [];
+      const today = moment().format('YYYY-MM-DD'); // Get today's date in the same format
 
       while (start <= end) {
+        let label = start.format('dd, Do');
+
+        // Append " (Current)" if this is the current day
+        if (start.format('YYYY-MM-DD') === today) {
+          label = `${label} (Today)`;
+        }
+
         days.push({
-          label: start.format('dd, Do'),
+          label: label,
           value: start.format('YYYY-MM-DD'),
         });
+
         start.add(1, 'day');
       }
 
@@ -357,6 +387,7 @@ export default {
         },
         ...filteredDays,
       ];
+
       return result;
     },
   },
