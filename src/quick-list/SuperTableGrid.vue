@@ -8,7 +8,7 @@
                 templateListGrid.cols
               "
         >
-          <div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >
+          <div :class="colClasses(templateListGrid.colWidth ? templateListGrid.colWidth : 3)" >
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <RecordFieldsForDisplayCustom
                   :item="item"

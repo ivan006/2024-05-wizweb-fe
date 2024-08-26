@@ -503,7 +503,7 @@ export default {
       ), // last 5 years including this year
       itemsLength: 1,
       activated: false,
-      loading: true,
+      loading: false,
       options: {
         page: 1,
         itemsPerPage: 10,

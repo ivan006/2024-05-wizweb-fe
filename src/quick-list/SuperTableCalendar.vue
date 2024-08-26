@@ -88,6 +88,7 @@
                 :interval-count="19"
                 hour24-format
                 :weekdays="[1,2,3,4,5,6,0]"
+                no-active-date
             >
 
               <template #day-container="{ scope: { days }}">
