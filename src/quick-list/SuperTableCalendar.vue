@@ -2,6 +2,9 @@
   <div>
     <div>
       <div class="subcontent">
+        <pre>{{startFieldName}}</pre>
+        <pre>{{items}}</pre>
+        <pre>{{events}}</pre>
 
         <!--<div class="q-ma-sm row justify-center">-->
         <!--  <q-select-->
@@ -316,48 +319,48 @@ export default {
       currentDate: null,
       currentTime: null,
       timeStartPos: 0,
-      events: [
-        {
-          id: 1,
-          title: 'Meeting',
-          details: 'Time to pitch my idea to the company',
-          date: today(),
-          time: '09:00',
-          duration: 120,
-          bgcolor: 'red',
-          icon: 'fas fa-handshake'
-        },
-        {
-          id: 2,
-          title: 'Lunch',
-          details: 'Company is paying!',
-          date: today(),
-          time: '12:00',
-          duration: 60,
-          bgcolor: 'teal',
-          icon: 'fas fa-hamburger'
-        },
-        {
-          id: 3,
-          title: 'Conference',
-          details: 'Teaching Javascript 101',
-          date: today(),
-          time: '13:00',
-          duration: 240,
-          bgcolor: 'blue',
-          icon: 'fas fa-chalkboard-teacher'
-        },
-        {
-          id: 4,
-          title: 'Girlfriend',
-          details: 'Meet GF for dinner at Swanky Restaurant',
-          date: today(),
-          time: '19:00',
-          duration: 180,
-          bgcolor: 'teal-2',
-          icon: 'fas fa-utensils'
-        }
-      ]
+      // events: [
+      //   {
+      //     id: 1,
+      //     title: 'Meeting',
+      //     details: 'Time to pitch my idea to the company',
+      //     date: today(),
+      //     time: '09:00',
+      //     duration: 120,
+      //     bgcolor: 'red',
+      //     icon: 'fas fa-handshake'
+      //   },
+      //   {
+      //     id: 2,
+      //     title: 'Lunch',
+      //     details: 'Company is paying!',
+      //     date: today(),
+      //     time: '12:00',
+      //     duration: 60,
+      //     bgcolor: 'teal',
+      //     icon: 'fas fa-hamburger'
+      //   },
+      //   {
+      //     id: 3,
+      //     title: 'Conference',
+      //     details: 'Teaching Javascript 101',
+      //     date: today(),
+      //     time: '13:00',
+      //     duration: 240,
+      //     bgcolor: 'blue',
+      //     icon: 'fas fa-chalkboard-teacher'
+      //   },
+      //   {
+      //     id: 4,
+      //     title: 'Girlfriend',
+      //     details: 'Meet GF for dinner at Swanky Restaurant',
+      //     date: today(),
+      //     time: '19:00',
+      //     duration: 180,
+      //     bgcolor: 'teal-2',
+      //     icon: 'fas fa-utensils'
+      //   }
+      // ]
     }
   },
   computed: {
@@ -412,37 +415,38 @@ export default {
       let result = [];
       if (this.startFieldName?.value) {
         for (const item of this.items) {
+          let start, end;
+
+          // Check if start and end fields are nested in a related model
           if (this.startFieldName.isChildOf) {
-            result.push({
-              title: item[this.firstNonIdKey],
-              start: new Date(
-                  item[this.startFieldName.isChildOf.value][
-                      this.startFieldName.value
-                      ]
-              ),
-              end: new Date(
-                  item[this.startFieldName.isChildOf.value][
-                      this.endFieldName.value
-                      ]
-              ),
-              color: "deep-purple",
-              timed: true,
-              meta: item,
-            });
+            start = new Date(item[this.startFieldName.isChildOf.value][this.startFieldName.value]);
+            end = new Date(item[this.startFieldName.isChildOf.value][this.endFieldName.value]);
           } else {
-            result.push({
-              title: item[this.firstNonIdKey],
-              start: new Date(item[this.startFieldName.value]),
-              end: new Date(item[this.endFieldName.value]),
-              color: "deep-purple",
-              timed: true,
-              meta: item,
-            });
+            start = new Date(item[this.startFieldName.value]);
+            end = new Date(item[this.endFieldName.value]);
           }
+
+          // Calculate duration in minutes
+          const duration = (end - start) / 1000 / 60;
+
+          // Extract the start time in HH:mm format
+          const time = start.toISOString().substr(11, 5);
+
+          result.push({
+            id: item[this.firstNonIdKey],  // Assuming this is a unique identifier
+            title: item[this.firstNonIdKey],
+            details: 'Event details',  // Replace with actual details if available
+            date: start.toISOString().substr(0, 10),  // YYYY-MM-DD format
+            time: time,
+            duration: duration,
+            bgcolor: 'deep-purple',
+            icon: 'fas fa-calendar-alt',  // Generic icon
+          });
         }
       }
       return result;
     },
+
 
     style(){
       return {
