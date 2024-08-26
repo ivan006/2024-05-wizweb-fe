@@ -125,11 +125,11 @@ export default {
         let mapHeaderParent = "";
         for (const mapHeader of this.mapHeaders) {
           mapHeaderParent = mapHeader.field;
-          if (mapHeader.headerChildren) {
-            longField = mapHeader.headerChildren.find((field) => {
+          if (mapHeader.headerParentFields) {
+            longField = mapHeader.headerParentFields.find((field) => {
               return field.usageType == "mapExtraGeoLocLong";
             });
-            latField = mapHeader.headerChildren.find((field) => {
+            latField = mapHeader.headerParentFields.find((field) => {
               return field.usageType == "mapExtraGeoLocLat";
             });
 

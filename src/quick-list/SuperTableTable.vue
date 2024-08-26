@@ -256,8 +256,8 @@ export default {
       } else {
         for (const header of this.superOptions.headers) {
           result.push(header);
-          if (header.headerChildren) {
-            for (const childHeader of header.headerChildren) {
+          if (header.headerParentFields) {
+            for (const childHeader of header.headerParentFields) {
               result.push({
                 // isChildOf: header,
                 ...childHeader,

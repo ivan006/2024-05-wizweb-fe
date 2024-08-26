@@ -467,8 +467,40 @@ export default {
       const key = Object.keys(this.superOptions.headers).find(
           (field) => this.superOptions.headers[field].name !== "id"
       );
-      const result = this.superOptions.headers[key].name;
-      return result;
+      let result = this.superOptions.headers[key].name;
+
+
+
+
+      let timeRangeStartField = this.superOptions.headers.find((field) => {
+        return field.usageType == "timeRangeStart";
+      });
+      if (!timeRangeStartField) {
+        for (const modelField of this.superOptions.headers) {
+          if (modelField.headerParentFields) {
+            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
+              return field.usageType == "timeRangeStart";
+            });
+            if(timeRangeStartFieldParent){
+              const parentHeaders = QuickListsHelpers.SupaerTableHeaders(
+                  modelField.meta.relatedModel,
+                  [],
+                  [],
+                  [],
+              );
+
+              const key = Object.keys(parentHeaders).find(
+                  (field) => parentHeaders[field].name !== "id"
+              );
+              result = [
+                modelField.name,
+                parentHeaders[key].name
+              ]
+            }
+          }
+        }
+      }
+      return result
     },
     startFieldName() {
       let timeRangeStartField = this.superOptions.headers.find((field) => {
@@ -476,15 +508,17 @@ export default {
       });
       if (!timeRangeStartField) {
         for (const modelField of this.superOptions.headers) {
-          if (modelField.headerChildren) {
-            timeRangeStartField = modelField.headerChildren.find((field) => {
+          if (modelField.headerParentFields) {
+            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
               return field.usageType == "timeRangeStart";
             });
-            timeRangeStartField = {
-              ...timeRangeStartField,
-              isChildOf: modelField,
-            };
-            break;
+            if(timeRangeStartFieldParent){
+              timeRangeStartField = {
+                ...timeRangeStartFieldParent,
+                isChildOf: modelField,
+              };
+              break;
+            }
           }
         }
       }
@@ -496,15 +530,17 @@ export default {
       });
       if (!timeRangeEndField) {
         for (const modelField of this.superOptions.headers) {
-          if (modelField.headerChildren) {
-            timeRangeEndField = modelField.headerChildren.find((field) => {
+          if (modelField.headerParentFields) {
+            timeRangeEndField = modelField.headerParentFields.find((field) => {
               return field.usageType == "timeRangeEnd";
             });
-            timeRangeEndField = {
-              ...timeRangeEndField,
-              isChildOf: modelField,
-            };
-            break;
+            if(timeRangeEndField){
+              timeRangeEndField = {
+                ...timeRangeEndField,
+                isChildOf: modelField,
+              };
+              break;
+            }
           }
         }
       }
@@ -512,17 +548,28 @@ export default {
     },
     events() {
       let result = [];
-      if (this.startFieldName?.name) {
+      if (this.startFieldName?.name || this.startFieldName.isChildOf) {
         for (const item of this.items) {
           let start, end;
 
           // Check if start and end fields are nested in a related model
+          console.log("111")
           if (this.startFieldName.isChildOf) {
-            start = new Date(item[this.startFieldName.isChildOf.name][this.startFieldName.name]);
-            end = new Date(item[this.startFieldName.isChildOf.name][this.endFieldName.name]);
+            const startSplit = this.startFieldName.name.split(".");
+            start = new Date(item[startSplit[0]][startSplit[1]]);
+
+            const endSplit = this.endFieldName.name.split(".");
+            end = new Date(item[endSplit[0]][endSplit[1]]);
           } else {
             start = new Date(item[this.startFieldName.name]);
             end = new Date(item[this.endFieldName.name]);
+          }
+
+          let title = ""
+          if (Array.isArray(this.firstNonIdKey)) {
+            title = item[this.firstNonIdKey[0]][this.firstNonIdKey[1]];
+          } else {
+            title = item[this.firstNonIdKey];
           }
 
           // Calculate duration in minutes
@@ -532,8 +579,8 @@ export default {
           const time = start.toISOString().substr(11, 5);
 
           result.push({
-            id: item[this.firstNonIdKey],  // Assuming this is a unique identifier
-            title: item[this.firstNonIdKey],
+            id: title,  // Assuming this is a unique identifier
+            title: title,
             // details: 'Event details',  // Replace with actual details if available
             date: start.toISOString().substr(0, 10),  // YYYY-MM-DD format
             time: time,
@@ -614,37 +661,7 @@ export default {
 
 
 
-    // onToday () {
-    //   this.$refs.calendar.moveToToday()
-    // },
-    // onPrev () {
-    //   this.$refs.calendar.prev()
-    // },
-    // onNext () {
-    //   this.$refs.calendar.next()
-    // },
-    //
-    // onMoved (data) {
-    //   console.log('onMoved', data)
-    // },
-    // onChange (data) {
-    //   console.log('onChange', data)
-    // },
-    // onClickDate (data) {
-    //   console.log('onClickDate', data)
-    // },
-    // onClickTime (data) {
-    //   console.log('onClickTime', data)
-    // },
-    // onClickInterval (data) {
-    //   console.log('onClickInterval', data)
-    // },
-    // onClickHeadIntervals (data) {
-    //   console.log('onClickHeadIntervals', data)
-    // },
-    // onClickHeadDay (data) {
-    //   console.log('onClickHeadDay', data)
-    // },
+
 
     hasDate (days) {
       return this.currentDate
@@ -723,25 +740,25 @@ export default {
     },
 
     onMoved (data) {
-      console.log('onMoved', data)
+      // console.log('onMoved', data)
     },
     onChange (data) {
-      console.log('onChange', data)
+      // console.log('onChange', data)
     },
     onClickDate (data) {
-      console.log('onClickDate', data)
+      // console.log('onClickDate', data)
     },
     onClickTime (data) {
-      console.log('onClickTime', data)
+      // console.log('onClickTime', data)
     },
     onClickInterval (data) {
-      console.log('onClickInterval', data)
+      // console.log('onClickInterval', data)
     },
     onClickHeadIntervals (data) {
-      console.log('onClickHeadIntervals', data)
+      // console.log('onClickHeadIntervals', data)
     },
     onClickHeadDay (data) {
-      console.log('onClickHeadDay', data)
+      // console.log('onClickHeadDay', data)
     }
   },
   mounted() {
@@ -754,11 +771,7 @@ export default {
   },
   watch: {
     loading(newVal, oldVal){
-      console.log("newVal")
-      console.log(newVal)
-      console.log(oldVal)
       if (!newVal){
-        console.log(12)
         this.adjustCurrentTime()
         // now, adjust the time every minute
         const intervalId = setInterval(() => {

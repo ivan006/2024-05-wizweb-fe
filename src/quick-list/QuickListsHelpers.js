@@ -173,7 +173,7 @@ class QuickListsHelpers {
     }
 
 
-    static SupaerTableHeaders(model, excludedCols = [], canEdit, displayMapField = false) {
+    static SupaerTableHeaders(model, excludedCols = [], canEdit = true, displayMapField = false) {
         let result = [];
         const computedAttrs = this.computedAttrs(model, excludedCols);
 
@@ -182,13 +182,16 @@ class QuickListsHelpers {
                 // do nothing
             } else if (computedAttr.usageType.startsWith('relLookup')) {
                 const relatedAttrs = this.computedAttrs(computedAttr.meta.field.parent, excludedCols);
-                let headerChildren = [];
+                // console.log("computedAttr")
+                // console.log(computedAttr)
+                // console.log(relatedAttrs)
+                let headerParentFields = [];
                 for (const relatedAttr of relatedAttrs) {
-                    if (relatedAttr.important === true) {
+                    // if (relatedAttr.important === true) {
                         if (relatedAttr.usageType.startsWith('relForeignKey')) {
                             // do nothing
                         } else {
-                            headerChildren.push({
+                            headerParentFields.push({
                                 usageType: relatedAttr.usageType,
                                 dataType: relatedAttr.dataType,
                                 meta: relatedAttr.meta,
@@ -200,20 +203,20 @@ class QuickListsHelpers {
                                 sortable: true,
                             });
                         }
-                    }
+                    // }
                 }
 
                 result.push({
                     usageType: computedAttr.usageType,
                     dataType: computedAttr.dataType,
                     meta: computedAttr.meta,
-                    headerChildren: headerChildren,
+                    headerParentFields: headerParentFields,
                     name: computedAttr.name,
                     align: 'left',
                     label: computedAttr.label,
                     field: computedAttr.name,
                     sortable: true,
-                    children: headerChildren,
+                    children: headerParentFields,
                 });
             } else {
                 result.push({
