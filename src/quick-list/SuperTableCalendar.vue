@@ -2,9 +2,9 @@
   <div>
     <div>
       <div class="subcontent">
-        <pre>{{startFieldName}}</pre>
-        <pre>{{items}}</pre>
-        <pre>{{events}}</pre>
+        <!--<pre>{{startFieldName}}</pre>-->
+        <!--<pre>{{items}}</pre>-->
+        <!--<pre>{{events}}</pre>-->
 
         <!--<div class="q-ma-sm row justify-center">-->
         <!--  <q-select-->
@@ -75,8 +75,8 @@
                 @click-head-intervals="onClickHeadIntervals"
                 @click-head-day="onClickHeadDay"
                 :interval-height="30"
-                :interval-start="6"
-                :interval-count="16"
+                :interval-start="5"
+                :interval-count="19"
                 hour24-format
             >
             <!--<q-calendar-day-->
@@ -249,7 +249,15 @@
 </template>
 
 <script>
-import {today, parseDate} from '@quasar/quasar-ui-qcalendar';
+import {
+  today,
+  parseDate,
+  addToDate,
+  parseTimestamp,
+  isBetweenDates,
+  parsed,
+  parseTime,
+} from '@quasar/quasar-ui-qcalendar';
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
@@ -366,9 +374,9 @@ export default {
   computed: {
     firstNonIdKey() {
       const key = Object.keys(this.superOptions.headers).find(
-          (field) => this.superOptions.headers[field].value !== "id"
+          (field) => this.superOptions.headers[field].name !== "id"
       );
-      const result = this.superOptions.headers[key].value;
+      const result = this.superOptions.headers[key].name;
       return result;
     },
     startFieldName() {
@@ -413,17 +421,17 @@ export default {
     },
     events() {
       let result = [];
-      if (this.startFieldName?.value) {
+      if (this.startFieldName?.name) {
         for (const item of this.items) {
           let start, end;
 
           // Check if start and end fields are nested in a related model
           if (this.startFieldName.isChildOf) {
-            start = new Date(item[this.startFieldName.isChildOf.value][this.startFieldName.value]);
-            end = new Date(item[this.startFieldName.isChildOf.value][this.endFieldName.value]);
+            start = new Date(item[this.startFieldName.isChildOf.name][this.startFieldName.name]);
+            end = new Date(item[this.startFieldName.isChildOf.name][this.endFieldName.name]);
           } else {
-            start = new Date(item[this.startFieldName.value]);
-            end = new Date(item[this.endFieldName.value]);
+            start = new Date(item[this.startFieldName.name]);
+            end = new Date(item[this.endFieldName.name]);
           }
 
           // Calculate duration in minutes
