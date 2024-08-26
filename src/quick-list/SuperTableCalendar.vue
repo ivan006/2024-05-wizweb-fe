@@ -53,14 +53,23 @@
         <!--  />-->
         <!--</div>-->
 
-        <div class="row justify-center">
+        <template v-if="loading">
+
+          <div class="text-center q-pa-md">
+            <!--<q-spinner  color="primary" />-->
+            Loading...
+          </div>
+        </template>
+        <div :style="`display: ${loading ? 'none' : 'block'};`">
+
           <div
               style="display: flex; max-width: 100%; width: 100%; "
           >
+
             <q-calendar-day
                 ref="calendar"
                 v-model="selectedDate"
-                view="week"
+                :view="view"
                 short-weekday-label
                 :date-header="'stacked'"
                 :weekday-align="'center'"
@@ -74,32 +83,12 @@
                 @click-interval="onClickInterval"
                 @click-head-intervals="onClickHeadIntervals"
                 @click-head-day="onClickHeadDay"
-                :interval-height="30"
+                :interval-height="20"
                 :interval-start="5"
                 :interval-count="19"
                 hour24-format
+                :weekdays="[1,2,3,4,5,6,0]"
             >
-            <!--<q-calendar-day-->
-            <!--    ref="calendar"-->
-            <!--    v-model="selectedDate"-->
-            <!--    view="day"-->
-            <!--    animated-->
-            <!--    bordered-->
-            <!--    transition-next="slide-left"-->
-            <!--    transition-prev="slide-right"-->
-            <!--    no-active-date-->
-            <!--    :interval-minutes="15"-->
-            <!--    :interval-start="24"-->
-            <!--    :interval-count="68"-->
-            <!--    :interval-height="28"-->
-            <!--    @change="onChange"-->
-            <!--    @moved="onMoved"-->
-            <!--    @click-date="onClickDate"-->
-            <!--    @click-time="onClickTime"-->
-            <!--    @click-interval="onClickInterval"-->
-            <!--    @click-head-intervals="onClickHeadIntervals"-->
-            <!--    @click-head-day="onClickHeadDay"-->
-            <!--&gt;-->
 
               <template #day-container="{ scope: { days }}">
                 <template v-if="hasDate(days)">
@@ -129,7 +118,7 @@
                     >
                       <div class="title q-calendar__ellipsis">
                         {{ event.title }}
-                        <q-tooltip>{{ event.details }}</q-tooltip>
+                        <q-tooltip>{{ event.title }}</q-tooltip>
                       </div>
                     </q-badge>
                     <q-badge
@@ -137,9 +126,10 @@
                         :class="badgeClasses(event, 'header')"
                         :style="badgeStyles(event, 'header')"
                         style="margin: 1px; width: 10px; max-width: 10px; height: 10px; max-height: 10px; cursor: pointer"
-                        @click="scrollToEvent(event)"
+                        @click="showEvent(event)"
                     >
-                      <q-tooltip>{{ event.time + ' - ' + event.details }}</q-tooltip>
+                      <!--@click="scrollToEvent(event)"-->
+                      <q-tooltip>{{ event.time + ' - ' + event.title }}</q-tooltip>
                     </q-badge>
                   </template>
                 </div>
@@ -151,6 +141,7 @@
                     :key="event.id"
                 >
                   <div
+                      @click="showEvent(event)"
                       v-if="event.time !== undefined"
                       class="my-event"
                       :class="badgeClasses(event, 'body')"
@@ -158,7 +149,7 @@
                   >
                     <div class="title q-calendar__ellipsis">
                       {{ event.title }}
-                      <q-tooltip>{{ event.time + ' - ' + event.details }}</q-tooltip>
+                      <q-tooltip>{{ event.time }}</q-tooltip>
                     </div>
                   </div>
                 </template>
@@ -168,14 +159,47 @@
 
             <!--style="height: 400px; width: 100%;"-->
           </div>
+
+          <div class="row justify-center">
+            <div class="q-pa-md q-gutter-sm row">
+              <CalendarNavigationBar
+                  @today="onToday"
+                  @prev="onPrev"
+                  @next="onNext"
+              />
+              <q-select
+                  v-model="view"
+                  :options='[
+                      // "month",
+                      {
+                        label: "Week",
+                        value: "week",
+                      },
+                      {
+                        label: "Day",
+                        value: "day",
+                      },
+                      // "4day"
+                  ]'
+                  option-label="label"
+                  option-value="value"
+                  emitValue
+                  mapOptions
+                  dense
+                  filled
+                  hide-details
+                  class=""
+                  label="View"
+              ></q-select>
+            </div>
+          </div>
+
         </div>
 
-        <CalendarNavigationBar
-            @today="onToday"
-            @prev="onPrev"
-            @next="onNext"
-        />
       </div>
+
+
+      <!--<pre>{{events}}</pre>-->
 
       <!--<q-card class="q-pa-none">-->
       <!--  <q-select-->
@@ -228,20 +252,67 @@
       <!--</q-card>-->
 
       <q-dialog v-model="viewItemData.showModal" max-width="800px">
-        <q-card class="q-pt-md">
-          <q-card-section>
+        <q-card
+            class="q-pa-none"
+        >
+          <template
+              v-if="
+                templateListGrid &&
+                templateListGrid.cols
+              "
+          >
+
+            <RecordFieldsForDisplayCustom
+                :item="viewItemData.data"
+                :maxFields="6"
+                :childRelations="[]"
+                isSummary
+                :superOptions="superOptions"
+                :template="templateListGrid"
+                @editItem="editItem"
+                @deleteItem="deleteItem"
+                :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+                @clickRow="clickRow"
+            />
+            <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
+            <!--  <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">-->
+            <!--  </div>-->
+            <!--</div>-->
+          </template>
+          <template v-else>
             <RecordFieldsForDisplayGeneric
                 :item="viewItemData.data"
+                :maxFields="6"
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
+                :unClickable="unClickable"
+                @clickRow="clickRow"
             />
-          </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn @click="clickRow(viewItemData.data)" flat label="Open" />
-            <q-btn @click="viewItemData.showModal = false" flat label="Cancel" />
-          </q-card-actions>
+
+
+            <!--<RecordFieldsForDisplayGeneric-->
+            <!--    :item="viewItemData.data"-->
+            <!--    :superOptions="superOptions"-->
+            <!--    @editItem="editItem"-->
+            <!--    @deleteItem="deleteItem"-->
+            <!--/>-->
+
+            <!--<div :class="`col-12 col-md-3 `">-->
+            <!--  <div class="q-card q-mx-auto" style="height: 100%">-->
+            <!--  </div>-->
+            <!--</div>-->
+          </template>
+          <!--<q-card-section>-->
+
+          <!-- -->
+          <!--</q-card-section>-->
+
+          <!--<q-card-actions align="right">-->
+          <!--  <q-btn @click="clickRow(viewItemData.data)" flat label="Open" />-->
+          <!--  <q-btn @click="viewItemData.showModal = false" flat label="Cancel" />-->
+          <!--</q-card-actions>-->
         </q-card>
       </q-dialog>
     </div>
@@ -262,15 +333,35 @@ import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableCalendar",
   components: {
+    RecordFieldsForDisplayCustom,
     DatapointForDisplayInner,
     RecordFieldsForDisplayGeneric,
     CalendarNavigationBar,
   },
   props: {
+    loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    templateListGrid: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    unClickable: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     items: {
       type: Array,
       default() {
@@ -294,7 +385,6 @@ export default {
   data(){
     return {
       view: "week", // Initialize with a valid view
-      views: ["month", "week", "day", "4day"],
       mode: "stack",
       modes: ["stack", "column"],
       weekday: [1, 2, 3, 4, 5, 6, 0],
@@ -443,12 +533,13 @@ export default {
           result.push({
             id: item[this.firstNonIdKey],  // Assuming this is a unique identifier
             title: item[this.firstNonIdKey],
-            details: 'Event details',  // Replace with actual details if available
+            // details: 'Event details',  // Replace with actual details if available
             date: start.toISOString().substr(0, 10),  // YYYY-MM-DD format
             time: time,
             duration: duration,
             bgcolor: 'deep-purple',
             icon: 'fas fa-calendar-alt',  // Generic icon
+            meta: item,
           });
         }
       }
@@ -616,9 +707,9 @@ export default {
       return events
     },
 
-    scrollToEvent (event) {
-      this.$refs.calendar.scrollToTime(event.time, 350)
-    },
+    // scrollToEvent (event) {
+    //   this.$refs.calendar.scrollToTime(event.time, 350)
+    // },
 
     onToday () {
       this.$refs.calendar.moveToToday()
@@ -658,12 +749,23 @@ export default {
     }
 
 
-    this.adjustCurrentTime()
-    // now, adjust the time every minute
-    const intervalId = setInterval(() => {
-      this.adjustCurrentTime()
-    }, 60000)
+
   },
+  watch: {
+    loading(newVal, oldVal){
+      console.log("newVal")
+      console.log(newVal)
+      console.log(oldVal)
+      if (!newVal){
+        console.log(12)
+        this.adjustCurrentTime()
+        // now, adjust the time every minute
+        const intervalId = setInterval(() => {
+          this.adjustCurrentTime()
+        }, 60000)
+      }
+    }
+  }
 };
 </script>
 

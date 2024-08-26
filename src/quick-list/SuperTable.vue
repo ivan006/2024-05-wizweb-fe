@@ -208,6 +208,9 @@
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
+                :templateListGrid="templateListGrid"
+                :unClickable="unClickable"
+                :loading="loading"
             />
           </template>
         </div>
@@ -500,7 +503,7 @@ export default {
       ), // last 5 years including this year
       itemsLength: 1,
       activated: false,
-      loading: false,
+      loading: true,
       options: {
         page: 1,
         itemsPerPage: 10,
@@ -1010,7 +1013,8 @@ export default {
       }
     }
     if (this.activated || !this.isForSelectingRelation){
-      if (!this.loading && !this.justCreateButton) {
+      // if (!this.loading && !this.justCreateButton) {
+      if (!this.justCreateButton) {
         this.fetchData();
       }
     }
