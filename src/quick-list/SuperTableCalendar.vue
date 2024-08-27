@@ -61,6 +61,7 @@
           </div>
         </template>
         <div :style="`display: ${loading ? 'none' : 'block'};`">
+        <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
 
           <div
               style="display: flex; max-width: 100%; width: 100%; "
@@ -329,7 +330,9 @@ import {
   isBetweenDates,
   parsed,
   parseTime,
+  QCalendarDay
 } from '@quasar/quasar-ui-qcalendar';
+// } from '../../../2024-08-battery-fe/node_modules/@quasar/quasar-ui-qcalendar/src/index.js'
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
@@ -343,6 +346,7 @@ export default {
     DatapointForDisplayInner,
     RecordFieldsForDisplayGeneric,
     CalendarNavigationBar,
+    QCalendarDay,
   },
   props: {
     loading: {
