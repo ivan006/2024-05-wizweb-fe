@@ -9,6 +9,7 @@
       <template #default="{ api }">
         <InocanMarkerCluster :options="clusterOptions(api)">
           <InocanMarker
+              api-key="AIzaSyAENUjZ_P7ulkAcDb-U8Htn6VSv_ioEKWE"
               v-for="(m, index) in markers"
               :key="index"
               @click="clickedMarker(m, index)"
