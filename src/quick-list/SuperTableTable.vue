@@ -224,7 +224,7 @@ export default {
           } else {
 
             let label = "";
-            if (typeof field.label !== "undefined"){
+            if (typeof field.label !== "undefined" && !field.hideLabel){
               label = field.label
             }
 
