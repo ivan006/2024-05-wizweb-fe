@@ -368,7 +368,12 @@ export default {
         }
       });
     },
-  },
+    item(newVal) {
+      if (Object.keys(newVal).length !== 0){
+        this.$emit('update:item', newVal)
+      }
+    },
+  }
 };
 </script>
 

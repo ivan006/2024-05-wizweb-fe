@@ -67,6 +67,12 @@
         </q-tr>
       </template>
     </q-table>
+
+    <template v-if="!items.length && !loading">
+      <div class="text-center q-pa-md">
+        No items
+      </div>
+    </template>
   </div>
 </template>
 
@@ -218,7 +224,7 @@ export default {
           } else {
 
             let label = "";
-            if (typeof field.label !== "undefined"){
+            if (typeof field.label !== "undefined" && !field.hideLabel){
               label = field.label
             }
 
