@@ -5,7 +5,7 @@
         :center="modelValue"
         :zoom="zoom"
         map-type-id="roadmap"
-        style="height: calc(100vh - 220px); width: 100%"
+        style="height: calc(100vh - 222px); width: 100%"
     >
       <!--style="height: 500px; width: 904px"-->
       <!--map-type-id="terrain"-->

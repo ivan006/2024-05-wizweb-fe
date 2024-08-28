@@ -233,17 +233,17 @@
     <template v-else-if="field.usageType.startsWith('mapExtra')">
       <q-input
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
           :error="!!compError"
           :error-message="compError"
-          readonly
-          style="display: none"
           filled
           dense
       />
+      <!--readonly-->
+      <!--style="display: none"-->
     </template>
     <template v-else-if="field.usageType == 'normal'">
       <template v-if="field.dataType === 'string'">

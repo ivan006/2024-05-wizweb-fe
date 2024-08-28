@@ -199,6 +199,8 @@
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
+                :unClickable="unClickable"
+                :templateListGrid="templateListGrid"
             />
           </template>
           <template v-if="activeTab == 'calendar'">

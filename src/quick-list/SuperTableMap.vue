@@ -11,21 +11,41 @@
       />
     </q-card>
 
+
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
-      <q-card class="q-pt-md">
-        <q-card-section>
+      <q-card
+          class="q-pa-none"
+      >
+        <template
+            v-if="
+                templateListGrid &&
+                templateListGrid.cols
+              "
+        >
+          <RecordFieldsForDisplayCustom
+              :item="viewItemData.data"
+              :maxFields="6"
+              :childRelations="[]"
+              isSummary
+              :superOptions="superOptions"
+              :template="templateListGrid"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
+              :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+              @clickRow="clickRow"
+          />
+        </template>
+        <template v-else>
           <RecordFieldsForDisplayGeneric
               :item="viewItemData.data"
+              :maxFields="6"
               :superOptions="superOptions"
               @editItem="editItem"
               @deleteItem="deleteItem"
+              :unClickable="unClickable"
+              @clickRow="clickRow"
           />
-        </q-card-section>
-
-        <q-card-actions>
-          <q-btn @click="clickRow(viewItemData.data)" flat label="Open" />
-          <q-btn @click="viewItemData.showModal = false" flat label="Cancel" />
-        </q-card-actions>
+        </template>
       </q-card>
     </q-dialog>
   </div>
@@ -36,15 +56,29 @@ import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 
 export default {
   name: "SuperTableMap",
   components: {
+    RecordFieldsForDisplayCustom,
     DatapointForDisplayInner,
     MyGoogleMap,
     RecordFieldsForDisplayGeneric,
   },
   props: {
+    templateListGrid: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    unClickable: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     items: {
       type: Array,
       default() {
