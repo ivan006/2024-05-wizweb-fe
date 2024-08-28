@@ -1,11 +1,15 @@
 <template>
   <div>
-    <MyGoogleMap
-        :markers="markers"
-        v-model="center"
-        :zoom="zoom"
-        @clickMarker="clickedMarker"
-    />
+    <q-card class="q-pa-xs">
+
+      <MyGoogleMap
+          v-if="markers.length"
+          :markers="markers"
+          v-model="center"
+          :zoom="zoom"
+          @clickMarker="clickedMarker"
+      />
+    </q-card>
 
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
       <q-card class="q-pt-md">
@@ -105,17 +109,18 @@ export default {
       let latField = this.mapHeaders.find((field) => {
         return field.usageType == "mapExtraGeoLocLat";
       });
+      console.log(longField)
       if (latField && longField) {
         for (const item of this.items) {
-          if (item[latField.value] !== null) {
+          if (![null, ""].includes(item[latField.name])) {
             result.push({
               position: {
-                lat: item[latField.value],
-                lng: item[longField.value],
+                lat: +item[latField.name],
+                lng: +item[longField.name],
               },
               keys: {
-                long: longField.value,
-                lat: latField.value,
+                long: longField.name,
+                lat: latField.name,
               },
               meta: item,
             });
@@ -142,15 +147,15 @@ export default {
 
         if (latField && longField) {
           for (const item of this.items) {
-            if (item[latField.value] !== null) {
+            if (item[latField.name] !== null) {
               result.push({
                 position: {
-                  lat: item[mapHeaderParent][latField.value],
-                  lng: item[mapHeaderParent][longField.value],
+                  lat: item[mapHeaderParent][latField.name],
+                  lng: item[mapHeaderParent][longField.name],
                 },
                 keys: {
-                  long: longField.value,
-                  lat: latField.value,
+                  long: longField.name,
+                  lat: latField.name,
                 },
                 meta: item,
               });

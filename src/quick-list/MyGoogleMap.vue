@@ -1,22 +1,27 @@
 <template>
   <div>
     <InocanGoogleMap
+        :api-key="VITE_API_GOOGLE_MAP_KEY"
         :center="modelValue"
         :zoom="zoom"
-        map-type-id="terrain"
-        style="height: 500px; width: 904px"
+        map-type-id="roadmap"
+        style="height: calc(100vh - 220px); width: 100%"
     >
+      <!--style="height: 500px; width: 904px"-->
+      <!--map-type-id="terrain"-->
+      <!--satellite-->
+      <!--hybrid-->
       <template #default="{ api }">
         <InocanMarkerCluster :options="clusterOptions(api)">
-          <InocanMarker
-              v-for="(m, index) in markers"
-              :key="index"
-              @click="clickedMarker(m, index)"
-              :options="{
-              position: m.position,
-              icon: markerOptionsMethod(m, index),
-            }"
-          />
+          <template v-for="(m, index) in markers" :key="index">
+            <InocanMarker
+                @click="clickedMarker(m, index)"
+                :options="{
+                position: m.position,
+                icon: markerOptionsMethod(m, index),
+              }"
+            />
+          </template>
         </InocanMarkerCluster>
       </template>
     </InocanGoogleMap>
@@ -25,6 +30,8 @@
 
 <script>
 import { GoogleMap, Marker, MarkerCluster } from "vue3-google-map";
+import mapIconCluster from '../assets/mapIconCluster.svg'
+import mapIconPin from '../assets/mapIconPin.svg'
 
 export default {
   name: "MyGoogleMap",
@@ -56,9 +63,10 @@ export default {
   data() {
     return {
       selectedPlaceIndex: null,
+      VITE_API_GOOGLE_MAP_KEY: import.meta.env.VITE_API_GOOGLE_MAP_KEY,
       iconAndLabelLabel: {
         icon: {
-          url: "/mapIconCluster.svg",
+          url: mapIconCluster,
         },
         label: {
           color: "white",
@@ -101,7 +109,7 @@ export default {
     },
     markerOptions(m) {
       return {
-        url: "/mapIconPin.svg",
+        url: mapIconPin,
         size: { width: 30, height: 30, f: "px", b: "px" },
         scaledSize: { width: 30, height: 30, f: "px", b: "px" },
       };
@@ -109,7 +117,7 @@ export default {
     selectedMarkerOptions(m) {
       return {
         id: m.meta.id,
-        url: "/mapIconPin.svg",
+        url: mapIconPin,
         size: { width: 40, height: 40, f: "px", b: "px" },
         scaledSize: { width: 40, height: 40, f: "px", b: "px" },
       };
