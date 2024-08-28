@@ -1,6 +1,6 @@
 {
   "name": "quicklists-vue-orm-ui",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "A Vue-based ORM to UI generator library.",
   "main": "src/index.js",
   "scripts": {
@@ -26,7 +26,10 @@
     "@quasar/quasar-ui-qcalendar": "^4.0.0-beta.16",
     "vite": "^2.0.0",
     "vue": "^3.0.0",
-    "vue3-google-map": "^0.21.0"
+    "vue3-google-map": "^0.21.0",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
+    "quasar": "^2.16.0"
   },
   "keywords": [
     "vue",

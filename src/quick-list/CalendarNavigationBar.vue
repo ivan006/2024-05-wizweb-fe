@@ -1,12 +1,12 @@
 <template>
   <div>
-
     <q-btn
         no-caps
         class="button"
         style="margin: 2px;"
         @click="$emit('prev')"
         unelevated
+        icon="arrow_left"
     >
       Previous
     </q-btn>
@@ -25,6 +25,7 @@
         style="margin: 2px;"
         @click="$emit('next')"
         unelevated
+        icon-right="arrow_right"
     >
       Next
     </q-btn>
