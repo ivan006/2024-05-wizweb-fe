@@ -67,6 +67,12 @@
         </q-tr>
       </template>
     </q-table>
+
+    <template v-if="!items.length && !loading">
+      <div class="text-center q-pa-md">
+        No items
+      </div>
+    </template>
   </div>
 </template>
 
