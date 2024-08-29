@@ -152,20 +152,39 @@
         </template>
         <div class="">
           <template v-if="activeTab == 'table'">
+            <template v-if="bordered">
+              <q-card class="">
+                <SuperTableTable
+                    :items="items"
+                    :loading="loading"
+                    @clickRow="clickRow"
+                    :templateListTable="templateListTable"
+                    :hidePagination="hidePagination"
+                    :excludedCols="excludedCols"
+                    :model="model"
+                    :displayMapField="displayMapField"
+                    :canEdit="canEdit"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                />
+              </q-card>
+            </template>
+            <template v-else>
 
-            <SuperTableTable
-                :items="items"
-                :loading="loading"
-                @clickRow="clickRow"
-                :templateListTable="templateListTable"
-                :hidePagination="hidePagination"
-                :excludedCols="excludedCols"
-                :model="model"
-                :displayMapField="displayMapField"
-                :canEdit="canEdit"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-            />
+              <SuperTableTable
+                  :items="items"
+                  :loading="loading"
+                  @clickRow="clickRow"
+                  :templateListTable="templateListTable"
+                  :hidePagination="hidePagination"
+                  :excludedCols="excludedCols"
+                  :model="model"
+                  :displayMapField="displayMapField"
+                  :canEdit="canEdit"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+              />
+            </template>
             <!--:superOptions="superOptions"-->
             <!--:itemsLength="itemsLength"-->
             <!--@clickRow="clickRow"-->
@@ -327,6 +346,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    bordered: {
+      type: Boolean,
+      default: false,
+    },
     justCreateButton: {
       type: Boolean,
       default: false,
