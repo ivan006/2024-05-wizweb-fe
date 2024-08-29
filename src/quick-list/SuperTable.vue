@@ -177,7 +177,7 @@
             <!--@update:rows-per-page="updateRowsPerPage"-->
           </template>
           <template v-if="activeTab == 'grid'">
-            <div class="">
+            <div class="q-pa-md">
               <SuperTableGrid
                   :items="items"
                   @clickRow="clickRow"

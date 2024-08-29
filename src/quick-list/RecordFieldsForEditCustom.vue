@@ -52,7 +52,7 @@
             />
           </template>
         </template>
-        <template v-else-if="template.dataPoint && !compField.meta.hideField">
+        <template v-else-if="template.dataPoint && (compField.meta && !compField.meta.hideField)">
           <div class="col-12">
             <div :class="template.dataPoint.noMargin ? '' : 'q-mb-sm'">
               <DatapointForEdit
