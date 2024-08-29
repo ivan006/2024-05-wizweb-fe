@@ -33,7 +33,7 @@
           </template>
         </template>
         <template v-else-if="template.dataPoint">
-          <div class="col-12">
+          <div class="col-12" style="overflow: hidden;">
 
             <DatapointForDisplay
                 :item="item"

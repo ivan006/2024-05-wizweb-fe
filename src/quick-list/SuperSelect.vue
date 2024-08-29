@@ -1,7 +1,6 @@
 <template>
   <div>
     <q-select
-        style="min-width: 200px;"
         :modelValue="modelValue"
         @update:modelValue="updateValue"
         :options="itemsComp"

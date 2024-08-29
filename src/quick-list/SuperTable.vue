@@ -100,19 +100,23 @@
                     <template
                         v-if="filterInput.usageType.startsWith('relForeignKey')"
                     >
-                      <SuperTable
-                          :isForSelectingRelation="true"
-                          :canEdit="false"
-                          v-model="filters[filterInput.name]"
-                          :model="filterInput.meta.field.parent"
-                          :rules="[() => true]"
-                          :modelField="filterInput"
-                          class="q-mr-sm"
+                      <div style="min-width: 200px;">
 
-                      />
-                      <!--v-model="filters[filterInput.name].value"-->
+                        <SuperTable
+                            :isForSelectingRelation="true"
+                            :canEdit="false"
+                            v-model="filters[filterInput.name]"
+                            :model="filterInput.meta.field.parent"
+                            :rules="[() => true]"
+                            :modelField="filterInput"
+                            class="q-mr-sm"
+
+                        />
+                        <!--v-model="filters[filterInput.name].value"-->
+                      </div>
                     </template>
                     <template v-if="filterInput.usageType == 'timeRangeStart'">
+
                       <FilterTime
                           :key="filterInput.name"
                           :modelField="filterInput"
