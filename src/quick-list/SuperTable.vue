@@ -67,7 +67,7 @@
       </template>
       <template v-else>
         <template v-if="shouldWeShowTopBar()">
-          <div class="">
+          <div class="q-px-sm">
 
             <DestructableExpansionPanels
                 :destroy="!quickListsIsMobile"
