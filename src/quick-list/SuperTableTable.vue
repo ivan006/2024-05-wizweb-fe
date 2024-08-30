@@ -80,6 +80,7 @@
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import DatapointForDisplay from "./DatapointForDisplay.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
+import moment from "moment/moment";
 
 export default {
   name: "SuperTableTable",
@@ -167,6 +168,38 @@ export default {
     };
   },
   computed: {
+    itemsForExport() {
+      const result = []
+      let compItem = {}
+      for (const item of this.items) {
+        compItem = {}
+        for (const header of this.flattenedHeaders) {
+          if (header.userConfig.type === 'function'){
+            compItem[header.label] = header.userConfig.function(item)
+          } else if(header.usageType) {
+            if (
+                header.usageType === 'readOnlyTimestampType' ||
+                header.usageType === 'timestampType' ||
+                header.usageType === 'timeRangeStart' ||
+                header.usageType === 'timeRangeEnd'
+            ){
+              compItem[header.label] = this.formatTimestamp(item[header.field])
+            } else if (header.usageType.startsWith('relLookup')) {
+              if (item?.[header.field]?.[header.meta.lookupDisplayField]) {
+                compItem[header.label] = item?.[header.field]?.[header.meta.lookupDisplayField]
+              }
+            } else if (
+                !header.usageType.startsWith('relChildren') &&
+                item[header.field]
+            ){
+              compItem[header.label] = this.truncateStr(item[header.field])
+            }
+          }
+        }
+        result.push(compItem)
+      }
+      return result
+    },
     superOptions() {
       return {
         headers: this.headers,
@@ -298,6 +331,26 @@ export default {
     },
   },
   methods: {
+    truncateStr(str) {
+      let truncatedStr = "";
+      if (str) {
+        const maxLength = 40;
+        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+      }
+      return truncatedStr;
+    },
+    formatTimestamp(timestamp) {
+      if (timestamp) {
+        const timezone = 'Africa/Johannesburg'; // replace with desired timezone
+        const formattedDateInTimeZone = moment
+            .tz(timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'UTC')
+            .tz(timezone)
+            .format('dddd, MMMM D, YYYY h:mm A');
+        return formattedDateInTimeZone;
+      } else {
+        return null;
+      }
+    },
     tableRowClassFn(props) {
       let result = 'ccc'
       if (this.model.rules.readable(props.row)){

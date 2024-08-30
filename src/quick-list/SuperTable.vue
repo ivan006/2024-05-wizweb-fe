@@ -989,6 +989,11 @@ export default {
     },
   },
   watch: {
+    items(newVal) {
+      if (newVal.length){
+        this.$emit('update:items', newVal)
+      }
+    },
     search(value) {
       if (!this.disabled) {
         if (this.timeout) clearTimeout(this.timeout)

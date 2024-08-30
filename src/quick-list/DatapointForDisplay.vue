@@ -37,7 +37,7 @@
               </template>
               <template v-else-if="dataPoint.type === 'function'">
                 <!--{{ dataPoint.function(item) }}-->
-                <div v-html="dataPoint.function(item)"></div>
+                <span v-html="dataPoint.function(item)"></span>
               </template>
               <template v-else>
                 <DatapointForDisplayInner
@@ -94,7 +94,7 @@
         </template>
         <template v-else-if="dataPoint.type === 'function'">
           <!--{{ dataPoint.function(item) }}-->
-          <div v-html="dataPoint.function(item)"></div>
+          <span v-html="dataPoint.function(item)"></span>
         </template>
         <template v-else>
           <DatapointForDisplayInner
