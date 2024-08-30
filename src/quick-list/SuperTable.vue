@@ -146,6 +146,28 @@
                     dense
                     filled
                 ></q-input>
+                <template v-if="Object.keys(downloadables).includes('csv')">
+                  <q-btn
+                      icon="download"
+                      label="CSV"
+                      @click="downloadCsv"
+                      class="q-mb-md q-ml-md text-grey-8"
+                      filled
+                      unelevated
+                      :style="{ backgroundColor: 'var(--q-color-grey-2)', 'margin-left': 'auto'}"
+                  />
+                </template>
+                <template v-if="Object.keys(downloadables).includes('pdf')">
+                  <q-btn
+                      icon="download"
+                      label="Pdf"
+                      @click="downloadPdf"
+                      class="q-mb-md q-ml-md text-grey-8"
+                      filled
+                      unelevated
+                      :style="{ backgroundColor: 'var(--q-color-grey-2)' }"
+                  />
+                </template>
               </div>
             </DestructableExpansionPanels>
           </div>
@@ -155,6 +177,7 @@
             <template v-if="bordered">
               <q-card class="">
                 <SuperTableTable
+                    ref="SuperTableTableRef"
                     :items="items"
                     :loading="loading"
                     @clickRow="clickRow"
@@ -318,6 +341,8 @@ import RelationComponent from "./RelationComponent.vue";
 import { defineAsyncComponent } from 'vue'
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
@@ -346,6 +371,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    downloadables: {
+      type: Object,
+      default: {},
+    },
     bordered: {
       type: Boolean,
       default: false,
@@ -554,6 +583,102 @@ export default {
     };
   },
   computed: {
+    flattenedHeaders() {
+
+      let result = [];
+      if (this.templateListTable.length){
+        for (const field of this.templateListTable) {
+
+          const validField = this.superOptions.headers.find((header) => header.field === field.field);
+          let addableField = {}
+
+          if (typeof validField !== "undefined"){
+
+            addableField = validField
+
+            if (typeof field.label !== "undefined"){
+              addableField.label = field.label
+            }
+            addableField.userConfig = field
+
+          } else {
+
+            let label = "";
+            if (typeof field.label !== "undefined" && !field.hideLabel){
+              label = field.label
+            }
+
+            let fieldName = "";
+            if (typeof field.field !== "undefined"){
+              fieldName = field.field
+            }
+
+            addableField = {
+              align: "left",
+              dataType: "attr",
+              field: fieldName,
+              label: label,
+              meta: {},
+              name: fieldName,
+              sortable: fieldName.length ? true : false,
+              usageType: "normal",
+              userConfig: field
+            }
+
+          }
+
+          result.push(addableField);
+        }
+
+      } else {
+        for (const header of this.superOptions.headers) {
+          result.push(header);
+          if (header.headerParentFields) {
+            for (const childHeader of header.headerParentFields) {
+              result.push({
+                // isChildOf: header,
+                ...childHeader,
+                userConfig: {}
+              });
+            }
+          }
+        }
+      }
+
+      return result;
+    },
+    itemsForExport() {
+      const result = []
+      let compItem = {}
+      for (const item of this.items) {
+        compItem = {}
+        for (const header of this.flattenedHeaders) {
+          if (header.userConfig && header.userConfig.type === 'function'){
+            compItem[header.label] = header.userConfig.function(item)
+          } else if(header.usageType) {
+            if (
+                header.usageType === 'readOnlyTimestampType' ||
+                header.usageType === 'timestampType' ||
+                header.usageType === 'timeRangeStart' ||
+                header.usageType === 'timeRangeEnd'
+            ){
+              compItem[header.label] = this.formatTimestamp(item[header.field])
+            } else if (header.usageType.startsWith('relLookup')) {
+              if (item?.[header.field]?.[header.meta.lookupDisplayField]) {
+                compItem[header.label] = item?.[header.field]?.[header.meta.lookupDisplayField]
+              }
+            } else if (
+                !header.usageType.startsWith('relChildren') &&
+                item[header.field]
+            ){
+              compItem[header.label] = this.truncateStr(item[header.field])
+            }
+          }
+        }
+        result.push(compItem)
+      }
+      return result
+    },
     tabOptions() {
       let result = []
       // let result = [
@@ -708,6 +833,56 @@ export default {
     },
   },
   methods: {
+    downloadCsv() {
+      const csvData = this.convertToCsv();
+      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `${this.downloadables.csv}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    downloadPdf() {
+      const doc = new jsPDF();
+
+      // Extract headers and rows directly without additional formatting
+      const tableColumn = Object.keys(this.itemsForExport[0]);
+      const tableRows = this.itemsForExport.map(row => Object.values(row));
+
+      // Generate PDF table using autoTable plugin
+      doc.autoTable({
+        head: [tableColumn],
+        body: tableRows
+      });
+
+      // Save the PDF file
+      doc.save(`${this.downloadables.pdf}.pdf`);
+    },
+    convertToCsv() {
+      // Check if data is not empty
+      if (this.itemsForExport.length === 0) {
+        return '';
+      }
+
+      // Generate header from the keys of the first object in the data array
+      const header = Object.keys(this.itemsForExport[0]).join(',');
+
+      // Generate rows from the data
+      const rows = this.itemsForExport.map(row => {
+        return Object.values(row).map(value => `"${value}"`).join(',');
+      });
+
+      return [header, ...rows].join('\r\n');
+    },
+    truncateStr(str) {
+      let truncatedStr = "";
+      if (str) {
+        const maxLength = 40;
+        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+      }
+      return truncatedStr;
+    },
     shouldWeShowTopBar() {
       // let result = true
       let result = false
@@ -722,7 +897,9 @@ export default {
                   )
               )
           ) ||
-          this.model.titleKey !== this.model.primaryKey
+          this.model.titleKey !== this.model.primaryKey ||
+          Object.keys(this.downloadables).includes('csv') ||
+          Object.keys(this.downloadables).includes('pdf')
       ){
         result = true
       }

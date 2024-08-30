@@ -68,20 +68,6 @@
       </template>
 
 
-      <template v-slot:top>
-        <q-btn
-            color="primary"
-            icon="download"
-            label="Download CSV"
-            @click="downloadCsv"
-        />
-        <q-btn
-            color="primary"
-            icon="download"
-            label="Download Pdf"
-            @click="downloadPdf"
-        />
-      </template>
     </q-table>
 
     <template v-if="!items.length && !loading">
@@ -97,8 +83,6 @@ import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import DatapointForDisplay from "./DatapointForDisplay.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import moment from "moment/moment";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 export default {
   name: "SuperTableTable",
@@ -186,38 +170,6 @@ export default {
     };
   },
   computed: {
-    itemsForExport() {
-      const result = []
-      let compItem = {}
-      for (const item of this.items) {
-        compItem = {}
-        for (const header of this.flattenedHeaders) {
-          if (header.userConfig.type === 'function'){
-            compItem[header.label] = header.userConfig.function(item)
-          } else if(header.usageType) {
-            if (
-                header.usageType === 'readOnlyTimestampType' ||
-                header.usageType === 'timestampType' ||
-                header.usageType === 'timeRangeStart' ||
-                header.usageType === 'timeRangeEnd'
-            ){
-              compItem[header.label] = this.formatTimestamp(item[header.field])
-            } else if (header.usageType.startsWith('relLookup')) {
-              if (item?.[header.field]?.[header.meta.lookupDisplayField]) {
-                compItem[header.label] = item?.[header.field]?.[header.meta.lookupDisplayField]
-              }
-            } else if (
-                !header.usageType.startsWith('relChildren') &&
-                item[header.field]
-            ){
-              compItem[header.label] = this.truncateStr(item[header.field])
-            }
-          }
-        }
-        result.push(compItem)
-      }
-      return result
-    },
     superOptions() {
       return {
         headers: this.headers,
@@ -349,77 +301,6 @@ export default {
     },
   },
   methods: {
-    downloadCsv() {
-      const csvData = this.convertToCsv();
-      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', 'table_data.csv');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
-    downloadPdf() {
-      const doc = new jsPDF();
-
-      // Use the existing convertToCsv method to get data
-      const csvData = this.convertToCsv();
-
-      if (!csvData) {
-        console.error("No data available to export.");
-        return;
-      }
-
-      // Split the CSV data into rows for PDF table generation
-      const [header, ...rows] = csvData.split('\r\n');
-      const tableColumn = header.split(',');
-      const tableRows = rows.map(row => row.split(','));
-
-      // Generate PDF table using autoTable plugin
-      doc.autoTable({
-        head: [tableColumn],
-        body: tableRows
-      });
-
-      // Save the PDF file
-      doc.save('table_data.pdf');
-    },
-    convertToCsv() {
-      // Check if data is not empty
-      if (this.itemsForExport.length === 0) {
-        return '';
-      }
-
-      // Generate header from the keys of the first object in the data array
-      const header = Object.keys(this.itemsForExport[0]).join(',');
-
-      // Generate rows from the data
-      const rows = this.itemsForExport.map(row => {
-        return Object.values(row).map(value => `"${value}"`).join(',');
-      });
-
-      return [header, ...rows].join('\r\n');
-    },
-    truncateStr(str) {
-      let truncatedStr = "";
-      if (str) {
-        const maxLength = 40;
-        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
-      }
-      return truncatedStr;
-    },
-    formatTimestamp(timestamp) {
-      if (timestamp) {
-        const timezone = 'Africa/Johannesburg'; // replace with desired timezone
-        const formattedDateInTimeZone = moment
-            .tz(timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'UTC')
-            .tz(timezone)
-            .format('dddd, MMMM D, YYYY h:mm A');
-        return formattedDateInTimeZone;
-      } else {
-        return null;
-      }
-    },
     tableRowClassFn(props) {
       let result = 'ccc'
       if (this.model.rules.readable(props.row)){
