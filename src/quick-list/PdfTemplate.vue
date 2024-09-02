@@ -1,10 +1,13 @@
 <template>
   <div>
+    <!-- Title at the top -->
     <div class="col-12 q-mb-lg">
       <div class="text-h6 text-grey-7 text-center">
         {{ title }}
       </div>
     </div>
+
+    <!-- Quasar Table -->
     <q-table
         separator="none"
         :rows="tableRows"
@@ -12,20 +15,35 @@
         row-key="key"
         flat
         dense
-        hide-header
         :pagination="pagination"
-        hideBottom
+        hide-bottom
     >
-      <template v-slot:body-cell-key="props">
-        <q-td :props="props" class="table-title" colspan="2">
-          {{ props.row.key }}
-        </q-td>
+      <!-- Table Headers -->
+      <template v-slot:header="props">
+        <q-tr :props="props">
+          <q-th
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              class="table-header"
+          >
+            {{ col.label }}
+          </q-th>
+        </q-tr>
       </template>
 
-      <template v-slot:body-cell-value="props">
-        <q-td :props="props" class="table-value" colspan="2">
-          {{ props.row.value }}
-        </q-td>
+      <!-- Table Rows -->
+      <template v-slot:body="props">
+        <q-tr :props="props">
+          <q-td
+              v-for="col in props.cols"
+              :key="col.name"
+              :props="props"
+              class="table-cell"
+          >
+            {{ props.row[col.field] }}
+          </q-td>
+        </q-tr>
       </template>
     </q-table>
   </div>
@@ -45,33 +63,19 @@ const props = defineProps({
   },
 });
 
-// Convert items array to a format that q-table can consume
-const tableRows = computed(() =>
-    props.items.map((item) => {
-      const rows = [];
-      for (const [key, value] of Object.entries(item)) {
-        rows.push({
-          key,
-          value,
-        });
-      }
-      return rows;
-    }).flat()
-);
+// Dynamically generate columns based on the first item in the list
+const tableColumns = computed(() => {
+  if (props.items.length === 0) return [];
+  return Object.keys(props.items[0]).map((key) => ({
+    name: key,
+    align: 'left',
+    label: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize first letter for the header
+    field: key,
+  }));
+});
 
-// Define the table columns for q-table
-const tableColumns = [
-  {
-    name: 'key',
-    align: 'left',
-    field: 'key',
-  },
-  {
-    name: 'value',
-    align: 'left',
-    field: 'value',
-  },
-];
+// Convert items array to a format that q-table can consume
+const tableRows = computed(() => props.items);
 
 // Disable pagination by setting a large page size
 const pagination = ref({
@@ -81,28 +85,28 @@ const pagination = ref({
 </script>
 
 <style scoped>
-.table-title {
+.table-header {
   background-color: rgb(41, 128, 186);
   color: white;
   padding: 8px;
   font-weight: bold;
 }
 
-.table-value {
+.table-cell {
   padding: 8px;
   background-color: #f5f5f5;
   color: DimGray;
 }
 
-.q-table tr:nth-child(even) .table-title {
-  background-color: rgb(93, 173, 226); /* Lighter blue for striped effect */
-}
-
-.q-table tr:nth-child(odd) .table-value {
-  background-color: #f5f5f5; /* Light grey for table values */
-}
-
-.q-table tr:nth-child(even) .table-value {
+.q-table tr:nth-child(even) .table-cell {
   background-color: white;
+}
+
+.q-table tr:nth-child(odd) .table-cell {
+  background-color: #f5f5f5;
+}
+
+.q-table tr:nth-child(even) .table-header {
+  background-color: rgb(93, 173, 226); /* Lighter blue for striped effect */
 }
 </style>
