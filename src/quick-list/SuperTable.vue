@@ -161,7 +161,7 @@
                   <q-btn
                       icon="download"
                       label="Pdf"
-                      @click="downloadPdf"
+                      @click="downloadPdf(downloadables.pdf)"
                       class="q-mb-md q-ml-md text-grey-8"
                       filled
                       unelevated
@@ -173,7 +173,7 @@
                   >
                     <PdfTemplate
                         :items="itemsForExport"
-                        id="pdfContent"
+                        :id="`pdfContent${toHtmlIdSafeString(downloadables.pdf)}`"
                         :title="downloadables.pdf"
                     />
                   </div>
@@ -872,8 +872,8 @@ export default {
     //   // Save the PDF file
     //   doc.save(`${this.downloadables.pdf}.pdf`);
     // },
-    downloadPdf() {
-      const element = document.querySelector('#pdfContent'); // Get the element to render to PDF
+    downloadPdf(str) {
+      const element = document.querySelector(`#pdfContent${this.toHtmlIdSafeString(str)}`); // Get the element to render to PDF
       const opt = {
         margin: 0.6, // Reduced margin size
         filename: `${this.downloadables.pdf}.pdf`,
@@ -883,6 +883,15 @@ export default {
       };
 
       html2pdf().from(element).set(opt).save(); // Generate and download the PDF
+    },
+    toHtmlIdSafeString(str) {
+      return str
+          .toString()                  // Ensure it's a string
+          .toLowerCase()               // Convert to lowercase
+          .trim()                      // Remove whitespace from both ends
+          .replace(/\s+/g, '-')        // Replace spaces with hyphens
+          .replace(/[^a-z0-9_-]/g, '') // Remove invalid characters
+          .replace(/^-+/, '');         // Remove leading hyphens (if any)
     },
     convertToCsv() {
       // Check if data is not empty

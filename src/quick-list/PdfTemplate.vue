@@ -8,6 +8,11 @@
     </div>
 
     <!-- Quasar Table -->
+    <template v-if="!tableRows.length">
+      <div class="text-center q-pa-md" style="color: DimGray;">
+        No items
+      </div>
+    </template>
     <q-table
         separator="none"
         :rows="tableRows"
