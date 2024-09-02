@@ -875,7 +875,7 @@ export default {
     downloadPdf() {
       const element = document.querySelector('#pdfContent'); // Get the element to render to PDF
       const opt = {
-        margin: 1,
+        margin: 0.6, // Reduced margin size
         filename: `${this.downloadables.pdf}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
