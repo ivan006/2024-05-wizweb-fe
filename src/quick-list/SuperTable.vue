@@ -167,6 +167,16 @@
                       unelevated
                       :style="{ backgroundColor: 'var(--q-color-grey-2)' }"
                   />
+                  <div
+                      ref="pdfContentxxx"
+                      style="display: none"
+                  >
+                    <PdfTemplate
+                        :items="items"
+                        id="pdfContent"
+                        :title="downloadables.pdf"
+                    />
+                  </div>
                 </template>
               </div>
             </DestructableExpansionPanels>
@@ -343,6 +353,7 @@ import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
+import PdfTemplate from "./PdfTemplate.vue";
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
@@ -354,6 +365,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    PdfTemplate,
     SearchGooglePlace,
     RecordFieldsForDisplayGeneric,
     RelationComponent,
@@ -843,6 +855,22 @@ export default {
       link.click();
       document.body.removeChild(link);
     },
+    // downloadPdf() {
+    //   const doc = new jsPDF();
+    //
+    //   // Extract headers and rows directly without additional formatting
+    //   const tableColumn = Object.keys(this.itemsForExport[0]);
+    //   const tableRows = this.itemsForExport.map(row => Object.values(row));
+    //
+    //   // Generate PDF table using autoTable plugin
+    //   doc.autoTable({
+    //     head: [tableColumn],
+    //     body: tableRows
+    //   });
+    //
+    //   // Save the PDF file
+    //   doc.save(`${this.downloadables.pdf}.pdf`);
+    // },
     downloadPdf() {
       const doc = new jsPDF();
 
@@ -850,10 +878,30 @@ export default {
       const tableColumn = Object.keys(this.itemsForExport[0]);
       const tableRows = this.itemsForExport.map(row => Object.values(row));
 
-      // Generate PDF table using autoTable plugin
+      // Define the base blue and lighter blue for striping
+      const baseBlue = [41, 128, 186];
+      const lighterBlue = [93, 173, 226];
+
+      // Generate PDF table using autoTable plugin with enhanced styling
       doc.autoTable({
+        startY: 20, // Add some space at the top of the document
         head: [tableColumn],
-        body: tableRows
+        body: tableRows,
+        styles: { halign: 'left' }, // Align text to the left for consistency
+        columnStyles: {
+          0: { textColor: [255, 255, 255] }, // White text for the first column (headers)
+        },
+        theme: 'striped', // Striped theme for alternating row colors
+        didParseCell: function (data) {
+          if (data.section === 'head') {
+            data.cell.styles.fillColor = baseBlue; // Base blue for header
+          }
+          if (data.section === 'body' && data.column.index === 0) {
+            // Apply alternating background colors to the first column
+            const rowIndex = data.row.index;
+            data.cell.styles.fillColor = rowIndex % 2 === 0 ? baseBlue : lighterBlue;
+          }
+        },
       });
 
       // Save the PDF file
