@@ -11,10 +11,10 @@
         dense
     ></q-input>
 
-    <q-dialog v-model="showDialog" max-width="500px">
-      <q-card>
+    <q-dialog v-model="showDialog" >
+      <q-card style="width: 700px; max-width: delete me;">
         <q-card-section>
-          <h3>Search Place</h3>
+          <div class="text-subtitle1">Search Place</div>
           <q-input
               class="CustomPlaceSearch"
               label="Place"
@@ -100,10 +100,14 @@ export default {
     },
   },
 };
+// .CustomPlaceSearch .q-field__control input[placeholder] {
+//   opacity: 0;
+// }
 </script>
 
-<style scoped>
-.CustomPlaceSearch .q-field__control input[placeholder] {
-  opacity: 0;
+<style >
+
+.pac-container {
+  z-index: 10000 !important; /* Adjust this value as needed */
 }
 </style>
