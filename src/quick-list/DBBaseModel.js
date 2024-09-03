@@ -125,6 +125,7 @@ export default class DBBaseModel extends Model {
 
         let computedUrl = url
         let preparedRels = {}
+        let filtersObj = {}
 
         if (modelClass.adapator === "supabase"){
 
@@ -133,7 +134,8 @@ export default class DBBaseModel extends Model {
 
         } else if(modelClass.adapator === "laravel") {
 
-            computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
+            // computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
+            filtersObj = Helpers.prepareFiltersForLaravel(options.filters); // Now returns an object
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
 
         }
@@ -148,6 +150,7 @@ export default class DBBaseModel extends Model {
                     },
                     ...flags,
                     ...preparedRels,
+                    ...filtersObj
                 },
                 dataTransformer: ({ data }) => {
                     if (options.clearPrimaryModelOnly) {

@@ -65,25 +65,28 @@ class Helpers {
     }
 
     static prepareFiltersForLaravel(obj) {
-        let result = [];
+        const result = {};
+
         for (const [key, filter] of Object.entries(obj)) {
             if (typeof filter === 'object' && filter !== null && filter?.usageType === 'timeRangeStart') {
                 // Handle time range filters using gt/lt for start and end dates
                 if (filter.value && filter.value.range) {
                     if (filter.value.range.start) {
-                        result.push(`filter[${key}-ge]=${filter.value.range.start}`); // Changed to 'ge' to match allowed filters
+                        result[`filter[${key}-ge]`] = filter.value.range.start; // Changed to 'ge' to match allowed filters
                     }
                     if (filter.value.range.end) {
-                        result.push(`filter[${key}-le]=${filter.value.range.end}`); // Changed to 'le' to match allowed filters
+                        result[`filter[${key}-le]`] = filter.value.range.end; // Changed to 'le' to match allowed filters
                     }
                 }
             } else if (filter !== null) {
                 // Handle simple equality filters
-                result.push(`filter[${key}]=${filter}`);
+                result[`filter[${key}]`] = filter;
             }
         }
-        return result.join('&');
+        
+        return result;
     }
+
 
 
 
