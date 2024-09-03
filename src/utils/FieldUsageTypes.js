@@ -19,8 +19,8 @@ class FieldUsageTypes {
         return 'dateType' // You might apply some date-time specific processing here if necessary
     }
 
-    static mapName() {
-        return 'mapName'
+    static location_address_place_name() {
+        return 'location_address_place_name'
     }
     static mapExtraFormattedAddress() {
         return 'mapExtraFormattedAddress'

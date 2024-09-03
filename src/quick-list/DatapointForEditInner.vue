@@ -221,7 +221,7 @@
           disabled
       />
     </template>
-    <template v-else-if="field.usageType === 'mapName'">
+    <template v-else-if="field.usageType === 'location_address_place_name'">
       <SearchGooglePlace
           :hideLabel="hideLabel"
           :configs="field"
@@ -429,8 +429,8 @@ export default {
     },
     placeFieldsWithFieldNames() {
       let result = [];
-      const mapName = this.superOptions.modelFields.find((field) => field.usageType == "mapName");
-      if (mapName) {
+      const location_address_place_name = this.superOptions.modelFields.find((field) => field.usageType == "location_address_place_name");
+      if (location_address_place_name) {
         for (const placeFieldType of QuickListsHelpers.mapPlaceFields()) {
           const placeField = this.superOptions.modelFields.find((field) => field.usageType == placeFieldType.flag);
           if (placeField) {
