@@ -890,16 +890,15 @@ export default {
     //   doc.save(`${this.downloadables.pdf}.pdf`);
     // },import html2pdf from 'html2pdf.js';
 
-
     downloadPdf() {
       const element = document.querySelector(
           `#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
       ); // Get the element to render to PDF
-      const footerText = document.querySelector(
+      const footerElement = document.querySelector(
           `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
       );
 
-      // Configuration for pdf generation
+      // Configuration for PDF generation
       const opt = {
         margin: 0,
         filename: 'GeneratedDocument.pdf',
@@ -924,19 +923,24 @@ export default {
               pdf.setFontSize(10); // Set font size for the footer
               pdf.setTextColor(150); // Set text color for the footer
 
-              // Use `text()` method to add footer as text. Adjust `X` and `Y` positions as needed.
-              pdf.text(
-                  footerText.innerText, // Use text content of footer element
-                  pdf.internal.pageSize.getWidth() / 2, // Center horizontally
-                  pdf.internal.pageSize.getHeight() - (50 / 96), // Position 10 units from bottom
-                  { align: 'center' } // Center align footer text
-              );
-              console.log("pdf.internal.pageSize.getHeight()")
-              console.log(pdf.internal.pageSize.getHeight())
+              // Get the HTML content from the footer element
+              const footerHtml = footerElement.innerHTML;
+
+              // Render the HTML footer to the PDF
+              pdf.html(footerHtml, {
+                x: pdf.internal.pageSize.getWidth() / 2 - (100 / 96), // Convert 100px to inches
+                y: pdf.internal.pageSize.getHeight() - (50 / 96), // Convert 50px to inches
+                width: 200 / 96, // Convert width from pixels to inches
+                html2canvas: { scale: 0.5 }, // Scale factor for the footer HTML rendering
+                callback: function (pdf) {
+                  pdf.save();
+                }
+              });
             }
-          })
-          .save();
+          });
     },
+
+
 
 
 
