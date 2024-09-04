@@ -176,6 +176,22 @@
                         :items="itemsForExport"
                         :id="`pdfContent${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                     />
+
+                    <template v-if="downloadables.pdf.footer">
+                      <div ref="pdfContent">
+                        <!-- Your existing PDF content goes here -->
+
+                        <!-- Footer element for PDF generation -->
+                        <div
+                            :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
+                        >
+                          <!--style="display: none;"-->
+                          <component
+                              :is="defineAsyncComponent(downloadables.pdf.footer)"
+                          />
+                        </div>
+                      </div>
+                    </template>
                   </div>
                 </template>
               </div>
@@ -846,6 +862,7 @@ export default {
     },
   },
   methods: {
+    defineAsyncComponent,
     downloadCsv() {
       const csvData = this.convertToCsv();
       const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
@@ -878,18 +895,21 @@ export default {
       const element = document.querySelector(
           `#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
       ); // Get the element to render to PDF
+      const footerText = document.querySelector(
+          `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+      );
 
-      const footerText = document.querySelector('#pdfFooter'); // Get the footer text element
-
+      // Configuration for pdf generation
       const opt = {
         margin: 0,
-        filename: `${this.downloadables.pdf?.title}.pdf`,
+        filename: 'GeneratedDocument.pdf',
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['css', 'legacy'] },
       };
 
+      // Generate PDF and add the footer
       html2pdf()
           .from(element)
           .set(opt)
@@ -903,16 +923,23 @@ export default {
               pdf.setPage(i);
               pdf.setFontSize(10); // Set font size for the footer
               pdf.setTextColor(150); // Set text color for the footer
+
+              // Use `text()` method to add footer as text. Adjust `X` and `Y` positions as needed.
               pdf.text(
-                  footerText.innerText,
-                  pdf.internal.pageSize.getWidth() / 2,
-                  pdf.internal.pageSize.getHeight() - 10,
+                  footerText.innerText, // Use text content of footer element
+                  pdf.internal.pageSize.getWidth() / 2, // Center horizontally
+                  pdf.internal.pageSize.getHeight() - (50 / 96), // Position 10 units from bottom
                   { align: 'center' } // Center align footer text
               );
+              console.log("pdf.internal.pageSize.getHeight()")
+              console.log(pdf.internal.pageSize.getHeight())
             }
           })
           .save();
     },
+
+
+
 
     toHtmlIdSafeString(str) {
       return str

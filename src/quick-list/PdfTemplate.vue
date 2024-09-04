@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 1056px; position: relative;">
+  <div style="height: 1056px; position: relative;" id="pdfContent">
     <!-- Title at the top -->
     <template v-if="options.header">
       <component
@@ -63,21 +63,6 @@
         </template>
       </q-table>
     </div>
-    <template v-if="options.footer">
-      <div ref="pdfContent">
-        <!-- Your existing PDF content goes here -->
-
-        <!-- Footer element for PDF generation -->
-        <div
-            id="pdfFooter"
-        >
-          <!--style="display: none;"-->
-          <component
-              :is="defineAsyncComponent(options.footer)"
-          />
-        </div>
-      </div>
-    </template>
   </div>
 </template>
 
@@ -143,10 +128,4 @@ const pagination = ref({
 }
 
 
-#pdfFooter {
-  position: absolute;
-  bottom:0;
-  left: 0;
-  width: 100%;
-}
 </style>
