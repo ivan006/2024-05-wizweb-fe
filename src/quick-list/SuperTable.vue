@@ -900,8 +900,14 @@ export default {
 
       // Configuration for PDF generation
       const opt = {
-        margin: 0,
-        filename: 'GeneratedDocument.pdf',
+        // margin: 0,
+        margin: [
+          this.downloadables.pdf['margin-top'] ? +this.downloadables.pdf['margin-top'] / 96 : 0, //top
+          0, //left
+          this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
+          0 // right
+        ],
+        filename: `${this.downloadables.pdf?.title}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
@@ -920,18 +926,17 @@ export default {
             // Loop through each page and add the footer
             for (let i = 1; i <= pageCount; i++) {
               pdf.setPage(i);
-              pdf.setFontSize(10); // Set font size for the footer
-              pdf.setTextColor(150); // Set text color for the footer
+              // pdf.setFontSize(10 / 96); // Set font size for the footer
+              // pdf.setTextColor("white"); // Set text color for the footer
 
               // Get the HTML content from the footer element
               const footerHtml = footerElement.innerHTML;
-
               // Render the HTML footer to the PDF
               pdf.html(footerHtml, {
-                x: pdf.internal.pageSize.getWidth() / 2 - (100 / 96), // Convert 100px to inches
-                y: pdf.internal.pageSize.getHeight() - (50 / 96), // Convert 50px to inches
-                width: 200 / 96, // Convert width from pixels to inches
-                html2canvas: { scale: 0.5 }, // Scale factor for the footer HTML rendering
+                x: 0, // Convert 100px to inches
+                y: pdf.internal.pageSize.getHeight() - ((this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom']+0.25 : 0) / 96), // Convert 50px to inches
+                // width: 600 / 96, // Convert width from pixels to inches
+                html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
                 callback: function (pdf) {
                   pdf.save();
                 }
