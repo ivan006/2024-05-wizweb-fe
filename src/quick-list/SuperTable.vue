@@ -168,9 +168,8 @@
                       :style="{ backgroundColor: 'var(--q-color-grey-2)' }"
                   />
                   <div
-                      ref="pdfContent"
+                      style="display: none"
                   >
-                    <!--style="display: none"-->
                     <PdfTemplate
                         :options="downloadables.pdf"
                         :items="itemsForExport"
@@ -902,22 +901,20 @@ export default {
 
       // Configuration for PDF generation
       const opt = {
-        margin: [0.35,0,0.3,0],
-        // margin: [
-        //   this.downloadables.pdf['margin-top'] ? +this.downloadables.pdf['margin-top'] / 96 : 0, // top
-        //   0, // left
-        //   this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
-        //   0, // right
-        // ],
+        // margin: [0.35, 0, 0.3, 0],
+        margin: [
+          this.downloadables.pdf['margin-top'] ? +this.downloadables.pdf['margin-top'] / 96 : 0, // top
+          0, // left
+          this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
+          0, // right
+        ],
         filename: `${this.downloadables.pdf?.title}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 1 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-        // pagebreak: { mode: ['css', 'legacy'] },
-        // pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }, // Ensure no unwanted page breaks
       };
 
-      // Generate PDF and add the footer
+      // Generate PDF
       html2pdf()
           .from(element)
           .set(opt)
@@ -926,61 +923,63 @@ export default {
           .then((pdf) => {
             const pageCount = pdf.internal.getNumberOfPages();
 
-            // Loop through each page and add the footer
+            // Loop through each page to add headers and footers
             let addPromises = [];
 
             for (let i = 1; i <= pageCount; i++) {
               pdf.setPage(i);
 
-
-
               const headerElement = document.querySelector(
                   `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
               ); // Get the header element
+
               // Add Header
               if (headerElement) {
                 const headerHtml = headerElement.innerHTML; // Get the HTML content from the header element
-                // console.log("headerHtml")
-                // console.log(headerHtml)
                 const addHeaderPromise = pdf.html(headerHtml, {
                   x: 0,
                   y: 0, // Position at the top of the page
-                  html2canvas: { scale: 1 / 96 }, // Scale factor for the header HTML rendering
+                  html2canvas: { scale: 1/96 }, // Scale factor for the header HTML rendering
                 });
 
                 addPromises.push(addHeaderPromise);
               }
-
-
-
-
-              const footerElement = document.querySelector(
-                  `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-              ); // Get the footer element
-              // Add Footer
-              if (footerElement) {
-                const footerHtml = footerElement.innerHTML; // Get the HTML content from the footer element
-
-                const addFooterPromise = pdf.html(footerHtml, {
-                  x: 0,
-                  y:
-                      pdf.internal.pageSize.getHeight() -
-                      (this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] + 0.5 : 0) /
-                      96, // Position at the bottom of the page
-                  html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
-                });
-
-                addPromises.push(addFooterPromise);
-              }
-
             }
 
-            // Wait for all promises to be resolved before saving
+            // Once headers are added, add footers
             Promise.all(addPromises).then(() => {
-              pdf.save(); // Save the PDF after all footers are added
+              addPromises = []; // Clear promises array for footers
+
+              for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+
+                const footerElement = document.querySelector(
+                    `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+                ); // Get the footer element
+
+                // Add Footer
+                if (footerElement) {
+                  const footerHtml = footerElement.innerHTML; // Get the HTML content from the footer element
+                  const addFooterPromise = pdf.html(footerHtml, {
+                    x: 0,
+                    y:
+                        pdf.internal.pageSize.getHeight() -
+                        (this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] + 0.5 : 0) / 96, // Position at the bottom of the page
+                    html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
+                  });
+
+                  addPromises.push(addFooterPromise);
+                }
+              }
+
+              // Wait for all footer promises to be resolved before saving
+              Promise.all(addPromises).then(() => {
+                pdf.save(); // Save the PDF after all headers and footers are added
+              });
             });
           });
     },
+
 
 
 

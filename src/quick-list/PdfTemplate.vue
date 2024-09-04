@@ -2,7 +2,7 @@
   <div style="" id="pdfContent">
     <!-- Title at the top -->
 
-    <div class="q-ma-xl">
+    <div class="q-mx-xl">
 
 
       <template v-if="options.title">
