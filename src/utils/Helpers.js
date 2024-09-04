@@ -83,7 +83,7 @@ class Helpers {
                 result[`filter[${key}]`] = filter;
             }
         }
-        
+
         return result;
     }
 

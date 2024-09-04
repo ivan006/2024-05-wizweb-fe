@@ -143,7 +143,6 @@ export default {
       let latField = this.mapHeaders.find((field) => {
         return field.usageType == "mapExtraGeoLocLat";
       });
-      console.log(longField)
       if (latField && longField) {
         for (const item of this.items) {
           if (![null, ""].includes(item[latField.name])) {

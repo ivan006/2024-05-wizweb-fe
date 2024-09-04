@@ -207,7 +207,6 @@ export default {
           return relation.field.name == this.dataPoint.field
         })
       }
-      console.log(result)
       return result
     },
     label() {

@@ -557,7 +557,6 @@ export default {
           let start, end;
 
           // Check if start and end fields are nested in a related model
-          console.log("111")
           if (this.startFieldName.isChildOf) {
             const startSplit = this.startFieldName.name.split(".");
             start = new Date(item[startSplit[0]][startSplit[1]]);
