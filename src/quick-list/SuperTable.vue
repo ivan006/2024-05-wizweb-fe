@@ -161,7 +161,7 @@
                   <q-btn
                       icon="download"
                       label="Pdf"
-                      @click="downloadPdf(downloadables.pdf)"
+                      @click="downloadPdf()"
                       class="q-mb-md q-ml-md text-grey-8"
                       filled
                       unelevated
@@ -169,12 +169,12 @@
                   />
                   <div
                       ref="pdfContent"
-                      style="display: none"
                   >
+                    <!--style="display: none"-->
                     <PdfTemplate
+                        :options="downloadables.pdf"
                         :items="itemsForExport"
-                        :id="`pdfContent${toHtmlIdSafeString(downloadables.pdf)}`"
-                        :title="downloadables.pdf"
+                        :id="`pdfContent${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                     />
                   </div>
                 </template>
@@ -851,7 +851,7 @@ export default {
       const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', `${this.downloadables.csv}.csv`);
+      link.setAttribute('download', `${this.downloadables.csv?.title}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -872,18 +872,39 @@ export default {
     //   // Save the PDF file
     //   doc.save(`${this.downloadables.pdf}.pdf`);
     // },
-    downloadPdf(str) {
-      const element = document.querySelector(`#pdfContent${this.toHtmlIdSafeString(str)}`); // Get the element to render to PDF
-      const opt = {
-        margin: 0.6, // Reduced margin size
-        filename: `${this.downloadables.pdf}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-      };
+    downloadPdf() {
+      const element = document.querySelector(`#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`); // Get the element to render to PDF
 
-      html2pdf().from(element).set(opt).save(); // Generate and download the PDF
+      // Check if all images are loaded
+      const images = element.querySelectorAll('img, svg');
+      let loadedImages = 0;
+      images.forEach((img) => {
+        if (img.complete) {
+          loadedImages++;
+        } else {
+          img.onload = () => loadedImages++;
+          img.onerror = () => loadedImages++;
+        }
+      });
+
+      // Wait until all images are loaded
+      const waitForImages = setInterval(() => {
+        if (loadedImages === images.length) {
+          clearInterval(waitForImages);
+
+          const opt = {
+            margin: 0.6, // Reduced margin size
+            filename: `${this.downloadables.pdf?.title}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },  // useCORS helps to load cross-origin images
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+          };
+
+          html2pdf().from(element).set(opt).save(); // Generate and download the PDF
+        }
+      }, 200); // Check every 200ms
     },
+
     toHtmlIdSafeString(str) {
       return str
           .toString()                  // Ensure it's a string

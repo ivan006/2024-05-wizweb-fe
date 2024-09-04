@@ -1,11 +1,18 @@
 <template>
   <div>
     <!-- Title at the top -->
-    <div class="col-12 q-mb-lg">
-      <div class="text-h6 text-grey-7 text-center">
-        {{ title }}
+    <template v-if="options.header">
+      <component
+          :is="defineAsyncComponent(options.header)"
+      />
+    </template>
+    <template v-if="options.title">
+      <div class="col-12 q-mb-lg">
+        <div class="text-h6 text-grey-7 text-center">
+          {{ options.title }}
+        </div>
       </div>
-    </div>
+    </template>
 
     <!-- Quasar Table -->
     <template v-if="!tableRows.length">
@@ -55,15 +62,15 @@
 </template>
 
 <script setup>
-import { defineProps, computed, ref } from 'vue';
+import {defineProps, computed, ref, defineAsyncComponent} from 'vue';
 
 const props = defineProps({
   items: {
     type: Array,
     required: true,
   },
-  title: {
-    type: String,
+  options: {
+    type: {},
     required: true,
   },
 });
