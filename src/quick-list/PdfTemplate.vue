@@ -1,63 +1,83 @@
 <template>
-  <div>
+  <div style="height: 1056px; position: relative;">
     <!-- Title at the top -->
     <template v-if="options.header">
       <component
           :is="defineAsyncComponent(options.header)"
       />
     </template>
-    <template v-if="options.title">
-      <div class="col-12 q-mb-lg">
-        <div class="text-h6 text-grey-7 text-center">
-          {{ options.title }}
+
+    <div class="q-ma-xl">
+
+
+      <template v-if="options.title">
+        <div class="col-12 q-mb-lg">
+          <div class="text-h6 text-grey-7 text-center">
+            {{ options.title }}
+          </div>
+        </div>
+      </template>
+
+      <!-- Quasar Table -->
+      <template v-if="!tableRows.length">
+        <div class="text-center q-pa-md" style="color: DimGray;">
+          No items
+        </div>
+      </template>
+      <q-table
+          separator="none"
+          :rows="tableRows"
+          :columns="tableColumns"
+          row-key="key"
+          flat
+          dense
+          :pagination="pagination"
+          hide-bottom
+      >
+        <!-- Table Headers -->
+        <template v-slot:header="props">
+          <q-tr :props="props">
+            <q-th
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                class="table-header"
+            >
+              {{ col.label }}
+            </q-th>
+          </q-tr>
+        </template>
+
+        <!-- Table Rows -->
+        <template v-slot:body="props">
+          <q-tr :props="props">
+            <q-td
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+                class="table-cell"
+            >
+              {{ props.row[col.field] }}
+            </q-td>
+          </q-tr>
+        </template>
+      </q-table>
+    </div>
+    <template v-if="options.footer">
+      <div ref="pdfContent">
+        <!-- Your existing PDF content goes here -->
+
+        <!-- Footer element for PDF generation -->
+        <div
+            id="pdfFooter"
+        >
+          <!--style="display: none;"-->
+          <component
+              :is="defineAsyncComponent(options.footer)"
+          />
         </div>
       </div>
     </template>
-
-    <!-- Quasar Table -->
-    <template v-if="!tableRows.length">
-      <div class="text-center q-pa-md" style="color: DimGray;">
-        No items
-      </div>
-    </template>
-    <q-table
-        separator="none"
-        :rows="tableRows"
-        :columns="tableColumns"
-        row-key="key"
-        flat
-        dense
-        :pagination="pagination"
-        hide-bottom
-    >
-      <!-- Table Headers -->
-      <template v-slot:header="props">
-        <q-tr :props="props">
-          <q-th
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-              class="table-header"
-          >
-            {{ col.label }}
-          </q-th>
-        </q-tr>
-      </template>
-
-      <!-- Table Rows -->
-      <template v-slot:body="props">
-        <q-tr :props="props">
-          <q-td
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-              class="table-cell"
-          >
-            {{ props.row[col.field] }}
-          </q-td>
-        </q-tr>
-      </template>
-    </q-table>
   </div>
 </template>
 
@@ -120,5 +140,13 @@ const pagination = ref({
 
 .q-table tr:nth-child(even) .table-header {
   background-color: rgb(93, 173, 226); /* Lighter blue for striped effect */
+}
+
+
+#pdfFooter {
+  position: absolute;
+  bottom:0;
+  left: 0;
+  width: 100%;
 }
 </style>

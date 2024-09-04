@@ -875,22 +875,14 @@ export default {
 
 
     downloadPdf() {
-      const element = document.querySelector(`#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`); // Get the element to render to PDF
-      const footerElement = document.querySelector(`#pdfFooter`); // Separate element for footer
+      const element = document.querySelector(
+          `#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+      ); // Get the element to render to PDF
 
-      // Prepare footer
-      const addFooter = (doc) => {
-        const pageCount = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= pageCount; i++) {
-          doc.setPage(i);
-          doc.setFontSize(10);
-          doc.setTextColor(150);
-          doc.text(footerElement.innerText, 14, doc.internal.pageSize.getHeight() - 10);
-        }
-      };
+      const footerText = document.querySelector('#pdfFooter'); // Get the footer text element
 
       const opt = {
-        margin: 0.6,
+        margin: 0,
         filename: `${this.downloadables.pdf?.title}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2 },
@@ -904,7 +896,20 @@ export default {
           .toPdf()
           .get('pdf')
           .then((pdf) => {
-            addFooter(pdf);
+            const pageCount = pdf.internal.getNumberOfPages();
+
+            // Loop through each page and add the footer
+            for (let i = 1; i <= pageCount; i++) {
+              pdf.setPage(i);
+              pdf.setFontSize(10); // Set font size for the footer
+              pdf.setTextColor(150); // Set text color for the footer
+              pdf.text(
+                  footerText.innerText,
+                  pdf.internal.pageSize.getWidth() / 2,
+                  pdf.internal.pageSize.getHeight() - 10,
+                  { align: 'center' } // Center align footer text
+              );
+            }
           })
           .save();
     },
