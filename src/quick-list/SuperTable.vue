@@ -900,18 +900,19 @@ export default {
 
       // Configuration for PDF generation
       const opt = {
-        // margin: 0,
-        margin: [
-          this.downloadables.pdf['margin-top'] ? +this.downloadables.pdf['margin-top'] / 96 : 0, //top
-          0, //left
-          this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
-          0 // right
-        ],
+        margin: [0.35,0,0.3,0],
+        // margin: [
+        //   this.downloadables.pdf['margin-top'] ? +this.downloadables.pdf['margin-top'] / 96 : 0, // top
+        //   0, // left
+        //   this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
+        //   0, // right
+        // ],
         filename: `${this.downloadables.pdf?.title}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
+        html2canvas: { scale: 1 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] },
+        // pagebreak: { mode: ['css', 'legacy'] },
+        // pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }, // Ensure no unwanted page breaks
       };
 
       // Generate PDF and add the footer
@@ -924,26 +925,35 @@ export default {
             const pageCount = pdf.internal.getNumberOfPages();
 
             // Loop through each page and add the footer
+            let addFooterPromises = [];
+
             for (let i = 1; i <= pageCount; i++) {
               pdf.setPage(i);
-              // pdf.setFontSize(10 / 96); // Set font size for the footer
-              // pdf.setTextColor("white"); // Set text color for the footer
 
               // Get the HTML content from the footer element
               const footerHtml = footerElement.innerHTML;
+
               // Render the HTML footer to the PDF
-              pdf.html(footerHtml, {
-                x: 0, // Convert 100px to inches
-                y: pdf.internal.pageSize.getHeight() - ((this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom']+0.25 : 0) / 96), // Convert 50px to inches
-                // width: 600 / 96, // Convert width from pixels to inches
-                html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
-                callback: function (pdf) {
-                  pdf.save();
-                }
-              });
+              const addFooterPromise = pdf
+                  .html(footerHtml, {
+                    x: 0, // Convert 100px to inches
+                    y:
+                        pdf.internal.pageSize.getHeight() -
+                        (this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] + 0.5 : 0) /
+                        96, // Convert 50px to inches
+                    html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
+                  });
+
+              addFooterPromises.push(addFooterPromise);
             }
+
+            // Wait for all promises to be resolved before saving
+            Promise.all(addFooterPromises).then(() => {
+              pdf.save(); // Save the PDF after all footers are added
+            });
           });
     },
+
 
 
 
