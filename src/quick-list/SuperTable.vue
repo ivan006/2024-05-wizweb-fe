@@ -181,20 +181,19 @@
                       <div
                           :id="`pdfHeader${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                       >
-                        <template v-if="options.header">
-                          <component
-                              :is="defineAsyncComponent(options.header)"
-                          />
-                        </template>
+                        <component
+                            :is="defineAsyncComponent(downloadables.pdf?.header)"
+                        />
                       </div>
                     </template>
+
                     <template v-if="downloadables.pdf.footer">
                       <div
                           :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                       >
                         <!--style="display: none;"-->
                         <component
-                            :is="defineAsyncComponent(downloadables.pdf.footer)"
+                            :is="defineAsyncComponent(downloadables.pdf?.footer)"
                         />
                       </div>
                     </template>
@@ -934,35 +933,45 @@ export default {
               pdf.setPage(i);
 
 
-              const footerElement = document.querySelector(
-                  `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-              );
-              // Get the HTML content from the footer element
-              const footerHtml = footerElement.innerHTML;
-              // Render the HTML footer to the PDF
-              const addFooterPromise = pdf
-                  .html(footerHtml, {
-                    x: 0, // Convert 100px to inches
-                    y:
-                        pdf.internal.pageSize.getHeight() -
-                        (this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] + 0.5 : 0) /
-                        96, // Convert 50px to inches
-                    html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
-                  });
-              addPromises.push(addFooterPromise);
-
 
               const headerElement = document.querySelector(
                   `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-              );
-              const headerHtml = headerElement.innerHTML;
-              const addHeaderPromise = pdf
-                  .html(headerHtml, {
-                    x: 0, // Convert 100px to inches
-                    y: 0, // Convert 50px to inches
-                    html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
-                  });
-              addPromises.push(addHeaderPromise);
+              ); // Get the header element
+              // Add Header
+              if (headerElement) {
+                const headerHtml = headerElement.innerHTML; // Get the HTML content from the header element
+                // console.log("headerHtml")
+                // console.log(headerHtml)
+                const addHeaderPromise = pdf.html(headerHtml, {
+                  x: 0,
+                  y: 0, // Position at the top of the page
+                  html2canvas: { scale: 1 / 96 }, // Scale factor for the header HTML rendering
+                });
+
+                addPromises.push(addHeaderPromise);
+              }
+
+
+
+
+              const footerElement = document.querySelector(
+                  `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+              ); // Get the footer element
+              // Add Footer
+              if (footerElement) {
+                const footerHtml = footerElement.innerHTML; // Get the HTML content from the footer element
+
+                const addFooterPromise = pdf.html(footerHtml, {
+                  x: 0,
+                  y:
+                      pdf.internal.pageSize.getHeight() -
+                      (this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] + 0.5 : 0) /
+                      96, // Position at the bottom of the page
+                  html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
+                });
+
+                addPromises.push(addFooterPromise);
+              }
 
             }
 
