@@ -11,10 +11,10 @@
         dense
     ></q-input>
 
-    <q-dialog v-model="showDialog" max-width="500px">
-      <q-card>
+    <q-dialog v-model="showDialog" >
+      <q-card style="width: 700px; max-width: delete me;">
         <q-card-section>
-          <h3>Search Place</h3>
+          <div class="text-subtitle1">Search Place</div>
           <q-input
               class="CustomPlaceSearch"
               label="Place"
@@ -32,25 +32,18 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
-    <div style="display: none">
-      <GMapAutocomplete
-          placeholder="This is a placeholder"
-          @place_changed="emitPlaceChanged"
-      />
-    </div>
   </div>
 </template>
 
 <script>
+import {Loader} from '@googlemaps/js-api-loader';
+
 export default {
   name: "SearchGooglePlace",
   props: {
     hideLabel: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     modelValue: {
       type: String,
@@ -75,7 +68,7 @@ export default {
     },
     showDialog(newVal) {
       if (newVal) {
-        this.tryInit();
+        this.initGoogleMaps();
       }
     },
   },
@@ -87,36 +80,34 @@ export default {
         this.$emit('update:modelValue', place.name);
       }
     },
-    initAutocomplete() {
-      const input = this.$refs.autocompleteInput.$el.querySelector('input');
-      const autocomplete = new window.google.maps.places.Autocomplete(input);
-
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        this.emitPlaceChanged(place);
+    initGoogleMaps() {
+      const loader = new Loader({
+        apiKey: import.meta.env.VITE_API_GOOGLE_MAP_KEY,  // Replace with your actual API key
+        libraries: ['places'],
       });
-    },
-    tryInit() {
-      if (
-          this.$refs.autocompleteInput &&
-          window.google &&
-          window.google.maps &&
-          window.google.maps.places
-      ) {
-        this.initAutocomplete();
-      } else if (this.retries < 5) {
-        this.retries++;
-        setTimeout(this.tryInit, 1000); // Retry after 1 second
-      } else {
-        console.error('Failed to load Google Maps API after multiple attempts.');
-      }
+
+      loader.load().then(() => {
+        const input = this.$refs.autocompleteInput.$el.querySelector('input');
+        const autocomplete = new google.maps.places.Autocomplete(input);
+
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          this.emitPlaceChanged(place);
+        });
+      }).catch((error) => {
+        console.error('Failed to load Google Maps API:', error);
+      });
     },
   },
 };
+// .CustomPlaceSearch .q-field__control input[placeholder] {
+//   opacity: 0;
+// }
 </script>
 
-<style scoped>
-.CustomPlaceSearch .q-field__control input[placeholder] {
-  opacity: 0;
+<style >
+
+.pac-container {
+  z-index: 10000 !important; /* Adjust this value as needed */
 }
 </style>

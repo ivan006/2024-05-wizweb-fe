@@ -17,9 +17,9 @@ class QuickListsHelpers {
     static mapPlaceFields() {
         return [
             // {
-            //     flag: 'mapName',
+            //     flag: 'location_address_place_name',
             //     googleType: 'simple',
-            //     googleName: 'mapName',
+            //     googleName: 'location_address_place_name',
             // },
             {
                 flag: 'mapExtraFormattedAddress',
