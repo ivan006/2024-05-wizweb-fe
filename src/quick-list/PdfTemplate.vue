@@ -1,11 +1,6 @@
 <template>
-  <div style="height: 1056px; position: relative;" id="pdfContent">
+  <div style="" id="pdfContent">
     <!-- Title at the top -->
-    <template v-if="options.header">
-      <component
-          :is="defineAsyncComponent(options.header)"
-      />
-    </template>
 
     <div class="q-ma-xl">
 

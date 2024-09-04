@@ -177,19 +177,25 @@
                         :id="`pdfContent${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                     />
 
-                    <template v-if="downloadables.pdf.footer">
-                      <div ref="pdfContent">
-                        <!-- Your existing PDF content goes here -->
-
-                        <!-- Footer element for PDF generation -->
-                        <div
-                            :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
-                        >
-                          <!--style="display: none;"-->
+                    <template v-if="downloadables.pdf.header">
+                      <div
+                          :id="`pdfHeader${toHtmlIdSafeString(downloadables.pdf?.title)}`"
+                      >
+                        <template v-if="options.header">
                           <component
-                              :is="defineAsyncComponent(downloadables.pdf.footer)"
+                              :is="defineAsyncComponent(options.header)"
                           />
-                        </div>
+                        </template>
+                      </div>
+                    </template>
+                    <template v-if="downloadables.pdf.footer">
+                      <div
+                          :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
+                      >
+                        <!--style="display: none;"-->
+                        <component
+                            :is="defineAsyncComponent(downloadables.pdf.footer)"
+                        />
                       </div>
                     </template>
                   </div>
@@ -894,9 +900,6 @@ export default {
       const element = document.querySelector(
           `#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
       ); // Get the element to render to PDF
-      const footerElement = document.querySelector(
-          `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-      );
 
       // Configuration for PDF generation
       const opt = {
@@ -925,14 +928,17 @@ export default {
             const pageCount = pdf.internal.getNumberOfPages();
 
             // Loop through each page and add the footer
-            let addFooterPromises = [];
+            let addPromises = [];
 
             for (let i = 1; i <= pageCount; i++) {
               pdf.setPage(i);
 
+
+              const footerElement = document.querySelector(
+                  `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+              );
               // Get the HTML content from the footer element
               const footerHtml = footerElement.innerHTML;
-
               // Render the HTML footer to the PDF
               const addFooterPromise = pdf
                   .html(footerHtml, {
@@ -943,12 +949,25 @@ export default {
                         96, // Convert 50px to inches
                     html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
                   });
+              addPromises.push(addFooterPromise);
 
-              addFooterPromises.push(addFooterPromise);
+
+              const headerElement = document.querySelector(
+                  `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+              );
+              const headerHtml = headerElement.innerHTML;
+              const addHeaderPromise = pdf
+                  .html(headerHtml, {
+                    x: 0, // Convert 100px to inches
+                    y: 0, // Convert 50px to inches
+                    html2canvas: { scale: 1 / 96 }, // Scale factor for the footer HTML rendering
+                  });
+              addPromises.push(addHeaderPromise);
+
             }
 
             // Wait for all promises to be resolved before saving
-            Promise.all(addFooterPromises).then(() => {
+            Promise.all(addPromises).then(() => {
               pdf.save(); // Save the PDF after all footers are added
             });
           });
