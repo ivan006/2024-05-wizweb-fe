@@ -180,9 +180,11 @@
                       <div
                           :id="`pdfHeader${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                       >
-                        <component
-                            :is="defineAsyncComponent(downloadables.pdf?.header)"
-                        />
+                        <div style="width: 793px;">
+                          <component
+                              :is="defineAsyncComponent(downloadables.pdf?.header)"
+                          />
+                        </div>
                       </div>
                     </template>
 
@@ -190,10 +192,11 @@
                       <div
                           :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                       >
-                        <!--style="display: none;"-->
-                        <component
-                            :is="defineAsyncComponent(downloadables.pdf?.footer)"
-                        />
+                        <div style="width: 793px;">
+                          <component
+                              :is="defineAsyncComponent(downloadables.pdf?.footer)"
+                          />
+                        </div>
                       </div>
                     </template>
                   </div>
@@ -908,7 +911,7 @@ export default {
           this.downloadables.pdf['margin-bottom'] ? +this.downloadables.pdf['margin-bottom'] / 96 : 0, // bottom
           0, // right
         ],
-        filename: `${this.downloadables.pdf?.title}.pdf`,
+        // filename: `${this.downloadables.pdf?.title}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 1 },
         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
@@ -974,10 +977,10 @@ export default {
 
               // Wait for all footer promises to be resolved before saving
               Promise.all(addPromises).then(() => {
-                pdf.save(); // Save the PDF after all headers and footers are added
+                pdf.save(`${this.downloadables.pdf?.title}.pdf`); // Save the PDF after all headers and footers are added
               });
             });
-          });
+          })
     },
 
 
