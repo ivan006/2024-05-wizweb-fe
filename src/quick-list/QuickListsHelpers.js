@@ -116,7 +116,8 @@ class QuickListsHelpers {
         return result
     }
 
-    static downloadPdf(bodyElement, footerElement, headerElement, marginTop, marginBottom, title) {
+
+    static downloadPdf(title, bodyElement, marginTop = 0, marginBottom = 0, footerElement = null, headerElement = null) {
 
         // Configuration for PDF generation
         const opt = {

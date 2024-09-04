@@ -909,11 +909,14 @@ export default {
           `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
       );
 
-      const marginTop = this.downloadables.pdf['margin-top']
-      const marginBottom = this.downloadables.pdf['margin-bottom']
-      const title = this.downloadables.pdf?.title
-
-      QuickListsHelpers.downloadPdf(bodyElement, footerElement, headerElement, marginTop, marginBottom, title)
+      QuickListsHelpers.downloadPdf(
+          this.downloadables.pdf?.title,
+          bodyElement,
+          this.downloadables.pdf['margin-top'],
+          this.downloadables.pdf['margin-bottom'],
+          footerElement,
+          headerElement
+      )
 
     },
 
