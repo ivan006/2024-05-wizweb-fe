@@ -871,38 +871,42 @@ export default {
     //
     //   // Save the PDF file
     //   doc.save(`${this.downloadables.pdf}.pdf`);
-    // },
+    // },import html2pdf from 'html2pdf.js';
+
+
     downloadPdf() {
       const element = document.querySelector(`#pdfContent${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`); // Get the element to render to PDF
+      const footerElement = document.querySelector(`#pdfFooter`); // Separate element for footer
 
-      // Check if all images are loaded
-      const images = element.querySelectorAll('img, svg');
-      let loadedImages = 0;
-      images.forEach((img) => {
-        if (img.complete) {
-          loadedImages++;
-        } else {
-          img.onload = () => loadedImages++;
-          img.onerror = () => loadedImages++;
+      // Prepare footer
+      const addFooter = (doc) => {
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i);
+          doc.setFontSize(10);
+          doc.setTextColor(150);
+          doc.text(footerElement.innerText, 14, doc.internal.pageSize.getHeight() - 10);
         }
-      });
+      };
 
-      // Wait until all images are loaded
-      const waitForImages = setInterval(() => {
-        if (loadedImages === images.length) {
-          clearInterval(waitForImages);
+      const opt = {
+        margin: 0.6,
+        filename: `${this.downloadables.pdf?.title}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] },
+      };
 
-          const opt = {
-            margin: 0.6, // Reduced margin size
-            filename: `${this.downloadables.pdf?.title}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true },  // useCORS helps to load cross-origin images
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-          };
-
-          html2pdf().from(element).set(opt).save(); // Generate and download the PDF
-        }
-      }, 200); // Check every 200ms
+      html2pdf()
+          .from(element)
+          .set(opt)
+          .toPdf()
+          .get('pdf')
+          .then((pdf) => {
+            addFooter(pdf);
+          })
+          .save();
     },
 
     toHtmlIdSafeString(str) {
