@@ -171,9 +171,9 @@
                       style="display: none"
                   >
                     <PdfTemplate
+                        :id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                         :options="downloadables.pdf"
                         :items="itemsForExport"
-                        :id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                     />
 
                     <template v-if="downloadables.pdf.header">
@@ -207,10 +207,32 @@
         </template>
         <div class="">
           <template v-if="activeTab == 'table'">
-            <template v-if="bordered">
-              <q-card class="">
+
+            <div
+            >
+              <!--:id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"-->
+              <template v-if="bordered">
+                <q-card class="">
+
+                    <SuperTableTable
+                        ref="SuperTableTableRef"
+                        :items="items"
+                        :loading="loading"
+                        @clickRow="clickRow"
+                        :templateListTable="templateListTable"
+                        :hidePagination="hidePagination"
+                        :excludedCols="excludedCols"
+                        :model="model"
+                        :displayMapField="displayMapField"
+                        :canEdit="canEdit"
+                        @editItem="editItem"
+                        @deleteItem="deleteItem"
+                    />
+                </q-card>
+              </template>
+              <template v-else>
+
                 <SuperTableTable
-                    ref="SuperTableTableRef"
                     :items="items"
                     :loading="loading"
                     @clickRow="clickRow"
@@ -223,24 +245,8 @@
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                 />
-              </q-card>
-            </template>
-            <template v-else>
-
-              <SuperTableTable
-                  :items="items"
-                  :loading="loading"
-                  @clickRow="clickRow"
-                  :templateListTable="templateListTable"
-                  :hidePagination="hidePagination"
-                  :excludedCols="excludedCols"
-                  :model="model"
-                  :displayMapField="displayMapField"
-                  :canEdit="canEdit"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
-              />
-            </template>
+              </template>
+            </div>
             <!--:superOptions="superOptions"-->
             <!--:itemsLength="itemsLength"-->
             <!--@clickRow="clickRow"-->
@@ -912,8 +918,7 @@ export default {
       QuickListsHelpers.downloadPdf(
           this.downloadables.pdf?.title,
           bodyElement,
-          this.downloadables.pdf['margin-top'],
-          this.downloadables.pdf['margin-bottom'],
+          this.downloadables.pdf['margin'] ? this.downloadables.pdf['margin'] : 0,
           footerElement,
           headerElement
       )

@@ -117,26 +117,39 @@ class QuickListsHelpers {
     }
 
 
-    static downloadPdf(title, bodyElement, marginTop = 0, marginBottom = 0, footerElement = null, headerElement = null) {
-
+    static downloadPdf(title, bodyElement, margin = 0, footerElement = null, headerElement = null) {
+        // [
+        //     marginTop ? +marginTop / 96 : 0, // top
+        //     0, // left
+        //     marginBottom ? +marginBottom / 96 : 0, // bottom
+        //     0, // right
+        // ]
         // Configuration for PDF generation
         const opt = {
             // margin: [0.35, 0, 0.3, 0],
-            margin: [
-                marginTop ? +marginTop / 96 : 0, // top
-                0, // left
-                marginBottom ? +marginBottom / 96 : 0, // bottom
-                0, // right
-            ],
+            margin: margin,
             // filename: `${title}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 1 },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
         };
 
+
+
+        const wrapperDiv = document.createElement('div');
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'text-h6 text-grey-7 text-center q-mb-lg';
+        titleDiv.textContent = title; // Assuming `options` is available and has a `title` property
+
+        wrapperDiv.appendChild(titleDiv);
+
+        wrapperDiv.appendChild(bodyElement.cloneNode(true)); // Clone the bodyElement to preserve its content
+
+
         // Generate PDF
         html2pdf()
-            .from(bodyElement)
+            .from(wrapperDiv)
             .set(opt)
             .toPdf()
             .get('pdf')
@@ -193,7 +206,7 @@ class QuickListsHelpers {
                                 x: 0,
                                 y:
                                     pdf.internal.pageSize.getHeight() -
-                                    (marginBottom ? +marginBottom + 0.5 : 0) / 96, // Position at the bottom of the page
+                                    (margin[2] ? +margin[2] + 0.5/96 : 0), // Position at the bottom of the page
                                 html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
                             });
 

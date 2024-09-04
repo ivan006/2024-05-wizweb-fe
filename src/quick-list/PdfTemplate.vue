@@ -2,16 +2,16 @@
   <div style="" id="pdfContent">
     <!-- Title at the top -->
 
-    <div class="q-mx-xl">
+    <div class="">
 
 
-      <template v-if="options.title">
-        <div class="col-12 q-mb-lg">
-          <div class="text-h6 text-grey-7 text-center">
-            {{ options.title }}
-          </div>
-        </div>
-      </template>
+      <!--<template v-if="options.title">-->
+      <!--  <div class="col-12 q-mb-lg">-->
+      <!--    <div class="text-h6 text-grey-7 text-center">-->
+      <!--      {{ options.title }}-->
+      <!--    </div>-->
+      <!--  </div>-->
+      <!--</template>-->
 
       <!-- Quasar Table -->
       <template v-if="!tableRows.length">
