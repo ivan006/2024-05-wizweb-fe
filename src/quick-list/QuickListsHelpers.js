@@ -1,4 +1,5 @@
 import DBCrudCacheSet from './DBCrudCacheSet'
+import html2pdf from "html2pdf.js";
 // import Helpers from '../utils/Helpers.js'
 
 class QuickListsHelpers {
@@ -113,6 +114,98 @@ class QuickListsHelpers {
         }
         const result = this.computedAttrs2(crudCache.fields, excludedCols)
         return result
+    }
+
+    static downloadPdf(bodyElement, footerElement, headerElement, marginTop, marginBottom, title) {
+
+        // Configuration for PDF generation
+        const opt = {
+            // margin: [0.35, 0, 0.3, 0],
+            margin: [
+                marginTop ? +marginTop / 96 : 0, // top
+                0, // left
+                marginBottom ? +marginBottom / 96 : 0, // bottom
+                0, // right
+            ],
+            // filename: `${title}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 1 },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+        };
+
+        // Generate PDF
+        html2pdf()
+            .from(bodyElement)
+            .set(opt)
+            .toPdf()
+            .get('pdf')
+            .then((pdf) => {
+                const pageCount = pdf.internal.getNumberOfPages();
+
+                // Loop through each page to add headers and footers
+                let addPromises = [];
+
+                for (let i = 1; i <= pageCount; i++) {
+                    pdf.setPage(i);
+
+                    // Add Header
+                    if (headerElement) {
+                        // const headerHtml = headerElement.innerHTML;
+
+
+                        // Wrap the footer content in a styled div
+                        const wrapperDiv = document.createElement('div'); // Create a new div element
+                        wrapperDiv.style.width = '793px'; // Set the style for width
+                        wrapperDiv.innerHTML = headerElement.innerHTML; // Set the footerHtml as the inner HTML
+
+                        const headerHtml = wrapperDiv.outerHTML;
+
+                        const addHeaderPromise = pdf.html(headerHtml, {
+                            x: 0,
+                            y: 0, // Position at the top of the page
+                            html2canvas: { scale: 1/96 }, // Scale factor for the header HTML rendering
+                        });
+
+                        addPromises.push(addHeaderPromise);
+                    }
+                }
+
+                // Once headers are added, add footers
+                Promise.all(addPromises).then(() => {
+                    addPromises = []; // Clear promises array for footers
+
+                    for (let i = 1; i <= pageCount; i++) {
+                        pdf.setPage(i);
+
+                        // Add Footer
+                        if (footerElement) {
+                            // const footerHtml = footerElement.innerHTML;
+
+                            // Wrap the footer content in a styled div
+                            const wrapperDiv = document.createElement('div'); // Create a new div element
+                            wrapperDiv.style.width = '793px'; // Set the style for width
+                            wrapperDiv.innerHTML = footerElement.innerHTML; // Set the footerHtml as the inner HTML
+
+                            const footerHtml = wrapperDiv.outerHTML;
+
+                            const addFooterPromise = pdf.html(footerHtml, {
+                                x: 0,
+                                y:
+                                    pdf.internal.pageSize.getHeight() -
+                                    (marginBottom ? +marginBottom + 0.5 : 0) / 96, // Position at the bottom of the page
+                                html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
+                            });
+
+                            addPromises.push(addFooterPromise);
+                        }
+                    }
+
+                    // Wait for all footer promises to be resolved before saving
+                    Promise.all(addPromises).then(() => {
+                        pdf.save(`${title}.pdf`); // Save the PDF after all headers and footers are added
+                    });
+                });
+            })
     }
 
     static computedAttrs2(fields, excludedCols = []) {
