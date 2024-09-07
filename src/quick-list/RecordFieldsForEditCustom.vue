@@ -49,7 +49,7 @@
                 :template="col"
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
-                @placeSelected="$emit('placeSelected')"
+                @placeSelected="(e)=>{$emit('placeSelected', e)}"
             />
           </template>
         </template>
@@ -65,7 +65,7 @@
                   :dataPoint="template.dataPoint"
                   :formServerErrors="formServerErrors"
                   :itemErrors="itemErrors"
-                  @placeSelected="$emit('placeSelected')"
+                  @placeSelected="(e)=>{$emit('placeSelected', e)}"
               />
             </div>
           </div>

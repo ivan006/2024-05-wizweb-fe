@@ -29,7 +29,7 @@
                     :field="compField"
                     hideLabel
                     :formServerErrors="formServerErrors"
-                    @placeSelected="$emit('placeSelected')"
+                    @placeSelected="(e)=>{$emit('placeSelected', e)}"
                 />
               </template>
             </component>
@@ -63,7 +63,7 @@
               hideLabel
               :formServerErrors="formServerErrors"
               :itemErrors="itemErrors"
-              @placeSelected="$emit('placeSelected')"
+              @placeSelected="(e)=>{$emit('placeSelected', e)}"
           />
         </template>
       </component>
