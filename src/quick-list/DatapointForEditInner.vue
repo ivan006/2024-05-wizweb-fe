@@ -227,8 +227,9 @@
           :configs="field"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
-          @change="searchGooglePlace"
+          @placeSelected="(e)=>{$emit('placeSelected', e)}"
       />
+      <!--@change="searchGooglePlace"-->
     </template>
     <template v-else-if="field.usageType.startsWith('mapExtra')">
       <q-input
@@ -427,19 +428,6 @@ export default {
       return result
 
     },
-    placeFieldsWithFieldNames() {
-      let result = [];
-      const location_address_place_name = this.superOptions.modelFields.find((field) => field.usageType == "location_address_place_name");
-      if (location_address_place_name) {
-        for (const placeFieldType of QuickListsHelpers.mapPlaceFields()) {
-          const placeField = this.superOptions.modelFields.find((field) => field.usageType == placeFieldType.flag);
-          if (placeField) {
-            result.push({ ...placeFieldType, fieldNames: placeField.name });
-          }
-        }
-      }
-      return result;
-    },
     compLabel() {
       // if (this.hideLabel){
       //   return void 0
@@ -476,9 +464,6 @@ export default {
     updateStartTime(item) {
       this.$emit('update:modelValue', item)
       this.$emit('updateSetDefaultEndTime', item);
-    },
-    async searchGooglePlace(arg) {
-      // Implement the necessary logic
     },
   },
   mounted() {
