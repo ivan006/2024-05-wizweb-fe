@@ -74,6 +74,7 @@ export default {
   },
   methods: {
     emitPlaceChanged(place) {
+      this.$emit('placeSelected', place)
       this.place = place;
       if (place.geometry) {
         this.internalModelValue = place.name;

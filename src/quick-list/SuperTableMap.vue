@@ -1,7 +1,9 @@
 <template>
   <div>
     <q-card class="q-pa-xs">
-
+      <template v-if="!markers.length">
+        <div class="text-center q-pa-md">No data available</div>
+      </template>
       <MyGoogleMap
           v-if="markers.length"
           :markers="markers"
