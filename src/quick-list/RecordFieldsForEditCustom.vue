@@ -49,6 +49,7 @@
                 :template="col"
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
+                @placeSelected="$emit('placeSelected')"
             />
           </template>
         </template>
@@ -64,6 +65,7 @@
                   :dataPoint="template.dataPoint"
                   :formServerErrors="formServerErrors"
                   :itemErrors="itemErrors"
+                  @placeSelected="$emit('placeSelected')"
               />
             </div>
           </div>

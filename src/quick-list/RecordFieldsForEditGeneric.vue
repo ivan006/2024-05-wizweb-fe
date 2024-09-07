@@ -22,6 +22,7 @@
                 :formServerErrors="formServerErrors"
                 :itemErrors="itemErrors"
                 hideLabel
+                @placeSelected="$emit('placeSelected')"
             />
           </template>
         </div>

@@ -16,6 +16,7 @@
                   :template="template"
                   :formServerErrors="formServerErrors"
                   :itemErrors="itemErrors"
+                  @placeSelected="$emit('placeSelected')"
               />
             </div>
           </div>
@@ -28,6 +29,7 @@
               @updateSetDefaultEndTime="updateSetDefaultEndTime"
               :formServerErrors="formServerErrors"
               :itemErrors="itemErrors"
+              @placeSelected="$emit('placeSelected')"
           />
         </template>
       </q-form>
