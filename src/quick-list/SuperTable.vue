@@ -1256,8 +1256,14 @@ export default {
     },
   },
   watch: {
-    forcedFilters(newVal) {
-       this.activated = false;
+    forcedFilters: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) { // Compare serialized objects
+          this.activated = false;
+          this.items = []
+        }
+      },
+      deep: true, // Deep watch to detect changes in nested properties
     },
     items(newVal) {
       if (newVal.length){
