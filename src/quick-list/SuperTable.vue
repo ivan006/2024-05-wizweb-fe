@@ -122,7 +122,7 @@
                           :key="filterInput.name"
                           :modelField="filterInput"
                           v-model="filters[filterInput.name].value"
-                          class="q-ma-sm col-grow"
+                          class="q-mr-sm col-grow"
                           style="max-width: 200px;"
                       />
                     </template>
@@ -133,7 +133,7 @@
                           :key="filterInput.name"
                           :filterField="filterInput"
                           v-model="filters"
-                          class="q-ma-sm col-grow"
+                          class="q-mr-sm col-grow"
                           style="max-width: 200px;"
                       />
                     </template>
