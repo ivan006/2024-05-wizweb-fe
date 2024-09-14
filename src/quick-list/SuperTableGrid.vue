@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row q-col-gutter-md q-mx-n2 justify-center">
+    <div class="row q-col-gutter-md justify-center">
       <template v-for="item in items" :key="item.name">
         <template
             v-if="

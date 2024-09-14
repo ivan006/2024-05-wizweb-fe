@@ -68,7 +68,7 @@
       </template>
       <template v-else>
         <template v-if="shouldWeShowTopBar()">
-          <div class="q-px-sm">
+          <div class="">
 
             <DestructableExpansionPanels
                 :destroy="!quickListsIsMobile"
@@ -264,7 +264,7 @@
             <!--@update:rows-per-page="updateRowsPerPage"-->
           </template>
           <template v-if="activeTab == 'grid'">
-            <div class="q-pa-md">
+            <div class="">
               <SuperTableGrid
                   :items="items"
                   @clickRow="clickRow"
