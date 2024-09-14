@@ -7,7 +7,7 @@
          v-show="!(typeof field.fieldExtras.autoFill === 'function')"
         >
           <template v-if="!['relLookupNormal','relChildrenNormal'].includes(field.usageType) ">
-            <div v-if="rendered" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
+            <div v-if="rendered && !field.usageType.startsWith('relLookupMapExtraRel')" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
               {{ field.label }}:
             </div>
             <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->

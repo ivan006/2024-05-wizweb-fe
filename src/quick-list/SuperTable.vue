@@ -133,6 +133,7 @@
                           :filterField="filterInput"
                           v-model="filters"
                           class="q-ma-sm col-grow"
+                          style="max-width: 200px;"
                       />
                     </template>
                   </template>

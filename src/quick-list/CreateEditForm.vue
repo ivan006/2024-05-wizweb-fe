@@ -64,6 +64,7 @@ import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForEditCustom from "./RecordFieldsForEditCustom.vue";
 import CreateButton from "./CreateButton.vue";
+import {FieldUsageTypes} from "../index";
 
 const AsyncSuperTableComponent = defineAsyncComponent(() =>
     import('./SuperTable.vue')
@@ -217,12 +218,49 @@ export default {
             ) {
               data.parent_id = parent_id // Set the parent id.
             }
+
+
+            let currentType = ''
+            if (placeField.flag == 'relForeignKeyMapExtraRelAdminArea1'){
+              currentType = FieldUsageTypes.mapExtraRelCountry()
+            } else if (placeField.flag == 'relForeignKeyMapExtraRelAdminArea2'){
+              currentType = FieldUsageTypes.mapExtraRelAdminArea1()
+            } else if (placeField.flag == 'relForeignKeyMapExtraRelLocality'){
+              currentType = FieldUsageTypes.mapExtraRelAdminArea2()
+            } else if (placeField.flag == 'relForeignKeyMapExtraRelSublocality'){
+              currentType = FieldUsageTypes.mapExtraRelLocality()
+            }
+
+            const parentKey = Object.keys(flagToModel[placeField.flag].fieldsMetadata).find(
+                (key) => flagToModel[placeField.flag].fieldsMetadata[key].usageType === currentType
+            );
+
+            data[parentKey] = parent_id
+
+
+
             // Perform the Upsert operation.
-            const responce = await flagToModel[
-                placeField.flag
-                ].Upsert(data)
+            // const responce = await flagToModel[
+            //     placeField.flag
+            //     ].Store(data)
+
+
+            const responce = await flagToModel[placeField.flag].Store(
+                {
+                  ...data,
+                  // ...this.createPayloadExtras,
+                },
+                [],
+                {
+                  upsertCompareOn: "name",
+                  upsertCompareMode: "sluggify",
+                },
+                {}
+            )
             // Extract the id from the result for use as parent_id in the next iteration.
-            parent_id = responce.response.data[0].id
+            // console.log('responce')
+            // console.log(responce.response.data.data)
+            parent_id = responce.response.data.data.id
             result[placeField.flag] = parent_id
           }
         }
@@ -234,7 +272,8 @@ export default {
 
 
 
-      // const entitiesIds = await this.upsertAndGetEntityIds(arg)
+      const entitiesIds = await this.upsertAndGetEntityIds(arg)
+      console.log(entitiesIds)
       for (const placeField of this.placeFieldsWithFieldNames) {
         if (placeField.googleType === 'simple') {
           this.itemData[placeField.fieldNames] =
@@ -245,8 +284,7 @@ export default {
                 arg.geometry.location[placeField.googleName]()
           }
         } else if (placeField.googleType === 'components') {
-          // this.itemData[placeField.fieldNames] =
-          //     entitiesIds[placeField.flag]
+          this.itemData[placeField.fieldNames] = entitiesIds[placeField.flag]
         }
       }
       this.loading = false

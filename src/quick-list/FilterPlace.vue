@@ -1,21 +1,23 @@
 <template>
   <div>
-    <q-menu v-model="menu" fit class="q-pt-none" no-corner>
-      <template v-slot:activator="{ attrs }">
-        <q-input
-            v-bind="attrs"
-            label="Place Filter"
-            type="text"
-            v-model="displayPlace"
-            :error="false"
-            :error-message="''"
-            readonly
-            dense
-            outlined
-            placeholder="All"
-        />
-      </template>
-
+    <q-input
+        label="Place Filter"
+        type="text"
+        v-model="displayPlace"
+        :error="false"
+        :error-message="''"
+        disable
+        filled
+        dense
+        placeholder="All"
+        class="FilterPlaceTrigger"
+    />
+    <q-menu
+        v-model="menu"
+        fit
+        class="q-pt-none"
+        no-corner
+    >
       <q-card>
         <q-card-section>
           <template
@@ -33,10 +35,7 @@
                     :model="childFilter.meta.field.parent"
                     :filters="getFilters(childFilter)"
                     v-model="filtersData[childFilter.name]"
-                    :disabled="
-                    filterParentName(childFilter) &&
-                    !modelValue[filterParentName(childFilter)]
-                  "
+                    :disabled="filterParentName(childFilter) && !modelValue[filterParentName(childFilter)]"
                     @update:modelValue="handleSelectChange(childFilter.name)"
                 />
               </div>
@@ -51,7 +50,6 @@
 </template>
 
 <script>
-import { ref, computed, watch } from "vue";
 import SuperSelect from "./SuperSelect.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 
@@ -189,4 +187,16 @@ export default {
 };
 </script>
 
-<style scoped></style>
+
+<style>
+
+.FilterPlaceTrigger > div {
+  cursor: pointer !important;
+}
+
+
+.FilterPlaceTrigger.q-field--disabled .q-field__control > div {
+  opacity: 1 !important;
+}
+</style>
+

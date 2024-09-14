@@ -45,12 +45,22 @@
         <!--parentKeyValuePair-->
       </template>
       <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
-        <RelationComponent
+        <SuperTable
             :hideLabel="hideLabel"
-            :configs="field"
+            :isForSelectingRelation="true"
+            :canEdit="false"
             :modelValue="modelValue"
             @update:modelValue="updateModelValue"
-            readonly
+            :model="field.meta.field.parent"
+            :rules="[() => true]"
+            :modelField="field"
+            :fetchFlags="{
+              sort: field.meta.field.parent.titleKey
+            }"
+            :forcedFilters="getForcedFilters(field)"
+            @superTableMounted="$emit('superTableMounted')"
+            :errorMessage="compError"
+            disabled
         />
       </template>
       <template v-else-if="field.usageType == 'relForeignKeyOwnerAppliedToProviderType'">
