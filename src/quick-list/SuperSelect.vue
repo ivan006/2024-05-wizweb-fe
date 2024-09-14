@@ -241,7 +241,9 @@ export default {
           if (this.preSelectedItem){
             preSelectedItemLabel = this.preSelectedItem[this.model.titleKey]
           }
-          result.push({ label: preSelectedItemLabel, id: this.modelValue });
+          if (this.modelValue){
+            result.push({ label: preSelectedItemLabel, id: this.modelValue });
+          }
         }
 
         for (const item of this.items) {
