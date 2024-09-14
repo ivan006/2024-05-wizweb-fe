@@ -18,6 +18,7 @@
         :rules="rules"
         :error="!!errorMessage"
         :errorMessage="errorMessage"
+        :hideBottomSpace="hideBottomSpace"
     >
       <template v-slot:option="scope">
         <q-item v-if="scope.index === 0" class="q-mt-none q-px-md">
@@ -88,6 +89,12 @@ import QuickListsHelpers from "./QuickListsHelpers";
 export default {
   name: "SuperSelect",
   props: {
+    hideBottomSpace: {
+      type: String,
+      default() {
+        return false;
+      },
+    },
     errorMessage: {
       type: String,
       default() {

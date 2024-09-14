@@ -221,13 +221,13 @@ export default {
 
 
             let currentType = ''
-            if (placeField.flag == 'relForeignKeyMapExtraRelAdminArea1'){
+            if (placeField.flag === 'relForeignKeyMapExtraRelAdminArea1'){
               currentType = FieldUsageTypes.mapExtraRelCountry()
-            } else if (placeField.flag == 'relForeignKeyMapExtraRelAdminArea2'){
+            } else if (placeField.flag === 'relForeignKeyMapExtraRelAdminArea2'){
               currentType = FieldUsageTypes.mapExtraRelAdminArea1()
-            } else if (placeField.flag == 'relForeignKeyMapExtraRelLocality'){
+            } else if (placeField.flag === 'relForeignKeyMapExtraRelLocality'){
               currentType = FieldUsageTypes.mapExtraRelAdminArea2()
-            } else if (placeField.flag == 'relForeignKeyMapExtraRelSublocality'){
+            } else if (placeField.flag === 'relForeignKeyMapExtraRelSublocality'){
               currentType = FieldUsageTypes.mapExtraRelLocality()
             }
 

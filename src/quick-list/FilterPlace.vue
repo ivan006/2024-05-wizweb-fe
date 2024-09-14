@@ -28,16 +28,44 @@
                 v-if="childFilter.usageType.startsWith('relForeignKeyMapExtraRel')"
             >
               <div class="q-mt-md">
-                <SuperSelect
+                <SuperTable
+
                     allowAll
                     v-if="typeof filtersData[childFilter.name] !== 'undefined'"
                     :modelField="childFilter"
                     :model="childFilter.meta.field.parent"
-                    :filters="getFilters(childFilter)"
+                    :forcedFilters="getFilters(childFilter)"
                     v-model="filtersData[childFilter.name]"
                     :disabled="filterParentName(childFilter) && !modelValue[filterParentName(childFilter)]"
                     @update:modelValue="handleSelectChange(childFilter.name)"
+
+                    :isForSelectingRelation="true"
+                    hideCreate
+                    selectHideBottomSpace
                 />
+                <!--:modelField="filtersData[childFilter.name]"-->
+
+                <!--:hideLabel="hideLabel"-->
+                <!--:isForSelectingRelation="true"-->
+                <!--:canEdit="false"-->
+                <!--:rules="[() => true]"-->
+                <!--:fetchFlags="{-->
+                <!--sort: field.meta.field.parent.titleKey-->
+                <!--}"-->
+                <!--@superTableMounted="$emit('superTableMounted')"-->
+                <!--:errorMessage="compError"-->
+                <!--disabled-->
+
+                <!--<SuperSelect-->
+                <!--    allowAll-->
+                <!--    v-if="typeof filtersData[childFilter.name] !== 'undefined'"-->
+                <!--    :modelField="childFilter"-->
+                <!--    :model="childFilter.meta.field.parent"-->
+                <!--    :filters="getFilters(childFilter)"-->
+                <!--    v-model="filtersData[childFilter.name]"-->
+                <!--    :disabled="filterParentName(childFilter) && !modelValue[filterParentName(childFilter)]"-->
+                <!--    @update:modelValue="handleSelectChange(childFilter.name)"-->
+                <!--/>-->
               </div>
             </template>
           </template>
@@ -52,10 +80,20 @@
 <script>
 import SuperSelect from "./SuperSelect.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
+import {defineAsyncComponent} from "vue";
+import {FieldUsageTypes} from "../index";
+
+
+const AsyncSuperTableComponent = defineAsyncComponent(() =>
+    import('./SuperTable.vue')
+);
 
 export default {
   name: "FilterPlace",
-  components: { SuperSelect },
+  components: {
+    SuperSelect,
+    SuperTable: AsyncSuperTableComponent
+  },
   props: {
     filterField: {
       type: Object,
@@ -165,12 +203,28 @@ export default {
     },
     getFilters(modelField) {
       const filterParentName = this.filterParentName(modelField);
-      const result = this.modelValue[filterParentName]
-          ? {
-            parent_id: this.modelValue[filterParentName],
-          }
-          : {};
-      return JSON.stringify(result);
+
+      let currentType = ''
+      if (modelField.usageType === 'relForeignKeyMapExtraRelAdminArea1'){
+        currentType = FieldUsageTypes.mapExtraRelCountry()
+      } else if (modelField.usageType === 'relForeignKeyMapExtraRelAdminArea2'){
+        currentType = FieldUsageTypes.mapExtraRelAdminArea1()
+      } else if (modelField.usageType === 'relForeignKeyMapExtraRelLocality'){
+        currentType = FieldUsageTypes.mapExtraRelAdminArea2()
+      } else if (modelField.usageType === 'relForeignKeyMapExtraRelSublocality'){
+        currentType = FieldUsageTypes.mapExtraRelLocality()
+      }
+
+      const parentKey = Object.keys(modelField.meta.relatedModel.fieldsMetadata).find(
+          (key) => modelField.meta.relatedModel.fieldsMetadata[key].usageType === currentType
+      );
+
+      let result = {}
+      if (this.modelValue[filterParentName]){
+        result[parentKey] = this.modelValue[filterParentName]
+      }
+
+      return result;
     },
   },
   watch: {

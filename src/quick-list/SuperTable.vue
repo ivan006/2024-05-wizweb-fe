@@ -41,16 +41,17 @@
             :items="items"
             :loading="loading"
             :rules="rules"
-            :modelValue="+modelValue"
+            :modelValue="modelValue"
             @update:modelValue="clickRow"
             :model="model"
             :modelField="modelField"
             :activated="activated"
             @search="doSearch"
             :errorMessage="errorMessage"
+            :hideBottomSpace="selectHideBottomSpace"
         >
           <CreateButton
-              v-if="superOptions.model.rules.creatable() && canCreateComputed"
+              v-if="superOptions.model.rules.creatable() && canCreateComputed && !hideCreate"
               :modelFields="modelFields"
               @createItem="createItem"
               :model="model"
@@ -582,6 +583,12 @@ export default {
       type: String,
       default() {
         return null;
+      },
+    },
+    selectHideBottomSpace: {
+      type: String,
+      default() {
+        return false;
       },
     },
   },
@@ -1249,6 +1256,9 @@ export default {
     },
   },
   watch: {
+    forcedFilters(newVal) {
+       this.activated = false;
+    },
     items(newVal) {
       if (newVal.length){
         this.$emit('update:items', newVal)
