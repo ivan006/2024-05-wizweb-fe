@@ -2,56 +2,6 @@
   <div>
     <div>
       <div class="subcontent">
-        <!--<pre>{{startFieldName}}</pre>-->
-        <!--<pre>{{items}}</pre>-->
-        <!--<pre>{{events}}</pre>-->
-
-        <!--<div class="q-ma-sm row justify-center">-->
-        <!--  <q-select-->
-        <!--      v-model="dateHeader"-->
-        <!--      label="date-header"-->
-        <!--      outlined-->
-        <!--      dense-->
-        <!--      options-dense-->
-        <!--      :options="[-->
-        <!--        'stacked',-->
-        <!--        'inline',-->
-        <!--        'inverted'-->
-        <!--      ]"-->
-        <!--      class="button"-->
-        <!--      style="min-width: 160px;"-->
-        <!--  />-->
-
-        <!--  <q-select-->
-        <!--      v-model="dateAlign"-->
-        <!--      label="date-align"-->
-        <!--      outlined-->
-        <!--      dense-->
-        <!--      options-dense-->
-        <!--      :options="[-->
-        <!--        'center',-->
-        <!--        'left',-->
-        <!--        'right'-->
-        <!--      ]"-->
-        <!--      class="button"-->
-        <!--      style="min-width: 160px;"-->
-        <!--  />-->
-
-        <!--  <q-select-->
-        <!--      v-model="weekdayAlign"-->
-        <!--      label="weekday-align"-->
-        <!--      outlined-->
-        <!--      dense-->
-        <!--      options-dense-->
-        <!--      :options="[-->
-        <!--    'center',-->
-        <!--    'left',-->
-        <!--    'right'-->
-        <!--  ]"-->
-        <!--      class="button"-->
-        <!--      style="min-width: 160px;"-->
-        <!--  />-->
-        <!--</div>-->
 
         <template v-if="loading">
 
@@ -63,100 +13,158 @@
         <div :style="`display: ${loading ? 'none' : 'block'};`">
         <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
 
+          <div class="row justify-center q-pa-md">
+
+            <q-btn-toggle
+                v-model="isAgendaView"
+                toggle-color="primary"
+                :options="[
+                    {label: 'Hour by Hour', value: 'Hour by Hour'},
+                    {label: 'Full Details', value: 'Full Details'},
+                  ]"
+            />
+          </div>
           <div
               style="display: flex; max-width: 100%; width: 100%; "
           >
+            <!-- Toggle Button to switch views -->
 
-            <q-calendar-day
-                ref="calendar"
-                v-model="selectedDate"
-                :view="view"
-                short-weekday-label
-                :date-header="'stacked'"
-                :weekday-align="'center'"
-                :date-align="'center'"
-                animated
-                bordered
-                @change="onChange"
-                @moved="onMoved"
-                @click-date="onClickDate"
-                @click-time="onClickTime"
-                @click-interval="onClickInterval"
-                @click-head-intervals="onClickHeadIntervals"
-                @click-head-day="onClickHeadDay"
-                :interval-height="20"
-                :interval-start="5"
-                :interval-count="19"
-                hour24-format
-                :weekdays="[1,2,3,4,5,6,0]"
-                no-active-date
-            >
 
-              <template #day-container="{ scope: { days }}">
-                <template v-if="hasDate(days)">
-                  <div
-                      class="day-view-current-time-indicator"
-                      :style="style"
-                  />
-                  <div
-                      class="day-view-current-time-line"
-                      :style="style"
-                  />
+            <template v-if="isAgendaView === 'Hour by Hour'">
+
+
+              <q-calendar-day
+                  ref="calendar"
+                  v-model="selectedDate"
+                  :view="view"
+                  short-weekday-label
+                  :date-header="'stacked'"
+                  :weekday-align="'center'"
+                  :date-align="'center'"
+                  animated
+                  bordered
+                  @change="onChange"
+                  @moved="onMoved"
+                  @click-date="onClickDate"
+                  @click-time="onClickTime"
+                  @click-interval="onClickInterval"
+                  @click-head-intervals="onClickHeadIntervals"
+                  @click-head-day="onClickHeadDay"
+                  :interval-height="20"
+                  :interval-start="5"
+                  :interval-count="19"
+                  hour24-format
+                  :weekdays="[1,2,3,4,5,6,0]"
+                  no-active-date
+              >
+
+                <template #day-container="{ scope: { days }}">
+                  <template v-if="hasDate(days)">
+                    <div
+                        class="day-view-current-time-indicator"
+                        :style="style"
+                    />
+                    <div
+                        class="day-view-current-time-line"
+                        :style="style"
+                    />
+                  </template>
                 </template>
-              </template>
 
 
-              <template #head-day-event="{ scope: { timestamp } }">
-                <div style="display: flex; justify-content: center; flex-wrap: wrap; padding: 2px;">
+                <template #head-day-event="{ scope: { timestamp } }">
+                  <div style="display: flex; justify-content: center; flex-wrap: wrap; padding: 2px;">
+                    <template
+                        v-for="event in eventsMap[timestamp.date]"
+                        :key="event.id"
+                    >
+                      <q-badge
+                          v-if="!event.time"
+                          :class="badgeClasses(event, 'header')"
+                          :style="badgeStyles(event, 'header')"
+                          style="width: 100%; cursor: pointer; height: 12px; font-size: 10px; margin: 1px;"
+                      >
+                        <div class="title q-calendar__ellipsis">
+                          {{ event.title }}
+                          <q-tooltip>{{ event.title }}</q-tooltip>
+                        </div>
+                      </q-badge>
+                      <q-badge
+                          v-else
+                          :class="badgeClasses(event, 'header')"
+                          :style="badgeStyles(event, 'header')"
+                          style="margin: 1px; width: 10px; max-width: 10px; height: 10px; max-height: 10px; cursor: pointer"
+                          @click="showEvent(event)"
+                      >
+                        <!--@click="scrollToEvent(event)"-->
+                        <q-tooltip>{{ event.time + ' - ' + event.title }}</q-tooltip>
+                      </q-badge>
+                    </template>
+                  </div>
+                </template>
+
+                <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
                   <template
-                      v-for="event in eventsMap[timestamp.date]"
+                      v-for="event in getEvents(timestamp.date)"
                       :key="event.id"
                   >
-                    <q-badge
-                        v-if="!event.time"
-                        :class="badgeClasses(event, 'header')"
-                        :style="badgeStyles(event, 'header')"
-                        style="width: 100%; cursor: pointer; height: 12px; font-size: 10px; margin: 1px;"
+                    <div
+                        @click="showEvent(event)"
+                        v-if="event.time !== undefined"
+                        class="my-event"
+                        :class="badgeClasses(event, 'body')"
+                        :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
                     >
                       <div class="title q-calendar__ellipsis">
                         {{ event.title }}
-                        <q-tooltip>{{ event.title }}</q-tooltip>
+                        <q-tooltip>{{ event.time }}</q-tooltip>
                       </div>
-                    </q-badge>
-                    <q-badge
-                        v-else
-                        :class="badgeClasses(event, 'header')"
-                        :style="badgeStyles(event, 'header')"
-                        style="margin: 1px; width: 10px; max-width: 10px; height: 10px; max-height: 10px; cursor: pointer"
-                        @click="showEvent(event)"
-                    >
-                      <!--@click="scrollToEvent(event)"-->
-                      <q-tooltip>{{ event.time + ' - ' + event.title }}</q-tooltip>
-                    </q-badge>
-                  </template>
-                </div>
-              </template>
-
-              <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
-                <template
-                    v-for="event in getEvents(timestamp.date)"
-                    :key="event.id"
-                >
-                  <div
-                      @click="showEvent(event)"
-                      v-if="event.time !== undefined"
-                      class="my-event"
-                      :class="badgeClasses(event, 'body')"
-                      :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
-                  >
-                    <div class="title q-calendar__ellipsis">
-                      {{ event.title }}
-                      <q-tooltip>{{ event.time }}</q-tooltip>
                     </div>
-                  </div>
+                  </template>
                 </template>
-              </template>
-            </q-calendar-day>
+              </q-calendar-day>
+            </template>
+            <template v-else>
+              <q-calendar-agenda
+                  ref="calendar"
+                  v-model="selectedDate"
+                  :view="view"
+                  :weekdays="[1,2,3,4,5,6,0]"
+                  short-weekday-label
+                  :date-header="'stacked'"
+                  :weekday-align="'center'"
+                  :date-align="'center'"
+                  animated
+                  bordered
+                  @change="onChange"
+                  @moved="onMoved"
+                  @click-date="onClickDate"
+                  @click-time="onClickTime"
+                  :interval-height="40"
+                  :interval-start="5"
+                  :interval-count="19"
+                  hour24-format
+              >
+
+                <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
+                  <template
+                      v-for="event in getEvents(timestamp.date)"
+                      :key="event.id"
+                  >
+                    <div
+                        @click="showEvent(event)"
+                        v-if="event.time !== undefined"
+                        style="height: 150px;"
+                    >
+                      <div class="title q-calendar__ellipsis">
+                        {{ event.title }}
+                        <q-tooltip>{{ event.time }}</q-tooltip>
+                      </div>
+                    </div>
+                  </template>
+                </template>
+              </q-calendar-agenda>
+            </template>
 
 
             <!--style="height: 400px; width: 100%;"-->
@@ -201,57 +209,6 @@
       </div>
 
 
-      <!--<pre>{{events}}</pre>-->
-
-      <!--<q-card class="q-pa-none">-->
-      <!--  <q-select-->
-      <!--      v-model="view"-->
-      <!--      :options="views"-->
-      <!--      dense-->
-      <!--      outlined-->
-      <!--      hide-details-->
-      <!--      class="q-ma-md"-->
-      <!--      label="View"-->
-      <!--  ></q-select>-->
-
-      <!--  <q-select-->
-      <!--      v-model="mode"-->
-      <!--      :options="modes"-->
-      <!--      dense-->
-      <!--      outlined-->
-      <!--      hide-details-->
-      <!--      label="Event Overlap Mode"-->
-      <!--      class="q-ma-md"-->
-      <!--  ></q-select>-->
-      <!--</q-card>-->
-
-      <!--<q-card class="q-pa-none q-py-md" style="height: 800px;">-->
-      <!--  <q-btn flat dense icon="arrow_left" @click="prevPeriod">Prev</q-btn>-->
-      <!--  <q-btn flat dense icon="arrow_right" @click="nextPeriod">Next</q-btn>-->
-      <!--  <q-calendar-->
-      <!--      ref="calendar"-->
-      <!--      v-model="selectedDate"-->
-      <!--      :weekdays="weekday"-->
-      <!--      :view="view"-->
-      <!--      :events="events"-->
-      <!--      event-overlap-mode="mode"-->
-      <!--      event-overlap-threshold="30"-->
-      <!--      :event-color="getEventColor"-->
-      <!--      @change="updateTimeWindow"-->
-      <!--      interval-start="8"-->
-      <!--      interval-duration="60"-->
-      <!--      intervals="14"-->
-      <!--      @click:event="showEvent"-->
-      <!--      @click:more="viewDay"-->
-      <!--      @click:date="viewDay"-->
-      <!--  >-->
-      <!--    <template v-slot:day="{ scope }">-->
-      <!--      <div @click="showEvent(scope.date)" class="day-cell">-->
-      <!--        {{ scope.day }}-->
-      <!--      </div>-->
-      <!--    </template>-->
-      <!--  </q-calendar>-->
-      <!--</q-card>-->
 
       <q-dialog v-model="viewItemData.showModal" max-width="800px">
         <q-card
@@ -293,28 +250,8 @@
             />
 
 
-
-            <!--<RecordFieldsForDisplayGeneric-->
-            <!--    :item="viewItemData.data"-->
-            <!--    :superOptions="superOptions"-->
-            <!--    @editItem="editItem"-->
-            <!--    @deleteItem="deleteItem"-->
-            <!--/>-->
-
-            <!--<div :class="`col-12 col-md-3 `">-->
-            <!--  <div class="q-card q-mx-auto" style="height: 100%">-->
-            <!--  </div>-->
-            <!--</div>-->
           </template>
-          <!--<q-card-section>-->
 
-          <!-- -->
-          <!--</q-card-section>-->
-
-          <!--<q-card-actions align="right">-->
-          <!--  <q-btn @click="clickRow(viewItemData.data)" flat label="Open" />-->
-          <!--  <q-btn @click="viewItemData.showModal = false" flat label="Cancel" />-->
-          <!--</q-card-actions>-->
         </q-card>
       </q-dialog>
     </div>
@@ -332,7 +269,7 @@ import {
   parseTime,
   QCalendarDay
 } from '@quasar/quasar-ui-qcalendar';
-// } from '../../../2024-08-battery-fe/node_modules/@quasar/quasar-ui-qcalendar/src/index.js'
+
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
@@ -389,6 +326,7 @@ export default {
   },
   data(){
     return {
+      isAgendaView: 'Full Details',
       view: "week", // Initialize with a valid view
       mode: "stack",
       modes: ["stack", "column"],
@@ -422,48 +360,6 @@ export default {
       currentDate: null,
       currentTime: null,
       timeStartPos: 0,
-      // events: [
-      //   {
-      //     id: 1,
-      //     title: 'Meeting',
-      //     details: 'Time to pitch my idea to the company',
-      //     date: today(),
-      //     time: '09:00',
-      //     duration: 120,
-      //     bgcolor: 'red',
-      //     icon: 'fas fa-handshake'
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Lunch',
-      //     details: 'Company is paying!',
-      //     date: today(),
-      //     time: '12:00',
-      //     duration: 60,
-      //     bgcolor: 'teal',
-      //     icon: 'fas fa-hamburger'
-      //   },
-      //   {
-      //     id: 3,
-      //     title: 'Conference',
-      //     details: 'Teaching Javascript 101',
-      //     date: today(),
-      //     time: '13:00',
-      //     duration: 240,
-      //     bgcolor: 'blue',
-      //     icon: 'fas fa-chalkboard-teacher'
-      //   },
-      //   {
-      //     id: 4,
-      //     title: 'Girlfriend',
-      //     details: 'Meet GF for dinner at Swanky Restaurant',
-      //     date: today(),
-      //     time: '19:00',
-      //     duration: 180,
-      //     bgcolor: 'teal-2',
-      //     icon: 'fas fa-utensils'
-      //   }
-      // ]
     }
   },
   computed: {
@@ -472,9 +368,6 @@ export default {
           (field) => this.superOptions.headers[field].name !== "id"
       );
       let result = this.superOptions.headers[key].name;
-
-
-
 
       let timeRangeStartField = this.superOptions.headers.find((field) => {
         return field.usageType == "timeRangeStart";
@@ -650,21 +543,6 @@ export default {
       this.viewItemData.showModal = true;
       this.viewItemData.data = m.meta;
     },
-    viewDay({date}) {
-      this.selectedDate = date;
-      this.view = "day";
-    },
-    prevPeriod() {
-      this.$refs.calendar.prev();
-    },
-    nextPeriod() {
-      this.$refs.calendar.next();
-    },
-
-
-
-
-
 
     hasDate (days) {
       return this.currentDate
@@ -706,8 +584,7 @@ export default {
 
       if (events.length === 1) {
         events[ 0 ].side = 'full'
-      }
-      else if (events.length === 2) {
+      } else if (events.length === 2) {
         // this example does no more than 2 events per day
         // check if the two events overlap and if so, select
         // left or right side alignment to prevent overlap
@@ -727,10 +604,6 @@ export default {
 
       return events
     },
-
-    // scrollToEvent (event) {
-    //   this.$refs.calendar.scrollToTime(event.time, 350)
-    // },
 
     onToday () {
       this.$refs.calendar.moveToToday()
@@ -768,9 +641,6 @@ export default {
     if (QuickListsHelpers.quickListsIsMobile()) {
       this.view = "day";
     }
-
-
-
   },
   watch: {
     loading(newVal, oldVal){
