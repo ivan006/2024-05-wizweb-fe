@@ -151,16 +151,49 @@
                       v-for="event in getEvents(timestamp.date)"
                       :key="event.id"
                   >
-                    <div
-                        @click="showEvent(event)"
-                        v-if="event.time !== undefined"
-                        style="height: 150px;"
+
+                    <q-card
+                        class="q-pa-none q-ma-sm"
                     >
-                      <div class="title q-calendar__ellipsis">
-                        {{ event.title }}
-                        <q-tooltip>{{ event.time }}</q-tooltip>
-                      </div>
-                    </div>
+                      <template
+                          v-if="
+                            templateListGrid &&
+                            templateListGrid.cols
+                          "
+                      >
+
+                        <RecordFieldsForDisplayCustom
+                            :item="event.meta"
+                            :maxFields="6"
+                            :childRelations="[]"
+                            isSummary
+                            :superOptions="superOptions"
+                            :template="templateListGrid"
+                            @editItem="editItem"
+                            @deleteItem="deleteItem"
+                            :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+                            @clickRow="clickRow"
+                        />
+                        <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
+                        <!--  <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">-->
+                        <!--  </div>-->
+                        <!--</div>-->
+                      </template>
+                      <template v-else>
+                        <RecordFieldsForDisplayGeneric
+                            :item="event.meta"
+                            :maxFields="6"
+                            :superOptions="superOptions"
+                            @editItem="editItem"
+                            @deleteItem="deleteItem"
+                            :unClickable="unClickable"
+                            @clickRow="clickRow"
+                        />
+
+
+                      </template>
+
+                    </q-card>
                   </template>
                 </template>
               </q-calendar-agenda>
@@ -581,6 +614,13 @@ export default {
     getEvents(dt) {
       // Get all events for the specified date
       const events = this.eventsMap[dt] || [];
+
+      // Sort events by start time
+      events.sort((a, b) => {
+        const startA = new Date(`${a.date}T${a.time}`);
+        const startB = new Date(`${b.date}T${b.time}`);
+        return startA - startB;
+      });
 
       if (events.length === 1) {
         events[0].side = 'full';
