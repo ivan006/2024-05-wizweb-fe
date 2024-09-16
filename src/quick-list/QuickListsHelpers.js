@@ -1,6 +1,8 @@
-import DBCrudCacheSet from './DBCrudCacheSet'
-import html2pdf from "html2pdf.js";
 // import Helpers from '../utils/Helpers.js'
+import DBCrudCacheSet from './DBCrudCacheSet'
+// import html2pdf from "html2pdf.js";
+// import html2canvas from 'html2canvas';
+
 
 class QuickListsHelpers {
     static quickListsIsMobile() {
@@ -117,110 +119,70 @@ class QuickListsHelpers {
     }
 
 
-    static downloadPdf(title, bodyElement, margin = 0, footerElement = null, headerElement = null) {
-        // [
-        //     marginTop ? +marginTop / 96 : 0, // top
-        //     0, // left
-        //     marginBottom ? +marginBottom / 96 : 0, // bottom
-        //     0, // right
-        // ]
-        // Configuration for PDF generation
-        const opt = {
-            // margin: [0.35, 0, 0.3, 0],
-            margin: margin,
-            // filename: `${title}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 1 },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-        };
-
-
-
-        const wrapperDiv = document.createElement('div');
-
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'text-h6 text-grey-7 text-center q-mb-lg';
-        titleDiv.textContent = title; // Assuming `options` is available and has a `title` property
-
-        wrapperDiv.appendChild(titleDiv);
-
-        wrapperDiv.appendChild(bodyElement.cloneNode(true)); // Clone the bodyElement to preserve its content
-
-
-        // Generate PDF
-        html2pdf()
-            .from(wrapperDiv)
-            .set(opt)
-            .toPdf()
-            .get('pdf')
-            .then((pdf) => {
-                const pageCount = pdf.internal.getNumberOfPages();
-
-                // Loop through each page to add headers and footers
-                let addPromises = [];
-
-                for (let i = 1; i <= pageCount; i++) {
-                    pdf.setPage(i);
-
-                    // Add Header
-                    if (headerElement) {
-                        // const headerHtml = headerElement.innerHTML;
-
-
-                        // Wrap the footer content in a styled div
-                        const wrapperDiv = document.createElement('div'); // Create a new div element
-                        wrapperDiv.style.width = '793px'; // Set the style for width
-                        wrapperDiv.innerHTML = headerElement.innerHTML; // Set the footerHtml as the inner HTML
-
-                        const headerHtml = wrapperDiv.outerHTML;
-
-                        const addHeaderPromise = pdf.html(headerHtml, {
-                            x: 0,
-                            y: 0, // Position at the top of the page
-                            html2canvas: { scale: 1/96 }, // Scale factor for the header HTML rendering
-                        });
-
-                        addPromises.push(addHeaderPromise);
-                    }
-                }
-
-                // Once headers are added, add footers
-                Promise.all(addPromises).then(() => {
-                    addPromises = []; // Clear promises array for footers
-
-                    for (let i = 1; i <= pageCount; i++) {
-                        pdf.setPage(i);
-
-                        // Add Footer
-                        if (footerElement) {
-                            // const footerHtml = footerElement.innerHTML;
-
-                            // Wrap the footer content in a styled div
-                            const wrapperDiv = document.createElement('div'); // Create a new div element
-                            wrapperDiv.style.width = '793px'; // Set the style for width
-                            wrapperDiv.innerHTML = footerElement.innerHTML; // Set the footerHtml as the inner HTML
-
-                            const footerHtml = wrapperDiv.outerHTML;
-
-                            const addFooterPromise = pdf.html(footerHtml, {
-                                x: 0,
-                                y:
-                                    pdf.internal.pageSize.getHeight() -
-                                    (margin[2] ? +margin[2] + 0.5/96 : 0), // Position at the bottom of the page
-                                html2canvas: { scale: 1/96 }, // Scale factor for the footer HTML rendering
-                            });
-
-                            addPromises.push(addFooterPromise);
-                        }
-                    }
-
-                    // Wait for all footer promises to be resolved before saving
-                    Promise.all(addPromises).then(() => {
-                        pdf.save(`${title}.pdf`); // Save the PDF after all headers and footers are added
-                    });
-                });
-            })
+    static async downloadPdf(title, bodyElement, margin = 0, footerElement = null, headerElement = null) {
+        // // Configuration for PDF generation
+        // const opt = {
+        //     margin: margin,
+        //     image: { type: 'jpeg', quality: 0.98 },
+        //     html2canvas: { scale: 1 },
+        //     jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+        // };
+        //
+        // const wrapperDiv = document.createElement('div');
+        //
+        // // Create and append title div
+        // const titleDiv = document.createElement('div');
+        // titleDiv.className = 'text-h6 text-grey-7 text-center q-mb-lg';
+        // titleDiv.textContent = title;
+        // wrapperDiv.appendChild(titleDiv);
+        //
+        // // Clone and append the body element
+        // wrapperDiv.appendChild(bodyElement.cloneNode(true));
+        //
+        // // Generate PDF from the main content
+        // const pdf = await html2pdf().from(wrapperDiv).set(opt).toPdf().get('pdf');
+        //
+        // const pageCount = pdf.internal.getNumberOfPages();
+        //
+        // // Helper function to add an image to the PDF
+        // const addImageToPdf = async (element, pdf, x, y, width) => {
+        //     const canvas = await html2canvas(element, { scale: 2 });
+        //     const imgData = canvas.toDataURL('image/png');
+        //     pdf.addImage(imgData, 'PNG', x, y, width);
+        // };
+        //
+        // // Loop to add headers and footers
+        // let addPromises = [];
+        //
+        // for (let i = 1; i <= pageCount; i++) {
+        //     pdf.setPage(i);
+        //
+        //     // Add Header
+        //     if (headerElement) {
+        //         const addHeaderPromise = addImageToPdf(headerElement, pdf, 0, 0, 793 / 96); // Width is in inches
+        //         addPromises.push(addHeaderPromise);
+        //     }
+        //
+        //     // Add Footer
+        //     if (footerElement) {
+        //         const addFooterPromise = addImageToPdf(
+        //             footerElement,
+        //             pdf,
+        //             0,
+        //             pdf.internal.pageSize.getHeight() - (margin[2] ? +margin[2] + 0.5 / 96 : 0), // Bottom position
+        //             793 / 96
+        //         );
+        //         addPromises.push(addFooterPromise);
+        //     }
+        // }
+        //
+        // // Wait for all headers and footers to be added
+        // await Promise.all(addPromises);
+        //
+        // // Save the final PDF
+        // pdf.save(`${title}.pdf`);
     }
+
 
     static computedAttrs2(fields, excludedCols = []) {
         let lookupKeys = [] // To keep track of foreign keys
