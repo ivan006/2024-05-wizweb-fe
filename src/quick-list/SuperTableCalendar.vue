@@ -578,32 +578,34 @@ export default {
       return s
     },
 
-    getEvents (dt) {
-      // get all events for the specified date
-      const events = this.eventsMap[ dt ] || []
+    getEvents(dt) {
+      // Get all events for the specified date
+      const events = this.eventsMap[dt] || [];
 
       if (events.length === 1) {
-        events[ 0 ].side = 'full'
+        events[0].side = 'full';
       } else if (events.length === 2) {
-        // this example does no more than 2 events per day
-        // check if the two events overlap and if so, select
-        // left or right side alignment to prevent overlap
-        const startTime = addToDate(parsed(events[ 0 ].date), { minute: parseTime(events[ 0 ].time) })
-        const endTime = addToDate(startTime, { minute: events[ 0 ].duration })
-        const startTime2 = addToDate(parsed(events[ 1 ].date), { minute: parseTime(events[ 1 ].time) })
-        const endTime2 = addToDate(startTime2, { minute: events[ 1 ].duration })
-        if (isBetweenDates(startTime2, startTime, endTime, true) || isBetweenDates(endTime2, startTime, endTime, true)) {
-          events[ 0 ].side = 'left'
-          events[ 1 ].side = 'right'
-        }
-        else {
-          events[ 0 ].side = 'full'
-          events[ 1 ].side = 'full'
+        // Handle up to 2 events per day for overlapping cases
+        const startTime = addToDate(parsed(events[0].date), { minute: parseTime(events[0].time) });
+        const endTime = addToDate(startTime, { minute: events[0].duration });
+        const startTime2 = addToDate(parsed(events[1].date), { minute: parseTime(events[1].time) });
+        const endTime2 = addToDate(startTime2, { minute: events[1].duration });
+
+        if (
+            isBetweenDates(startTime2, startTime, endTime, true) ||
+            isBetweenDates(endTime2, startTime, endTime, true)
+        ) {
+          events[0].side = 'left';
+          events[1].side = 'right';
+        } else {
+          events[0].side = 'full';
+          events[1].side = 'full';
         }
       }
 
-      return events
+      return events;
     },
+
 
     onToday () {
       this.$refs.calendar.moveToToday()
