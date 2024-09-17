@@ -47,6 +47,28 @@
                   :weekdays="[1,2,3,4,5,6,0]"
                   no-active-date
               >
+                <template #head-day="{ scope }">
+                  <div class="text-center">
+                    <!-- Weekday Label -->
+                    <div class="text-weight-bold q-mt-xs">
+                      {{momentMethod(scope.timestamp.date, 'ddd')}}
+                      {{  }}
+                    </div>
+
+                    <!-- Date as Button -->
+
+                    <q-btn
+                        flat
+                        rounded
+                        dense
+                        :style="isToday(scope.timestamp.date) ? 'border: solid 2px var(--q-primary);' : 'border: solid 2px rgba(0,0,0,0);' "
+                        style=" font-size: 0.75em;"
+                        :label="momentMethod(scope.timestamp.date, 'D')+' '+momentMethod(scope.timestamp.date, 'MMM')"
+                        @click="onClickDate(scope.timestamp.date)"
+                        class="q-mb-sm text-bold"
+                    />
+                  </div>
+                </template>
 
                 <template #day-container="{ scope: { days }}">
                   <template v-if="hasDate(days)">
@@ -119,7 +141,7 @@
                   ref="calendarAgenda"
                   v-model="selectedDate"
                   :view="view"
-                  :weekdays="[1,2,3,4,5,6,0]"
+                  :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                   short-weekday-label
                   :date-header="'stacked'"
                   :weekday-align="'center'"
@@ -135,6 +157,29 @@
                   :interval-count="19"
                   hour24-format
               >
+                <!-- Custom Day Header to show both weekday and month -->
+                <template #head-day="{ scope }">
+                  <div class="text-center">
+                    <!-- Weekday Label -->
+                    <div class="text-weight-bold q-mt-xs">
+                      {{momentMethod(scope.timestamp.date, 'ddd')}}
+                      {{  }}
+                    </div>
+
+                    <!-- Date as Button -->
+
+                    <q-btn
+                      flat
+                      rounded
+                      dense
+                      :style="isToday(scope.timestamp.date) ? 'border: solid 2px var(--q-primary);' : 'border: solid 2px rgba(0,0,0,0);' "
+                      style=" font-size: 0.75em;"
+                      :label="momentMethod(scope.timestamp.date, 'D')+' '+momentMethod(scope.timestamp.date, 'MMM')"
+                      @click="onClickDate(scope.timestamp.date)"
+                      class="q-mb-sm text-bold"
+                    />
+                  </div>
+                </template>
 
                 <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
                   <template v-if="!getEvents(timestamp.date).length">
@@ -303,6 +348,7 @@ import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import moment from "moment/moment";
 
 export default {
   name: "SuperTableCalendar",
@@ -402,6 +448,9 @@ export default {
     }
   },
   computed: {
+    moment() {
+      return moment
+    },
     firstNonIdKey() {
       const key = Object.keys(this.superOptions.headers).find(
           (field) => this.superOptions.headers[field].name !== "id"
@@ -560,6 +609,12 @@ export default {
     }
   },
   methods: {
+    isToday(date) {
+      return moment(date).isSame(moment(), 'day');
+    },
+    momentMethod(e, format) {
+      return moment(e).format(format);
+    },
     deleteItem(e) {
       this.$emit('deleteItem', e);
     },
