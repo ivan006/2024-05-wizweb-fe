@@ -5,7 +5,7 @@
         <div class="row" style="align-items: center;">
           <template v-if="!dataPoint.hideLabel">
             <div class="q-pr-sm">
-              <div  class="text-subtitle2" style="display: flex; align-items: center;">
+              <div  class="text-bold" style="display: flex; align-items: center;">
                 {{ label }}:
               </div>
             </div>
@@ -57,7 +57,7 @@
     <template v-else>
 
       <template v-if="!dataPoint.hideLabel && !hideLabel">
-        <div  class="text-subtitle2" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
+        <div  class="text-bold" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
           {{ label }}:
         </div>
       </template>

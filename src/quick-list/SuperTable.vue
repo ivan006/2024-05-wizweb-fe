@@ -77,19 +77,45 @@
               <div class="row items-center wrap">
                 <template v-if="viewAs.show.length">
                   <div class="q-mr-sm">
-                    <q-select
-                        style="width: 200px"
-                        :options="tabOptions"
+                    <!--<q-select-->
+                    <!--    style="width: 200px"-->
+                    <!--    :options="tabOptions"-->
+                    <!--    v-model="activeTab"-->
+                    <!--    label="View As"-->
+                    <!--    option-label="label"-->
+                    <!--    option-value="value"-->
+                    <!--    emit-value-->
+                    <!--    map-options-->
+                    <!--    dense-->
+                    <!--    class="col-grow "-->
+                    <!--    filled-->
+                    <!--    :rules="[() => true]"-->
+                    <!--/>-->
+
+                    <q-btn-toggle
                         v-model="activeTab"
-                        label="View As"
-                        option-label="label"
-                        option-value="value"
-                        emit-value
-                        map-options
-                        dense
-                        class="col-grow "
-                        filled
-                        :rules="[() => true]"
+                        toggle-color="primary"
+                        :options="tabOptions"
+                        style="margin-bottom: 20px;"
+                        unelevated
+                        text-color="grey-8"
+                        color="grey-3"
+                    />
+
+
+                    <q-btn-toggle
+                        v-if="activeTab === 'calendar'"
+                        class="q-ml-sm"
+                        v-model="calendarMode"
+                        toggle-color="primary"
+                        :options="[
+                          {label: 'Hour by Hour', value: 'Hour by Hour'},
+                          {label: 'Full Details', value: 'Full Details'},
+                        ]"
+                        unelevated
+                        text-color="grey-8"
+                        color="grey-3"
+                        style="margin-bottom: 20px;"
                     />
                   </div>
                 </template>
@@ -293,11 +319,13 @@
           <template v-if="activeTab == 'calendar'">
             <SuperTableCalendar
                 :items="items"
+                :calendarMode="calendarMode"
                 @clickRow="clickRow"
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
                 :templateListGrid="templateListGrid"
+                :templateListCalendar="templateListCalendar"
                 :unClickable="unClickable"
                 :loading="loading"
             />
@@ -493,6 +521,12 @@ export default {
         return {};
       },
     },
+    templateListCalendar: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     model: {
       type: [Object, Function],
       required: true,
@@ -594,6 +628,7 @@ export default {
   },
   data() {
     return {
+      calendarMode: 'Full Details',
       saving: false,
       search: "",
       formServerErrors: {},

@@ -5,7 +5,7 @@
       <div class="">
         <div class="row">
           <div class="q-pr-sm col-6 col-md-6 col-sm-6 col-xs-6">
-            <div   class="text-subtitle2" style="line-height: 3em;">
+            <div   class="text-bold" style="line-height: 3em;">
               {{ label }}:
             </div>
           </div>
@@ -39,7 +39,7 @@
     </template>
     <template v-else>
       <template v-if="!dataPoint.hideLabel">
-        <div  class="text-subtitle2" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
+        <div  class="text-bold" :style="`visibility: ${label.length ? 'visible' : 'hidden'}`">
           {{ label }}:
         </div>
       </template>

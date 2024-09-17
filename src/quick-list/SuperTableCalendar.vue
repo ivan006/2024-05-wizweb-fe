@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <div class="subcontent">
+      <div class="">
 
         <template v-if="loading">
 
@@ -13,24 +13,14 @@
         <div :style="`display: ${loading ? 'none' : 'block'};`">
         <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
 
-          <div class="row justify-center q-pa-md">
 
-            <q-btn-toggle
-                v-model="isAgendaView"
-                toggle-color="primary"
-                :options="[
-                    {label: 'Hour by Hour', value: 'Hour by Hour'},
-                    {label: 'Full Details', value: 'Full Details'},
-                  ]"
-            />
-          </div>
           <div
               style="display: flex; max-width: 100%; width: 100%; "
           >
             <!-- Toggle Button to switch views -->
 
 
-            <template v-if="isAgendaView === 'Hour by Hour'">
+            <template v-if="calendarMode === 'Hour by Hour'">
 
 
               <q-calendar-day
@@ -126,7 +116,7 @@
             </template>
             <template v-else>
               <q-calendar-agenda
-                  ref="calendar"
+                  ref="calendarAgenda"
                   v-model="selectedDate"
                   :view="view"
                   :weekdays="[1,2,3,4,5,6,0]"
@@ -147,6 +137,11 @@
               >
 
                 <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
+                  <template v-if="!getEvents(timestamp.date).length">
+                    <div class="text-center q-pa-md text-grey-5">
+                      Empty
+                    </div>
+                  </template>
                   <template
                       v-for="event in getEvents(timestamp.date)"
                       :key="event.id"
@@ -154,11 +149,12 @@
 
                     <q-card
                         class="q-pa-none q-ma-sm"
+                        @click="showEvent(event)"
                     >
                       <template
                           v-if="
-                            templateListGrid &&
-                            templateListGrid.cols
+                            templateListCalendar &&
+                            templateListCalendar.cols
                           "
                       >
 
@@ -168,16 +164,12 @@
                             :childRelations="[]"
                             isSummary
                             :superOptions="superOptions"
-                            :template="templateListGrid"
+                            :template="templateListCalendar"
                             @editItem="editItem"
                             @deleteItem="deleteItem"
                             :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
-                            @clickRow="clickRow"
                         />
-                        <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
-                        <!--  <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">-->
-                        <!--  </div>-->
-                        <!--</div>-->
+                        <!--@clickRow="clickRow"-->
                       </template>
                       <template v-else>
                         <RecordFieldsForDisplayGeneric
@@ -187,9 +179,9 @@
                             @editItem="editItem"
                             @deleteItem="deleteItem"
                             :unClickable="unClickable"
-                            @clickRow="clickRow"
                         />
 
+                        <!--@clickRow="clickRow"-->
 
                       </template>
 
@@ -210,30 +202,33 @@
                   @prev="onPrev"
                   @next="onNext"
               />
-              <q-select
-                  v-model="view"
-                  :options='[
-                      // "month",
-                      {
-                        label: "Week",
-                        value: "week",
-                      },
-                      {
-                        label: "Day",
-                        value: "day",
-                      },
-                      // "4day"
-                  ]'
-                  option-label="label"
-                  option-value="value"
-                  emitValue
-                  mapOptions
-                  dense
-                  filled
-                  hide-details
-                  class=""
-                  label="View"
-              ></q-select>
+              <!--<q-select-->
+              <!--    v-model="view"-->
+              <!--    :options='[-->
+              <!--        // "month",-->
+              <!--        {-->
+              <!--          label: "Week",-->
+              <!--          value: "week",-->
+              <!--        },-->
+              <!--        {-->
+              <!--          label: "Day",-->
+              <!--          value: "day",-->
+              <!--        },-->
+              <!--        // "4day"-->
+              <!--    ]'-->
+              <!--    option-label="label"-->
+              <!--    option-value="value"-->
+              <!--    emitValue-->
+              <!--    mapOptions-->
+              <!--    dense-->
+              <!--    filled-->
+              <!--    hide-details-->
+              <!--    class=""-->
+              <!--    label="View"-->
+              <!--&gt;</q-select>-->
+
+
+
             </div>
           </div>
 
@@ -331,6 +326,12 @@ export default {
         return {};
       },
     },
+    templateListCalendar: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     unClickable: {
       type: Boolean,
       default() {
@@ -341,6 +342,12 @@ export default {
       type: Array,
       default() {
         return [];
+      },
+    },
+    calendarMode: {
+      type: String,
+      default() {
+        return 'Full Details';
       },
     },
     superOptions: {
@@ -359,7 +366,6 @@ export default {
   },
   data(){
     return {
-      isAgendaView: 'Full Details',
       view: "week", // Initialize with a valid view
       mode: "stack",
       modes: ["stack", "column"],
@@ -648,13 +654,25 @@ export default {
 
 
     onToday () {
-      this.$refs.calendar.moveToToday()
+      if (this.$refs.calendarAgenda){
+        this.$refs.calendarAgenda.moveToToday()
+      } else if (this.$refs.calendar){
+        this.$refs.calendar.moveToToday()
+      }
     },
     onPrev () {
-      this.$refs.calendar.prev()
+      if (this.$refs.calendarAgenda){
+        this.$refs.calendarAgenda.prev()
+      } else if (this.$refs.calendar){
+        this.$refs.calendar.prev()
+      }
     },
     onNext () {
-      this.$refs.calendar.next()
+      if (this.$refs.calendarAgenda){
+        this.$refs.calendarAgenda.next()
+      } else if (this.$refs.calendar){
+        this.$refs.calendar.next()
+      }
     },
 
     onMoved (data) {
@@ -687,13 +705,26 @@ export default {
   watch: {
     loading(newVal, oldVal){
       if (!newVal){
+        if (this.calendarMode === 'Hour by Hour'){
+
+          this.adjustCurrentTime()
+          // now, adjust the time every minute
+          const intervalId = setInterval(() => {
+            this.adjustCurrentTime()
+          }, 60000)
+        }
+      }
+    },
+    calendarMode(newVal, oldVal){
+      if (this.calendarMode !== 'Hour by Hour'){
+
         this.adjustCurrentTime()
         // now, adjust the time every minute
         const intervalId = setInterval(() => {
           this.adjustCurrentTime()
         }, 60000)
       }
-    }
+    },
   }
 };
 </script>

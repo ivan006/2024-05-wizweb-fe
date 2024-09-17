@@ -8,7 +8,8 @@
         unelevated
         icon="arrow_left"
     >
-      Previous
+      <!--Previous-->
+      <!--Back-->
     </q-btn>
     <q-btn
         no-caps
@@ -27,7 +28,8 @@
         unelevated
         icon-right="arrow_right"
     >
-      Next
+      <!--Next-->
+      <!--Forward-->
     </q-btn>
   </div>
 </template>
