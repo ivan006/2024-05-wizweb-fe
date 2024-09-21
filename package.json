@@ -1,6 +1,6 @@
 {
   "name": "quicklists-vue-orm-ui",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "A Vue-based ORM to UI generator library.",
   "main": "src/index.js",
   "scripts": {

@@ -348,7 +348,7 @@ import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
-import moment from "moment/moment";
+import moment from "moment";
 
 export default {
   name: "SuperTableCalendar",

@@ -413,7 +413,7 @@ import SearchGooglePlace from "./SearchGooglePlace.vue";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import PdfTemplate from "./PdfTemplate.vue";
-import html2pdf from 'html2pdf.js';
+// import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
