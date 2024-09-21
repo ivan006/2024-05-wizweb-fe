@@ -99,8 +99,9 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
+
+import moment from 'moment-timezone/builds/moment-timezone-with-data';
+
 import QuickListsHelpers from './QuickListsHelpers';
 
 export default {
