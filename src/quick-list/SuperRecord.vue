@@ -124,12 +124,15 @@ import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import OverviewTab from "./OverviewTab.vue";
-import CreateEditForm from "./CreateEditForm.vue";
+import {defineAsyncComponent} from "vue";
+const AsyncCreateEditFormComponent = defineAsyncComponent(() =>
+    import('./CreateEditForm.vue')
+);
 
 export default {
   name: "SuperRecord",
   components: {
-    CreateEditForm,
+    CreateEditForm: AsyncCreateEditFormComponent,
     OverviewTab,
     SuperTableTable,
     RecordFieldsForDisplayCustom,
