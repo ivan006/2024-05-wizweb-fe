@@ -391,8 +391,7 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
+import moment from 'moment-timezone'
 // import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperTableCalendar from "./SuperTableCalendar.vue";
