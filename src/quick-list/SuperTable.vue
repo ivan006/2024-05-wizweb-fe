@@ -392,7 +392,7 @@
 
 <script>
 
-import * as moment from 'moment-timezone/builds/moment-timezone-with-data';
+import moment from 'moment-timezone/builds/moment-timezone-with-data';
 // import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperTableCalendar from "./SuperTableCalendar.vue";
