@@ -110,8 +110,8 @@
 </template>
 
 <script>
-
-import moment from 'moment-timezone/builds/moment-timezone-with-data';
+import moment from "moment";
+import "moment-timezone";
 
 export default {
   name: "DateRangePicker",
