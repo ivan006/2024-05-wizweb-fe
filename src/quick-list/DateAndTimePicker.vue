@@ -77,7 +77,7 @@
 
 <script>
 
-import moment from 'moment-timezone/builds/moment-timezone-with-data';
+import * as moment from 'moment-timezone/builds/moment-timezone-with-data';
 import { QIcon, QInput } from 'quasar';
 
 export default {
