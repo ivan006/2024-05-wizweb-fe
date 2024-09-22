@@ -8,6 +8,8 @@
           align="left"
       >
         <q-tab :name="'tab'"> Overview </q-tab>
+        <q-tab :name="'special-tab-map'" v-if="someChildrenCanBeMapped"> Map </q-tab>
+        <q-tab :name="'special-tab-calendar'" v-if="someChildrenCanBeCalendared"> Calendar </q-tab>
         <q-tab
             v-for="(relation, index) in filteredChildRelations"
             :key="index"
@@ -36,6 +38,17 @@
           <template v-else>
             Loading...
           </template>
+        </q-tab-panel>
+
+        <q-tab-panel
+            :name="'special-tab-calendar'"
+        >
+          ...
+        </q-tab-panel>
+        <q-tab-panel
+            :name="'special-tab-map'"
+        >
+          ...
         </q-tab-panel>
         <q-tab-panel
             v-for="(relation, index) in filteredChildRelations"
@@ -195,6 +208,16 @@ export default {
     };
   },
   computed: {
+    someChildrenCanBeCalendared() {
+      return this.childRelations.some(
+          child =>  child.canBeCalendared
+      )
+    },
+    someChildrenCanBeMapped() {
+      return this.childRelations.some(
+          child =>  child.canBeMapped
+      )
+    },
     superOptions() {
       return {
         headers: this.headers,
@@ -239,15 +262,41 @@ export default {
       for (let fieldName in fields) {
         const field = fields[fieldName];
         if (field.usageType.startsWith("relChildren")) {
-          result.push({
+          const child = {
             field,
+
             // currentParentRecord: {
             //   item: this.item,
             //   model: this.model,
             //   relationType: field.usageType,
             //   foreignKeyToParentRecord: field.meta.field.foreignKey,
             // },
-          });
+          }
+
+
+
+          const headers = QuickListsHelpers.SupaerTableHeaders(
+              field.meta.field.related
+          )
+
+          const startfield = this.startFieldNameMethod(headers)
+          if (startfield){
+            child.canBeMapped = true
+          } else {
+            child.canBeMapped = false
+          }
+
+
+          let longField = this.longitudeFieldNameMethod(headers);
+          if (longField){
+            child.canBeCalendared = true
+          } else {
+            child.canBeCalendared = false
+          }
+
+
+
+          result.push(child);
         }
       }
       return result;
@@ -274,6 +323,51 @@ export default {
     },
   },
   methods: {
+    startFieldNameMethod(headers) {
+      let timeRangeStartField = headers.find((field) => {
+        return field.usageType == "timeRangeStart";
+      });
+      if (!timeRangeStartField) {
+        for (const modelField of headers) {
+          if (modelField.headerParentFields) {
+            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
+              return field.usageType == "timeRangeStart";
+            });
+            if(timeRangeStartFieldParent){
+              timeRangeStartField = {
+                ...timeRangeStartFieldParent,
+                isChildOf: modelField,
+              };
+              break;
+            }
+          }
+        }
+      }
+      return timeRangeStartField;
+    },
+    longitudeFieldNameMethod(headers) {
+
+      let field = headers.find((field) => {
+        return field.usageType == "mapExtraGeoLocLong";
+      });
+      if (!field) {
+        for (const modelField of headers) {
+          if (modelField.headerParentFields) {
+            const fieldParent = modelField.headerParentFields.find((field) => {
+              return field.usageType == "mapExtraGeoLocLong";
+            });
+            if(fieldParent){
+              field = {
+                ...fieldParent,
+                isChildOf: modelField,
+              };
+              break;
+            }
+          }
+        }
+      }
+      return field;
+    },
     clickRow(pVal, item, relation) {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },

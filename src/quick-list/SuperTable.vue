@@ -318,6 +318,8 @@
           </template>
           <template v-if="activeTab == 'calendar'">
             <SuperTableCalendar
+                :startFieldName="startFieldName"
+                :endFieldName="endFieldName"
                 :items="items"
                 :calendarMode="calendarMode"
                 @clickRow="clickRow"
@@ -668,6 +670,56 @@ export default {
     };
   },
   computed: {
+    longField(){
+      let longField = this.mapHeaders.find((field) => {
+        return field.usageType == "mapExtraGeoLocLong";
+      });
+      return longField
+    },
+    startFieldName() {
+      let timeRangeStartField = this.superOptions.headers.find((field) => {
+        return field.usageType == "timeRangeStart";
+      });
+      if (!timeRangeStartField) {
+        for (const modelField of this.superOptions.headers) {
+          if (modelField.headerParentFields) {
+            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
+              return field.usageType == "timeRangeStart";
+            });
+            if(timeRangeStartFieldParent){
+              timeRangeStartField = {
+                ...timeRangeStartFieldParent,
+                isChildOf: modelField,
+              };
+              break;
+            }
+          }
+        }
+      }
+      return timeRangeStartField;
+    },
+    endFieldName() {
+      let timeRangeEndField = this.superOptions.headers.find((field) => {
+        return field.usageType == "timeRangeEnd";
+      });
+      if (!timeRangeEndField) {
+        for (const modelField of this.superOptions.headers) {
+          if (modelField.headerParentFields) {
+            timeRangeEndField = modelField.headerParentFields.find((field) => {
+              return field.usageType == "timeRangeEnd";
+            });
+            if(timeRangeEndField){
+              timeRangeEndField = {
+                ...timeRangeEndField,
+                isChildOf: modelField,
+              };
+              break;
+            }
+          }
+        }
+      }
+      return timeRangeEndField;
+    },
     flattenedHeaders() {
 
       let result = [];
@@ -775,10 +827,10 @@ export default {
       if(this.viewAs.show.includes('grid')){
         result.push({ label: 'Grid', value: 'grid' })
       }
-      if(this.viewAs.show.includes('map')){
+      if(this.viewAs.show.includes('map') && this.longField){
         result.push({ label: 'Map', value: 'map' })
       }
-      if(this.viewAs.show.includes('calendar')){
+      if(this.viewAs.show.includes('calendar') && this.startFieldName){
         result.push({ label: 'Calendar', value: 'calendar' })
       }
       if(this.viewAs.show.includes('table')){

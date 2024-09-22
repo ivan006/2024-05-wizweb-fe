@@ -372,6 +372,18 @@ export default {
         return {};
       },
     },
+    startFieldName: {
+      type: Object,
+      default() {
+        return null;
+      },
+    },
+    endFieldName: {
+      type: Object,
+      default() {
+        return null;
+      },
+    },
     templateListCalendar: {
       type: Object,
       default() {
@@ -487,53 +499,9 @@ export default {
       }
       return result
     },
-    startFieldName() {
-      let timeRangeStartField = this.superOptions.headers.find((field) => {
-        return field.usageType == "timeRangeStart";
-      });
-      if (!timeRangeStartField) {
-        for (const modelField of this.superOptions.headers) {
-          if (modelField.headerParentFields) {
-            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeStart";
-            });
-            if(timeRangeStartFieldParent){
-              timeRangeStartField = {
-                ...timeRangeStartFieldParent,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return timeRangeStartField;
-    },
-    endFieldName() {
-      let timeRangeEndField = this.superOptions.headers.find((field) => {
-        return field.usageType == "timeRangeEnd";
-      });
-      if (!timeRangeEndField) {
-        for (const modelField of this.superOptions.headers) {
-          if (modelField.headerParentFields) {
-            timeRangeEndField = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeEnd";
-            });
-            if(timeRangeEndField){
-              timeRangeEndField = {
-                ...timeRangeEndField,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return timeRangeEndField;
-    },
     events() {
       let result = [];
-      if (this.startFieldName?.name || this.startFieldName.isChildOf) {
+      if (this.startFieldName?.name || this.startFieldName?.isChildOf) {
         for (const item of this.items) {
           let start, end;
 
