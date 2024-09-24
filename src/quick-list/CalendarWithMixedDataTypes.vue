@@ -36,10 +36,10 @@ export default {
         const superTable = this.$refs[superTableRefKey][0]; // Access the first element in the ref array
 
         console.log( `superTableRef-${index}`)
-        console.log( superTable.superOptions.modelFields)
+        console.log( superTable.superOptions.headers)
         if (superTable) {
-          const modelFields = superTable.superOptions.modelFields || {};
-          const hasCalendarFields = this.checkForCalendarFields(modelFields);
+          const headers = superTable.superOptions.headers || {};
+          const hasCalendarFields = this.checkForCalendarFields(headers);
 
           if (hasCalendarFields) {
             console.log('ddd')
@@ -52,15 +52,41 @@ export default {
   methods: {
     // Generate dynamic ref keys for each SuperTable
     getSuperTableRefKey(index) {
-
       return `superTableRef-${index}`;
     },
-    // Check if the SuperTable's model has relevant start and end date fields
+
+    // Check if the SuperTable's model has relevant start and end date fields, including parent fields
     checkForCalendarFields(fields) {
-      const hasStartDate = Object.values(fields).some(field => field.usageType === 'timeRangeStart');
-      const hasEndDate = Object.values(fields).some(field => field.usageType === 'timeRangeEnd');
+      let hasStartDate = false;
+      let hasEndDate = false;
+
+      // First, check the model fields for timeRangeStart and timeRangeEnd
+      Object.values(fields).forEach(field => {
+        console.log(field)
+        if (field.usageType === 'timeRangeStart') {
+          hasStartDate = true;
+        }
+        if (field.usageType === 'timeRangeEnd') {
+          hasEndDate = true;
+        }
+
+        // If the field has parent fields, check those as well
+        if (field.headerParentFields) {
+          field.headerParentFields.forEach(parentField => {
+            if (parentField.usageType === 'timeRangeStart') {
+              hasStartDate = true;
+            }
+            if (parentField.usageType === 'timeRangeEnd') {
+              hasEndDate = true;
+            }
+          });
+        }
+      });
+
+      // Return true only if both start and end date fields are found
       return hasStartDate && hasEndDate;
     },
+
     // Activate and fetch data for a specific SuperTable by ref key
     activateAndFetchData(refKey) {
       const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
@@ -68,7 +94,8 @@ export default {
         superTable.activateAndFetchData();
       }
     },
-  },
+  }
+
 };
 </script>
 
