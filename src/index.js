@@ -23,6 +23,7 @@ import SuperTableGrid from './quick-list/SuperTableGrid.vue';
 import SuperTableList from './quick-list/SuperTableList.vue';
 import SuperTableMap from './quick-list/SuperTableMap.vue';
 import SuperTableTable from './quick-list/SuperTableTable.vue';
+import CalendarWithMixedDataTypes from './quick-list/CalendarWithMixedDataTypes.vue';
 import FieldUsageTypes from './utils/FieldUsageTypes.js';
 import Helpers from './utils/Helpers.js';
 
@@ -54,5 +55,6 @@ export {
   SuperTableMap,
   SuperTableTable,
   FieldUsageTypes,
-  Helpers
+  Helpers,
+  CalendarWithMixedDataTypes,
 };

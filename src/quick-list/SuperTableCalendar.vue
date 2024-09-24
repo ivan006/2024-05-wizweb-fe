@@ -163,7 +163,6 @@
                     <!-- Weekday Label -->
                     <div class="text-weight-bold q-mt-xs">
                       {{momentMethod(scope.timestamp.date, 'ddd')}}
-                      {{  }}
                     </div>
 
                     <!-- Date as Button -->
