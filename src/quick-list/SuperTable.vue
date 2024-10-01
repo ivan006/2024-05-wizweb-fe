@@ -1334,6 +1334,7 @@ export default {
         count = response.response.data.total;
       }
       this.itemsLength = count; // Assuming your API returns a total count
+      this.$emit('fetchComplete', this.model.name, this.items);
     },
     activateAndFetchData() {
       if (!this.activated && !this.disabled) {

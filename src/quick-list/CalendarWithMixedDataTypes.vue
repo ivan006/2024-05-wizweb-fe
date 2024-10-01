@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div v-if="!allLoaded">
+      <!-- Spinner or loading indicator -->
+      <p>Loading...</p>
+    </div>
     <pre>{{mergedData}}</pre>
     <!-- Loop through the dataTypes and create a hidden SuperTable for each model -->
     <div v-for="(dataType, index) in dataTypes" :key="index" style="display: none;">
@@ -8,8 +12,9 @@
           :parentKeyValuePair="dataType.parentKeyValuePair"
           :templateListGrid="dataType.templateListGrid"
           :isForSelectingRelation="true"
-      @clickRow="dataType.clickRow"
-      :ref="getSuperTableRefKey(index)"
+          @clickRow="dataType.clickRow"
+          :ref="getSuperTableRefKey(index)"
+          @fetchComplete="handleFetchComplete"
       />
     </div>
   </div>
@@ -31,15 +36,22 @@ export default {
   },
   data() {
     return {
+      loadingStatus: {},
       mergedData: [], // Holds the merged data from all SuperTables
     };
+  },
+  computed: {
+    allLoaded() {
+      // Check if all models have completed loading
+      return Object.values(this.loadingStatus).every(status => status === true);
+    }
   },
   mounted() {
     // After mounting, check if each SuperTable's model has relevant calendar fields and fetch data
     this.dataTypes.forEach((dataType, index) => {
       this.$nextTick(() => {
-        const superTableRefKey = this.getSuperTableRefKey(index);
-        const superTable = this.$refs[superTableRefKey][0]; // Access the first element in the ref array
+        const refKey = this.getSuperTableRefKey(index);
+        const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
 
         if (superTable) {
           const headers = superTable.superOptions.headers || {};
@@ -47,13 +59,28 @@ export default {
           console.log('hasCalendarFields')
           console.log(hasCalendarFields)
           if (hasCalendarFields) {
-            this.fetchSuperTableData(superTableRefKey);
+            const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
+            if (superTable) {
+              superTable.activateAndFetchData()
+
+              console.log( 'data')
+              console.log( superTable.items)
+              const items = superTable.items; // Get the fetched data from SuperTable
+              this.mergedData = [...this.mergedData, ...items]; // Merge data into the super array
+            }
           }
         }
       });
     });
   },
   methods: {
+
+    handleFetchComplete(modelName, fetchedData) {
+      console.log(`Fetch complete for model: ${modelName}`);
+      this.loadingStatus[modelName] = true; // Mark the model as loaded
+      console.log(this.loadingStatus);
+      // Handle the fetched data if needed
+    },
     // Generate dynamic ref keys for each SuperTable
     getSuperTableRefKey(index) {
       return `superTableRef-${index}`;
@@ -88,18 +115,6 @@ export default {
       return hasStartDate && hasEndDate;
     },
 
-    // Fetch data from each SuperTable and merge it once all fetches are complete
-    fetchSuperTableData(refKey) {
-      const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
-      if (superTable) {
-        superTable.activateAndFetchData()
-
-        console.log( 'data')
-        console.log( superTable.items)
-        const items = superTable.items; // Get the fetched data from SuperTable
-        this.mergedData = [...this.mergedData, ...items]; // Merge data into the super array
-      }
-    },
 
 
   },
