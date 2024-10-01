@@ -74,15 +74,66 @@ export default {
 
   methods: {
 
+    getFieldFromModelOrParent(field, usageType) {
+      // Direct check on the item's usageType
+      if (field.usageType === usageType) {
+        return field;
+      }
+
+      // Check in parent fields if they exist
+      if (field.headerParentFields) {
+        for (let parentField of field.headerParentFields) {
+          if (parentField.usageType === usageType) {
+            return parentField;
+          }
+        }
+      }
+
+      // If no value is found, return null
+      return null;
+    },
+
+
     handleDataFetched(modelName, items) {
-      // Merge fetched data
-      this.mergedData = [...this.mergedData, ...items];
+      // Find the dataType that corresponds to the modelName
+      const dataType = this.dataTypes.find(dt => dt.model.name === modelName);
+
+      // Process and normalize fetched data
+      const processedItems = items.map(item => {
+        // Get the headers (fields) for the current model from the dataType's superOptions
+        const headers = this.$refs[this.getSuperTableRefKey(this.dataTypes.indexOf(dataType))][0].superOptions.headers;
+
+        // Extract start and end time, check both direct and parent fields
+        const startTimeField = this.getFieldFromModelOrParent(headers, 'timeRangeStart');
+        const endTimeField = this.getFieldFromModelOrParent(headers, 'timeRangeEnd');
+
+        const test = Object.values(headers).find(field => this.getFieldFromModelOrParent(field, 'timeRangeStart'));
+
+        console.log('test')
+        console.log(test)
+        // Get the actual values from the item using the field names
+        const startTime = startTimeField ? item[startTimeField.field] : null;
+        const endTime = endTimeField ? item[endTimeField.field] : null;
+
+        // Return normalized structure
+        return {
+          dataType: modelName, // Which data type (model) the item belongs to
+          startTime: startTime || null, // Extracted start time
+          endTime: endTime || null, // Extracted end time
+          content: {
+            ...item, // All other attributes of the item
+          },
+        };
+      });
+
+      // Merge normalized data into mergedData
+      this.mergedData = [...this.mergedData, ...processedItems];
 
       // Mark this model as done fetching
       this.loadingStatus[modelName] = true;
 
       // Check if all data is fetched
-      if (this.allDataFetched) {
+      if (this.allLoaded) {
         console.log('All data fetched:', this.mergedData);
       }
     },
@@ -91,32 +142,13 @@ export default {
       return `superTableRef-${index}`;
     },
 
-    // Check if the SuperTable's model has relevant start and end date fields, including parent fields
+
+
     checkForCalendarFields(fields) {
-      let hasStartDate = false;
-      let hasEndDate = false;
-
-      // Check both fields and parent fields for timeRangeStart and timeRangeEnd
-      Object.values(fields).forEach(field => {
-        if (field.usageType === 'timeRangeStart') {
-          hasStartDate = true;
-        }
-        if (field.usageType === 'timeRangeEnd') {
-          hasEndDate = true;
-        }
-
-        if (field.headerParentFields) {
-          field.headerParentFields.forEach(parentField => {
-            if (parentField.usageType === 'timeRangeStart') {
-              hasStartDate = true;
-            }
-            if (parentField.usageType === 'timeRangeEnd') {
-              hasEndDate = true;
-            }
-          });
-        }
-      });
-
+      const hasStartDate = !!Object.values(fields).find(field => this.getFieldFromModelOrParent(field, 'timeRangeStart'));
+      const hasEndDate = !!Object.values(fields).find(field => this.getFieldFromModelOrParent(field, 'timeRangeEnd'));
+      console.log('hasStartDate')
+      console.log(hasStartDate)
       return hasStartDate && hasEndDate;
     },
 
