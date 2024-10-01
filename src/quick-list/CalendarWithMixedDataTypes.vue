@@ -1,5 +1,6 @@
 <template>
   <div>
+    <pre>{{mergedData}}</pre>
     <!-- Loop through the dataTypes and create a hidden SuperTable for each model -->
     <div v-for="(dataType, index) in dataTypes" :key="index" style="display: none;">
       <SuperTable
@@ -7,8 +8,8 @@
           :parentKeyValuePair="dataType.parentKeyValuePair"
           :templateListGrid="dataType.templateListGrid"
           :isForSelectingRelation="true"
-          @clickRow="dataType.clickRow"
-          :ref="getSuperTableRefKey(index)"
+      @clickRow="dataType.clickRow"
+      :ref="getSuperTableRefKey(index)"
       />
     </div>
   </div>
@@ -28,22 +29,25 @@ export default {
       required: true, // An array of objects, each containing model, clickRow, parentKeyValuePair, and templateListGrid
     },
   },
+  data() {
+    return {
+      mergedData: [], // Holds the merged data from all SuperTables
+    };
+  },
   mounted() {
-    // After mounting, check if each SuperTable's model has relevant calendar fields
+    // After mounting, check if each SuperTable's model has relevant calendar fields and fetch data
     this.dataTypes.forEach((dataType, index) => {
       this.$nextTick(() => {
         const superTableRefKey = this.getSuperTableRefKey(index);
         const superTable = this.$refs[superTableRefKey][0]; // Access the first element in the ref array
 
-        console.log( `superTableRef-${index}`)
-        console.log( superTable.superOptions.headers)
         if (superTable) {
           const headers = superTable.superOptions.headers || {};
           const hasCalendarFields = this.checkForCalendarFields(headers);
-
+          console.log('hasCalendarFields')
+          console.log(hasCalendarFields)
           if (hasCalendarFields) {
-            console.log('ddd')
-            this.activateAndFetchData(superTableRefKey);
+            this.fetchSuperTableData(superTableRefKey);
           }
         }
       });
@@ -60,9 +64,8 @@ export default {
       let hasStartDate = false;
       let hasEndDate = false;
 
-      // First, check the model fields for timeRangeStart and timeRangeEnd
+      // Check both fields and parent fields for timeRangeStart and timeRangeEnd
       Object.values(fields).forEach(field => {
-        console.log(field)
         if (field.usageType === 'timeRangeStart') {
           hasStartDate = true;
         }
@@ -70,7 +73,6 @@ export default {
           hasEndDate = true;
         }
 
-        // If the field has parent fields, check those as well
         if (field.headerParentFields) {
           field.headerParentFields.forEach(parentField => {
             if (parentField.usageType === 'timeRangeStart') {
@@ -83,19 +85,24 @@ export default {
         }
       });
 
-      // Return true only if both start and end date fields are found
       return hasStartDate && hasEndDate;
     },
 
-    // Activate and fetch data for a specific SuperTable by ref key
-    activateAndFetchData(refKey) {
+    // Fetch data from each SuperTable and merge it once all fetches are complete
+    fetchSuperTableData(refKey) {
       const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
       if (superTable) {
-        superTable.activateAndFetchData();
+        superTable.activateAndFetchData()
+
+        console.log( 'data')
+        console.log( superTable.items)
+        const items = superTable.items; // Get the fetched data from SuperTable
+        this.mergedData = [...this.mergedData, ...items]; // Merge data into the super array
       }
     },
-  }
 
+
+  },
 };
 </script>
 
