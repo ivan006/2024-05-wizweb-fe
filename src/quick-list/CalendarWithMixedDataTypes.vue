@@ -73,26 +73,30 @@ export default {
   },
 
   methods: {
+    getFieldFromModelOrParent(fields, usageType) {
+      let targetField = null;
 
-    getFieldFromModelOrParent(field, usageType) {
-      // Direct check on the item's usageType
-      if (field.usageType === usageType) {
-        return field;
+      // Check direct fields for the usageType
+      targetField = Object.values(fields).find(field => field.usageType === usageType);
+
+      if (targetField) {
+        // If found in direct fields, return as a string for direct access
+        return `'${targetField.field}'`;
       }
 
-      // Check in parent fields if they exist
-      if (field.headerParentFields) {
-        for (let parentField of field.headerParentFields) {
-          if (parentField.usageType === usageType) {
-            return parentField;
+      // If not found, check parent fields
+      Object.values(fields).forEach(field => {
+        if (field.headerParentFields) {
+          const parentField = field.headerParentFields.find(parent => parent.usageType === usageType);
+          if (parentField) {
+            // Return as a string path 'parentField.field'
+            targetField = `"${field.field}.${parentField.field}"`;
           }
         }
-      }
+      });
 
-      // If no value is found, return null
-      return null;
+      return targetField; // Either the direct field string or the nested field string
     },
-
 
     handleDataFetched(modelName, items) {
       // Find the dataType that corresponds to the modelName
@@ -104,16 +108,12 @@ export default {
         const headers = this.$refs[this.getSuperTableRefKey(this.dataTypes.indexOf(dataType))][0].superOptions.headers;
 
         // Extract start and end time, check both direct and parent fields
-        const startTimeField = this.getFieldFromModelOrParent(headers, 'timeRangeStart');
-        const endTimeField = this.getFieldFromModelOrParent(headers, 'timeRangeEnd');
+        const startTimeFieldPath = this.getFieldFromModelOrParent(headers, 'timeRangeStart');
+        const endTimeFieldPath = this.getFieldFromModelOrParent(headers, 'timeRangeEnd');
 
-        const test = Object.values(headers).find(field => this.getFieldFromModelOrParent(field, 'timeRangeStart'));
-
-        console.log('test')
-        console.log(test)
-        // Get the actual values from the item using the field names
-        const startTime = startTimeField ? item[startTimeField.field] : null;
-        const endTime = endTimeField ? item[endTimeField.field] : null;
+        // Get the actual values from the item using the field paths
+        const startTime = this.getValueFromItem(item, startTimeFieldPath);
+        const endTime = this.getValueFromItem(item, endTimeFieldPath);
 
         // Return normalized structure
         return {
@@ -137,11 +137,17 @@ export default {
         console.log('All data fetched:', this.mergedData);
       }
     },
-    // Generate dynamic ref keys for each SuperTable
-    getSuperTableRefKey(index) {
-      return `superTableRef-${index}`;
-    },
 
+    // Utility method to safely access nested values in an item based on path string
+    getValueFromItem(item, path) {
+      if (!path) return null;
+
+      // Remove quotes and split by dot for nested paths
+      const keys = path.replace(/["']/g, "").split(".");
+
+      // Recursively access the value in the item
+      return keys.reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : null), item);
+    },
 
 
     checkForCalendarFields(fields) {
@@ -151,6 +157,14 @@ export default {
       console.log(hasStartDate)
       return hasStartDate && hasEndDate;
     },
+
+
+
+    // Generate dynamic ref keys for each SuperTable
+    getSuperTableRefKey(index) {
+      return `superTableRef-${index}`;
+    },
+
 
 
 
