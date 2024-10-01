@@ -14,7 +14,7 @@
           :isForSelectingRelation="true"
           @clickRow="dataType.clickRow"
           :ref="getSuperTableRefKey(index)"
-          @fetchComplete="handleFetchComplete"
+          @fetchComplete="handleDataFetched"
       />
     </div>
   </div>
@@ -53,33 +53,38 @@ export default {
         const refKey = this.getSuperTableRefKey(index);
         const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
 
+        // Initialize loading status for each model
+        // this.$set(this.loadingStatus, dataType.model.name, false);
+
+        this.loadingStatus[dataType.model.name] = false;
+
         if (superTable) {
           const headers = superTable.superOptions.headers || {};
           const hasCalendarFields = this.checkForCalendarFields(headers);
-          console.log('hasCalendarFields')
-          console.log(hasCalendarFields)
           if (hasCalendarFields) {
-            const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
-            if (superTable) {
-              superTable.activateAndFetchData()
-
-              console.log( 'data')
-              console.log( superTable.items)
-              const items = superTable.items; // Get the fetched data from SuperTable
-              this.mergedData = [...this.mergedData, ...items]; // Merge data into the super array
-            }
+            superTable.activateAndFetchData();
+          } else {
+            // If the model doesn't have calendar fields, mark it as fetched
+            this.loadingStatus[dataType.model.name] = true;
           }
         }
       });
     });
   },
+
   methods: {
 
-    handleFetchComplete(modelName, fetchedData) {
-      console.log(`Fetch complete for model: ${modelName}`);
-      this.loadingStatus[modelName] = true; // Mark the model as loaded
-      console.log(this.loadingStatus);
-      // Handle the fetched data if needed
+    handleDataFetched(modelName, items) {
+      // Merge fetched data
+      this.mergedData = [...this.mergedData, ...items];
+
+      // Mark this model as done fetching
+      this.loadingStatus[modelName] = true;
+
+      // Check if all data is fetched
+      if (this.allDataFetched) {
+        console.log('All data fetched:', this.mergedData);
+      }
     },
     // Generate dynamic ref keys for each SuperTable
     getSuperTableRefKey(index) {
