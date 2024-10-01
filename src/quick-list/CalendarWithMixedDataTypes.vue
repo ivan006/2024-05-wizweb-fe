@@ -78,10 +78,9 @@ export default {
 
       // Check direct fields for the usageType
       targetField = Object.values(fields).find(field => field.usageType === usageType);
-
       if (targetField) {
-        // If found in direct fields, return as a string for direct access
-        return `'${targetField.field}'`;
+        // If found in direct fields, return the field name
+        return targetField.field;
       }
 
       // If not found, check parent fields
@@ -89,13 +88,13 @@ export default {
         if (field.headerParentFields) {
           const parentField = field.headerParentFields.find(parent => parent.usageType === usageType);
           if (parentField) {
-            // Return as a string path 'parentField.field'
-            targetField = `"${field.field}.${parentField.field}"`;
+            // Return the nested field path
+            targetField = parentField.name;
           }
         }
       });
 
-      return targetField; // Either the direct field string or the nested field string
+      return targetField; // Either the direct field name or the nested field path
     },
 
     handleDataFetched(modelName, items) {
@@ -114,7 +113,9 @@ export default {
         // Get the actual values from the item using the field paths
         const startTime = this.getValueFromItem(item, startTimeFieldPath);
         const endTime = this.getValueFromItem(item, endTimeFieldPath);
-
+        console.log('startTime')
+        console.log(startTimeFieldPath)
+        console.log(startTime)
         // Return normalized structure
         return {
           dataType: modelName, // Which data type (model) the item belongs to
@@ -139,23 +140,30 @@ export default {
     },
 
     // Utility method to safely access nested values in an item based on path string
-    getValueFromItem(item, path) {
-      if (!path) return null;
 
-      // Remove quotes and split by dot for nested paths
-      const keys = path.replace(/["']/g, "").split(".");
 
-      // Recursively access the value in the item
-      return keys.reduce((obj, key) => (obj && obj[key] !== undefined ? obj[key] : null), item);
+    getValueFromItem(item, fieldPath) {
+      if (!fieldPath) return null;
+
+      // Split the fieldPath into parts to handle nested fields
+      const fieldParts = fieldPath.split('.');
+
+      // Use reduce to traverse through the item object
+      const value = fieldParts.reduce((acc, part) => {
+        return acc && acc[part] !== undefined ? acc[part] : null;
+      }, item);
+
+      return value;
     },
 
 
+
     checkForCalendarFields(fields) {
-      const hasStartDate = !!Object.values(fields).find(field => this.getFieldFromModelOrParent(field, 'timeRangeStart'));
-      const hasEndDate = !!Object.values(fields).find(field => this.getFieldFromModelOrParent(field, 'timeRangeEnd'));
-      console.log('hasStartDate')
-      console.log(hasStartDate)
-      return hasStartDate && hasEndDate;
+      const hasStartDateField = this.getFieldFromModelOrParent(fields, 'timeRangeStart');
+      const hasEndDateField = this.getFieldFromModelOrParent(fields, 'timeRangeEnd');
+
+      // If both start and end fields are found, the model has relevant calendar fields
+      return hasStartDateField && hasEndDateField;
     },
 
 
