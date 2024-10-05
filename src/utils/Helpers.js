@@ -87,6 +87,29 @@ class Helpers {
         return result;
     }
 
+    static getFieldFromModelOrParent(fields, usageType) {
+        let targetField = null;
+
+        // Check direct fields for the usageType
+        targetField = Object.values(fields).find(field => field.usageType === usageType);
+        if (targetField) {
+            // If found in direct fields, return the field name
+            return targetField.field;
+        }
+
+        // If not found, check parent fields
+        Object.values(fields).forEach(field => {
+            if (field.headerParentFields) {
+                const parentField = field.headerParentFields.find(parent => parent.usageType === usageType);
+                if (parentField) {
+                    // Return the nested field path
+                    targetField = parentField.name;
+                }
+            }
+        });
+
+        return targetField; // Either the direct field name or the nested field path
+    }
 
 
 

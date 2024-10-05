@@ -2,27 +2,19 @@
   <div>
     <div>
       <div class="">
-
         <template v-if="loading">
-
           <div class="text-center q-pa-md">
             <!--<q-spinner  color="primary" />-->
             Loading...
           </div>
         </template>
         <div :style="`display: ${loading ? 'none' : 'block'};`">
-        <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
+          <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
 
-
-          <div
-              style="display: flex; max-width: 100%; width: 100%; "
-          >
+          <div style="display: flex; max-width: 100%; width: 100%">
             <!-- Toggle Button to switch views -->
 
-
             <template v-if="calendarMode === 'Hour by Hour'">
-
-
               <q-calendar-day
                   ref="calendar"
                   v-model="selectedDate"
@@ -44,15 +36,15 @@
                   :interval-start="5"
                   :interval-count="19"
                   hour24-format
-                  :weekdays="[1,2,3,4,5,6,0]"
+                  :weekdays="[1, 2, 3, 4, 5, 6, 0]"
                   no-active-date
               >
                 <template #head-day="{ scope }">
                   <div class="text-center">
                     <!-- Weekday Label -->
                     <div class="text-weight-bold q-mt-xs">
-                      {{momentMethod(scope.timestamp.date, 'ddd')}}
-                      {{  }}
+                      {{ momentMethod(scope.timestamp.date, "ddd") }}
+                      {{}}
                     </div>
 
                     <!-- Date as Button -->
@@ -61,31 +53,42 @@
                         flat
                         rounded
                         dense
-                        :style="isToday(scope.timestamp.date) ? 'border: solid 2px var(--q-primary);' : 'border: solid 2px rgba(0,0,0,0);' "
-                        style=" font-size: 0.75em;"
-                        :label="momentMethod(scope.timestamp.date, 'D')+' '+momentMethod(scope.timestamp.date, 'MMM')"
+                        :style="
+                        isToday(scope.timestamp.date)
+                          ? 'border: solid 2px var(--q-primary);'
+                          : 'border: solid 2px rgba(0,0,0,0);'
+                      "
+                        style="font-size: 0.75em"
+                        :label="
+                        momentMethod(scope.timestamp.date, 'D') +
+                        ' ' +
+                        momentMethod(scope.timestamp.date, 'MMM')
+                      "
                         @click="onClickDate(scope.timestamp.date)"
                         class="q-mb-sm text-bold"
                     />
                   </div>
                 </template>
 
-                <template #day-container="{ scope: { days }}">
+                <template #day-container="{ scope: { days } }">
                   <template v-if="hasDate(days)">
                     <div
                         class="day-view-current-time-indicator"
                         :style="style"
                     />
-                    <div
-                        class="day-view-current-time-line"
-                        :style="style"
-                    />
+                    <div class="day-view-current-time-line" :style="style" />
                   </template>
                 </template>
 
-
                 <template #head-day-event="{ scope: { timestamp } }">
-                  <div style="display: flex; justify-content: center; flex-wrap: wrap; padding: 2px;">
+                  <div
+                      style="
+                      display: flex;
+                      justify-content: center;
+                      flex-wrap: wrap;
+                      padding: 2px;
+                    "
+                  >
                     <template
                         v-for="event in eventsMap[timestamp.date]"
                         :key="event.id"
@@ -94,7 +97,13 @@
                           v-if="!event.time"
                           :class="badgeClasses(event, 'header')"
                           :style="badgeStyles(event, 'header')"
-                          style="width: 100%; cursor: pointer; height: 12px; font-size: 10px; margin: 1px;"
+                          style="
+                          width: 100%;
+                          cursor: pointer;
+                          height: 12px;
+                          font-size: 10px;
+                          margin: 1px;
+                        "
                       >
                         <div class="title q-calendar__ellipsis">
                           {{ event.title }}
@@ -105,17 +114,30 @@
                           v-else
                           :class="badgeClasses(event, 'header')"
                           :style="badgeStyles(event, 'header')"
-                          style="margin: 1px; width: 10px; max-width: 10px; height: 10px; max-height: 10px; cursor: pointer"
+                          style="
+                          margin: 1px;
+                          width: 10px;
+                          max-width: 10px;
+                          height: 10px;
+                          max-height: 10px;
+                          cursor: pointer;
+                        "
                           @click="showEvent(event)"
                       >
                         <!--@click="scrollToEvent(event)"-->
-                        <q-tooltip>{{ event.time + ' - ' + event.title }}</q-tooltip>
+                        <q-tooltip>{{
+                            event.time + " - " + event.title
+                          }}</q-tooltip>
                       </q-badge>
                     </template>
                   </div>
                 </template>
 
-                <template #day-body="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
+                <template
+                    #day-body="{
+                    scope: { timestamp, timeStartPos, timeDurationHeight },
+                  }"
+                >
                   <template
                       v-for="event in getEvents(timestamp.date)"
                       :key="event.id"
@@ -125,7 +147,14 @@
                         v-if="event.time !== undefined"
                         class="my-event"
                         :class="badgeClasses(event, 'body')"
-                        :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
+                        :style="
+                        badgeStyles(
+                          event,
+                          'body',
+                          timeStartPos,
+                          timeDurationHeight,
+                        )
+                      "
                     >
                       <div class="title q-calendar__ellipsis">
                         {{ event.title }}
@@ -162,46 +191,48 @@
                   <div class="text-center">
                     <!-- Weekday Label -->
                     <div class="text-weight-bold q-mt-xs">
-                      {{momentMethod(scope.timestamp.date, 'ddd')}}
+                      {{ momentMethod(scope.timestamp.date, "ddd") }}
                     </div>
 
                     <!-- Date as Button -->
 
                     <q-btn
-                      flat
-                      rounded
-                      dense
-                      :style="isToday(scope.timestamp.date) ? 'border: solid 2px var(--q-primary);' : 'border: solid 2px rgba(0,0,0,0);' "
-                      style=" font-size: 0.75em;"
-                      :label="momentMethod(scope.timestamp.date, 'D')+' '+momentMethod(scope.timestamp.date, 'MMM')"
-                      @click="onClickDate(scope.timestamp.date)"
-                      class="q-mb-sm text-bold"
+                        flat
+                        rounded
+                        dense
+                        :style="
+                        isToday(scope.timestamp.date)
+                          ? 'border: solid 2px var(--q-primary);'
+                          : 'border: solid 2px rgba(0,0,0,0);'
+                      "
+                        style="font-size: 0.75em"
+                        :label="
+                        momentMethod(scope.timestamp.date, 'D') +
+                        ' ' +
+                        momentMethod(scope.timestamp.date, 'MMM')
+                      "
+                        @click="onClickDate(scope.timestamp.date)"
+                        class="q-mb-sm text-bold"
                     />
                   </div>
                 </template>
 
-                <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
+                <template
+                    #day="{
+                    scope: { timestamp, timeStartPos, timeDurationHeight },
+                  }"
+                >
                   <template v-if="!getEvents(timestamp.date).length">
-                    <div class="text-center q-pa-md text-grey-5">
-                      Empty
-                    </div>
+                    <div class="text-center q-pa-md text-grey-5">Empty</div>
                   </template>
                   <template
                       v-for="event in getEvents(timestamp.date)"
                       :key="event.id"
                   >
-
-                    <q-card
-                        class="q-pa-none q-ma-sm"
-                        @click="showEvent(event)"
-                    >
+                    <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">
                       <template
-                          v-if="
-                            templateListCalendar &&
-                            templateListCalendar.cols
-                          "
+                          v-if="templateListCalendar && templateListCalendar.cols"
                       >
-
                         <RecordFieldsForDisplayCustom
                             :item="event.meta"
                             :maxFields="6"
@@ -211,7 +242,12 @@
                             :template="templateListCalendar"
                             @editItem="editItem"
                             @deleteItem="deleteItem"
-                            :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+                            :unClickable="
+                            unClickable ||
+                            !superOptions.model.rules.readable(
+                              viewItemData.data,
+                            )
+                          "
                         />
                         <!--@clickRow="clickRow"-->
                       </template>
@@ -226,15 +262,12 @@
                         />
 
                         <!--@clickRow="clickRow"-->
-
                       </template>
-
                     </q-card>
                   </template>
                 </template>
               </q-calendar-agenda>
             </template>
-
 
             <!--style="height: 400px; width: 100%;"-->
           </div>
@@ -270,29 +303,14 @@
               <!--    class=""-->
               <!--    label="View"-->
               <!--&gt;</q-select>-->
-
-
-
             </div>
           </div>
-
         </div>
-
       </div>
 
-
-
       <q-dialog v-model="viewItemData.showModal" max-width="800px">
-        <q-card
-            class="q-pa-none"
-        >
-          <template
-              v-if="
-                templateListGrid &&
-                templateListGrid.cols
-              "
-          >
-
+        <q-card class="q-pa-none">
+          <template v-if="templateListGrid && templateListGrid.cols">
             <RecordFieldsForDisplayCustom
                 :item="viewItemData.data"
                 :maxFields="6"
@@ -302,7 +320,10 @@
                 :template="templateListGrid"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-                :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+                :unClickable="
+                unClickable ||
+                !superOptions.model.rules.readable(viewItemData.data)
+              "
                 @clickRow="clickRow"
             />
             <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
@@ -320,10 +341,7 @@
                 :unClickable="unClickable"
                 @clickRow="clickRow"
             />
-
-
           </template>
-
         </q-card>
       </q-dialog>
     </div>
@@ -339,8 +357,8 @@ import {
   isBetweenDates,
   parsed,
   parseTime,
-  QCalendarDay
-} from '@quasar/quasar-ui-qcalendar';
+  QCalendarDay,
+} from "@quasar/quasar-ui-qcalendar";
 
 import QuickListsHelpers from "./QuickListsHelpers";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
@@ -404,7 +422,7 @@ export default {
     calendarMode: {
       type: String,
       default() {
-        return 'Full Details';
+        return "Full Details";
       },
     },
     superOptions: {
@@ -421,17 +439,17 @@ export default {
       },
     },
   },
-  data(){
+  data() {
     return {
       view: "week", // Initialize with a valid view
       mode: "stack",
       modes: ["stack", "column"],
       weekday: [1, 2, 3, 4, 5, 6, 0],
       weekdays: [
-        {title: "Sun - Sat", value: [0, 1, 2, 3, 4, 5, 6]},
-        {title: "Mon - Sun", value: [1, 2, 3, 4, 5, 6, 0]},
-        {title: "Mon - Fri", value: [1, 2, 3, 4, 5]},
-        {title: "Mon, Wed, Fri", value: [1, 3, 5]},
+        { title: "Sun - Sat", value: [0, 1, 2, 3, 4, 5, 6] },
+        { title: "Mon - Sun", value: [1, 2, 3, 4, 5, 6, 0] },
+        { title: "Mon - Fri", value: [1, 2, 3, 4, 5] },
+        { title: "Mon, Wed, Fri", value: [1, 3, 5] },
       ],
       // selectedDate: new Date().toISOString().split('T')[0], // Initialize with the current date in 'YYYY-MM-DD' format
       colors: [
@@ -448,7 +466,6 @@ export default {
         data: {},
       },
 
-
       selectedDate: today(),
       // dateAlign: 'center',
       // weekdayAlign: 'center',
@@ -456,15 +473,15 @@ export default {
       currentDate: null,
       currentTime: null,
       timeStartPos: 0,
-    }
+    };
   },
   computed: {
     moment() {
-      return moment
+      return moment;
     },
     firstNonIdKey() {
       const key = Object.keys(this.superOptions.headers).find(
-          (field) => this.superOptions.headers[field].name !== "id"
+          (field) => this.superOptions.headers[field].name !== "id",
       );
       let result = this.superOptions.headers[key].name;
 
@@ -474,10 +491,11 @@ export default {
       if (!timeRangeStartField) {
         for (const modelField of this.superOptions.headers) {
           if (modelField.headerParentFields) {
-            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeStart";
-            });
-            if(timeRangeStartFieldParent){
+            const timeRangeStartFieldParent =
+                modelField.headerParentFields.find((field) => {
+                  return field.usageType == "timeRangeStart";
+                });
+            if (timeRangeStartFieldParent) {
               const parentHeaders = QuickListsHelpers.SupaerTableHeaders(
                   modelField.meta.relatedModel,
                   [],
@@ -486,17 +504,14 @@ export default {
               );
 
               const key = Object.keys(parentHeaders).find(
-                  (field) => parentHeaders[field].name !== "id"
+                  (field) => parentHeaders[field].name !== "id",
               );
-              result = [
-                modelField.name,
-                parentHeaders[key].name
-              ]
+              result = [modelField.name, parentHeaders[key].name];
             }
           }
         }
       }
-      return result
+      return result;
     },
     events() {
       let result = [];
@@ -516,7 +531,7 @@ export default {
             end = new Date(item[this.endFieldName.name]);
           }
 
-          let title = ""
+          let title = "";
           if (Array.isArray(this.firstNonIdKey)) {
             title = item[this.firstNonIdKey[0]][this.firstNonIdKey[1]];
           } else {
@@ -530,14 +545,14 @@ export default {
           const time = start.toISOString().substr(11, 5);
 
           result.push({
-            id: title,  // Assuming this is a unique identifier
+            id: title, // Assuming this is a unique identifier
             title: title,
             // details: 'Event details',  // Replace with actual details if available
-            date: start.toISOString().substr(0, 10),  // YYYY-MM-DD format
+            date: start.toISOString().substr(0, 10), // YYYY-MM-DD format
             time: time,
             duration: duration,
-            bgcolor: 'deep-purple',
-            icon: 'fas fa-calendar-alt',  // Generic icon
+            bgcolor: "deep-purple",
+            icon: "fas fa-calendar-alt", // Generic icon
             meta: item,
           });
         }
@@ -545,55 +560,53 @@ export default {
       return result;
     },
 
-
-    style(){
+    style() {
       return {
-        top: this.timeStartPos + 'px'
-      }
+        top: this.timeStartPos + "px",
+      };
     },
 
-    eventsMap () {
-      const map = {}
+    eventsMap() {
+      const map = {};
       // this.events.forEach(event => (map[ event.date ] = map[ event.date ] || []).push(event))
-      this.events.forEach(event => {
-        if (!map[ event.date ]) {
-          map[ event.date ] = []
+      this.events.forEach((event) => {
+        if (!map[event.date]) {
+          map[event.date] = [];
         }
-        map[ event.date ].push(event)
+        map[event.date].push(event);
         if (event.days) {
-          let timestamp = parseTimestamp(event.date)
-          let days = event.days
+          let timestamp = parseTimestamp(event.date);
+          let days = event.days;
           do {
-            timestamp = addToDate(timestamp, { day: 1 })
-            if (!map[ timestamp.date ]) {
-              map[ timestamp.date ] = []
+            timestamp = addToDate(timestamp, { day: 1 });
+            if (!map[timestamp.date]) {
+              map[timestamp.date] = [];
             }
-            map[ timestamp.date ].push(event)
-          } while (--days > 0)
+            map[timestamp.date].push(event);
+          } while (--days > 0);
         }
-      })
-      return map
-    }
+      });
+      return map;
+    },
   },
   methods: {
     isToday(date) {
-      return moment(date).isSame(moment(), 'day');
+      return moment(date).isSame(moment(), "day");
     },
     momentMethod(e, format) {
       return moment(e).format(format);
     },
     deleteItem(e) {
-      this.$emit('deleteItem', e);
+      this.$emit("deleteItem", e);
     },
     editItem(e) {
-      this.$emit('editItem', e);
+      this.$emit("editItem", e);
     },
     clickRow(e) {
       this.viewItemData.showModal = false;
       this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);
     },
-    updateTimeWindow() {
-    },
+    updateTimeWindow() {},
     getEventColor(event) {
       return event.color;
     },
@@ -605,38 +618,45 @@ export default {
       this.viewItemData.data = m.meta;
     },
 
-    hasDate (days) {
+    hasDate(days) {
       return this.currentDate
-          ? days.find(day => day.date === this.currentDate)
-          : false
+          ? days.find((day) => day.date === this.currentDate)
+          : false;
     },
-    adjustCurrentTime () {
-      const now = parseDate(new Date())
-      this.currentDate = now.date
-      this.currentTime = now.time
-      this.timeStartPos = this.$refs.calendar.timeStartPos(this.currentTime, false)
+    adjustCurrentTime() {
+      const now = parseDate(new Date());
+      this.currentDate = now.date;
+      this.currentTime = now.time;
+      this.timeStartPos = this.$refs.calendar.timeStartPos(
+          this.currentTime,
+          false,
+      );
     },
 
-
-    badgeClasses (event, type) {
-      const isHeader = type === 'header'
+    badgeClasses(event, type) {
+      const isHeader = type === "header";
       return {
-        [ `text-white bg-${ event.bgcolor }` ]: true,
-        'full-width': !isHeader && (!event.side || event.side === 'full'),
-        'left-side': !isHeader && event.side === 'left',
-        'right-side': !isHeader && event.side === 'right',
-        'rounded-border': true
-      }
+        [`text-white bg-${event.bgcolor}`]: true,
+        "full-width": !isHeader && (!event.side || event.side === "full"),
+        "left-side": !isHeader && event.side === "left",
+        "right-side": !isHeader && event.side === "right",
+        "rounded-border": true,
+      };
     },
 
-    badgeStyles (event, type, timeStartPos = undefined, timeDurationHeight = undefined) {
-      const s = {}
+    badgeStyles(
+        event,
+        type,
+        timeStartPos = undefined,
+        timeDurationHeight = undefined,
+    ) {
+      const s = {};
       if (timeStartPos && timeDurationHeight) {
-        s.top = timeStartPos(event.time) + 'px'
-        s.height = timeDurationHeight(event.duration) + 'px'
+        s.top = timeStartPos(event.time) + "px";
+        s.height = timeDurationHeight(event.duration) + "px";
       }
-      s[ 'align-items' ] = 'flex-start'
-      return s
+      s["align-items"] = "flex-start";
+      return s;
     },
 
     getEvents(dt) {
@@ -651,73 +671,76 @@ export default {
       });
 
       if (events.length === 1) {
-        events[0].side = 'full';
+        events[0].side = "full";
       } else if (events.length === 2) {
         // Handle up to 2 events per day for overlapping cases
-        const startTime = addToDate(parsed(events[0].date), { minute: parseTime(events[0].time) });
+        const startTime = addToDate(parsed(events[0].date), {
+          minute: parseTime(events[0].time),
+        });
         const endTime = addToDate(startTime, { minute: events[0].duration });
-        const startTime2 = addToDate(parsed(events[1].date), { minute: parseTime(events[1].time) });
+        const startTime2 = addToDate(parsed(events[1].date), {
+          minute: parseTime(events[1].time),
+        });
         const endTime2 = addToDate(startTime2, { minute: events[1].duration });
 
         if (
             isBetweenDates(startTime2, startTime, endTime, true) ||
             isBetweenDates(endTime2, startTime, endTime, true)
         ) {
-          events[0].side = 'left';
-          events[1].side = 'right';
+          events[0].side = "left";
+          events[1].side = "right";
         } else {
-          events[0].side = 'full';
-          events[1].side = 'full';
+          events[0].side = "full";
+          events[1].side = "full";
         }
       }
 
       return events;
     },
 
+    onToday() {
+      if (this.$refs.calendarAgenda) {
+        this.$refs.calendarAgenda.moveToToday();
+      } else if (this.$refs.calendar) {
+        this.$refs.calendar.moveToToday();
+      }
+    },
+    onPrev() {
+      if (this.$refs.calendarAgenda) {
+        this.$refs.calendarAgenda.prev();
+      } else if (this.$refs.calendar) {
+        this.$refs.calendar.prev();
+      }
+    },
+    onNext() {
+      if (this.$refs.calendarAgenda) {
+        this.$refs.calendarAgenda.next();
+      } else if (this.$refs.calendar) {
+        this.$refs.calendar.next();
+      }
+    },
 
-    onToday () {
-      if (this.$refs.calendarAgenda){
-        this.$refs.calendarAgenda.moveToToday()
-      } else if (this.$refs.calendar){
-        this.$refs.calendar.moveToToday()
-      }
-    },
-    onPrev () {
-      if (this.$refs.calendarAgenda){
-        this.$refs.calendarAgenda.prev()
-      } else if (this.$refs.calendar){
-        this.$refs.calendar.prev()
-      }
-    },
-    onNext () {
-      if (this.$refs.calendarAgenda){
-        this.$refs.calendarAgenda.next()
-      } else if (this.$refs.calendar){
-        this.$refs.calendar.next()
-      }
-    },
-
-    onMoved (data) {
+    onMoved(data) {
       // console.log('onMoved', data)
     },
-    onChange (data) {
+    onChange(data) {
       // console.log('onChange', data)
     },
-    onClickDate (data) {
+    onClickDate(data) {
       // console.log('onClickDate', data)
     },
-    onClickTime (data) {
+    onClickTime(data) {
       // console.log('onClickTime', data)
     },
-    onClickInterval (data) {
+    onClickInterval(data) {
       // console.log('onClickInterval', data)
     },
-    onClickHeadIntervals (data) {
+    onClickHeadIntervals(data) {
       // console.log('onClickHeadIntervals', data)
     },
-    onClickHeadDay (data) {
+    onClickHeadDay(data) {
       // console.log('onClickHeadDay', data)
-    }
+    },
   },
   mounted() {
     if (QuickListsHelpers.quickListsIsMobile()) {
@@ -725,29 +748,27 @@ export default {
     }
   },
   watch: {
-    loading(newVal, oldVal){
-      if (!newVal){
-        if (this.calendarMode === 'Hour by Hour'){
-
-          this.adjustCurrentTime()
+    loading(newVal, oldVal) {
+      if (!newVal) {
+        if (this.calendarMode === "Hour by Hour") {
+          this.adjustCurrentTime();
           // now, adjust the time every minute
           const intervalId = setInterval(() => {
-            this.adjustCurrentTime()
-          }, 60000)
+            this.adjustCurrentTime();
+          }, 60000);
         }
       }
     },
-    calendarMode(newVal, oldVal){
-      if (this.calendarMode !== 'Hour by Hour'){
-
-        this.adjustCurrentTime()
+    calendarMode(newVal, oldVal) {
+      if (this.calendarMode !== "Hour by Hour") {
+        this.adjustCurrentTime();
         // now, adjust the time every minute
         const intervalId = setInterval(() => {
-          this.adjustCurrentTime()
-        }, 60000)
+          this.adjustCurrentTime();
+        }, 60000);
       }
     },
-  }
+  },
 };
 </script>
 
@@ -842,4 +863,3 @@ export default {
 .rounded-border
   border-radius: 2px
 </style>
-

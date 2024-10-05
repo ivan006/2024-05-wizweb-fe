@@ -317,7 +317,7 @@
             />
           </template>
           <template v-if="activeTab == 'calendar'">
-            <SuperTableCalendar
+            <SuperTableCalendarWrapper
                 :startFieldName="startFieldName"
                 :endFieldName="endFieldName"
                 :items="items"
@@ -397,7 +397,7 @@ import moment from "moment";
 import "moment-timezone";
 // import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-import SuperTableCalendar from "./SuperTableCalendar.vue";
+import SuperTableCalendarWrapper from "./SuperTableCalendarWrapper.vue";
 import SuperTableGrid from "./SuperTableGrid.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import SuperTableMap from "./SuperTableMap.vue";
@@ -440,7 +440,7 @@ export default {
     SuperTableMap,
     SuperTableTable,
     SuperTableGrid,
-    SuperTableCalendar,
+    SuperTableCalendarWrapper,
     CreateEditForm: AsyncComponentCreateEditForm,
     SuperTable: AsyncComponentSuperTable,
   },
