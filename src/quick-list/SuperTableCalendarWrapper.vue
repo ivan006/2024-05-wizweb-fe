@@ -1,17 +1,23 @@
 <template>
-<div>dd
-  <SuperTableCalendar
-      :mixedItems="formattedItems"
-      :loading="loading"
-      :calendarMode="calendarMode"
-      :dataTypes="dataTypes"
-  />
-</div>
+  <div>
+    <SuperTableCalendar
+        :items="formattedItems"
+        :startFieldName="startFieldName"
+        :endFieldName="endFieldName"
+        :loading="loading"
+        :calendarMode="calendarMode"
+        :templateListCalendar="templateListCalendar"
+        :unClickable="unClickable"
+        :superOptions="superOptions"
+        @clickRow="clickRow"
+        @editItem="editItem"
+        @deleteItem="deleteItem"
+    />
+  </div>
 </template>
 
 <script>
-import SuperTableCalendar from './SuperTableCalendar.vue';
-import Helpers from "../utils/Helpers"; // Assuming you have a helper function for extracting fields
+import SuperTableCalendar from './SuperTableCalendar.vue'; // Assuming the path is correct
 
 export default {
   name: 'SuperTableCalendarWrapper',
@@ -19,58 +25,54 @@ export default {
     SuperTableCalendar,
   },
   props: {
-    startFieldName: String,
-    endFieldName: String,
     items: {
       type: Array,
       default: () => [],
     },
-    calendarMode: String,
-    loading: Boolean,
-    templateListGrid: Object,
-    templateListCalendar: Object,
-    superOptions: Object,
-    unClickable: Boolean,
-    dataTypes: {
-      type: Array,
-      default: () => [],
+    startFieldName: {
+      type: Object,
+      required: true,
     },
-    clickRow: Function,
-    editItem: Function,
-    deleteItem: Function,
+    endFieldName: {
+      type: Object,
+      required: true,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    calendarMode: {
+      type: String,
+      default: 'Full Details',
+    },
+    templateListCalendar: {
+      type: Object,
+      default: () => ({}),
+    },
+    unClickable: {
+      type: Boolean,
+      default: false,
+    },
+    superOptions: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
     formattedItems() {
-      return this.items.map(item => {
-        // Extract start and end time using the helper that checks for parent fields if necessary
-        const startField = Helpers.getFieldFromModelOrParent(this.superOptions.modelFields, this.startFieldName);
-        const endField = Helpers.getFieldFromModelOrParent(this.superOptions.modelFields, this.endFieldName);
-
-        return {
-          dataType: this.superOptions.model.name,
-          startTime: this.getValueFromItem(item, startField),
-          endTime: this.getValueFromItem(item, endField),
-          content: item, // Rest of the content goes here
-        };
-      });
-    },
-    dataTypes() {
-      return [
-        {
-          model: this.superOptions.model,
-          clickRow: this.clickRow,
-          templateListCalendar: this.templateListCalendar,
-          superOptions: this.superOptions,
-          parentKeyValuePair: {}, // Pass in the parent key value pair if needed
-        },
-      ];
+      // Any preprocessing on items if needed, or directly return
+      return this.items;
     },
   },
   methods: {
-    getValueFromItem(item, fieldPath) {
-      if (!fieldPath) return null;
-      const fieldSegments = fieldPath.split('.');
-      return fieldSegments.reduce((acc, segment) => acc && acc[segment], item);
+    clickRow(itemId, item) {
+      this.$emit('clickRow', itemId, item);
+    },
+    editItem(item) {
+      this.$emit('editItem', item);
+    },
+    deleteItem(item) {
+      this.$emit('deleteItem', item);
     },
   },
 };
