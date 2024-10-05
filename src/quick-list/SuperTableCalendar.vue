@@ -52,16 +52,16 @@
                     rounded
                     dense
                     :style="
-                        isToday(scope.timestamp.date)
-                          ? 'border: solid 2px var(--q-primary);'
-                          : 'border: solid 2px rgba(0,0,0,0);'
-                      "
+                    isToday(scope.timestamp.date)
+                      ? 'border: solid 2px var(--q-primary);'
+                      : 'border: solid 2px rgba(0,0,0,0);'
+                  "
                     style="font-size: 0.75em"
                     :label="
-                        momentMethod(scope.timestamp.date, 'D') +
-                        ' ' +
-                        momentMethod(scope.timestamp.date, 'MMM')
-                      "
+                    momentMethod(scope.timestamp.date, 'D') +
+                    ' ' +
+                    momentMethod(scope.timestamp.date, 'MMM')
+                  "
                     @click="onClickDate(scope.timestamp.date)"
                     class="q-mb-sm text-bold"
                 />
@@ -70,10 +70,7 @@
 
             <template #day-container="{ scope: { days } }">
               <template v-if="hasDate(days)">
-                <div
-                    class="day-view-current-time-indicator"
-                    :style="style"
-                />
+                <div class="day-view-current-time-indicator" :style="style" />
                 <div class="day-view-current-time-line" :style="style" />
               </template>
             </template>
@@ -81,11 +78,11 @@
             <template #head-day-event="{ scope: { timestamp } }">
               <div
                   style="
-                      display: flex;
-                      justify-content: center;
-                      flex-wrap: wrap;
-                      padding: 2px;
-                    "
+                  display: flex;
+                  justify-content: center;
+                  flex-wrap: wrap;
+                  padding: 2px;
+                "
               >
                 <template
                     v-for="event in eventsMap[timestamp.date]"
@@ -96,12 +93,12 @@
                       :class="badgeClasses(event, 'header')"
                       :style="badgeStyles(event, 'header')"
                       style="
-                          width: 100%;
-                          cursor: pointer;
-                          height: 12px;
-                          font-size: 10px;
-                          margin: 1px;
-                        "
+                      width: 100%;
+                      cursor: pointer;
+                      height: 12px;
+                      font-size: 10px;
+                      margin: 1px;
+                    "
                   >
                     <div class="title q-calendar__ellipsis">
                       {{ event.title }}
@@ -113,13 +110,13 @@
                       :class="badgeClasses(event, 'header')"
                       :style="badgeStyles(event, 'header')"
                       style="
-                          margin: 1px;
-                          width: 10px;
-                          max-width: 10px;
-                          height: 10px;
-                          max-height: 10px;
-                          cursor: pointer;
-                        "
+                      margin: 1px;
+                      width: 10px;
+                      max-width: 10px;
+                      height: 10px;
+                      max-height: 10px;
+                      cursor: pointer;
+                    "
                       @click="showEvent(event)"
                   >
                     <!--@click="scrollToEvent(event)"-->
@@ -133,8 +130,8 @@
 
             <template
                 #day-body="{
-                    scope: { timestamp, timeStartPos, timeDurationHeight },
-                  }"
+                scope: { timestamp, timeStartPos, timeDurationHeight },
+              }"
             >
               <template
                   v-for="event in getEvents(timestamp.date)"
@@ -146,13 +143,8 @@
                     class="my-event"
                     :class="badgeClasses(event, 'body')"
                     :style="
-                        badgeStyles(
-                          event,
-                          'body',
-                          timeStartPos,
-                          timeDurationHeight,
-                        )
-                      "
+                    badgeStyles(event, 'body', timeStartPos, timeDurationHeight)
+                  "
                 >
                   <div class="title q-calendar__ellipsis">
                     {{ event.title }}
@@ -199,16 +191,16 @@
                     rounded
                     dense
                     :style="
-                        isToday(scope.timestamp.date)
-                          ? 'border: solid 2px var(--q-primary);'
-                          : 'border: solid 2px rgba(0,0,0,0);'
-                      "
+                    isToday(scope.timestamp.date)
+                      ? 'border: solid 2px var(--q-primary);'
+                      : 'border: solid 2px rgba(0,0,0,0);'
+                  "
                     style="font-size: 0.75em"
                     :label="
-                        momentMethod(scope.timestamp.date, 'D') +
-                        ' ' +
-                        momentMethod(scope.timestamp.date, 'MMM')
-                      "
+                    momentMethod(scope.timestamp.date, 'D') +
+                    ' ' +
+                    momentMethod(scope.timestamp.date, 'MMM')
+                  "
                     @click="onClickDate(scope.timestamp.date)"
                     class="q-mb-sm text-bold"
                 />
@@ -216,9 +208,7 @@
             </template>
 
             <template
-                #day="{
-                    scope: { timestamp, timeStartPos, timeDurationHeight },
-                  }"
+                #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }"
             >
               <template v-if="!getEvents(timestamp.date).length">
                 <div class="text-center q-pa-md text-grey-5">Empty</div>
@@ -241,11 +231,9 @@
                         @editItem="editItem"
                         @deleteItem="deleteItem"
                         :unClickable="
-                            unClickable ||
-                            !superOptions.model.rules.readable(
-                              viewItemData.data,
-                            )
-                          "
+                        unClickable ||
+                        !superOptions.model.rules.readable(viewItemData.data)
+                      "
                     />
                     <!--@clickRow="clickRow"-->
                   </template>
@@ -318,9 +306,9 @@
               @editItem="editItem"
               @deleteItem="deleteItem"
               :unClickable="
-                unClickable ||
-                !superOptions.model.rules.readable(viewItemData.data)
-              "
+              unClickable ||
+              !superOptions.model.rules.readable(viewItemData.data)
+            "
               @clickRow="clickRow"
           />
           <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
