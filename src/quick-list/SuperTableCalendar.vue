@@ -1,47 +1,35 @@
 <template>
   <div>
     <template v-if="loading">
-      <div class="text-center q-pa-md">
-        <!--<q-spinner  color="primary" />-->
-        Loading...
-      </div>
+      <div class="text-center q-pa-md">Loading...</div>
     </template>
     <div :style="`display: ${loading ? 'none' : 'block'};`">
-      <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
-
-      <div style="display: flex; max-width: 100%; width: 100%;">
-        <!-- Toggle Button to switch views -->
-
+      <div style="display: flex; max-width: 100%; width: 100%">
+        <!-- Render a single calendar containing all events from the combined configs -->
         <template v-if="calendarMode === 'Hour by Hour'">
           <SuperTableCalendarDay
               ref="calendar"
-              :events="events"
+              :events="combinedEvents"
+              :mixedConfigs="mixedConfigs"
               v-model="selectedDate"
               :view="view"
-              :template-list-calendar="templateListCalendar"
-              :super-options="superOptions"
-              :un-clickable="unClickable"
-              @show-event="showEvent"
-              @edit-item="editItem"
-              @delete-item="deleteItem"
+              @show-event="onShowEvent"
+              @edit-item="onEditItem"
+              @delete-item="onDeleteItem"
           />
         </template>
         <template v-else>
           <SuperTableCalendarAgenda
               ref="calendarAgenda"
-              :events="events"
+              :events="combinedEvents"
+              :mixedConfigs="mixedConfigs"
               v-model="selectedDate"
               :view="view"
-              :template-list-calendar="templateListCalendar"
-              :super-options="superOptions"
-              :un-clickable="unClickable"
-              @show-event="showEvent"
-              @edit-item="editItem"
-              @delete-item="deleteItem"
+              @show-event="onShowEvent"
+              @edit-item="onEditItem"
+              @delete-item="onDeleteItem"
           />
         </template>
-
-        <!--style="height: 400px; width: 100%;"-->
       </div>
 
       <div class="row justify-center">
@@ -51,66 +39,40 @@
               @prev="onPrev"
               @next="onNext"
           />
-          <!--<q-select-->
-          <!--    v-model="view"-->
-          <!--    :options='[-->
-          <!--        // "month",-->
-          <!--        {-->
-          <!--          label: "Week",-->
-          <!--          value: "week",-->
-          <!--        },-->
-          <!--        {-->
-          <!--          label: "Day",-->
-          <!--          value: "day",-->
-          <!--        },-->
-          <!--        // "4day"-->
-          <!--    ]'-->
-          <!--    option-label="label"-->
-          <!--    option-value="value"-->
-          <!--    emitValue-->
-          <!--    mapOptions-->
-          <!--    dense-->
-          <!--    filled-->
-          <!--    hide-details-->
-          <!--    class=""-->
-          <!--    label="View"-->
-          <!--&gt;</q-select>-->
         </div>
       </div>
     </div>
 
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
       <q-card class="q-pa-none">
-        <template v-if="templateListGrid && templateListGrid.cols">
+        <template
+            v-if="
+            getCurrentSelectedConfig().templateListGrid &&
+            getCurrentSelectedConfig().templateListGrid.cols
+          "
+        >
           <RecordFieldsForDisplayCustom
               :item="viewItemData.data"
               :maxFields="6"
               :childRelations="[]"
               isSummary
-              :superOptions="superOptions"
-              :template="templateListGrid"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-              :unClickable="
-              unClickable ||
-              !superOptions.model.rules.readable(viewItemData.data)
-            "
-              @clickRow="clickRow"
+              :superOptions="getCurrentSelectedConfig().superOptions"
+              :template="getCurrentSelectedConfig().templateListGrid"
+              @editItem="getCurrentSelectedConfig().events.editItem"
+              @deleteItem="getCurrentSelectedConfig().events.deleteItem"
+              :unClickable="getCurrentSelectedConfig().unClickable"
+              @clickRow="getCurrentSelectedConfig().events.clickRow"
           />
-          <!--<div :class="colClasses(templateListGrid.width ? templateListGrid.width : 3)" >-->
-          <!--  <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">-->
-          <!--  </div>-->
-          <!--</div>-->
         </template>
         <template v-else>
           <RecordFieldsForDisplayGeneric
               :item="viewItemData.data"
               :maxFields="6"
-              :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-              :unClickable="unClickable"
-              @clickRow="clickRow"
+              :superOptions="getCurrentSelectedConfig().superOptions"
+              @editItem="getCurrentSelectedConfig().events.editItem"
+              @deleteItem="getCurrentSelectedConfig().events.deleteItem"
+              :unClickable="getCurrentSelectedConfig().unClickable"
+              @clickRow="getCurrentSelectedConfig().events.clickRow"
           />
         </template>
       </q-card>
@@ -119,258 +81,119 @@
 </template>
 
 <script>
-import {
-  today,
-  parseDate,
-  addToDate,
-  parseTimestamp,
-  isBetweenDates,
-  parsed,
-  parseTime,
-  QCalendarDay,
-} from "@quasar/quasar-ui-qcalendar";
-
-import QuickListsHelpers from "./QuickListsHelpers";
-import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
-import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
-import CalendarNavigationBar from "./CalendarNavigationBar.vue";
-import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
-import moment from "moment";
 import SuperTableCalendarDay from "./SuperTableCalendarDay.vue";
 import SuperTableCalendarAgenda from "./SuperTableCalendarAgenda.vue";
+import CalendarNavigationBar from "./CalendarNavigationBar.vue";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+import moment from "moment";
 
 export default {
   name: "SuperTableCalendar",
   components: {
-    SuperTableCalendarAgenda,
     SuperTableCalendarDay,
-    RecordFieldsForDisplayCustom,
-    DatapointForDisplayInner,
-    RecordFieldsForDisplayGeneric,
+    SuperTableCalendarAgenda,
     CalendarNavigationBar,
-    QCalendarDay,
+    RecordFieldsForDisplayCustom,
+    RecordFieldsForDisplayGeneric,
   },
   props: {
     loading: {
       type: Boolean,
-      default() {
-        return false;
-      },
-    },
-    templateListGrid: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    startFieldName: {
-      type: Object,
-      default() {
-        return null;
-      },
-    },
-    endFieldName: {
-      type: Object,
-      default() {
-        return null;
-      },
-    },
-    templateListCalendar: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
-    unClickable: {
-      type: Boolean,
-      default() {
-        return false;
-      },
-    },
-    items: {
-      type: Array,
-      default() {
-        return [];
-      },
+      default: false,
     },
     calendarMode: {
       type: String,
-      default() {
-        return "Full Details";
-      },
+      default: "Full Details",
     },
-    superOptions: {
-      type: Object,
-      default() {
-        return {
-          headers: [],
-          modelFields: [],
-          displayMapField: false,
-          model: {},
-          canEdit: false,
-          currentParentRecord: {},
-        };
-      },
+    mixedConfigs: {
+      type: Array,
+      required: true,
     },
   },
   data() {
     return {
-      view: "week", // Initialize with a valid view
-      mode: "stack",
-      modes: ["stack", "column"],
-      weekday: [1, 2, 3, 4, 5, 6, 0],
-      weekdays: [
-        { title: "Sun - Sat", value: [0, 1, 2, 3, 4, 5, 6] },
-        { title: "Mon - Sun", value: [1, 2, 3, 4, 5, 6, 0] },
-        { title: "Mon - Fri", value: [1, 2, 3, 4, 5] },
-        { title: "Mon, Wed, Fri", value: [1, 3, 5] },
-      ],
-      // selectedDate: new Date().toISOString().split('T')[0], // Initialize with the current date in 'YYYY-MM-DD' format
-      colors: [
-        "blue",
-        "indigo",
-        "deep-purple",
-        "cyan",
-        "green",
-        "orange",
-        "grey darken-1",
-      ],
+      selectedDate: moment().format("YYYY-MM-DD"), // Default to today
+      view: "week",
       viewItemData: {
         showModal: false,
         data: {},
+        configForeignKey: null,
       },
-
-      selectedDate: today(),
-      // dateAlign: 'center',
-      // weekdayAlign: 'center',
-      // dateHeader: 'stacked',
     };
   },
   computed: {
-    moment() {
-      return moment;
-    },
-    firstNonIdKey() {
-      const key = Object.keys(this.superOptions.headers).find(
-          (field) => this.superOptions.headers[field].name !== "id",
-      );
-      let result = this.superOptions.headers[key].name;
+    combinedEvents() {
+      const eventsArray = []; // Array to hold all combined events
 
-      let timeRangeStartField = this.superOptions.headers.find((field) => {
-        return field.usageType == "timeRangeStart";
-      });
-      if (!timeRangeStartField) {
-        for (const modelField of this.superOptions.headers) {
-          if (modelField.headerParentFields) {
-            const timeRangeStartFieldParent =
-                modelField.headerParentFields.find((field) => {
-                  return field.usageType == "timeRangeStart";
-                });
-            if (timeRangeStartFieldParent) {
-              const parentHeaders = QuickListsHelpers.SupaerTableHeaders(
-                  modelField.meta.relatedModel,
-                  [],
-                  [],
-                  [],
-              );
-
-              const key = Object.keys(parentHeaders).find(
-                  (field) => parentHeaders[field].name !== "id",
-              );
-              result = [modelField.name, parentHeaders[key].name];
-            }
-          }
-        }
-      }
-      return result;
-    },
-
-    events() {
-      let result = {};
-      if (
-          this.items.length > 0 &&
-          (this.startFieldName?.name || this.startFieldName?.isChildOf)
-      ) {
-        for (const item of this.items) {
+      // Iterate through each config in mixedConfigs
+      this.mixedConfigs.forEach((config, configIndex) => {
+        // Iterate through each item in the config's items array
+        config.items.forEach((item) => {
           let start, end;
 
           // Extract start and end dates, handling nested fields if needed
-          if (this.startFieldName.isChildOf) {
-            const startSplit = this.startFieldName.name.split(".");
+          if (config.startFieldName.isChildOf) {
+            const startSplit = config.startFieldName.name.split(".");
             start = new Date(item[startSplit[0]][startSplit[1]]);
-            const endSplit = this.endFieldName.name.split(".");
+            const endSplit = config.endFieldName.name.split(".");
             end = new Date(item[endSplit[0]][endSplit[1]]);
           } else {
-            start = new Date(item[this.startFieldName.name]);
-            end = new Date(item[this.endFieldName.name]);
+            start = new Date(item[config.startFieldName.name]);
+            end = new Date(item[config.endFieldName.name]);
           }
 
-          let title = Array.isArray(this.firstNonIdKey)
-              ? item[this.firstNonIdKey[0]][this.firstNonIdKey[1]]
-              : item[this.firstNonIdKey];
-
-          // Normalize the event data
+          // Normalize event data
           const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
           const time = start.toISOString().substr(11, 5); // HH:mm format
-          const duration = (end - start) / 1000 / 60; // Calculate duration in minutes
+          const duration = (end - start) / 1000 / 60; // Duration in minutes
 
-          // Push event into the result object under the appropriate date
-          if (!result[eventDate]) {
-            result[eventDate] = [];
-          }
-
-          result[eventDate].push({
-            id: title, // Assuming this is a unique identifier
-            title: title,
+          // Create the event object
+          const event = {
+            id: item.id || `${eventDate}-${configIndex}-${item.title}`, // Unique identifier
+            title: Array.isArray(config.firstNonIdKey)
+                ? item[config.firstNonIdKey[0]][config.firstNonIdKey[1]]
+                : item[config.firstNonIdKey] || "Untitled Event",
             date: eventDate,
             time: time,
             duration: duration,
-            bgcolor: "deep-purple",
-            icon: "fas fa-calendar-alt", // Generic icon
-            meta: item, // Keep the full item in case more metadata is needed
-          });
-        }
-      }
+            bgcolor: "deep-purple", // Placeholder color
+            icon: "fas fa-calendar-alt", // Placeholder icon
+            meta: item, // Full item data as metadata
+            configForeignKey: configIndex, // Store config index for later reference
+          };
 
-      return result; // Object where each key is a date and value is an array of events for that date
+          // Push event into the eventsArray
+          eventsArray.push(event);
+        });
+      });
+
+      return eventsArray;
     },
-
-
   },
   methods: {
-    isToday(date) {
-      return moment(date).isSame(moment(), "day");
-    },
-    momentMethod(e, format) {
-      return moment(e).format(format);
-    },
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
-    },
-    clickRow(e) {
-      this.viewItemData.showModal = false;
-      this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);
-    },
-    updateTimeWindow() {},
-    getEventColor(event) {
-      return event.color;
-    },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
-    },
-    showEvent(m) {
-      this.viewItemData.showModal = true;
-      this.viewItemData.data = m.meta;
+    // Get the config for the currently selected item
+    getCurrentSelectedConfig() {
+      return this.mixedConfigs[this.viewItemData.configForeignKey] || {};
     },
 
+    // Generates events based on items, startFieldName, and endFieldName in the config
 
+    // Handle event interaction
+    onShowEvent(event) {
+      this.viewItemData = {
+        showModal: true,
+        data: event.meta,
+        configForeignKey: event.configForeignKey,
+      };
+    },
 
-    getEvents(date) {
-      // Return all events for the specific date or an empty array if none exist
-      return this.events[date] || [];
+    onEditItem(event) {
+      this.getCurrentSelectedConfig().events.editItem(event.meta);
+    },
+
+    onDeleteItem(event) {
+      this.getCurrentSelectedConfig().events.deleteItem(event.meta);
     },
 
     onToday() {
@@ -396,10 +219,10 @@ export default {
     },
   },
   mounted() {
-    if (QuickListsHelpers.quickListsIsMobile()) {
+    // Example of a mobile-first check
+    if (window.innerWidth < 768) {
       this.view = "day";
     }
   },
 };
 </script>
-

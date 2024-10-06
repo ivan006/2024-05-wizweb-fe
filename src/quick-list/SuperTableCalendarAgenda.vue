@@ -1,12 +1,8 @@
 <template>
   <q-calendar-agenda
       ref="calendar"
-      :modelValue="modelValue"
-      @update:modelValue="
-      (e) => {
-        $emit('update:modelValue', e);
-      }
-    "
+      :model-value="modelValue"
+      @update:modelValue="(e) => $emit('update:modelValue', e)"
       :view="view"
       :weekdays="[1, 2, 3, 4, 5, 6, 0]"
       short-weekday-label
@@ -51,29 +47,27 @@
       </template>
       <template v-for="event in getEvents(timestamp.date)" :key="event.id">
         <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">
-          <template v-if="templateListCalendar && templateListCalendar.cols">
+          <template v-if="getCurrentTemplate(event.configForeignKey)?.cols">
             <RecordFieldsForDisplayCustom
                 :item="event.meta"
                 :maxFields="6"
                 :childRelations="[]"
                 isSummary
-                :superOptions="superOptions"
-                :template="templateListCalendar"
+                :superOptions="getCurrentSuperOptions(event.configForeignKey)"
+                :template="getCurrentTemplate(event.configForeignKey)"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-                :unClickable="
-                unClickable || !superOptions.model.rules.readable(event.meta)
-              "
+                :unClickable="getCurrentUnClickable(event.configForeignKey)"
             />
           </template>
           <template v-else>
             <RecordFieldsForDisplayGeneric
                 :item="event.meta"
                 :maxFields="6"
-                :superOptions="superOptions"
+                :superOptions="getCurrentSuperOptions(event.configForeignKey)"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-                :unClickable="unClickable"
+                :unClickable="getCurrentUnClickable(event.configForeignKey)"
             />
           </template>
         </q-card>
@@ -93,12 +87,10 @@ export default {
     RecordFieldsForDisplayCustom,
   },
   props: {
-    events: Object,
+    events: Array, // Now expecting an array of combined events
     modelValue: String,
     view: String,
-    templateListCalendar: Object,
-    superOptions: Object,
-    unClickable: Boolean,
+    mixedConfigs: Array, // Config array for dynamic behavior
   },
   methods: {
     moveToToday() {
@@ -117,16 +109,34 @@ export default {
       return moment(date).isSame(moment(), "day");
     },
     getEvents(date) {
-      return this.events[date] || [];
+      // Return all events for the specific date or an empty array if none exist
+      return this.events.filter((event) => event.date === date);
     },
     showEvent(event) {
       this.$emit("show-event", event);
     },
     editItem(item) {
-      this.$emit("edit-item", item);
+      const config = this.getCurrentConfig(item.configForeignKey);
+      config.events.editItem(item);
     },
     deleteItem(item) {
-      this.$emit("delete-item", item);
+      const config = this.getCurrentConfig(item.configForeignKey);
+      config.events.deleteItem(item);
+    },
+    getCurrentConfig(configForeignKey) {
+      return this.mixedConfigs[configForeignKey];
+    },
+    getCurrentTemplate(configForeignKey) {
+      const config = this.getCurrentConfig(configForeignKey);
+      return config.templateListCalendar || {};
+    },
+    getCurrentSuperOptions(configForeignKey) {
+      const config = this.getCurrentConfig(configForeignKey);
+      return config.superOptions || {};
+    },
+    getCurrentUnClickable(configForeignKey) {
+      const config = this.getCurrentConfig(configForeignKey);
+      return config.unClickable || false;
     },
   },
 };

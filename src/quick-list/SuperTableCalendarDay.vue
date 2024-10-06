@@ -2,11 +2,7 @@
   <q-calendar-day
       ref="calendar"
       :modelValue="modelValue"
-      @update:modelValue="
-      (e) => {
-        $emit('update:modelValue', e);
-      }
-    "
+      @update:modelValue="(e) => $emit('update:modelValue', e)"
       :view="view"
       short-weekday-label
       :date-header="'stacked'"
@@ -20,7 +16,6 @@
       :weekdays="[1, 2, 3, 4, 5, 6, 0]"
       no-active-date
   >
-    <!--style=" height: 467px;"-->
     <template #head-day="{ scope }">
       <div class="text-center">
         <div class="text-weight-bold q-mt-xs">
@@ -49,8 +44,8 @@
 
     <template #day-container="{ scope: { days } }">
       <template v-if="hasDate(days)">
-        <div class="day-view-current-time-indicator" :style="style"/>
-        <div class="day-view-current-time-line" :style="style"/>
+        <div class="day-view-current-time-indicator" :style="style" />
+        <div class="day-view-current-time-line" :style="style" />
       </template>
     </template>
 
@@ -118,13 +113,14 @@
 
 <script>
 import moment from "moment";
-import {parseDate} from "@quasar/quasar-ui-qcalendar";
+import { parseDate } from "@quasar/quasar-ui-qcalendar";
 
 export default {
   props: {
-    events: Array,
+    events: Array, // Combined array of events with multiple data types
     modelValue: String,
     view: String,
+    mixedConfigs: Array, // Configuration array for dynamic behavior
   },
   data() {
     return {
@@ -133,7 +129,7 @@ export default {
       timeStartPos: 0,
     };
   },
-  computed:{
+  computed: {
     style() {
       return {
         top: this.timeStartPos + "px",
@@ -145,7 +141,6 @@ export default {
       this.$refs.calendar.moveToToday();
     },
     prev() {
-      console.log(111);
       this.$refs.calendar.prev();
     },
     next() {
@@ -158,7 +153,7 @@ export default {
       return moment(date).isSame(moment(), "day");
     },
     getEvents(date) {
-      return this.events[date] || [];
+      return this.events.filter((event) => event.date === date);
     },
     showEvent(event) {
       this.$emit("show-event", event);
@@ -173,7 +168,6 @@ export default {
         "rounded-border": true,
       };
     },
-
     badgeStyles(
         event,
         type,
@@ -189,15 +183,10 @@ export default {
       return s;
     },
     hasDate(days) {
-      console.log(this.currentDate)
       return this.currentDate
           ? days.find((day) => day.date === this.currentDate)
           : false;
     },
-
-    // hasDate(days) {
-    //   return days.some((day) => day.date === this.selectedDate);
-    // },
     adjustCurrentTime() {
       const now = parseDate(new Date());
       this.currentDate = now.date;
@@ -206,39 +195,13 @@ export default {
           this.currentTime,
           false,
       );
-      console.log(this.timeStartPos)
     },
   },
-  mounted(){
-
+  mounted() {
     this.adjustCurrentTime();
-    // now, adjust the time every minute
     const intervalId = setInterval(() => {
       this.adjustCurrentTime();
     }, 60000);
-  },
-
-  watch: {
-    // loading(newVal, oldVal) {
-    //   if (!newVal) {
-    //     if (this.calendarMode === "Hour by Hour") {
-    //       this.adjustCurrentTime();
-    //       // now, adjust the time every minute
-    //       const intervalId = setInterval(() => {
-    //         this.adjustCurrentTime();
-    //       }, 60000);
-    //     }
-    //   }
-    // },
-    // calendarMode(newVal, oldVal) {
-    //   if (this.calendarMode !== "Hour by Hour") {
-    //     this.adjustCurrentTime();
-    //     // now, adjust the time every minute
-    //     const intervalId = setInterval(() => {
-    //       this.adjustCurrentTime();
-    //     }, 60000);
-    //   }
-    // },
   },
 };
 </script>

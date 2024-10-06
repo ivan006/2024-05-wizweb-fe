@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import SuperTableCalendar from './SuperTableCalendar.vue'; // Path assumed to be correct
+import SuperTableCalendar from './SuperTableCalendar.vue'; // Adjust path as necessary
 
 export default {
   name: 'SuperTableCalendarWrapper',
@@ -52,7 +52,7 @@ export default {
   },
   computed: {
     normalizedConfigs() {
-      // Return an array of configurations (poly-content), even for mono-content setups
+      // Return an array of configurations, treating mono-content like poly-content.
       return [
         {
           templateListCalendar: this.templateListCalendar,
@@ -61,7 +61,6 @@ export default {
           items: this.items,
           superOptions: this.superOptions,
           unClickable: this.unClickable,
-          // Include the event methods as part of the config
           events: {
             clickRow: this.clickRow,
             editItem: this.editItem,
@@ -72,7 +71,7 @@ export default {
     },
   },
   methods: {
-    // Events will be included in each config
+    // Emit relevant events to parent component
     clickRow(itemId, item) {
       this.$emit('clickRow', itemId, item);
     },
