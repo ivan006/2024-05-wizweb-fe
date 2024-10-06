@@ -23,13 +23,6 @@
               :date-align="'center'"
               animated
               bordered
-              @change="onChange"
-              @moved="onMoved"
-              @click-date="onClickDate"
-              @click-time="onClickTime"
-              @click-interval="onClickInterval"
-              @click-head-intervals="onClickHeadIntervals"
-              @click-head-day="onClickHeadDay"
               :interval-height="20"
               :interval-start="5"
               :interval-count="19"
@@ -167,10 +160,6 @@
               :date-align="'center'"
               animated
               bordered
-              @change="onChange"
-              @moved="onMoved"
-              @click-date="onClickDate"
-              @click-time="onClickTime"
               :interval-height="40"
               :interval-start="5"
               :interval-count="19"
@@ -704,27 +693,7 @@ export default {
       }
     },
 
-    onMoved(data) {
-      // console.log('onMoved', data)
-    },
-    onChange(data) {
-      // console.log('onChange', data)
-    },
-    onClickDate(data) {
-      // console.log('onClickDate', data)
-    },
-    onClickTime(data) {
-      // console.log('onClickTime', data)
-    },
-    onClickInterval(data) {
-      // console.log('onClickInterval', data)
-    },
-    onClickHeadIntervals(data) {
-      // console.log('onClickHeadIntervals', data)
-    },
-    onClickHeadDay(data) {
-      // console.log('onClickHeadDay', data)
-    },
+
   },
   mounted() {
     if (QuickListsHelpers.quickListsIsMobile()) {
