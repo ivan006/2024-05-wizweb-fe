@@ -17,7 +17,7 @@
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
     </div>
-    <SuperTableCalendar
+    <SuperTablePolyContentifiedCalendar
         v-if="allLoaded && configsFetched"
         :loading="!allLoaded"
         :mixedConfigs="mergedConfigs"
@@ -44,14 +44,14 @@
 
 <script>
 import SuperTable from "./SuperTable.vue"; // Adjust path as needed
-import SuperTableCalendar from "./SuperTableCalendar.vue";
+import SuperTablePolyContentifiedCalendar from "./SuperTablePolyContentifiedCalendar.vue";
 import {Helpers} from "../index"; // Adjust path as needed
 
 export default {
-  name: "CalendarWithMixedDataTypes",
+  name: "PolyContentifiedWrapper",
   components: {
     SuperTable,
-    SuperTableCalendar,
+    SuperTablePolyContentifiedCalendar,
   },
   props: {
     dataTypes: {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SuperTableCalendar
+    <SuperTablePolyContentifiedCalendar
         :loading="loading"
         :calendarMode="calendarMode"
         :mixedConfigs="normalizedConfigs"
@@ -9,12 +9,12 @@
 </template>
 
 <script>
-import SuperTableCalendar from './SuperTableCalendar.vue'; // Adjust path as necessary
+import SuperTablePolyContentifiedCalendar from './SuperTablePolyContentifiedCalendar.vue'; // Adjust path as necessary
 
 export default {
   name: 'SuperTableCalendarWrapper',
   components: {
-    SuperTableCalendar,
+    SuperTablePolyContentifiedCalendar,
   },
   props: {
     items: {
