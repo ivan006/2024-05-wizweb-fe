@@ -1,11 +1,9 @@
 <script setup>
-
 import RecordFieldsForDisplayGeneric from "../RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
 </script>
 
 <template>
-
   <q-calendar-agenda
       ref="calendarAgenda"
       v-model="selectedDate"
@@ -37,36 +35,29 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
             rounded
             dense
             :style="
-                    isToday(scope.timestamp.date)
-                      ? 'border: solid 2px var(--q-primary);'
-                      : 'border: solid 2px rgba(0,0,0,0);'
-                  "
+            isToday(scope.timestamp.date)
+              ? 'border: solid 2px var(--q-primary);'
+              : 'border: solid 2px rgba(0,0,0,0);'
+          "
             style="font-size: 0.75em"
             :label="
-                    momentMethod(scope.timestamp.date, 'D') +
-                    ' ' +
-                    momentMethod(scope.timestamp.date, 'MMM')
-                  "
+            momentMethod(scope.timestamp.date, 'D') +
+            ' ' +
+            momentMethod(scope.timestamp.date, 'MMM')
+          "
             @click="onClickDate(scope.timestamp.date)"
             class="q-mb-sm text-bold"
         />
       </div>
     </template>
 
-    <template
-        #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }"
-    >
+    <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
       <template v-if="!getEvents(timestamp.date).length">
         <div class="text-center q-pa-md text-grey-5">Empty</div>
       </template>
-      <template
-          v-for="event in getEvents(timestamp.date)"
-          :key="event.id"
-      >
+      <template v-for="event in getEvents(timestamp.date)" :key="event.id">
         <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">
-          <template
-              v-if="templateListCalendar && templateListCalendar.cols"
-          >
+          <template v-if="templateListCalendar && templateListCalendar.cols">
             <RecordFieldsForDisplayCustom
                 :item="event.meta"
                 :maxFields="6"
@@ -77,9 +68,9 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
                 @editItem="editItem"
                 @deleteItem="deleteItem"
                 :unClickable="
-                        unClickable ||
-                        !superOptions.model.rules.readable(viewItemData.data)
-                      "
+                unClickable ||
+                !superOptions.model.rules.readable(viewItemData.data)
+              "
             />
             <!--@clickRow="clickRow"-->
           </template>
@@ -101,6 +92,4 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
   </q-calendar-agenda>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
