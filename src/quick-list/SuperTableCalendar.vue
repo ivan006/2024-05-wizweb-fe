@@ -78,7 +78,7 @@
                 "
               >
                 <template
-                    v-for="event in eventsMap[timestamp.date]"
+                    v-for="event in getEvents(timestamp.date)"
                     :key="event.id"
                 >
                   <q-badge
@@ -112,7 +112,6 @@
                     "
                       @click="showEvent(event)"
                   >
-                    <!--@click="scrollToEvent(event)"-->
                     <q-tooltip>{{
                         event.time + " - " + event.title
                       }}</q-tooltip>
@@ -486,17 +485,20 @@ export default {
       }
       return result;
     },
+
     events() {
-      let result = [];
-      if (this.startFieldName?.name || this.startFieldName?.isChildOf) {
+      let result = {};
+      if (
+          this.items.length > 0 &&
+          (this.startFieldName?.name || this.startFieldName?.isChildOf)
+      ) {
         for (const item of this.items) {
           let start, end;
 
-          // Check if start and end fields are nested in a related model
+          // Extract start and end dates, handling nested fields if needed
           if (this.startFieldName.isChildOf) {
             const startSplit = this.startFieldName.name.split(".");
             start = new Date(item[startSplit[0]][startSplit[1]]);
-
             const endSplit = this.endFieldName.name.split(".");
             end = new Date(item[endSplit[0]][endSplit[1]]);
           } else {
@@ -504,62 +506,40 @@ export default {
             end = new Date(item[this.endFieldName.name]);
           }
 
-          let title = "";
-          if (Array.isArray(this.firstNonIdKey)) {
-            title = item[this.firstNonIdKey[0]][this.firstNonIdKey[1]];
-          } else {
-            title = item[this.firstNonIdKey];
+          let title = Array.isArray(this.firstNonIdKey)
+              ? item[this.firstNonIdKey[0]][this.firstNonIdKey[1]]
+              : item[this.firstNonIdKey];
+
+          // Normalize the event data
+          const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
+          const time = start.toISOString().substr(11, 5); // HH:mm format
+          const duration = (end - start) / 1000 / 60; // Calculate duration in minutes
+
+          // Push event into the result object under the appropriate date
+          if (!result[eventDate]) {
+            result[eventDate] = [];
           }
 
-          // Calculate duration in minutes
-          const duration = (end - start) / 1000 / 60;
-
-          // Extract the start time in HH:mm format
-          const time = start.toISOString().substr(11, 5);
-
-          result.push({
+          result[eventDate].push({
             id: title, // Assuming this is a unique identifier
             title: title,
-            // details: 'Event details',  // Replace with actual details if available
-            date: start.toISOString().substr(0, 10), // YYYY-MM-DD format
+            date: eventDate,
             time: time,
             duration: duration,
             bgcolor: "deep-purple",
             icon: "fas fa-calendar-alt", // Generic icon
-            meta: item,
+            meta: item, // Keep the full item in case more metadata is needed
           });
         }
       }
-      return result;
+
+      return result; // Object where each key is a date and value is an array of events for that date
     },
 
     style() {
       return {
         top: this.timeStartPos + "px",
       };
-    },
-
-    eventsMap() {
-      const map = {};
-      // this.events.forEach(event => (map[ event.date ] = map[ event.date ] || []).push(event))
-      this.events.forEach((event) => {
-        if (!map[event.date]) {
-          map[event.date] = [];
-        }
-        map[event.date].push(event);
-        if (event.days) {
-          let timestamp = parseTimestamp(event.date);
-          let days = event.days;
-          do {
-            timestamp = addToDate(timestamp, { day: 1 });
-            if (!map[timestamp.date]) {
-              map[timestamp.date] = [];
-            }
-            map[timestamp.date].push(event);
-          } while (--days > 0);
-        }
-      });
-      return map;
     },
   },
   methods: {
@@ -632,43 +612,9 @@ export default {
       return s;
     },
 
-    getEvents(dt) {
-      // Get all events for the specified date
-      const events = this.eventsMap[dt] || [];
-
-      // Sort events by start time
-      events.sort((a, b) => {
-        const startA = new Date(`${a.date}T${a.time}`);
-        const startB = new Date(`${b.date}T${b.time}`);
-        return startA - startB;
-      });
-
-      if (events.length === 1) {
-        events[0].side = "full";
-      } else if (events.length === 2) {
-        // Handle up to 2 events per day for overlapping cases
-        const startTime = addToDate(parsed(events[0].date), {
-          minute: parseTime(events[0].time),
-        });
-        const endTime = addToDate(startTime, { minute: events[0].duration });
-        const startTime2 = addToDate(parsed(events[1].date), {
-          minute: parseTime(events[1].time),
-        });
-        const endTime2 = addToDate(startTime2, { minute: events[1].duration });
-
-        if (
-            isBetweenDates(startTime2, startTime, endTime, true) ||
-            isBetweenDates(endTime2, startTime, endTime, true)
-        ) {
-          events[0].side = "left";
-          events[1].side = "right";
-        } else {
-          events[0].side = "full";
-          events[1].side = "full";
-        }
-      }
-
-      return events;
+    getEvents(date) {
+      // Return all events for the specific date or an empty array if none exist
+      return this.events[date] || [];
     },
 
     onToday() {
@@ -692,8 +638,6 @@ export default {
         this.$refs.calendar.next();
       }
     },
-
-
   },
   mounted() {
     if (QuickListsHelpers.quickListsIsMobile()) {
