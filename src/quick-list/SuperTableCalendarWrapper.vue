@@ -1,23 +1,15 @@
 <template>
   <div>
     <SuperTableCalendar
-        :items="formattedItems"
-        :startFieldName="startFieldName"
-        :endFieldName="endFieldName"
         :loading="loading"
         :calendarMode="calendarMode"
-        :templateListCalendar="templateListCalendar"
-        :unClickable="unClickable"
-        :superOptions="superOptions"
-        @clickRow="clickRow"
-        @editItem="editItem"
-        @deleteItem="deleteItem"
+        :mixedConfigs="normalizedConfigs"
     />
   </div>
 </template>
 
 <script>
-import SuperTableCalendar from './SuperTableCalendar.vue'; // Assuming the path is correct
+import SuperTableCalendar from './SuperTableCalendar.vue'; // Path assumed to be correct
 
 export default {
   name: 'SuperTableCalendarWrapper',
@@ -59,12 +51,28 @@ export default {
     },
   },
   computed: {
-    formattedItems() {
-      // Any preprocessing on items if needed, or directly return
-      return this.items;
+    normalizedConfigs() {
+      // Return an array of configurations (poly-content), even for mono-content setups
+      return [
+        {
+          templateListCalendar: this.templateListCalendar,
+          startFieldName: this.startFieldName,
+          endFieldName: this.endFieldName,
+          items: this.items,
+          superOptions: this.superOptions,
+          unClickable: this.unClickable,
+          // Include the event methods as part of the config
+          events: {
+            clickRow: this.clickRow,
+            editItem: this.editItem,
+            deleteItem: this.deleteItem,
+          }
+        }
+      ];
     },
   },
   methods: {
+    // Events will be included in each config
     clickRow(itemId, item) {
       this.$emit('clickRow', itemId, item);
     },
