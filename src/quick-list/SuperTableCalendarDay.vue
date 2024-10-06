@@ -104,7 +104,10 @@
             :class="badgeClasses(event, 'body')"
             :style="badgeStyles(event, 'body', timeStartPos, timeDurationHeight)"
         >
-          <div class="title q-calendar__ellipsis">{{ event.title }}</div>
+          <div class="title q-calendar__ellipsis" v-if="event.duration >= 30">
+            {{ event.title }}
+          </div>
+          <q-tooltip>{{ event.time + " - " + event.title }}</q-tooltip>
         </div>
       </template>
     </template>
