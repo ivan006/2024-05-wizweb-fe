@@ -4,21 +4,21 @@
         no-caps
         class="button"
         style="margin: 2px;"
+        @click="$emit('today')"
+        unelevated
+    >
+      Today
+    </q-btn>
+    <q-btn
+        no-caps
+        class="button"
+        style="margin: 2px;"
         @click="$emit('prev')"
         unelevated
         icon="arrow_left"
     >
       <!--Previous-->
       <!--Back-->
-    </q-btn>
-    <q-btn
-        no-caps
-        class="button"
-        style="margin: 2px;"
-        @click="$emit('today')"
-        unelevated
-    >
-      Now
     </q-btn>
     <q-btn
         no-caps
