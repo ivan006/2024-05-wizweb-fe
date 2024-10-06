@@ -87,6 +87,7 @@ import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import moment from "moment";
+import {QuickListsHelpers} from "../index";
 
 export default {
   name: "SuperTableCalendar",
@@ -104,6 +105,7 @@ export default {
     },
     calendarMode: {
       type: String,
+      // default: "Hour by Hour",
       default: "Full Details",
     },
     mixedConfigs: {
@@ -123,37 +125,88 @@ export default {
     };
   },
   computed: {
+
+    firstNonIdKeys() {
+      const keys = {};
+
+      this.mixedConfigs.forEach((config, index) => {
+        let key = Object.keys(config.superOptions.headers).find(
+            (field) => config.superOptions.headers[field].name !== "id"
+        );
+        let result = config.superOptions.headers[key].name;
+
+        let timeRangeStartField = config.superOptions.headers.find((field) => {
+          return field.usageType == "timeRangeStart";
+        });
+
+        if (!timeRangeStartField) {
+          for (const modelField of config.superOptions.headers) {
+            if (modelField.headerParentFields) {
+              const timeRangeStartFieldParent = modelField.headerParentFields.find(
+                  (field) => field.usageType == "timeRangeStart"
+              );
+
+              if (timeRangeStartFieldParent) {
+                const parentHeaders = QuickListsHelpers.SupaerTableHeaders(
+                    modelField.meta.relatedModel,
+                    [],
+                    [],
+                    []
+                );
+
+                const parentKey = Object.keys(parentHeaders).find(
+                    (field) => parentHeaders[field].name !== "id"
+                );
+                result = [modelField.name, parentHeaders[parentKey].name];
+              }
+            }
+          }
+        }
+
+        // Assign to the `keys` object with the index of the config as the key
+        keys[index] = result;
+      });
+
+      return keys;
+    },
     combinedEvents() {
       const eventsArray = []; // Array to hold all combined events
 
       // Iterate through each config in mixedConfigs
       this.mixedConfigs.forEach((config, configIndex) => {
+        // Get the firstNonIdKey for the current config
+        const firstNonIdKey = this.firstNonIdKeys[configIndex];
+
         // Iterate through each item in the config's items array
         config.items.forEach((item) => {
           let start, end;
-
           // Extract start and end dates, handling nested fields if needed
-          if (config.startFieldName.isChildOf) {
-            const startSplit = config.startFieldName.name.split(".");
+
+
+          const startSplit = config.startFieldName.split(".");
+          const endSplit = config.endFieldName.split(".");
+          if (startSplit.length > 1) {
             start = new Date(item[startSplit[0]][startSplit[1]]);
-            const endSplit = config.endFieldName.name.split(".");
             end = new Date(item[endSplit[0]][endSplit[1]]);
           } else {
-            start = new Date(item[config.startFieldName.name]);
-            end = new Date(item[config.endFieldName.name]);
+            start = new Date(item[startSplit[0]]);
+            end = new Date(item[startSplit[0]]);
           }
 
           // Normalize event data
           const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
           const time = start.toISOString().substr(11, 5); // HH:mm format
-          const duration = (end - start) / 1000 / 60; // Duration in minutes
+          const duration = Math.max((end - start) / 1000 / 60, 15);
+
+          // Determine the event title
+          const title = Array.isArray(firstNonIdKey)
+              ? item[firstNonIdKey[0]][firstNonIdKey[1]]
+              : item[firstNonIdKey] || "Untitled Event";
 
           // Create the event object
           const event = {
-            id: item.id || `${eventDate}-${configIndex}-${item.title}`, // Unique identifier
-            title: Array.isArray(config.firstNonIdKey)
-                ? item[config.firstNonIdKey[0]][config.firstNonIdKey[1]]
-                : item[config.firstNonIdKey] || "Untitled Event",
+            id: item.id || `${eventDate}-${configIndex}-${title}`, // Unique identifier
+            title: title,
             date: eventDate,
             time: time,
             duration: duration,
@@ -167,7 +220,6 @@ export default {
           eventsArray.push(event);
         });
       });
-
       return eventsArray;
     },
   },

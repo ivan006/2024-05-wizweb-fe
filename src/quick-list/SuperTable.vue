@@ -317,7 +317,6 @@
             />
           </template>
           <template v-if="activeTab == 'calendar'">
-            <!--<SuperTableCalendar-->
             <SuperTableCalendarWrapper
                 :startFieldName="startFieldName"
                 :endFieldName="endFieldName"
@@ -416,7 +415,7 @@ import SearchGooglePlace from "./SearchGooglePlace.vue";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import PdfTemplate from "./PdfTemplate.vue";
-import SuperTableCalendar from "./SuperTableCalendar.vue";
+import {Helpers} from "../index";
 // import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
@@ -429,7 +428,6 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
-    SuperTableCalendar,
     PdfTemplate,
     SearchGooglePlace,
     RecordFieldsForDisplayGeneric,
@@ -680,48 +678,13 @@ export default {
       return longField
     },
     startFieldName() {
-      let timeRangeStartField = this.superOptions.headers.find((field) => {
-        return field.usageType == "timeRangeStart";
-      });
-      if (!timeRangeStartField) {
-        for (const modelField of this.superOptions.headers) {
-          if (modelField.headerParentFields) {
-            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeStart";
-            });
-            if(timeRangeStartFieldParent){
-              timeRangeStartField = {
-                ...timeRangeStartFieldParent,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return timeRangeStartField;
+
+      const result = Helpers.getFieldFromModelOrParent(this.superOptions.headers, 'timeRangeStart');
+      return result
     },
     endFieldName() {
-      let timeRangeEndField = this.superOptions.headers.find((field) => {
-        return field.usageType == "timeRangeEnd";
-      });
-      if (!timeRangeEndField) {
-        for (const modelField of this.superOptions.headers) {
-          if (modelField.headerParentFields) {
-            timeRangeEndField = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeEnd";
-            });
-            if(timeRangeEndField){
-              timeRangeEndField = {
-                ...timeRangeEndField,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return timeRangeEndField;
+      const result = Helpers.getFieldFromModelOrParent(this.superOptions.headers, 'timeRangeEnd');
+      return result
     },
     flattenedHeaders() {
 
