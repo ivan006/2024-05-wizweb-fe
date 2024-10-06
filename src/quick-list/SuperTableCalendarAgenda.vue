@@ -1,35 +1,29 @@
-<script setup>
-import RecordFieldsForDisplayGeneric from "../RecordFieldsForDisplayGeneric.vue";
-import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
-</script>
-
 <template>
   <q-calendar-agenda
-      ref="calendarAgenda"
-      v-model="selectedDate"
+      ref="calendar"
+      :modelValue="modelValue"
+      @update:modelValue="
+      (e) => {
+        $emit('update:modelValue', e);
+      }
+    "
       :view="view"
       :weekdays="[1, 2, 3, 4, 5, 6, 0]"
       short-weekday-label
       :date-header="'stacked'"
       :weekday-align="'center'"
       :date-align="'center'"
-      animated
       bordered
       :interval-height="40"
       :interval-start="5"
       :interval-count="19"
       hour24-format
   >
-    <!-- Custom Day Header to show both weekday and month -->
     <template #head-day="{ scope }">
       <div class="text-center">
-        <!-- Weekday Label -->
         <div class="text-weight-bold q-mt-xs">
           {{ momentMethod(scope.timestamp.date, "ddd") }}
         </div>
-
-        <!-- Date as Button -->
-
         <q-btn
             flat
             rounded
@@ -51,7 +45,7 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
       </div>
     </template>
 
-    <template #day="{ scope: { timestamp, timeStartPos, timeDurationHeight } }">
+    <template #day="{ scope: { timestamp } }">
       <template v-if="!getEvents(timestamp.date).length">
         <div class="text-center q-pa-md text-grey-5">Empty</div>
       </template>
@@ -68,11 +62,9 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
                 @editItem="editItem"
                 @deleteItem="deleteItem"
                 :unClickable="
-                unClickable ||
-                !superOptions.model.rules.readable(viewItemData.data)
+                unClickable || !superOptions.model.rules.readable(event.meta)
               "
             />
-            <!--@clickRow="clickRow"-->
           </template>
           <template v-else>
             <RecordFieldsForDisplayGeneric
@@ -83,8 +75,6 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
                 @deleteItem="deleteItem"
                 :unClickable="unClickable"
             />
-
-            <!--@clickRow="clickRow"-->
           </template>
         </q-card>
       </template>
@@ -92,4 +82,52 @@ import RecordFieldsForDisplayCustom from "../RecordFieldsForDisplayCustom.vue";
   </q-calendar-agenda>
 </template>
 
-<style scoped></style>
+<script>
+import moment from "moment";
+import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+
+export default {
+  components: {
+    RecordFieldsForDisplayGeneric,
+    RecordFieldsForDisplayCustom,
+  },
+  props: {
+    events: Object,
+    modelValue: String,
+    view: String,
+    templateListCalendar: Object,
+    superOptions: Object,
+    unClickable: Boolean,
+  },
+  methods: {
+    moveToToday() {
+      this.$refs.calendar.moveToToday();
+    },
+    prev() {
+      this.$refs.calendar.prev();
+    },
+    next() {
+      this.$refs.calendar.next();
+    },
+    momentMethod(e, format) {
+      return moment(e).format(format);
+    },
+    isToday(date) {
+      return moment(date).isSame(moment(), "day");
+    },
+    getEvents(date) {
+      return this.events[date] || [];
+    },
+    showEvent(event) {
+      this.$emit("show-event", event);
+    },
+    editItem(item) {
+      this.$emit("edit-item", item);
+    },
+    deleteItem(item) {
+      this.$emit("delete-item", item);
+    },
+  },
+};
+</script>

@@ -9,14 +9,36 @@
     <div :style="`display: ${loading ? 'none' : 'block'};`">
       <!--<div :style="`visibility: ${loading ? 'hidden' : 'visible'};`">-->
 
-      <div style="display: flex; max-width: 100%; width: 100%">
+      <div style="display: flex; max-width: 100%; width: 100%;">
         <!-- Toggle Button to switch views -->
 
         <template v-if="calendarMode === 'Hour by Hour'">
-          <DayCalendar/>
+          <SuperTableCalendarDay
+              ref="calendar"
+              :events="events"
+              v-model="selectedDate"
+              :view="view"
+              :template-list-calendar="templateListCalendar"
+              :super-options="superOptions"
+              :un-clickable="unClickable"
+              @show-event="showEvent"
+              @edit-item="editItem"
+              @delete-item="deleteItem"
+          />
         </template>
         <template v-else>
-          <AgendaCalendar />
+          <SuperTableCalendarAgenda
+              ref="calendarAgenda"
+              :events="events"
+              v-model="selectedDate"
+              :view="view"
+              :template-list-calendar="templateListCalendar"
+              :super-options="superOptions"
+              :un-clickable="unClickable"
+              @show-event="showEvent"
+              @edit-item="editItem"
+              @delete-item="deleteItem"
+          />
         </template>
 
         <!--style="height: 400px; width: 100%;"-->
@@ -114,14 +136,14 @@ import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import moment from "moment";
-import DayCalendar from "./calendars/DayCalendar.vue";
-import AgendaCalendar from "./calendars/AgendaCalendar.vue";
+import SuperTableCalendarDay from "./SuperTableCalendarDay.vue";
+import SuperTableCalendarAgenda from "./SuperTableCalendarAgenda.vue";
 
 export default {
   name: "SuperTableCalendar",
   components: {
-    AgendaCalendar,
-    DayCalendar,
+    SuperTableCalendarAgenda,
+    SuperTableCalendarDay,
     RecordFieldsForDisplayCustom,
     DatapointForDisplayInner,
     RecordFieldsForDisplayGeneric,
@@ -222,9 +244,6 @@ export default {
       // dateAlign: 'center',
       // weekdayAlign: 'center',
       // dateHeader: 'stacked',
-      currentDate: null,
-      currentTime: null,
-      timeStartPos: 0,
     };
   },
   computed: {
@@ -316,11 +335,7 @@ export default {
       return result; // Object where each key is a date and value is an array of events for that date
     },
 
-    style() {
-      return {
-        top: this.timeStartPos + "px",
-      };
-    },
+
   },
   methods: {
     isToday(date) {
@@ -351,46 +366,7 @@ export default {
       this.viewItemData.data = m.meta;
     },
 
-    hasDate(days) {
-      return this.currentDate
-          ? days.find((day) => day.date === this.currentDate)
-          : false;
-    },
-    adjustCurrentTime() {
-      const now = parseDate(new Date());
-      this.currentDate = now.date;
-      this.currentTime = now.time;
-      this.timeStartPos = this.$refs.calendar.timeStartPos(
-          this.currentTime,
-          false,
-      );
-    },
 
-    badgeClasses(event, type) {
-      const isHeader = type === "header";
-      return {
-        [`text-white bg-${event.bgcolor}`]: true,
-        "full-width": !isHeader && (!event.side || event.side === "full"),
-        "left-side": !isHeader && event.side === "left",
-        "right-side": !isHeader && event.side === "right",
-        "rounded-border": true,
-      };
-    },
-
-    badgeStyles(
-        event,
-        type,
-        timeStartPos = undefined,
-        timeDurationHeight = undefined,
-    ) {
-      const s = {};
-      if (timeStartPos && timeDurationHeight) {
-        s.top = timeStartPos(event.time) + "px";
-        s.height = timeDurationHeight(event.duration) + "px";
-      }
-      s["align-items"] = "flex-start";
-      return s;
-    },
 
     getEvents(date) {
       // Return all events for the specific date or an empty array if none exist
@@ -424,119 +400,6 @@ export default {
       this.view = "day";
     }
   },
-  watch: {
-    loading(newVal, oldVal) {
-      if (!newVal) {
-        if (this.calendarMode === "Hour by Hour") {
-          this.adjustCurrentTime();
-          // now, adjust the time every minute
-          const intervalId = setInterval(() => {
-            this.adjustCurrentTime();
-          }, 60000);
-        }
-      }
-    },
-    calendarMode(newVal, oldVal) {
-      if (this.calendarMode !== "Hour by Hour") {
-        this.adjustCurrentTime();
-        // now, adjust the time every minute
-        const intervalId = setInterval(() => {
-          this.adjustCurrentTime();
-        }, 60000);
-      }
-    },
-  },
 };
 </script>
 
-<style style lang="sass">
-.day-cell
-  cursor: pointer
-
-
-
-
-
-.day-view-current-time-indicator
-  position: absolute
-  left: -5px
-  height: 10px
-  width: 10px
-  margin-top: -4px
-  background-color: rgba(0, 0, 255, .5)
-  border-radius: 50%
-
-.day-view-current-time-line
-  position: absolute
-  left: 5px
-  border-top: rgba(0, 0, 255, .5) 2px solid
-  width: calc(100% - 5px)
-
-.q-dark,
-.body--dark,
-.q-calendar--dark
-  .day-view-current-time-indicator
-    background-color: rgba(255, 255, 0, .85)
-
-  .day-view-current-time-line
-    border-top: rgba(255, 255, 0, .85) 2px solid
-
-
-
-
-
-.my-event
-  position: absolute
-  font-size: 12px
-  justify-content: center
-  margin: 0 1px
-  text-overflow: ellipsis
-  overflow: hidden
-  cursor: pointer
-
-.title
-  position: relative
-  display: flex
-  justify-content: center
-  align-items: center
-  height: 100%
-
-.text-white
-  color: white
-
-.bg-blue
-  background: blue
-
-.bg-green
-  background: green
-
-.bg-orange
-  background: orange
-
-.bg-red
-  background: red
-
-.bg-teal
-  background: teal
-
-.bg-grey
-  background: grey
-
-.bg-purple
-  background: purple
-
-.full-width
-  left: 0
-  width: calc(100% - 2px)
-
-.left-side
-  left: 0
-  width: calc(50% - 3px)
-
-.right-side
-  left: 50%
-  width: calc(50% - 3px)
-
-.rounded-border
-  border-radius: 2px
-</style>
