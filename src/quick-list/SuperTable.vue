@@ -317,6 +317,7 @@
             />
           </template>
           <template v-if="activeTab == 'calendar'">
+            <!--<SuperTableCalendar-->
             <SuperTableCalendarWrapper
                 :startFieldName="startFieldName"
                 :endFieldName="endFieldName"
@@ -415,6 +416,7 @@ import SearchGooglePlace from "./SearchGooglePlace.vue";
 import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import PdfTemplate from "./PdfTemplate.vue";
+import SuperTableCalendar from "./SuperTableCalendar.vue";
 // import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
@@ -427,6 +429,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    SuperTableCalendar,
     PdfTemplate,
     SearchGooglePlace,
     RecordFieldsForDisplayGeneric,
