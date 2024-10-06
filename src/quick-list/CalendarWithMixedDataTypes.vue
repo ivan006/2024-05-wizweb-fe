@@ -1,5 +1,18 @@
 <template>
   <div>
+    <q-btn-toggle
+        class="q-ml-sm"
+        v-model="calendarMode"
+        toggle-color="primary"
+        :options="[
+          {label: 'Hour by Hour', value: 'Hour by Hour'},
+          {label: 'Full Details', value: 'Full Details'},
+        ]"
+        unelevated
+        text-color="grey-8"
+        color="grey-3"
+        style="margin-bottom: 20px;"
+    />
     <div v-if="!allLoaded">
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
@@ -45,14 +58,10 @@ export default {
       type: Array,
       required: true, // An array of objects, each containing model, clickRow, parentKeyValuePair, and templateListGrid
     },
-    calendarMode: {
-      type: String,
-      // default: "Full Details",
-      default: "Hour by Hour",
-    },
   },
   data() {
     return {
+      calendarMode: 'Full Details',
       loadingStatus: {},
       mergedData: [], // Holds the merged data from all SuperTables
       configsFetched: false, // Holds the merged data from all SuperTables

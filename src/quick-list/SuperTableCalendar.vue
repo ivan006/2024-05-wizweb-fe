@@ -4,6 +4,17 @@
       <div class="text-center q-pa-md">Loading...</div>
     </template>
     <div :style="`display: ${loading ? 'none' : 'block'};`">
+
+
+      <div class="row justify-center">
+        <div class="q-mb-sm">
+          <CalendarNavigationBar
+              @today="onToday"
+              @prev="onPrev"
+              @next="onNext"
+          />
+        </div>
+      </div>
       <div style="display: flex; max-width: 100%; width: 100%">
         <!-- Render a single calendar containing all events from the combined configs -->
         <template v-if="calendarMode === 'Hour by Hour'">
@@ -30,16 +41,6 @@
               @delete-item="onDeleteItem"
           />
         </template>
-      </div>
-
-      <div class="row justify-center">
-        <div class="q-pa-md q-gutter-sm row">
-          <CalendarNavigationBar
-              @today="onToday"
-              @prev="onPrev"
-              @next="onNext"
-          />
-        </div>
       </div>
     </div>
 

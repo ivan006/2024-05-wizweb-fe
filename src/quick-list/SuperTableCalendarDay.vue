@@ -127,6 +127,15 @@ export default {
       currentDate: null,
       currentTime: null,
       timeStartPos: 0,
+      colors: [
+        "blue",
+        "indigo",
+        "deep-purple",
+        "cyan",
+        "green",
+        "orange",
+        "grey darken-1",
+      ],
     };
   },
   computed: {
@@ -161,7 +170,7 @@ export default {
     badgeClasses(event, type) {
       const isHeader = type === "header";
       return {
-        [`text-white bg-${event.bgcolor}`]: true,
+        [`text-white bg-${this.colors[event.configForeignKey]}`]: true,
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
         "right-side": !isHeader && event.side === "right",
