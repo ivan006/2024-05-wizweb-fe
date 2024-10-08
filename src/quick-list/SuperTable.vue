@@ -321,36 +321,60 @@
             <template v-if="!noBorder">
               <q-card class="q-pa-sm">
 
-                <SuperTableCalendarWrapper
-                    :startFieldName="startFieldName"
-                    :endFieldName="endFieldName"
-                    :items="items"
-                    @clickRow="clickRow"
-                    :superOptions="superOptions"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
-                    :templateListGrid="templateListGrid"
-                    :templateListCalendar="templateListCalendar"
-                    :unClickable="unClickable"
-                    :loading="loading"
+                <!--<SuperTableCalendarWrapper-->
+                <!--    :startFieldName="startFieldName"-->
+                <!--    :endFieldName="endFieldName"-->
+                <!--    :items="items"-->
+                <!--    @clickRow="clickRow"-->
+                <!--    :superOptions="superOptions"-->
+                <!--    @editItem="editItem"-->
+                <!--    @deleteItem="deleteItem"-->
+                <!--    :templateListGrid="templateListGrid"-->
+                <!--    :templateListCalendar="templateListCalendar"-->
+                <!--    :unClickable="unClickable"-->
+                <!--    :loading="loading"-->
+                <!--/>-->
+                <!--&lt;!&ndash;:calendarMode="calendarMode"&ndash;&gt;-->
+
+                <SuperCalendar
+                  :loading="loading"
+                  :mixedConfigs="[
+                    {
+                      templateListCalendar: templateListCalendar,
+                      startFieldName: startFieldName,
+                      endFieldName: endFieldName,
+                      items: items,
+                      superOptions: superOptions,
+                      unClickable: unClickable,
+                      events: {
+                        clickRow: clickRow,
+                        editItem: editItem,
+                        deleteItem: deleteItem,
+                      }
+                    }
+                  ]"
                 />
                 <!--:calendarMode="calendarMode"-->
               </q-card>
             </template>
             <template v-else>
-
-              <SuperTableCalendarWrapper
-                  :startFieldName="startFieldName"
-                  :endFieldName="endFieldName"
-                  :items="items"
-                  @clickRow="clickRow"
-                  :superOptions="superOptions"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
-                  :templateListGrid="templateListGrid"
-                  :templateListCalendar="templateListCalendar"
-                  :unClickable="unClickable"
-                  :loading="loading"
+              <SuperCalendar
+                :loading="loading"
+                :mixedConfigs="[
+                  {
+                    templateListCalendar: templateListCalendar,
+                    startFieldName: startFieldName,
+                    endFieldName: endFieldName,
+                    items: items,
+                    superOptions: superOptions,
+                    unClickable: unClickable,
+                    events: {
+                      clickRow: clickRow,
+                      editItem: editItem,
+                      deleteItem: deleteItem,
+                    }
+                  }
+                ]"
               />
             </template>
           </template>
@@ -419,7 +443,6 @@ import moment from "moment";
 import "moment-timezone";
 // import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-import SuperTableCalendarWrapper from "./SuperTableCalendarWrapper.vue";
 import SuperTableGrid from "./SuperTableGrid.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import SuperTableMap from "./SuperTableMap.vue";
@@ -438,6 +461,7 @@ import jsPDF from "jspdf";
 import 'jspdf-autotable';
 import PdfTemplate from "./PdfTemplate.vue";
 import {Helpers} from "../index";
+import SuperCalendar from "./SuperCalendar.vue";
 // import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
@@ -450,6 +474,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    SuperCalendar,
     PdfTemplate,
     SearchGooglePlace,
     RecordFieldsForDisplayGeneric,
@@ -463,7 +488,6 @@ export default {
     SuperTableMap,
     SuperTableTable,
     SuperTableGrid,
-    SuperTableCalendarWrapper,
     CreateEditForm: AsyncComponentCreateEditForm,
     SuperTable: AsyncComponentSuperTable,
   },

@@ -106,7 +106,7 @@ import moment from "moment";
 import {QuickListsHelpers} from "../index";
 
 export default {
-  name: "SuperTablePolyContentifiedCalendar",
+  name: "SuperCalendar",
   components: {
     SuperTableCalendarDay,
     SuperTableCalendarAgenda,

@@ -18,12 +18,12 @@ import SearchGooglePlace from './quick-list/SearchGooglePlace.vue';
 import SuperRecord from './quick-list/SuperRecord.vue';
 import SuperSelect from './quick-list/SuperSelect.vue';
 import SuperTable from './quick-list/SuperTable.vue';
-import SuperTablePolyContentifiedCalendar from './quick-list/SuperTablePolyContentifiedCalendar.vue';
+import SuperCalendar from './quick-list/SuperCalendar.vue';
 import SuperTableGrid from './quick-list/SuperTableGrid.vue';
 import SuperTableList from './quick-list/SuperTableList.vue';
 import SuperTableMap from './quick-list/SuperTableMap.vue';
 import SuperTableTable from './quick-list/SuperTableTable.vue';
-import PolyContentifiedWrapper from './quick-list/PolyContentifiedWrapper.vue';
+import CalendarPolyContentWrapper from './quick-list/CalendarPolyContentWrapper.vue';
 import FieldUsageTypes from './utils/FieldUsageTypes.js';
 import Helpers from './utils/Helpers.js';
 
@@ -49,12 +49,12 @@ export {
   SuperRecord,
   SuperSelect,
   SuperTable,
-  SuperTablePolyContentifiedCalendar,
+  SuperCalendar,
   SuperTableGrid,
   SuperTableList,
   SuperTableMap,
   SuperTableTable,
   FieldUsageTypes,
   Helpers,
-  PolyContentifiedWrapper,
+  CalendarPolyContentWrapper,
 };

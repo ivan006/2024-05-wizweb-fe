@@ -17,11 +17,15 @@
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
     </div>
-    <SuperTablePolyContentifiedCalendar
-        v-if="allLoaded && configsFetched"
-        :loading="!allLoaded"
-        :mixedConfigs="mergedConfigs"
-    />
+    <template v-if="configsFetched">
+
+      <SuperCalendar
+          v-if="allLoaded"
+          :loading="!allLoaded"
+          :mixedConfigs="mergedConfigs"
+      />
+      <!--<pre>{{console.log(mergedConfigs)}}</pre>-->
+    </template>
     <!--:calendarMode="calendarMode"-->
     <!-- Hidden SuperTable for each model -->
     <div
@@ -44,14 +48,14 @@
 
 <script>
 import SuperTable from "./SuperTable.vue"; // Adjust path as needed
-import SuperTablePolyContentifiedCalendar from "./SuperTablePolyContentifiedCalendar.vue";
+import SuperCalendar from "./SuperCalendar.vue";
 import {Helpers} from "../index"; // Adjust path as needed
 
 export default {
-  name: "PolyContentifiedWrapper",
+  name: "CalendarPolyContentWrapper",
   components: {
     SuperTable,
-    SuperTablePolyContentifiedCalendar,
+    SuperCalendar,
   },
   props: {
     dataTypes: {
