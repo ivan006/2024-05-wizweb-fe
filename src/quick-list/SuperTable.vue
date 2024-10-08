@@ -239,7 +239,7 @@
             <div
             >
               <!--:id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"-->
-              <template v-if="bordered">
+              <template v-if="!noBorder">
                 <q-card class="">
 
                     <SuperTableTable
@@ -317,20 +317,42 @@
             />
           </template>
           <template v-if="activeTab == 'calendar'">
-            <SuperTableCalendarWrapper
-                :startFieldName="startFieldName"
-                :endFieldName="endFieldName"
-                :items="items"
-                @clickRow="clickRow"
-                :superOptions="superOptions"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-                :templateListGrid="templateListGrid"
-                :templateListCalendar="templateListCalendar"
-                :unClickable="unClickable"
-                :loading="loading"
-            />
-            <!--:calendarMode="calendarMode"-->
+
+            <template v-if="!noBorder">
+              <q-card class="q-pa-sm">
+
+                <SuperTableCalendarWrapper
+                    :startFieldName="startFieldName"
+                    :endFieldName="endFieldName"
+                    :items="items"
+                    @clickRow="clickRow"
+                    :superOptions="superOptions"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                    :templateListGrid="templateListGrid"
+                    :templateListCalendar="templateListCalendar"
+                    :unClickable="unClickable"
+                    :loading="loading"
+                />
+                <!--:calendarMode="calendarMode"-->
+              </q-card>
+            </template>
+            <template v-else>
+
+              <SuperTableCalendarWrapper
+                  :startFieldName="startFieldName"
+                  :endFieldName="endFieldName"
+                  :items="items"
+                  @clickRow="clickRow"
+                  :superOptions="superOptions"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+                  :templateListGrid="templateListGrid"
+                  :templateListCalendar="templateListCalendar"
+                  :unClickable="unClickable"
+                  :loading="loading"
+              />
+            </template>
           </template>
         </div>
       </template>
@@ -450,7 +472,7 @@ export default {
       type: Object,
       default: {},
     },
-    bordered: {
+    noBorder: {
       type: Boolean,
       default: false,
     },
