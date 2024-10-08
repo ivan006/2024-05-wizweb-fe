@@ -138,6 +138,7 @@ import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import OverviewTab from "./OverviewTab.vue";
 import {defineAsyncComponent} from "vue";
+import {Helpers} from "../index";
 const AsyncCreateEditFormComponent = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
 );
@@ -227,29 +228,28 @@ export default {
         canEdit: this.canEdit,
       };
     },
-    colsAndDataIndicators() {
-      let result = {
-        dataIndicators: [],
-        cols: [],
-      };
+    fieldsUsedInOverview() {
+      // let result = {
+      //   dataIndicators: [],
+      //   cols: [],
+      // };
+      const result = []
       if (this.templateOverview && this.templateOverview.cols) {
-        result.cols = this.templateOverview.cols;
-      }
-
-
-      for (const col of result.cols) {
-        if (col.cols) {
-          for (const col2 of col.cols) {
-            if (col2.dataPoint.field) {
-              result.dataIndicators.push(col2.dataPoint.field);
+        for (const col of this.templateOverview.cols) {
+          if (col.cols) {
+            for (const col2 of col.cols) {
+              if (col2.dataPoint.field) {
+                result.push(col2.dataPoint.field);
+              }
             }
-          }
-        } else {
-          if (col.dataPoint.field) {
-            result.dataIndicators.push(col.dataPoint.field);
+          } else {
+            if (col.dataPoint.field) {
+              result.push(col.dataPoint.field);
+            }
           }
         }
       }
+
       return result;
     },
     canEdit() {
@@ -279,15 +279,16 @@ export default {
               field.meta.field.related
           )
 
-          const startfield = this.startFieldNameMethod(headers)
+          const startfield = Helpers.getFieldFromModelOrParent(headers, 'timeRangeStart');
+
           if (startfield){
             child.canBeMapped = true
           } else {
             child.canBeMapped = false
           }
 
+          let longField = Helpers.getFieldFromModelOrParent(headers, 'mapExtraGeoLocLong');
 
-          let longField = this.longitudeFieldNameMethod(headers);
           if (longField){
             child.canBeCalendared = true
           } else {
@@ -299,13 +300,15 @@ export default {
           result.push(child);
         }
       }
+      console.log("*")
+      console.log(result)
       return result;
     },
     filteredChildRelations() {
       let result = [];
       if (!this.hideRelations){
         for (const childRelation of this.childRelations) {
-          if (!this.colsAndDataIndicators.dataIndicators.includes(childRelation.field.name)) {
+          if (!this.fieldsUsedInOverview.includes(childRelation.field.name)) {
             result.push(childRelation);
           }
         }
@@ -323,51 +326,6 @@ export default {
     },
   },
   methods: {
-    startFieldNameMethod(headers) {
-      let timeRangeStartField = headers.find((field) => {
-        return field.usageType == "timeRangeStart";
-      });
-      if (!timeRangeStartField) {
-        for (const modelField of headers) {
-          if (modelField.headerParentFields) {
-            const timeRangeStartFieldParent = modelField.headerParentFields.find((field) => {
-              return field.usageType == "timeRangeStart";
-            });
-            if(timeRangeStartFieldParent){
-              timeRangeStartField = {
-                ...timeRangeStartFieldParent,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return timeRangeStartField;
-    },
-    longitudeFieldNameMethod(headers) {
-
-      let field = headers.find((field) => {
-        return field.usageType == "mapExtraGeoLocLong";
-      });
-      if (!field) {
-        for (const modelField of headers) {
-          if (modelField.headerParentFields) {
-            const fieldParent = modelField.headerParentFields.find((field) => {
-              return field.usageType == "mapExtraGeoLocLong";
-            });
-            if(fieldParent){
-              field = {
-                ...fieldParent,
-                isChildOf: modelField,
-              };
-              break;
-            }
-          }
-        }
-      }
-      return field;
-    },
     clickRow(pVal, item, relation) {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },
