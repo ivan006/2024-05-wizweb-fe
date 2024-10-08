@@ -1,18 +1,18 @@
 <template>
   <div>
-    <q-btn-toggle
-        class="q-ml-sm"
-        v-model="calendarMode"
-        toggle-color="primary"
-        :options="[
-          {label: 'Hour by Hour', value: 'Hour by Hour'},
-          {label: 'Full Details', value: 'Full Details'},
-        ]"
-        unelevated
-        text-color="grey-8"
-        color="grey-3"
-        style="margin-bottom: 20px;"
-    />
+    <!--<q-btn-toggle-->
+    <!--    class="q-ml-sm"-->
+    <!--    v-model="calendarMode"-->
+    <!--    toggle-color="primary"-->
+    <!--    :options="[-->
+    <!--      {label: 'Timeline', value: 'Timeline'},-->
+    <!--      {label: 'List', value: 'List'},-->
+    <!--    ]"-->
+    <!--    unelevated-->
+    <!--    text-color="grey-8"-->
+    <!--    color="grey-3"-->
+    <!--    style="margin-bottom: 20px;"-->
+    <!--/>-->
     <div v-if="!allLoaded">
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
@@ -21,8 +21,8 @@
         v-if="allLoaded && configsFetched"
         :loading="!allLoaded"
         :mixedConfigs="mergedConfigs"
-        :calendarMode="calendarMode"
     />
+    <!--:calendarMode="calendarMode"-->
     <!-- Hidden SuperTable for each model -->
     <div
         v-for="(dataType, index) in dataTypes"
@@ -61,7 +61,7 @@ export default {
   },
   data() {
     return {
-      calendarMode: 'Full Details',
+      // calendarMode: 'List',
       loadingStatus: {},
       mergedData: [], // Holds the merged data from all SuperTables
       configsFetched: false, // Holds the merged data from all SuperTables

@@ -103,20 +103,20 @@
                     />
 
 
-                    <q-btn-toggle
-                        v-if="activeTab === 'calendar'"
-                        class="q-ml-sm"
-                        v-model="calendarMode"
-                        toggle-color="primary"
-                        :options="[
-                          {label: 'Hour by Hour', value: 'Hour by Hour'},
-                          {label: 'Full Details', value: 'Full Details'},
-                        ]"
-                        unelevated
-                        text-color="grey-8"
-                        color="grey-3"
-                        style="margin-bottom: 20px;"
-                    />
+                    <!--<q-btn-toggle-->
+                    <!--    v-if="activeTab === 'calendar'"-->
+                    <!--    class="q-ml-sm"-->
+                    <!--    v-model="calendarMode"-->
+                    <!--    toggle-color="primary"-->
+                    <!--    :options="[-->
+                    <!--      {label: 'Timeline', value: 'Timeline'},-->
+                    <!--      {label: 'List', value: 'List'},-->
+                    <!--    ]"-->
+                    <!--    unelevated-->
+                    <!--    text-color="grey-8"-->
+                    <!--    color="grey-3"-->
+                    <!--    style="margin-bottom: 20px;"-->
+                    <!--/>-->
                   </div>
                 </template>
                 <template
@@ -321,7 +321,6 @@
                 :startFieldName="startFieldName"
                 :endFieldName="endFieldName"
                 :items="items"
-                :calendarMode="calendarMode"
                 @clickRow="clickRow"
                 :superOptions="superOptions"
                 @editItem="editItem"
@@ -331,6 +330,7 @@
                 :unClickable="unClickable"
                 :loading="loading"
             />
+            <!--:calendarMode="calendarMode"-->
           </template>
         </div>
       </template>
@@ -631,7 +631,7 @@ export default {
   },
   data() {
     return {
-      calendarMode: 'Full Details',
+      // calendarMode: 'List',
       saving: false,
       search: "",
       formServerErrors: {},

@@ -2,9 +2,9 @@
   <div>
     <SuperTablePolyContentifiedCalendar
         :loading="loading"
-        :calendarMode="calendarMode"
         :mixedConfigs="normalizedConfigs"
     />
+    <!--:calendarMode="calendarMode"-->
   </div>
 </template>
 
@@ -33,10 +33,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    calendarMode: {
-      type: String,
-      default: 'Full Details',
-    },
+    // calendarMode: {
+    //   type: String,
+    //   default: 'List',
+    // },
     templateListCalendar: {
       type: Object,
       default: () => ({}),

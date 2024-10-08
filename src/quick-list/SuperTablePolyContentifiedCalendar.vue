@@ -6,8 +6,23 @@
     <div :style="`display: ${loading ? 'none' : 'block'};`">
 
 
-      <div class="row justify-center">
-        <div class="q-mb-sm">
+      <div class="row ">
+        <!--justify-center-->
+        <q-btn-toggle
+            class=" q-mb-sm block"
+            v-model="calendarMode"
+            toggle-color="primary"
+            :options="[
+              {label: 'Timeline', value: 'Timeline'},
+              {label: 'List', value: 'List'},
+            ]"
+            unelevated
+            text-color="grey-8"
+            color="grey-3"
+        />
+        <!--q-ml-sm-->
+        <!--style="margin-bottom: 20px;"-->
+        <div class="q-mb-sm q-ml-sm">
           <CalendarNavigationBar
               @today="onToday"
               @prev="onPrev"
@@ -17,7 +32,7 @@
       </div>
       <div style="display: flex; max-width: 100%; width: 100%">
         <!-- Render a single calendar containing all events from the combined configs -->
-        <template v-if="calendarMode === 'Hour by Hour'">
+        <template v-if="calendarMode === 'Timeline'">
           <SuperTableCalendarDay
               ref="calendar"
               :events="combinedEvents"
@@ -104,11 +119,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    calendarMode: {
-      type: String,
-      // default: "Hour by Hour",
-      default: "Full Details",
-    },
+    // calendarMode: {
+    //   type: String,
+    //   // default: "Timeline",
+    //   default: "List",
+    // },
     mixedConfigs: {
       type: Array,
       required: true,
@@ -116,6 +131,8 @@ export default {
   },
   data() {
     return {
+      // calendarMode: "Timeline",
+      calendarMode: "List",
       selectedDate: moment().format("YYYY-MM-DD"), // Default to today
       view: "week",
       viewItemData: {
