@@ -850,17 +850,17 @@ export default {
       }
       return result
     },
-    optionsComputed: {
-      get() {
-        return this.options;
-      },
-      set(value) {
-        if (!this.loading) {
-          this.fetchData();
-        }
-        this.options = value;
-      },
-    },
+    // optionsComputed: {
+    //   get() {
+    //     return this.options;
+    //   },
+    //   set(value) {
+    //     if (!this.loading) {
+    //       this.fetchData();
+    //     }
+    //     this.options = value;
+    //   },
+    // },
     parentField() {
       const result = this.superOptions.modelFields.find((field) => {
         return field.name == this.parentKeyValuePair.parentFKey
@@ -1290,6 +1290,7 @@ export default {
 
       this.loading = true;
       let rules = [];
+      // everything from here down could be in helper methods
       if (this.model.rules?.readables) {
         rules = this.model.rules.readables();
       }
@@ -1307,21 +1308,25 @@ export default {
         extraHeaderComputed = {};
         flagsComputed = {
           sort: `-${this.model.primaryKey}`,
+          // =------------------------------------
           per_page: this.options.itemsPerPage,
           page: this.options.page,
         };
       }
       const response = await this.model.FetchAll(
+          // =========================
           this.relationships,
           {
             ...rules,
             ...flagsComputed,
+            /// -----------------------
             ...this.fetchFlags,
           },
           extraHeaderComputed,
           {
             page: this.options.page,
             limit: this.options.itemsPerPage,
+            //============================
             filters: this.filtersComp,
             clearPrimaryModelOnly: false,
           },

@@ -43,7 +43,11 @@
         <q-tab-panel
             :name="'special-tab-calendar'"
         >
-          ...
+          <CalendarPolyContentWrapper
+              :configsCollection="configsCollection"
+              :childRelations="childRelations"
+              :parentPrimaryKey="item[model.primaryKey]"
+          />
         </q-tab-panel>
         <q-tab-panel
             :name="'special-tab-map'"
@@ -139,6 +143,7 @@ import SuperTableTable from "./SuperTableTable.vue";
 import OverviewTab from "./OverviewTab.vue";
 import {defineAsyncComponent} from "vue";
 import {Helpers} from "../index";
+import CalendarPolyContentWrapper from "./CalendarPolyContentWrapper.vue";
 const AsyncCreateEditFormComponent = defineAsyncComponent(() =>
     import('./CreateEditForm.vue')
 );
@@ -146,6 +151,7 @@ const AsyncCreateEditFormComponent = defineAsyncComponent(() =>
 export default {
   name: "SuperRecord",
   components: {
+    CalendarPolyContentWrapper,
     CreateEditForm: AsyncCreateEditFormComponent,
     OverviewTab,
     SuperTableTable,
@@ -154,6 +160,10 @@ export default {
     SuperTable,
   },
   props: {
+    configsCollection: {
+      type: Object,
+      default: {},
+    },
     hideRelations: {
       type: Boolean,
       default() {
@@ -282,26 +292,37 @@ export default {
           const startfield = Helpers.getFieldFromModelOrParent(headers, 'timeRangeStart');
 
           if (startfield){
-            child.canBeMapped = true
-          } else {
-            child.canBeMapped = false
-          }
-
-          let longField = Helpers.getFieldFromModelOrParent(headers, 'mapExtraGeoLocLong');
-
-          if (longField){
             child.canBeCalendared = true
           } else {
             child.canBeCalendared = false
           }
 
+          let longField = Helpers.getFieldFromModelOrParent(headers, 'mapExtraGeoLocLong');
 
+          if (longField){
+            child.canBeMapped = true
+          } else {
+            child.canBeMapped = false
+          }
+
+
+          child.superOptions = {
+            headers,
+            modelFields: QuickListsHelpers.computedAttrs(
+                field.meta.field.model,
+                [],
+            ),
+            displayMapField: false,
+            model: field.meta.field.model,
+            canEdit: field.meta.field.model.rules.creatable()
+          }
+          // console.log('field')
+          // console.log(child.superOptions)
 
           result.push(child);
         }
       }
-      console.log("*")
-      console.log(result)
+
       return result;
     },
     filteredChildRelations() {

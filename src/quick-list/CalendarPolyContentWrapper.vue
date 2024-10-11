@@ -17,7 +17,8 @@
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
     </div>
-    <template v-if="configsFetched">
+    <!--<template v-if="configsFetched">-->
+    <template v-if="true">
 
       <SuperCalendar
           v-if="allLoaded"
@@ -26,23 +27,23 @@
       />
       <!--<pre>{{console.log(mergedConfigs)}}</pre>-->
     </template>
-    <!--:calendarMode="calendarMode"-->
-    <!-- Hidden SuperTable for each model -->
-    <div
-        v-for="(dataType, index) in dataTypes"
-        :key="index"
-        style="display: none"
-    >
-      <SuperTable
-          :model="dataType.model"
-          :parentKeyValuePair="dataType.parentKeyValuePair"
-          :templateListGrid="dataType.templateListGrid"
-          :isForSelectingRelation="true"
-          @clickRow="dataType.clickRow"
-          :ref="getSuperTableRefKey(index)"
-          @fetchComplete="handleDataFetched"
-      />
-    </div>
+    <!--&lt;!&ndash;:calendarMode="calendarMode"&ndash;&gt;-->
+    <!--&lt;!&ndash; Hidden SuperTable for each model &ndash;&gt;-->
+    <!--<div-->
+    <!--    v-for="(dataType, index) in configsCollection"-->
+    <!--    :key="index"-->
+    <!--    style="display: none"-->
+    <!--&gt;-->
+    <!--  <SuperTable-->
+    <!--      :model="dataType.model"-->
+    <!--      :parentKeyValuePair="dataType.parentKeyValuePair"-->
+    <!--      :templateListGrid="dataType.templateListGrid"-->
+    <!--      :isForSelectingRelation="true"-->
+    <!--      @clickRow="dataType.clickRow"-->
+    <!--      :ref="getSuperTableRefKey(index)"-->
+    <!--      @fetchComplete="handleDataFetched"-->
+    <!--  />-->
+    <!--</div>-->
   </div>
 </template>
 
@@ -58,9 +59,18 @@ export default {
     SuperCalendar,
   },
   props: {
-    dataTypes: {
+    configsCollection: {
+      type: Object,
+      // required: true,
+      default: {},
+    },
+    childRelations: {
       type: Array,
       required: true, // An array of objects, each containing model, clickRow, parentKeyValuePair, and templateListGrid
+    },
+    parentPrimaryKey: {
+      type: [String, Number],
+      default: null,
     },
   },
   data() {
@@ -69,6 +79,13 @@ export default {
       loadingStatus: {},
       mergedData: [], // Holds the merged data from all SuperTables
       configsFetched: false, // Holds the merged data from all SuperTables
+      options: {
+        page: 1,
+        itemsPerPage: 10,
+        sortBy: [],
+        groupBy: [],
+      },
+      fetchedData: [],
     };
   },
   computed: {
@@ -79,74 +96,157 @@ export default {
       );
     },
     mergedConfigs() {
-      return this.dataTypes.map((dataType, configIndex) => {
-        const superTable = this.$refs[this.getSuperTableRefKey(configIndex)]?.[0];
-        const superOptions = superTable?.superOptions || {};
 
-        // Access inferred start and end fields from the computed array
-        const { startFieldName, endFieldName } = this.startAndEndFieldNames[configIndex] || {};
+      const result = []
+      // for (const [index, childRelation] of this.childRelations) {
 
-        return {
-          templateListCalendar: dataType.templateListCalendar,
-          startFieldName: startFieldName,
-          endFieldName: endFieldName,
-          items: this.mergedData[dataType.model.name],
-          superOptions: superOptions, // Use inferred superOptions
-          // unClickable: dataType.unClickable,
-          unClickable: false,
-          events: {
-            // clickRow: dataType.clickRow,
-            // editItem: dataType.editItem,
-            // deleteItem: dataType.deleteItem,
-            clickRow: ()=>{},
-            editItem: ()=>{},
-            deleteItem: ()=>{},
-          }
-        };
-      });
+      for (const index in this.childRelations) {
+        const childRelation = this.childRelations[index]
+
+        if (childRelation.canBeCalendared){
+
+          const superTable = this.$refs[this.getSuperTableRefKey(index)]?.[0];
+          // const superOptions = superTable?.superOptions || {};
+
+          // // Access inferred start and end fields from the computed array
+          // const { startFieldName, endFieldName } = this.startAndEndFieldNames[index] || {};
+
+          const startFieldName = Helpers.getFieldFromModelOrParent(childRelation.superOptions.headers, 'timeRangeStart');
+          const endFieldName = Helpers.getFieldFromModelOrParent(childRelation.superOptions.headers, 'timeRangeEnd');
+
+          const relatedModel = childRelation.field.meta.field.related
+          console.log('relatedModel')
+          console.log(relatedModel)
+          // console.log(this.fetchedData[index]?.response?.data?.data)
+          result.push({
+            startFieldName,
+            endFieldName,
+            // items: this.mergedData[dataType.model.name],
+            items: this.fetchedData[index]?.response?.data?.data || [],
+            superOptions: childRelation.superOptions,
+
+            unClickable: this.configsCollection[relatedModel.name]?.clickRow || (()=>{}),
+            events: {
+              clickRow: this.configsCollection[relatedModel.name]?.clickRow || (()=>{}),
+              editItem: this.configsCollection[relatedModel.name]?.editItem || (()=>{}),
+              deleteItem: this.configsCollection[relatedModel.name]?.deleteItem || (()=>{}),
+            },
+            templateListCalendar: this.configsCollection[relatedModel.name]?.templateListCalendar || {},
+          });
+        }
+      };
+      console.log('result')
+      console.log(result)
+      return result
     },
 
 
-    startAndEndFieldNames() {
-      return this.dataTypes.map((dataType, index) => {
-        const superTable = this.$refs[this.getSuperTableRefKey(index)]?.[0]; // Access SuperTable instance
+    // startAndEndFieldNames() {
+    //   return this.configsCollection.map((dataType, index) => {
+    //     const superTable = this.$refs[this.getSuperTableRefKey(index)]?.[0]; // Access SuperTable instance
+    //
+    //     if (!superTable) return { startFieldName: null, endFieldName: null };
+    //
+    //     const headers = superTable.superOptions.headers || {};
+    //
+    //     // Use the getFieldFromModelOrParent method to extract the field names
+    //     const startFieldName = Helpers.getFieldFromModelOrParent(headers, 'timeRangeStart');
+    //     const endFieldName = Helpers.getFieldFromModelOrParent(headers, 'timeRangeEnd');
+    //
+    //     return { startFieldName, endFieldName };
+    //   });
+    // },
 
-        if (!superTable) return { startFieldName: null, endFieldName: null };
-
-        const headers = superTable.superOptions.headers || {};
-
-        // Use the getFieldFromModelOrParent method to extract the field names
-        const startFieldName = Helpers.getFieldFromModelOrParent(headers, 'timeRangeStart');
-        const endFieldName = Helpers.getFieldFromModelOrParent(headers, 'timeRangeEnd');
-
-        return { startFieldName, endFieldName };
-      });
-    },
   },
   mounted() {
-    // After mounting, check if each SuperTable's model has relevant calendar fields and fetch data
-    this.dataTypes.forEach((dataType, index) => {
-      this.$nextTick(() => {
-        this.configsFetched = true
-        const refKey = this.getSuperTableRefKey(index);
-        const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
 
-        this.loadingStatus[dataType.model.name] = false;
-
-        if (superTable) {
-          const headers = superTable.superOptions.headers || {};
-          const hasCalendarFields = this.checkForCalendarFields(headers);
-          if (hasCalendarFields) {
-            superTable.activateAndFetchData();
-          } else {
-            this.loadingStatus[dataType.model.name] = true;
-          }
-        }
-      });
-    });
+    this.fetchAllModels();
+    // // After mounting, check if each SuperTable's model has relevant calendar fields and fetch data
+    // this.configsCollection.forEach((dataType, index) => {
+    //   this.$nextTick(() => {
+    //     this.configsFetched = true
+    //     const refKey = this.getSuperTableRefKey(index);
+    //     const superTable = this.$refs[refKey][0]; // Access the first element in the ref array
+    //
+    //     this.loadingStatus[dataType.model.name] = false;
+    //
+    //     if (superTable) {
+    //       const headers = superTable.superOptions.headers || {};
+    //       const hasCalendarFields = this.checkForCalendarFields(headers);
+    //       if (hasCalendarFields) {
+    //         superTable.activateAndFetchData();
+    //       } else {
+    //         this.loadingStatus[dataType.model.name] = true;
+    //       }
+    //     }
+    //   });
+    // });
   },
   methods: {
 
+    filters(relation) {
+      const parentKeyValuePair = this.parentKeyValuePair(relation)
+
+      // console.log('parentKeyValuePair')
+      // console.log(parentKeyValuePair)
+      return {
+        [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
+      };
+    },
+    parentKeyValuePair(relation) {
+      const fKey = relation.field.meta.field.foreignKey
+
+      const result = {
+        parentFKey: fKey,
+        parentFVal: this.parentPrimaryKey,
+      }
+
+      return result
+    },
+    async fetchAllModels() {
+      try {
+        // Create an array of promises by calling FetchAll() on each model
+        const fetchPromises = this.childRelations.map((childRelation) => {
+          const relatedModel = childRelation.field.meta.field.related
+          let rules = [];
+          // everything from here down could be in helper methods
+          if (relatedModel.rules?.readables) {
+            rules = relatedModel.rules.readables();
+          }
+
+          const extraHeaderComputed = {};
+          const flagsComputed = {
+            sort: `-${relatedModel.primaryKey}`,
+            per_page: this.options.itemsPerPage,
+            page: this.options.page,
+          };
+
+
+          return relatedModel.FetchAll(
+              [],
+              {
+                ...rules,
+                ...flagsComputed
+              },
+              extraHeaderComputed,
+              {
+                page: this.options.page,
+                limit: this.options.itemsPerPage,
+                filters: this.filters(childRelation),
+                clearPrimaryModelOnly: false,
+              },
+          )
+        });
+
+        // Wait for all promises to resolve and store the results in an array
+        const results = await Promise.all(fetchPromises);
+
+        // Assign results to fetchedData, keeping the same index as models
+        this.fetchedData = results;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    },
     // getFieldFromModelOrParent(fields, usageType) {
     //   let targetField = null;
     //
@@ -173,12 +273,12 @@ export default {
 
     handleDataFetched(modelName, items) {
       // Find the dataType that corresponds to the modelName
-      const dataType = this.dataTypes.find((dt) => dt.model.name === modelName);
+      const dataType = this.configsCollection.find((dt) => dt.model.name === modelName);
 
       // Access the SuperTable ref to infer superOptions
       const superTable =
           this.$refs[
-              this.getSuperTableRefKey(this.dataTypes.indexOf(dataType))
+              this.getSuperTableRefKey(this.configsCollection.indexOf(dataType))
               ]?.[0];
 
       // Ensure superTable and its superOptions are available
