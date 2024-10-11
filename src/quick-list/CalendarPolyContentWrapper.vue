@@ -13,7 +13,7 @@
     <!--    color="grey-3"-->
     <!--    style="margin-bottom: 20px;"-->
     <!--/>-->
-    <div v-if="!allLoaded">
+    <div v-if="loading">
       <!-- Spinner or loading indicator -->
       <p>Loading...</p>
     </div>
@@ -21,8 +21,8 @@
     <template v-if="true">
 
       <SuperCalendar
-          v-if="allLoaded"
-          :loading="!allLoaded"
+          v-if="!loading"
+          :loading="loading"
           :mixedConfigs="mergedConfigs"
       />
       <!--<pre>{{console.log(mergedConfigs)}}</pre>-->
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       // calendarMode: 'List',
+      loading: true,
       loadingStatus: {},
       mergedData: [], // Holds the merged data from all SuperTables
       configsFetched: false, // Holds the merged data from all SuperTables
@@ -205,6 +206,7 @@ export default {
     },
     async fetchAllModels() {
       try {
+        this.loading = true;
         // Create an array of promises by calling FetchAll() on each model
         const fetchPromises = this.childRelations.map((childRelation) => {
           const relatedModel = childRelation.field.meta.field.related
@@ -245,6 +247,8 @@ export default {
         this.fetchedData = results;
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        this.loading = false;
       }
     },
     // getFieldFromModelOrParent(fields, usageType) {
