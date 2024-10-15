@@ -381,60 +381,12 @@
         </div>
       </template>
     </template>
-
-    <template v-if="canEdit">
-      <q-dialog
-          v-model="createItemData.showModal"
-          @update:modelValue="formServerErrors = {};"
-      >
-        <!--:parentKeyValuePair="parentKeyValuePair"-->
-        <CreateEditForm
-            titlePrefix="New"
-            v-if="createItemData.showModal"
-            v-model="createItemData.data"
-            @submit="createItemSubmit"
-            @cancel="createItemData.showModal = false; formServerErrors = {};"
-            :superOptions="superOptions"
-            style="width: 700px; max-width: delete me;"
-            :template="templateForm"
-            :formServerErrors="formServerErrors"
-        />
-      </q-dialog>
-
-      <template v-if="superOptions.canEdit">
-        <q-dialog
-            v-model="editItemData.showModal"
-            @update:modelValue="formServerErrors = {};"
-        >
-          <CreateEditForm
-              titlePrefix="Edit"
-              v-if="editItemData.showModal"
-              v-model="editItemData.data"
-              @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false; formServerErrors = {};"
-              :superOptions="superOptions"
-              :template="templateForm"
-              style="width: 700px; max-width: delete me;"
-              :formServerErrors="formServerErrors"
-          />
-        </q-dialog>
-
-        <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: delete me;">
-            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
-              <div class="text-h6">Delete Item</div>
-            </q-card-section>
-            <q-card-section>
-              <p>Are you sure you want to delete this item?</p>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-      </template>
-    </template>
+    <CrudModal
+        @fetchData="fetchData"
+        ref="CrudModalRef"
+        :superOptions="superOptions"
+        :parentKeyValuePair="parentKeyValuePair"
+    />
   </div>
 </template>
 
@@ -462,6 +414,7 @@ import 'jspdf-autotable';
 import PdfTemplate from "./PdfTemplate.vue";
 import {Helpers} from "../index";
 import SuperCalendar from "./SuperCalendar.vue";
+import CrudModal from "./CrudModal.vue";
 // import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
@@ -474,6 +427,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    CrudModal,
     SuperCalendar,
     PdfTemplate,
     SearchGooglePlace,
@@ -678,17 +632,7 @@ export default {
   data() {
     return {
       // calendarMode: 'List',
-      saving: false,
       search: "",
-      formServerErrors: {},
-      deleteItemData: {
-        showModal: false,
-        data: null,
-      },
-      editItemData: {
-        showModal: false,
-        data: null,
-      },
       years: Array.from(
           {length: 5},
           (_, index) => new Date().getFullYear() - index,
@@ -701,10 +645,6 @@ export default {
         itemsPerPage: 10,
         sortBy: [],
         groupBy: [],
-      },
-      createItemData: {
-        showModal: false,
-        data: {},
       },
       highlightedRow: null,
       filters: {},
@@ -982,6 +922,17 @@ export default {
     },
   },
   methods: {
+    createItem() {
+      this.$refs.CrudModalRef.createItem()
+    },
+    deleteItem(item) {
+      this.$emit("deleteItem", item);
+      this.$refs.CrudModalRef.deleteItem(item)
+    },
+    editItem(item) {
+      this.$emit("editItem", item);
+      this.$refs.CrudModalRef.editItem(item)
+    },
     defineAsyncComponent,
     downloadCsv() {
       const csvData = this.convertToCsv();
@@ -1098,48 +1049,6 @@ export default {
       this.filters[this.model.titleKey] = searchTerm
       this.fetchData();
     },
-    deleteItem(item) {
-
-      this.$emit("deleteItem", item);
-
-      this.deleteItemData.data = item;
-      this.deleteItemData.showModal = true;
-    },
-    deleteItemSubmit() {
-      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
-        this.fetchData();
-      });
-      this.deleteItemData.showModal = false;
-    },
-    editItem(item) {
-      this.$emit("editItem", item);
-
-      this.editItemData.data = {...item};
-      this.editItemData.showModal = true;
-    },
-    editItemSubmit() {
-      const payload = QuickListsHelpers.preparePayload(
-          this.editItemData.data,
-          this.superOptions.modelFields
-      );
-
-      this.superOptions.model.Update(
-          payload,
-          [],
-          {},
-          {
-            'Content-Type': 'multipart/form-data'
-          }
-      )
-          .then(() => {
-            this.fetchData();
-            this.editItemData.showModal = false;
-            this.formServerErrors = {};
-          })
-          .catch((err) => {
-            this.formServerErrors = err.response.data;
-          });
-    },
     pageUpdate(page) {
       this.options = {
         ...this.options,
@@ -1183,9 +1092,6 @@ export default {
         return null;
       }
     },
-    createNewInstance() {
-      return new this.model();
-    },
     clickRow(pVal, item) {
 
       if (this.isForSelectingRelation) {
@@ -1200,68 +1106,6 @@ export default {
       }
 
       this.$emit("update:modelValue", pVal);
-    },
-    createItem() {
-      this.createItemData.showModal = true;
-    },
-    createItemSubmit() {
-      if (this.saving){
-        return
-      }
-      this.saving = true
-      let payload = QuickListsHelpers.preparePayload(
-          this.createItemData.data,
-          this.modelFields,
-      );
-
-      delete payload.id;
-
-      const inititalItemLength = this.items.length;
-
-
-      let headers = {}
-      const hasFileField = this.superOptions.modelFields.find((field) => field.usageType == "fileImageType");
-      if (hasFileField){
-        headers = {
-          'Content-Type': 'multipart/form-data'
-        }
-      }
-
-      this.model.Store(
-          {
-            ...payload,
-            ...this.createPayloadExtras,
-          },
-          [],
-          {},
-          headers
-      )
-          .then(() => {
-
-
-            this.saving = false
-
-            // if (!inititalItemLength) {
-            //   if (!this.loading) {
-            //   }
-            // }
-
-
-
-            this.fetchData();
-
-            // After handling, reset formData (if needed)
-            this.createItemData.data = {};
-
-            // Close the dialog after submission
-            this.createItemData.showModal = false;
-            this.formServerErrors = {};
-          })
-          .catch((err) => {
-            this.saving = false
-            this.formServerErrors = err.response.data;
-          });
-
     },
     applyFilters(items, filters) {
       const groupedFilters = {};
@@ -1390,15 +1234,6 @@ export default {
         }
       },
       deep: true,
-    },
-    "createItemData.showModal"(arg) {
-      if (arg) {
-        this.createItemData.data = this.createNewInstance();
-
-        if (this.parentKeyValuePair.parentFKey && this.parentKeyValuePair.parentFVal) {
-          this.createItemData.data[this.parentKeyValuePair.parentFKey] = this.parentKeyValuePair.parentFVal;
-        }
-      }
     },
   },
   mounted() {
