@@ -68,6 +68,7 @@ export default {
     canEdit: false,
     superOptions: {},
     parentKeyValuePair: {},
+    templateForm: {},
   },
   data(){
     return {

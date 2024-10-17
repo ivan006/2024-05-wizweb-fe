@@ -382,6 +382,7 @@
       </template>
     </template>
     <CrudModal
+        :templateForm="templateForm"
         @fetchData="fetchData"
         ref="CrudModalRef"
         :superOptions="superOptions"

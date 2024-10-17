@@ -60,7 +60,7 @@
     </div>
 
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
-      <q-card class="q-pa-none">
+      <q-card class="q-pa-none" style="width: 800px; max-width: calc(100vw - 32px);">
         <template
             v-if="
             getCurrentSelectedConfig().templateListGrid &&

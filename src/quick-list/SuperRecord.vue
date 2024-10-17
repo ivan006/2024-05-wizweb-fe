@@ -309,12 +309,12 @@ export default {
           child.superOptions = {
             headers,
             modelFields: QuickListsHelpers.computedAttrs(
-                field.meta.field.model,
+                field.meta.field.related,
                 [],
             ),
             displayMapField: false,
-            model: field.meta.field.model,
-            canEdit: field.meta.field.model.rules.creatable()
+            model: field.meta.field.related,
+            canEdit: field.meta.field.related.rules.creatable()
           }
           // console.log('field')
           // console.log(child.superOptions)

@@ -3,10 +3,14 @@
     <div v-if="loading">
       Loading...
     </div>
-    <template v-if="true">
-
+    <template v-else>
+      <CreateButtonWithDropDowns
+          :childRelations="childRelations"
+          @create-item=""
+          :fetchData="fetchData"
+          :parentKeyValuePair="parentKeyValuePair"
+      />
       <SuperCalendar
-          v-if="!loading"
           :loading="loading"
           :mixedConfigs="mergedConfigs"
       />
@@ -15,14 +19,14 @@
 </template>
 
 <script>
-import SuperTable from "./SuperTable.vue"; // Adjust path as needed
 import SuperCalendar from "./SuperCalendar.vue";
-import {Helpers} from "../index"; // Adjust path as needed
+import {Helpers} from "../index";
+import CreateButtonWithDropDowns from "./CreateButtonWithDropDowns.vue"; // Adjust path as needed
 
 export default {
   name: "CalendarPolyContentWrapper",
   components: {
-    SuperTable,
+    CreateButtonWithDropDowns,
     SuperCalendar,
   },
   props: {
@@ -115,6 +119,50 @@ export default {
   },
   methods: {
 
+    async fetchData(childRelation, index) {
+      try {
+        const results = await this.fetchItem(childRelation)
+
+        this.fetchedData[index] = results;
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    fetchItem(childRelation) {
+      const relatedModel = childRelation.field.meta.field.related
+      let rules = [];
+      // everything from here down could be in helper methods
+      if (relatedModel.rules?.readables) {
+        rules = relatedModel.rules.readables();
+      }
+
+      const extraHeaderComputed = {};
+      const flagsComputed = {
+        sort: `-${relatedModel.primaryKey}`,
+        per_page: this.options.itemsPerPage,
+        page: this.options.page,
+      };
+
+
+      return relatedModel.FetchAll(
+          [],
+          {
+            ...rules,
+            ...flagsComputed
+          },
+          extraHeaderComputed,
+          {
+            page: this.options.page,
+            limit: this.options.itemsPerPage,
+            filters: this.filters(childRelation),
+            clearPrimaryModelOnly: false,
+          },
+      )
+    },
+
     filters(relation) {
       const parentKeyValuePair = this.parentKeyValuePair(relation)
 
@@ -139,35 +187,7 @@ export default {
         this.loading = true;
         // Create an array of promises by calling FetchAll() on each model
         const fetchPromises = this.childRelations.map((childRelation) => {
-          const relatedModel = childRelation.field.meta.field.related
-          let rules = [];
-          // everything from here down could be in helper methods
-          if (relatedModel.rules?.readables) {
-            rules = relatedModel.rules.readables();
-          }
-
-          const extraHeaderComputed = {};
-          const flagsComputed = {
-            sort: `-${relatedModel.primaryKey}`,
-            per_page: this.options.itemsPerPage,
-            page: this.options.page,
-          };
-
-
-          return relatedModel.FetchAll(
-              [],
-              {
-                ...rules,
-                ...flagsComputed
-              },
-              extraHeaderComputed,
-              {
-                page: this.options.page,
-                limit: this.options.itemsPerPage,
-                filters: this.filters(childRelation),
-                clearPrimaryModelOnly: false,
-              },
-          )
+          return this.fetchItem(childRelation)
         });
 
         // Wait for all promises to resolve and store the results in an array
@@ -175,6 +195,7 @@ export default {
 
         // Assign results to fetchedData, keeping the same index as models
         this.fetchedData = results;
+
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
