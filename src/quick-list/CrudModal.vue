@@ -14,7 +14,7 @@
             @submit="createItemSubmit"
             @cancel="createItemData.showModal = false; formServerErrors = {};"
             :superOptions="superOptions"
-            style="width: 700px; max-width: delete me;"
+            style="width: 700px; max-width: calc(-32px + 100vw);"
             :template="templateForm"
             :formServerErrors="formServerErrors"
         />
@@ -33,13 +33,13 @@
               @cancel="editItemData.showModal = false; formServerErrors = {};"
               :superOptions="superOptions"
               :template="templateForm"
-              style="width: 700px; max-width: delete me;"
+              style="width: 700px; max-width: calc(-32px + 100vw);"
               :formServerErrors="formServerErrors"
           />
         </q-dialog>
 
         <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: delete me;">
+          <q-card style="width: 500px; max-width: calc(-32px + 100vw);">
             <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
               <div class="text-h6">Delete Item</div>
             </q-card-section>

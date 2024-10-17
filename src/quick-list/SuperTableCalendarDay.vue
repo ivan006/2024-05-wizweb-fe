@@ -173,7 +173,7 @@ export default {
     badgeClasses(event, type) {
       const isHeader = type === "header";
       return {
-        [`text-white bg-${this.colors[event.configForeignKey]}`]: true,
+        [`text-white bg-${this.colors[event.configIndex]}`]: true,
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
         "right-side": !isHeader && event.side === "right",

@@ -47,27 +47,27 @@
       </template>
       <template v-for="event in getEvents(timestamp.date)" :key="event.id">
         <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">
-          <template v-if="getCurrentTemplate(event.configForeignKey)?.cols">
+          <template v-if="getCurrentTemplate(event.configIndex)?.cols">
             <RecordFieldsForDisplayCustom
                 :item="event.meta"
                 :maxFields="6"
                 :childRelations="[]"
                 isSummary
-                :superOptions="getCurrentSuperOptions(event.configForeignKey)"
-                :template="getCurrentTemplate(event.configForeignKey)"
+                :superOptions="getCurrentSuperOptions(event.configIndex)"
+                :template="getCurrentTemplate(event.configIndex)"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-                :unClickable="getCurrentUnClickable(event.configForeignKey)"
+                :unClickable="getCurrentUnClickable(event.configIndex)"
             />
           </template>
           <template v-else>
             <RecordFieldsForDisplayGeneric
                 :item="event.meta"
                 :maxFields="6"
-                :superOptions="getCurrentSuperOptions(event.configForeignKey)"
+                :superOptions="getCurrentSuperOptions(event.configIndex)"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-                :unClickable="getCurrentUnClickable(event.configForeignKey)"
+                :unClickable="getCurrentUnClickable(event.configIndex)"
             />
           </template>
         </q-card>
@@ -116,26 +116,26 @@ export default {
       this.$emit("show-event", event);
     },
     editItem(item) {
-      const config = this.getCurrentConfig(item.configForeignKey);
+      const config = this.getCurrentConfig(item.configIndex);
       config.events.editItem(item);
     },
     deleteItem(item) {
-      const config = this.getCurrentConfig(item.configForeignKey);
+      const config = this.getCurrentConfig(item.configIndex);
       config.events.deleteItem(item);
     },
-    getCurrentConfig(configForeignKey) {
-      return this.mixedConfigs[configForeignKey];
+    getCurrentConfig(configIndex) {
+      return this.mixedConfigs[configIndex];
     },
-    getCurrentTemplate(configForeignKey) {
-      const config = this.getCurrentConfig(configForeignKey);
+    getCurrentTemplate(configIndex) {
+      const config = this.getCurrentConfig(configIndex);
       return config.templateListCalendar || {};
     },
-    getCurrentSuperOptions(configForeignKey) {
-      const config = this.getCurrentConfig(configForeignKey);
+    getCurrentSuperOptions(configIndex) {
+      const config = this.getCurrentConfig(configIndex);
       return config.superOptions || {};
     },
-    getCurrentUnClickable(configForeignKey) {
-      const config = this.getCurrentConfig(configForeignKey);
+    getCurrentUnClickable(configIndex) {
+      const config = this.getCurrentConfig(configIndex);
       return config.unClickable || false;
     },
   },

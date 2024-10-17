@@ -12,7 +12,7 @@
     ></q-input>
 
     <q-dialog v-model="showDialog" >
-      <q-card style="width: 700px; max-width: delete me;">
+      <q-card style="width: 700px; max-width: calc(-32px + 100vw);">
         <q-card-section>
           <div class="text-subtitle1">Search Place</div>
           <q-input

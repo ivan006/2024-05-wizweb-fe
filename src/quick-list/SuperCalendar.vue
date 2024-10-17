@@ -4,8 +4,6 @@
       <div class="text-center q-pa-md">Loading...</div>
     </template>
     <div :style="`display: ${loading ? 'none' : 'block'};`">
-
-
       <div class="row ">
         <!--justify-center-->
         <q-btn-toggle
@@ -60,11 +58,11 @@
     </div>
 
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
-      <q-card class="q-pa-none" style="width: 800px; max-width: calc(100vw - 32px);">
+      <q-card class="q-pa-none" style="width: 700px; max-width: calc(100vw - 32px);">
         <template
             v-if="
-            getCurrentSelectedConfig().templateListGrid &&
-            getCurrentSelectedConfig().templateListGrid.cols
+            activeItemAndType.templateListGrid &&
+            activeItemAndType.templateListGrid.cols
           "
         >
           <RecordFieldsForDisplayCustom
@@ -72,23 +70,23 @@
               :maxFields="6"
               :childRelations="[]"
               isSummary
-              :superOptions="getCurrentSelectedConfig().superOptions"
-              :template="getCurrentSelectedConfig().templateListGrid"
-              @editItem="getCurrentSelectedConfig().events.editItem"
-              @deleteItem="getCurrentSelectedConfig().events.deleteItem"
-              :unClickable="getCurrentSelectedConfig().unClickable"
-              @clickRow="getCurrentSelectedConfig().events.clickRow"
+              :superOptions="activeItemAndType.superOptions"
+              :template="activeItemAndType.templateListGrid"
+              @editItem="activeItemAndType.events.editItem"
+              @deleteItem="activeItemAndType.events.deleteItem"
+              :unClickable="activeItemAndType.unClickable"
+              @clickRow="activeItemAndType.events.clickRow"
           />
         </template>
         <template v-else>
           <RecordFieldsForDisplayGeneric
               :item="viewItemData.data"
               :maxFields="6"
-              :superOptions="getCurrentSelectedConfig().superOptions"
-              @editItem="getCurrentSelectedConfig().events.editItem"
-              @deleteItem="getCurrentSelectedConfig().events.deleteItem"
-              :unClickable="getCurrentSelectedConfig().unClickable"
-              @clickRow="getCurrentSelectedConfig().events.clickRow"
+              :superOptions="activeItemAndType.superOptions"
+              @editItem="activeItemAndType.events.editItem"
+              @deleteItem="activeItemAndType.events.deleteItem"
+              :unClickable="activeItemAndType.unClickable"
+              @clickRow="activeItemAndType.events.clickRow"
           />
         </template>
       </q-card>
@@ -138,11 +136,15 @@ export default {
       viewItemData: {
         showModal: false,
         data: {},
-        configForeignKey: null,
+        configIndex: null,
       },
     };
   },
   computed: {
+    // Get the config for the currently selected item
+    activeItemAndType() {
+      return this.mixedConfigs[this.viewItemData.configIndex] || {};
+    },
 
     firstNonIdKeys() {
       const keys = {};
@@ -231,7 +233,7 @@ export default {
             bgcolor: "deep-purple", // Placeholder color
             icon: "fas fa-calendar-alt", // Placeholder icon
             meta: item, // Full item data as metadata
-            configForeignKey: configIndex, // Store config index for later reference
+            configIndex: configIndex, // Store config index for later reference
           };
 
           // Push event into the eventsArray
@@ -242,10 +244,6 @@ export default {
     },
   },
   methods: {
-    // Get the config for the currently selected item
-    getCurrentSelectedConfig() {
-      return this.mixedConfigs[this.viewItemData.configForeignKey] || {};
-    },
 
     // Generates events based on items, startFieldName, and endFieldName in the config
 
@@ -254,16 +252,16 @@ export default {
       this.viewItemData = {
         showModal: true,
         data: event.meta,
-        configForeignKey: event.configForeignKey,
+        configIndex: event.configIndex,
       };
     },
 
     onEditItem(event) {
-      this.getCurrentSelectedConfig().events.editItem(event.meta);
+      this.activeItemAndType.events.editItem(event.meta);
     },
 
     onDeleteItem(event) {
-      this.getCurrentSelectedConfig().events.deleteItem(event.meta);
+      this.activeItemAndType.events.deleteItem(event.meta);
     },
 
     onToday() {
