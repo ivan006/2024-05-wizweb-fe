@@ -337,6 +337,29 @@
                 <!--&lt;!&ndash;:calendarMode="calendarMode"&ndash;&gt;-->
 
                 <SuperCalendar
+                    @clickRow="clickRow"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                    :loading="loading"
+                    :mixedConfigs="[
+                      {
+                        templateListCalendar: templateListCalendar,
+                        startFieldName: startFieldName,
+                        endFieldName: endFieldName,
+                        items: items,
+                        superOptions: superOptions,
+                        unClickable: unClickable,
+                      }
+                    ]"
+                />
+                <!--:calendarMode="calendarMode"-->
+              </q-card>
+            </template>
+            <template v-else>
+              <SuperCalendar
+                  @clickRow="clickRow"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
                   :loading="loading"
                   :mixedConfigs="[
                     {
@@ -346,35 +369,8 @@
                       items: items,
                       superOptions: superOptions,
                       unClickable: unClickable,
-                      events: {
-                        clickRow: clickRow,
-                        editItem: editItem,
-                        deleteItem: deleteItem,
-                      }
                     }
                   ]"
-                />
-                <!--:calendarMode="calendarMode"-->
-              </q-card>
-            </template>
-            <template v-else>
-              <SuperCalendar
-                :loading="loading"
-                :mixedConfigs="[
-                  {
-                    templateListCalendar: templateListCalendar,
-                    startFieldName: startFieldName,
-                    endFieldName: endFieldName,
-                    items: items,
-                    superOptions: superOptions,
-                    unClickable: unClickable,
-                    events: {
-                      clickRow: clickRow,
-                      editItem: editItem,
-                      deleteItem: deleteItem,
-                    }
-                  }
-                ]"
               />
             </template>
           </template>
@@ -1093,6 +1089,7 @@ export default {
         return null;
       }
     },
+
     clickRow(pVal, item) {
 
       if (this.isForSelectingRelation) {

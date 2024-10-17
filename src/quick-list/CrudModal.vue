@@ -166,10 +166,16 @@ export default {
       this.deleteItemData.showModal = true;
     },
     deleteItemSubmit() {
-      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
-        this.$emit('fetchData');
-      });
-      this.deleteItemData.showModal = false;
+      this.superOptions.model.Delete(this.deleteItemData.data.id)
+          .then(() => {
+            this.$emit('fetchData');
+            this.deleteItemData.showModal = false;
+
+            this.$emit("deleteComplete");
+          })
+          .catch((err) => {
+            this.$emit("deleteComplete");
+          });
     },
     editItem(item) {
       this.$emit("editItem", item);
@@ -196,9 +202,11 @@ export default {
             this.$emit('fetchData');
             this.editItemData.showModal = false;
             this.formServerErrors = {};
+            this.$emit("editComplete");
           })
           .catch((err) => {
             this.formServerErrors = err.response.data;
+            this.$emit("editComplete");
           });
     },
   },

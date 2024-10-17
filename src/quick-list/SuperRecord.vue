@@ -1,25 +1,47 @@
 <template>
   <div>
-    <template v-if="filteredChildRelations.length">
-
+    <div>
       <!--      <pre>{{headers}}</pre>-->
       <q-tabs
           v-model="activeTab"
           align="left"
+          v-if="this.allowedTabs.length !== 1"
       >
-        <q-tab :name="'tab'"> Overview </q-tab>
-        <q-tab :name="'special-tab-map'" v-if="someChildrenCanBeMapped"> Map </q-tab>
-        <q-tab :name="'special-tab-calendar'" v-if="someChildrenCanBeCalendared"> Calendar </q-tab>
+        <q-tab
+            :name="'tab-overview'"
+            v-if="this.allowedTabs.length === 0 || this.allowedTabs.includes('overview')"
+            data-name="overview"
+        >
+          Overview
+        </q-tab>
+        <q-tab
+            :name="'tab-map'"
+            v-if="someChildrenCanBeMapped && (this.allowedTabs.length === 0 || this.allowedTabs.includes('map'))"
+            data-name="map"
+        >
+          Map
+        </q-tab>
+        <q-tab
+            :name="'tab-calendar'"
+            v-if="someChildrenCanBeCalendared && (this.allowedTabs.length === 0 || this.allowedTabs.includes('calendar'))"
+            data-name="calendar"
+        >
+          Calendar
+        </q-tab>
         <q-tab
             v-for="(relation, index) in filteredChildRelations"
             :key="index"
             :name="'tab-' + index"
+            :data-name="relation.field.name"
         >
           {{ relation.field.label }}
         </q-tab>
       </q-tabs>
-      <q-tab-panels v-model="activeTab">
-        <q-tab-panel name="tab">
+      <q-tab-panels v-model="activeTab" :class="this.allowedTabs.length == 1 ? 'SuperRecorSingleTabOnly' : ''">
+        <q-tab-panel
+            name="tab-overview"
+            v-if="this.allowedTabs.length === 0 || this.allowedTabs.includes('overview')"
+        >
           <template v-if="!loading">
             <OverviewTab
                 :item="item"
@@ -36,12 +58,14 @@
             </OverviewTab>
           </template>
           <template v-else>
-            Loading...
+
+            <div class="text-center q-pa-md">Loading...</div>
           </template>
         </q-tab-panel>
 
         <q-tab-panel
-            :name="'special-tab-calendar'"
+            :name="'tab-calendar'"
+            v-if="someChildrenCanBeCalendared && (this.allowedTabs.length === 0 || this.allowedTabs.includes('calendar'))"
         >
           <CalendarPolyContentWrapper
               :configsCollection="configsCollection"
@@ -50,7 +74,8 @@
           />
         </q-tab-panel>
         <q-tab-panel
-            :name="'special-tab-map'"
+            :name="'tab-map'"
+            v-if="someChildrenCanBeMapped && (this.allowedTabs.length === 0 || this.allowedTabs.includes('map'))"
         >
           ...
         </q-tab-panel>
@@ -73,27 +98,7 @@
           </SuperTable>
         </q-tab-panel>
       </q-tab-panels>
-    </template>
-    <template v-else>
-      <template v-if="!loading">
-        <OverviewTab
-            :item="item"
-            :superOptions="superOptions"
-            :templateOverview="templateOverview"
-            :filteredChildRelations="filteredChildRelations"
-            :childRelations="childRelations"
-            @editItem="editItem"
-            @deleteItem="deleteItem"
-        >
-          <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-            <slot :name="slotName" v-bind="slotProps"></slot>
-          </template>
-        </OverviewTab>
-      </template>
-      <template v-else>
-        <div class="text-center q-pa-md">Loading...</div>
-      </template>
-    </template>
+    </div>
 
     <template v-if="canEdit">
 
@@ -164,10 +169,10 @@ export default {
       type: Object,
       default: {},
     },
-    hideRelations: {
-      type: Boolean,
+    allowedTabs: {
+      type: Array,
       default() {
-        return false;
+        return [];
       },
     },
     templateOverview: {
@@ -211,7 +216,7 @@ export default {
         showModal: false,
         data: null,
       },
-      activeTab: 'tab',
+      activeTab: 'tab-overview',
       loading: true,
       initialLoadHappened: false,
       item: {},
@@ -327,11 +332,14 @@ export default {
     },
     filteredChildRelations() {
       let result = [];
-      if (!this.hideRelations){
-        for (const childRelation of this.childRelations) {
-          if (!this.fieldsUsedInOverview.includes(childRelation.field.name)) {
-            result.push(childRelation);
-          }
+      if (!this.allowedTabs){
+      }
+      for (const childRelation of this.childRelations) {
+        if (
+            !this.fieldsUsedInOverview.includes(childRelation.field.name)
+            && (this.allowedTabs.length === 0 || this.allowedTabs.includes(childRelation.field.name))
+        ) {
+          result.push(childRelation);
         }
       }
       return result;
@@ -434,6 +442,9 @@ export default {
     },
   },
   mounted() {
+    if(this.allowedTabs.length){
+      this.activeTab = `tab-${this.allowedTabs[0]}`
+    }
     this.fetchData();
   },
   watch: {
@@ -453,4 +464,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss">
+.SuperRecorSingleTabOnly {
+  .q-tab-panel {
+    padding: 0;
+  }
+}
+</style>

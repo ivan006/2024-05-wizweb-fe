@@ -1,19 +1,34 @@
 <template>
   <div>
     <div v-if="loading">
-      Loading...
+
+      <div class="text-center q-pa-md">Loading...</div>
     </div>
     <template v-else>
       <CreateButtonWithDropDowns
           :childRelations="childRelations"
-          @create-item=""
+          @create-item="createItem"
           :fetchData="fetchData"
           :parentKeyValuePair="parentKeyValuePair"
       />
       <SuperCalendar
+          ref="SuperCalendar"
+          @editItem="editItem"
+          @deleteItem="deleteItem"
           :loading="loading"
           :mixedConfigs="mergedConfigs"
       />
+
+      <template v-for="(childRelation, index) in childRelations">
+        <CrudModal
+            @deleteComplete="actionComplete"
+            @editComplete="actionComplete"
+            @fetchData="fetchData(childRelation, index)"
+            :ref="`CrudModalRef${index}`"
+            :superOptions="childRelation.superOptions"
+            :parentKeyValuePair="parentKeyValuePair(childRelation)"
+        />
+      </template>
     </template>
   </div>
 </template>
@@ -21,11 +36,13 @@
 <script>
 import SuperCalendar from "./SuperCalendar.vue";
 import {Helpers} from "../index";
-import CreateButtonWithDropDowns from "./CreateButtonWithDropDowns.vue"; // Adjust path as needed
+import CreateButtonWithDropDowns from "./CreateButtonWithDropDowns.vue";
+import CrudModal from "./CrudModal.vue"; // Adjust path as needed
 
 export default {
   name: "CalendarPolyContentWrapper",
   components: {
+    CrudModal,
     CreateButtonWithDropDowns,
     SuperCalendar,
   },
@@ -96,11 +113,11 @@ export default {
             superOptions: childRelation.superOptions,
 
             unClickable: this.configsCollection[relatedModel.name]?.clickRow || (()=>{}),
-            events: {
-              clickRow: this.configsCollection[relatedModel.name]?.clickRow || (()=>{}),
-              editItem: this.configsCollection[relatedModel.name]?.editItem || (()=>{}),
-              deleteItem: this.configsCollection[relatedModel.name]?.deleteItem || (()=>{}),
-            },
+            // events: {
+            //   clickRow: this.configsCollection[relatedModel.name]?.clickRow || (()=>{}),
+            //   editItem: this.configsCollection[relatedModel.name]?.editItem || (()=>{}),
+            //   deleteItem: this.configsCollection[relatedModel.name]?.deleteItem || (()=>{}),
+            // },
             templateListCalendar: this.configsCollection[relatedModel.name]?.templateListCalendar || {},
           });
         }
@@ -118,7 +135,18 @@ export default {
     this.fetchAllModels();
   },
   methods: {
-
+    actionComplete(){
+      this.$refs.SuperCalendar.viewItemData.showModal = false
+    },
+    createItem(e){
+      this.$refs[`CrudModalRef${e}`][0].createItem()
+    },
+    editItem(item, e){
+      this.$refs[`CrudModalRef${e}`][0].editItem(item)
+    },
+    deleteItem(item, e){
+      this.$refs[`CrudModalRef${e}`][0].deleteItem(item)
+    },
     async fetchData(childRelation, index) {
       try {
         const results = await this.fetchItem(childRelation)

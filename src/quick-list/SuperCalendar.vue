@@ -72,10 +72,10 @@
               isSummary
               :superOptions="activeItemAndType.superOptions"
               :template="activeItemAndType.templateListGrid"
-              @editItem="activeItemAndType.events.editItem"
-              @deleteItem="activeItemAndType.events.deleteItem"
+              @editItem="(e)=>{$emit('editItem', e, this.viewItemData.configIndex)}"
+              @deleteItem="(e)=>{$emit('deleteItem', e, this.viewItemData.configIndex)}"
+              @clickRow="(e)=>{$emit('clickRow', null, e, this.viewItemData.configIndex)}"
               :unClickable="activeItemAndType.unClickable"
-              @clickRow="activeItemAndType.events.clickRow"
           />
         </template>
         <template v-else>
@@ -83,10 +83,10 @@
               :item="viewItemData.data"
               :maxFields="6"
               :superOptions="activeItemAndType.superOptions"
-              @editItem="activeItemAndType.events.editItem"
-              @deleteItem="activeItemAndType.events.deleteItem"
+              @editItem="(e)=>{$emit('editItem', e, this.viewItemData.configIndex)}"
+              @deleteItem="(e)=>{$emit('deleteItem', e, this.viewItemData.configIndex)}"
+              @clickRow="(e)=>{$emit('clickRow', null, e, this.viewItemData.configIndex)}"
               :unClickable="activeItemAndType.unClickable"
-              @clickRow="activeItemAndType.events.clickRow"
           />
         </template>
       </q-card>

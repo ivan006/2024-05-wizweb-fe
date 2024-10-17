@@ -2,6 +2,7 @@
   <div>
     <!--@click="emitCreateItem"-->
     <q-btn-dropdown
+        v-model="menu"
         :disable="!canEdit"
         outline
         class="q-mb-md"
@@ -22,14 +23,6 @@
     <q-tooltip v-if="canCreateMsg.length" bottom :disable="canCreatePart2">
       <span>{{ canCreateMsg }}</span>
     </q-tooltip>
-    <templace v-for="(modelType, index) in modelTypes">
-      <CrudModal
-          @fetchData="this.fetchData(modelType.meta, index)"
-          :ref="`CrudModalRef${index}`"
-          :superOptions="modelType.meta.superOptions"
-          :parentKeyValuePair="parentKeyValuePair(modelType.meta)"
-      />
-    </templace>
   </div>
 </template>
 
@@ -45,10 +38,6 @@ export default {
   },
   props: {
     parentKeyValuePair: {
-      type: Function,
-      default: ()=>{},
-    },
-    fetchData: {
       type: Function,
       default: ()=>{},
     },
@@ -81,6 +70,11 @@ export default {
     //   ],
     // },
   },
+  data(){
+    return {
+      menu: false,
+    }
+  },
   computed: {
     modelTypes(){
       const result = []
@@ -99,20 +93,12 @@ export default {
   },
   methods: {
 
-    filters(relation) {
-      const parentKeyValuePair = this.parentKeyValuePair(relation)
-
-      // console.log('parentKeyValuePair')
-      // console.log(parentKeyValuePair)
-      return {
-        [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
-      };
-    },
     emitCreateItem(index) {
-      console.log( index)
-      console.log( `CrudModalRef${index}`)
-      console.log( this.$refs[`CrudModalRef${index}`][0])
-      this.$refs[`CrudModalRef${index}`][0].createItem()
+      // console.log( index)
+      // console.log( `CrudModalRef${index}`)
+      // console.log( this.$refs[`CrudModalRef${index}`][0])
+      // this.$refs[`CrudModalRef${index}`][0].createItem()
+      this.menu = false
       this.$emit('create-item', index);
     },
   },
