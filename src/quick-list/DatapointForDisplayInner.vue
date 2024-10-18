@@ -44,6 +44,11 @@
         </q-card-section>
       </q-card>
     </template>
+    <template v-else-if="header.usageType.startsWith('htmlField')">
+      <div
+          v-html="item[header.field]"
+      />
+    </template>
     <template v-else-if="header.usageType == 'actions'">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
         <q-btn

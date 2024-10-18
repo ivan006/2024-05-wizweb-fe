@@ -202,44 +202,23 @@
       </template>
     </template>
     <template v-else-if="field.usageType.startsWith('htmlField')">
-
-      <template v-if="modelValue && modelValue.length">
-        <!-- Display the HTML content with the Quasar WYSIWYG HTML editor -->
-        <q-editor
-            :modelValue="modelValue"
-            @update:modelValue="updateModelValue"
-            :toolbar="[
+      <q-editor
+          :modelValue="modelValue"
+          @update:modelValue="updateModelValue"
+          :toolbar="[
               ['bold', 'italic', 'underline', 'strike'],
               ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
               ['link', 'image', 'hr'],
               ['undo', 'redo']
             ]"
-            :label="compLabel"
-            :error="!!compError"
-            :error-message="compError"
-            dense
-            :placeholder="compPlaceholder"
-            :rules="field.meta.rules"
-            filled
-        />
-      </template>
-      <template v-else>
-        <q-editor
-            :modelValue="modelValue"
-            @update:modelValue="updateModelValue"
-            :toolbar="[
-              ['bold', 'italic', 'underline', 'strike'],
-              ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
-              ['link', 'image', 'hr'],
-              ['undo', 'redo']
-            ]"
-            placeholder="Type some HTML here..."
-            dense
-            :placeholder="compPlaceholder"
-            :rules="field.meta.rules"
-            filled
-        />
-      </template>
+          :label="compLabel"
+          :error="!!compError"
+          :error-message="compError"
+          dense
+          :placeholder="compPlaceholder"
+          :rules="field.meta.rules"
+          filled
+      />
     </template>
     <template v-else-if="field.usageType.startsWith('staticLookup') && field.fieldExtras.usageTypeExtras?.options">
       <q-select

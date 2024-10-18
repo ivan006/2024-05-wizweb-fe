@@ -620,7 +620,7 @@ export default {
       },
     },
     selectHideBottomSpace: {
-      type: String,
+      type: Boolean,
       default() {
         return false;
       },

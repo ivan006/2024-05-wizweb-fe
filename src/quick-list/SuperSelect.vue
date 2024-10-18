@@ -90,7 +90,7 @@ export default {
   name: "SuperSelect",
   props: {
     hideBottomSpace: {
-      type: String,
+      type: Boolean,
       default() {
         return false;
       },
