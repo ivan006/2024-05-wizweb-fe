@@ -73,6 +73,12 @@ class FieldUsageTypes {
     static ownerApprovedByProviderType() {
         return 'ownerApprovedByProviderType'
     }
+    static fileImageType() {
+        return 'fileImageType'
+    }
+    static htmlField() {
+        return 'htmlField'
+    }
 }
 
 export default FieldUsageTypes
