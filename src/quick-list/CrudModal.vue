@@ -129,9 +129,12 @@ export default {
           {},
           headers
       )
-          .then(() => {
+          .then((response) => {
 
-
+            // hook to go here
+            if (this.superOptions.model.hooks?.createComplete){
+              this.superOptions.model.hooks.createComplete(response)
+            }
             this.saving = false
 
             // if (!inititalItemLength) {

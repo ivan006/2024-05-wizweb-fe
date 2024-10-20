@@ -9,6 +9,7 @@
       </template>
       <template v-else>
         <CreateButton
+            :class="noBorder ? 'q-ml-md' : ''"
             v-if="superOptions.model.rules.creatable()"
             :modelFields="modelFields"
             @createItem="createItem"
@@ -281,6 +282,7 @@
             <!--:pagination="options"-->
             <!--@update:pagination="updatePagination"-->
             <q-pagination
+                :class="noBorder ? 'q-ml-md' : ''"
                 v-if="!hidePagination"
                 v-model="options.page"
                 @update:modelValue="pageUpdate"
