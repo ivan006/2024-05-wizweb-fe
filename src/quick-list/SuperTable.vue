@@ -283,7 +283,7 @@
             <!--@update:pagination="updatePagination"-->
             <q-pagination
                 :class="noBorder ? 'q-ml-md' : ''"
-                v-if="!hidePagination"
+                v-if="!hidePagination && items.length"
                 v-model="options.page"
                 @update:modelValue="pageUpdate"
                 :max="maxPages"

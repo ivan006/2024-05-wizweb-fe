@@ -2,6 +2,7 @@
   <div>
     <!--<pre>{{flattenedHeadersHideMapField}}</pre>-->
     <q-table
+        v-if="items.length"
         :table-row-class-fn="tableRowClassFn"
         class="qTable"
         :rows="items"

@@ -1,54 +1,59 @@
 <template>
   <div>
-    <div class="row q-col-gutter-md justify-center">
-      <template v-for="item in items" :key="item.name">
-        <template
-            v-if="
-                templateListGrid &&
-                templateListGrid.cols
-              "
-        >
-          <div :class="colClasses(templateListGrid.colWidth ? templateListGrid.colWidth : 3)" >
-            <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
-              <RecordFieldsForDisplayCustom
-                  :item="item"
-                  @clickRow="clickRow"
-                  :maxFields="6"
-                  :childRelations="[]"
-                  isSummary
-                  :superOptions="superOptions"
-                  :template="templateListGrid"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
-                  :unClickable="unClickable || !superOptions.model.rules.readable(item)"
-              />
-            </div>
-          </div>
-        </template>
-        <template v-else>
-          <div :class="`col-12 col-md-3 `">
-            <div class="q-card q-mx-auto" style="height: 100%">
-              <RecordFieldsForDisplayGeneric
-                  :item="item"
-                  @clickRow="clickRow"
-                  :maxFields="6"
-                  :superOptions="superOptions"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
-                  :unClickable="unClickable"
-              />
-            </div>
-          </div>
-        </template>
-      </template>
-    </div>
+
     <template v-if="!items.length">
       <template v-if="loading">
         <div class="text-center q-pa-md">Loading...</div>
       </template>
       <template v-else>
-        <div class="text-center q-pa-md">No data available</div>
+        <div class="text-center q-pa-md">No items</div>
       </template>
+    </template>
+    <template v-else>
+      <div
+          class="row q-col-gutter-md justify-center"
+      >
+        <template v-for="item in items" :key="item.name">
+          <template
+              v-if="
+                templateListGrid &&
+                templateListGrid.cols
+              "
+          >
+            <div :class="colClasses(templateListGrid.colWidth ? templateListGrid.colWidth : 3)" >
+              <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
+                <RecordFieldsForDisplayCustom
+                    :item="item"
+                    @clickRow="clickRow"
+                    :maxFields="6"
+                    :childRelations="[]"
+                    isSummary
+                    :superOptions="superOptions"
+                    :template="templateListGrid"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                    :unClickable="unClickable || !superOptions.model.rules.readable(item)"
+                />
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div :class="`col-12 col-md-3 `">
+              <div class="q-card q-mx-auto" style="height: 100%">
+                <RecordFieldsForDisplayGeneric
+                    :item="item"
+                    @clickRow="clickRow"
+                    :maxFields="6"
+                    :superOptions="superOptions"
+                    @editItem="editItem"
+                    @deleteItem="deleteItem"
+                    :unClickable="unClickable"
+                />
+              </div>
+            </div>
+          </template>
+        </template>
+      </div>
     </template>
   </div>
 </template>
