@@ -1,7 +1,7 @@
 <template>
   <q-card class="">
     <q-card-section>
-      <div class="text-h6">{{titlePrefix}} {{ superOptions.model?.entityHumanName ? superOptions.model?.entityName : "Item" }}</div>
+      <div class="text-h6">{{titlePrefix}} {{ superOptions.model?.entityHumanName ? superOptions.model?.entityHumanName : "Item" }}</div>
     </q-card-section>
     <q-card-section>
       <q-form ref="editForm">

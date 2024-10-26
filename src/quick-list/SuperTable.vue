@@ -1,25 +1,5 @@
 <template>
   <div>
-    <div
-        v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
-         class="q-mb-md"
-    >
-      <template v-if="!!$slots.create">
-        <slot name="create" />
-      </template>
-      <template v-else>
-        <CreateButton
-            :class="noBorder ? 'q-ml-md' : ''"
-            v-if="superOptions.model.rules.creatable()"
-            :modelFields="modelFields"
-            @createItem="createItem"
-            :model="model"
-            :superOptions="superOptions"
-            :template="templateForm"
-            :createButtonText="createButtonText"
-        />
-      </template>
-    </div>
     <template v-if="!justCreateButton">
 
       <template v-if="isForSelectingRelation">
@@ -69,13 +49,35 @@
       </template>
       <template v-else>
         <template v-if="shouldWeShowTopBar()">
-          <div class="">
+          <div :class="noBorder ? 'q-mx-md' : ''">
 
             <DestructableExpansionPanels
                 :destroy="!quickListsIsMobile"
                 title="Settings"
             >
               <div class="row items-center wrap">
+
+                <div
+                    v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
+
+                    style="margin-bottom: 20px;"
+                    class="q-mr-sm"
+                >
+                  <template v-if="!!$slots.create">
+                    <slot name="create" />
+                  </template>
+                  <template v-else>
+                    <CreateButton
+                        v-if="superOptions.model.rules.creatable()"
+                        :modelFields="modelFields"
+                        @createItem="createItem"
+                        :model="model"
+                        :superOptions="superOptions"
+                        :template="templateForm"
+                        :createButtonText="createButtonText"
+                    />
+                  </template>
+                </div>
                 <template v-if="viewAs.show.length">
                   <div class="q-mr-sm">
                     <!--<q-select-->
@@ -282,7 +284,7 @@
             <!--:pagination="options"-->
             <!--@update:pagination="updatePagination"-->
             <q-pagination
-                :class="noBorder ? 'q-ml-md' : ''"
+                :class="noBorder ? 'q-mx-md' : ''"
                 v-if="!hidePagination && items.length"
                 v-model="options.page"
                 @update:modelValue="pageUpdate"

@@ -8,7 +8,7 @@
       >
         <!--:parentKeyValuePair="parentKeyValuePair"-->
         <CreateEditForm
-            titlePrefix="New"
+            :titlePrefix="`New`"
             v-if="createItemData.showModal"
             v-model="createItemData.data"
             @submit="createItemSubmit"
