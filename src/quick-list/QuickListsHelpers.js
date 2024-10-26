@@ -196,6 +196,7 @@ class QuickListsHelpers {
                     result.push({
                         ...field,
                         meta: {
+                            important: field.important,
                             ...field.meta,
                             hideField: false,
                         }
@@ -205,6 +206,7 @@ class QuickListsHelpers {
                     result.push({
                         ...field,
                         meta: {
+                            important: field.important,
                             ...field.meta,
                             hideField: true,
                         }
@@ -215,6 +217,7 @@ class QuickListsHelpers {
                     result.push({
                         ...field,
                         meta: {
+                            important: field.important,
                             ...field.meta,
                             hideField: false,
                         }
@@ -223,6 +226,7 @@ class QuickListsHelpers {
                     result.push({
                         ...field,
                         meta: {
+                            important: field.important,
                             ...field.meta,
                             hideField: true,
                         }

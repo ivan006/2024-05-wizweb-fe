@@ -265,14 +265,18 @@ export default {
 
       } else {
         for (const header of this.superOptions.headers) {
-          result.push(header);
-          if (header.headerParentFields) {
-            for (const childHeader of header.headerParentFields) {
-              result.push({
-                // isChildOf: header,
-                ...childHeader,
-                userConfig: {}
-              });
+          if (header.usageType !== "relChildrenNormal"){
+            result.push(header);
+            if (header.headerParentFields) {
+              for (const childHeader of header.headerParentFields) {
+                if(childHeader.meta.important){
+                  result.push({
+                    // isChildOf: header,
+                    ...childHeader,
+                    userConfig: {}
+                  });
+                }
+              }
             }
           }
         }
@@ -282,7 +286,6 @@ export default {
     },
     flattenedHeadersHideMapField() {
       let result = [];
-
       for (const header of this.flattenedHeaders) {
         if (!header.meta || !header.meta.hideField){
 
