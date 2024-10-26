@@ -174,7 +174,6 @@ export default {
         page: this.options.page,
       };
 
-
       return relatedModel.FetchAll(
           [],
           {
@@ -196,9 +195,11 @@ export default {
 
       // console.log('parentKeyValuePair')
       // console.log(parentKeyValuePair)
-      return {
+      const result = {
         [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
       };
+
+      return result
     },
     parentKeyValuePair(relation) {
       const fKey = relation.field.meta.field.foreignKey
@@ -207,7 +208,7 @@ export default {
         parentFKey: fKey,
         parentFVal: this.parentPrimaryKey,
       }
-
+      
       return result
     },
     async fetchAllModels() {

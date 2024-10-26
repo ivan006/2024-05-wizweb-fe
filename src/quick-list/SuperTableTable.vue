@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--<pre>{{flattenedHeadersHideMapField}}</pre>-->
+    <!--<pre>{{console.log(flattenedHeadersHideMapField)}}</pre>-->
     <q-table
         v-if="items.length"
         :table-row-class-fn="tableRowClassFn"

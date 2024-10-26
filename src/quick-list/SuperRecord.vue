@@ -70,7 +70,7 @@
           <CalendarPolyContentWrapper
               :configsCollection="configsCollection"
               :childRelations="childRelations"
-              :parentPrimaryKey="item[model.primaryKey]"
+              :parentPrimaryKey="this.id"
           />
         </q-tab-panel>
         <q-tab-panel
