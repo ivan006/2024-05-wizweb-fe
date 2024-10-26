@@ -17,6 +17,7 @@
             style="width: 700px; max-width: calc(-32px + 100vw);"
             :template="templateForm"
             :formServerErrors="formServerErrors"
+            :submitting="submitting"
         />
       </q-dialog>
 
