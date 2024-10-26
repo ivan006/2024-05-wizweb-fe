@@ -71,10 +71,15 @@
 
     </q-table>
 
-    <template v-if="!items.length && !loading">
-      <div class="text-center q-pa-md">
-        No items
-      </div>
+    <template v-if="!items.length">
+      <template v-if="loading">
+        <div class="text-center q-pa-md">Loading...</div>
+      </template>
+      <template v-else>
+        <div class="text-center q-pa-md">
+          No items
+        </div>
+      </template>
     </template>
   </div>
 </template>

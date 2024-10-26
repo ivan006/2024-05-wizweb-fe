@@ -82,8 +82,8 @@ export default {
 
         if (childRelation.canBeCalendared){
           result.push({
-            label: childRelation.field.meta.field.related.name,
-            value: childRelation.field.meta.field.related.name,
+            label: childRelation.field.meta.field.related.entityHumanName,
+            value: childRelation.field.meta.field.related.entityHumanName,
             meta: childRelation,
           })
         }

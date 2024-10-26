@@ -208,7 +208,7 @@ export default {
         parentFKey: fKey,
         parentFVal: this.parentPrimaryKey,
       }
-      
+
       return result
     },
     async fetchAllModels() {

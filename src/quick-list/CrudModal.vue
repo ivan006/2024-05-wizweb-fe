@@ -35,6 +35,7 @@
               :template="templateForm"
               style="width: 700px; max-width: calc(-32px + 100vw);"
               :formServerErrors="formServerErrors"
+              :submitting="submitting"
           />
         </q-dialog>
 
@@ -72,7 +73,7 @@ export default {
   },
   data(){
     return {
-      saving: false,
+      submitting: false,
       formServerErrors: {},
       deleteItemData: {
         showModal: false,
@@ -98,10 +99,10 @@ export default {
       this.createItemData.showModal = true;
     },
     createItemSubmit() {
-      if (this.saving){
+      if (this.submitting){
         return
       }
-      this.saving = true
+      this.submitting = true
       let payload = QuickListsHelpers.preparePayload(
           this.createItemData.data,
           this.superOptions.modelFields,
@@ -135,10 +136,10 @@ export default {
             if (this.superOptions.model.hooks?.createComplete){
               this.superOptions.model.hooks.createComplete(response)
             }
-            this.saving = false
+            this.submitting = false
 
             // if (!inititalItemLength) {
-            //   if (!this.loading) {
+            //   if (!this.submitting) {
             //   }
             // }
 
@@ -155,7 +156,7 @@ export default {
             this.formServerErrors = {};
           })
           .catch((err) => {
-            this.saving = false
+            this.submitting = false
             this.formServerErrors = err.response.data;
           });
 

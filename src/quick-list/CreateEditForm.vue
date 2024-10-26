@@ -43,7 +43,7 @@
         </div>
         <div class="text-right">
           <q-btn flat label="Cancel" @click="cancel" />
-          <q-btn flat label="Save" color="primary" @click="editItemSubmit" :loading="loading" />
+          <q-btn flat label="Save" color="primary" @click="editItemSubmit" :loading="loading || submitting" />
         </div>
       </div>
     </q-card-actions>
@@ -92,6 +92,12 @@ export default {
       type: Object,
       default() {
         return {};
+      },
+    },
+    submitting: {
+      type: Boolean,
+      default() {
+        return false;
       },
     },
     titlePrefix: {
