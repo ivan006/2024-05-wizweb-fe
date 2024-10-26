@@ -1040,7 +1040,8 @@ export default {
           ) ||
           this.model.titleKey !== this.model.primaryKey ||
           Object.keys(this.downloadables).includes('csv') ||
-          Object.keys(this.downloadables).includes('pdf')
+          Object.keys(this.downloadables).includes('pdf') ||
+          this.canCreateComputed && this.canEdit && !this.hideCreate && !this.isForSelectingRelation
       ){
         result = true
       }
