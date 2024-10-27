@@ -3,7 +3,11 @@
     <template v-for="(header, index) in superOptions.headers">
       <div
           :key="header.name"
-          v-if="header.field !== 'id' && (index < maxFields || header.usageType === 'actions') && !header.usageType.startsWith('relChildren')"
+          v-if="
+            header.field !== 'id' && (index < maxFields || header.usageType === 'actions') &&
+            !header.usageType.startsWith('relChildren') &&
+            (header.usageType !== 'actions' || superOptions.model.rules.editable(item))
+          "
           class="q-pa-xs q-mb-sm"
           style="min-height: 1.375rem"
       >
