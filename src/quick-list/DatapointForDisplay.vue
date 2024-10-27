@@ -47,6 +47,7 @@
                     hideLabel
                     @editItem="editItem"
                     @deleteItem="deleteItem"
+                    :protectImage="protectImage"
                 />
               </template>
             </component>
@@ -104,6 +105,7 @@
               hideLabel
               @editItem="editItem"
               @deleteItem="deleteItem"
+              :protectImage="protectImage"
           />
         </template>
       </component>
@@ -128,6 +130,12 @@ export default {
       type: Object,
       default() {
         return null;
+      },
+    },
+    protectImage: {
+      type: Boolean,
+      default() {
+        return false;
       },
     },
     hideLabel: {

@@ -33,6 +33,7 @@
                     hideLabel
                     @editItem="editItem"
                     @deleteItem="deleteItem"
+                    protectImage
                 />
                 <!--<DatapointForDisplayInner-->
                 <!--    :isTag="true"-->
@@ -55,6 +56,7 @@
                     hideLabel
                     @editItem="editItem"
                     @deleteItem="deleteItem"
+                    protectImage
                 />
                 <!--<DatapointForDisplayInner-->
                 <!--    :header="header"-->

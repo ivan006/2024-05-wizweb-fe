@@ -23,6 +23,44 @@
       {{ formatTimestamp(item[header.field]) }}
     </template>
     <template v-else-if="header.usageType.startsWith('fileImageType')">
+      <template v-if="protectImage">
+        <q-btn
+            @click.stop="showImageModel = true"
+            flat
+            unelevated
+            icon="image"
+            color="grey"
+        />
+            <!--label="Show Image"-->
+        <q-dialog
+            v-model="showImageModel"
+        >
+          <q-card
+              style="width: 700px; max-width: calc(-32px + 100vw);"
+              flat
+              class="bg-grey-2 "
+          >
+            <q-card-section class="q-pa-sm flex flex-center" >
+              <img
+                  alt="&nbsp;File not found."
+                  :src="`${item[header.field]}`"
+                  style="max-width: 100%;"
+              />
+              <!--<q-img-->
+              <!--    alt="File not found."-->
+              <!--    :src="`${item[header.field]}`"-->
+              <!--    style="width: 100%; height: auto;"-->
+              <!--&gt;-->
+              <!--  <div v-if="!item[header.field]" class="absolute-full text-subtitle2 flex flex-center">-->
+              <!--    Oops, no image found!-->
+              <!--  </div>-->
+              <!--</q-img>-->
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+      </template>
+      <template v-else>
+
       <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
         <q-card-section class="q-pa-sm">
 
@@ -43,6 +81,7 @@
           </q-img>
         </q-card-section>
       </q-card>
+      </template>
     </template>
     <template v-else-if="header.usageType.startsWith('htmlField')">
       <div
@@ -112,7 +151,18 @@ export default {
   name: 'DatapointForDisplayInner',
   components: {
   },
+  data(){
+    return {
+      showImageModel: false,
+    }
+  },
   props: {
+    protectImage: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     isTag: {
       type: Boolean,
       default() {
