@@ -88,7 +88,7 @@
           v-html="item[header.field]"
       />
     </template>
-    <template v-else-if="header.usageType == 'actions'">
+    <template v-else-if="header.usageType == 'actions' && !disabled()">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
         <q-btn
             @click.stop="editItem(item)"
