@@ -16,7 +16,7 @@
       <!-- Quasar Table -->
       <template v-if="!tableRows.length">
         <div class="text-center q-pa-md" style="color: DimGray;">
-          No items
+          Empty
         </div>
       </template>
       <q-table

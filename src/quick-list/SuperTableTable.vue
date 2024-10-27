@@ -78,9 +78,7 @@
         <div class="text-center q-pa-md">Loading...</div>
       </template>
       <template v-else>
-        <div class="text-center q-pa-md">
-          No items
-        </div>
+        <div class="text-center q-pa-md text-grey-5">Empty</div>
       </template>
     </template>
   </div>

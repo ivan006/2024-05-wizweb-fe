@@ -1,7 +1,6 @@
 <template>
   <div>
     <div v-if="loading">
-
       <div class="text-center q-pa-md">Loading...</div>
     </div>
     <template v-else>

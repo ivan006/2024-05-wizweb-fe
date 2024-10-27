@@ -58,7 +58,6 @@
             </OverviewTab>
           </template>
           <template v-else>
-
             <div class="text-center q-pa-md">Loading...</div>
           </template>
         </q-tab-panel>
