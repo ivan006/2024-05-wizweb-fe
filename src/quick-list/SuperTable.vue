@@ -244,7 +244,6 @@
               <!--:id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"-->
               <template v-if="!noBorder">
                 <q-card class="">
-
                     <SuperTableTable
                         ref="SuperTableTableRef"
                         :items="items"
@@ -258,6 +257,7 @@
                         :canEdit="canEdit"
                         @editItem="editItem"
                         @deleteItem="deleteItem"
+                        :loadingError="loadingError"
                     />
                 </q-card>
               </template>
@@ -275,6 +275,7 @@
                     :canEdit="canEdit"
                     @editItem="editItem"
                     @deleteItem="deleteItem"
+                    :loadingError="loadingError"
                 />
               </template>
             </div>
@@ -637,6 +638,7 @@ export default {
   data() {
     return {
       // calendarMode: 'List',
+      loadingError: false,
       search: "",
       years: Array.from(
           {length: 5},
@@ -1137,72 +1139,79 @@ export default {
       });
     },
     async fetchData() {
-      if (!this.activated && this.isForSelectingRelation) return;
 
-      this.loading = true;
-      let rules = [];
-      // everything from here down could be in helper methods
-      if (this.model.rules?.readables) {
-        rules = this.model.rules.readables();
-      }
+      try {
+        if (!this.activated && this.isForSelectingRelation) return;
 
-      let extraHeaderComputed = {};
-      let flagsComputed = {};
-      if (this.model.adapator == "supabase") {
-        extraHeaderComputed = {
-          Prefer: "count=exact",
-        };
-        flagsComputed = {
-          order: "id.desc",
-        };
-      } else if (this.model.adapator == "laravel") {
-        extraHeaderComputed = {};
-        flagsComputed = {
-          sort: `-${this.model.primaryKey}`,
-          // =------------------------------------
-          per_page: this.options.itemsPerPage,
-          page: this.options.page,
-        };
-      }
-      const response = await this.model.FetchAll(
-          // =========================
-          this.relationships,
-          {
-            ...rules,
-            ...flagsComputed,
-            /// -----------------------
-            ...this.fetchFlags,
-          },
-          extraHeaderComputed,
-          {
-            page: this.options.page,
-            limit: this.options.itemsPerPage,
-            //============================
-            filters: this.filtersComp,
-            clearPrimaryModelOnly: false,
-          },
-      );
-
-      // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
-      // this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
-      this.items = response.response.data.data;
-      // console.log("this.items")
-      // console.log(this.items)
-      // this.items = response.response.data.data
-
-      this.loading = false;
-      let count = 0;
-
-      if (this.model.adapator == "supabase") {
-        if (response?.response?.headers?.["content-range"]) {
-          const contentRange = response?.response?.headers?.["content-range"];
-          count = contentRange.split("/")[1];
+        this.loading = true;
+        this.loadingError = false;
+        let rules = [];
+        // everything from here down could be in helper methods
+        if (this.model.rules?.readables) {
+          rules = this.model.rules.readables();
         }
-      } else if (this.model.adapator == "laravel") {
-        count = response.response.data.total;
+
+        let extraHeaderComputed = {};
+        let flagsComputed = {};
+        if (this.model.adapator == "supabase") {
+          extraHeaderComputed = {
+            Prefer: "count=exact",
+          };
+          flagsComputed = {
+            order: "id.desc",
+          };
+        } else if (this.model.adapator == "laravel") {
+          extraHeaderComputed = {};
+          flagsComputed = {
+            sort: `-${this.model.primaryKey}`,
+            // =------------------------------------
+            per_page: this.options.itemsPerPage,
+            page: this.options.page,
+          };
+        }
+        const response = await this.model.FetchAll(
+            // =========================
+            this.relationships,
+            {
+              ...rules,
+              ...flagsComputed,
+              /// -----------------------
+              ...this.fetchFlags,
+            },
+            extraHeaderComputed,
+            {
+              page: this.options.page,
+              limit: this.options.itemsPerPage,
+              //============================
+              filters: this.filtersComp,
+              clearPrimaryModelOnly: false,
+            },
+        );
+
+        // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
+        // this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
+        this.items = response.response.data.data;
+        // console.log("this.items")
+        // console.log(this.items)
+        // this.items = response.response.data.data
+
+        this.loading = false;
+        let count = 0;
+
+        if (this.model.adapator == "supabase") {
+          if (response?.response?.headers?.["content-range"]) {
+            const contentRange = response?.response?.headers?.["content-range"];
+            count = contentRange.split("/")[1];
+          }
+        } else if (this.model.adapator == "laravel") {
+          count = response.response.data.total;
+        }
+        this.itemsLength = count; // Assuming your API returns a total count
+        this.$emit('fetchComplete', this.model.name, this.items);
+      } catch (error) {
+        this.loading = false;
+        this.loadingError = true;
       }
-      this.itemsLength = count; // Assuming your API returns a total count
-      this.$emit('fetchComplete', this.model.name, this.items);
     },
     activateAndFetchData() {
       if (!this.activated && !this.disabled) {

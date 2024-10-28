@@ -72,10 +72,12 @@
 
 
     </q-table>
-
     <template v-if="!items.length">
       <template v-if="loading">
         <div class="text-center q-pa-md">Loading...</div>
+      </template>
+      <template v-else-if="loadingError">
+        <div class="text-center q-pa-md text-grey-5">Loading Error</div>
       </template>
       <template v-else>
         <div class="text-center q-pa-md text-grey-5">Empty</div>
@@ -125,6 +127,12 @@ export default {
       },
     },
     loading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+    loadingError: {
       type: Boolean,
       default() {
         return false;
