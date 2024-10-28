@@ -283,14 +283,18 @@
             <!--@clickRow="clickRow"-->
             <!--:pagination="options"-->
             <!--@update:pagination="updatePagination"-->
-            <q-pagination
-                :class="noBorder ? 'q-mx-md' : ''"
-                v-if="!hidePagination && items.length"
-                v-model="options.page"
-                @update:modelValue="pageUpdate"
-                :max="maxPages"
-                input
-            />
+            <div class="flex flex-center">
+
+              <q-pagination
+                  class="q-mt-sm"
+                  :class="noBorder ? 'q-mx-md' : ''"
+                  v-if="!hidePagination && items.length"
+                  v-model="options.page"
+                  @update:modelValue="pageUpdate"
+                  :max="maxPages"
+                  input
+              />
+            </div>
             <!--@update:rows-per-page="updateRowsPerPage"-->
           </template>
           <template v-if="activeTab == 'grid'">
