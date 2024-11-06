@@ -60,12 +60,20 @@
 </template>
 
 <script>
-import CreateEditForm from "./CreateEditForm.vue";
+// import CreateEditForm from "./CreateEditForm.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
+import {defineAsyncComponent} from "vue";
+
+const AsyncCreateEditFormComponent = defineAsyncComponent(() =>
+    import('./CreateEditForm.vue')
+);
 
 export default {
   name: "CrudModal",
-  components: {CreateEditForm},
+  components: {
+    CreateEditForm: AsyncCreateEditFormComponent,
+    // CreateEditForm,
+  },
   props: {
     canEdit: false,
     superOptions: {},
