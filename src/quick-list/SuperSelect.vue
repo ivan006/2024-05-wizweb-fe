@@ -235,7 +235,7 @@ export default {
     itemsComp() {
       let result = [];
       if (!this.disabled) {
-        result.push({ label: "", id: null });  // Empty item for search input
+        result.push({ label: "", id: null });  // None item for search input
         if (this.allowAll) {
           result.push({ label: "All", id: null });
         }
@@ -254,7 +254,7 @@ export default {
         for (const item of this.items) {
           result.push({ label: item[this.model.titleKey], id: item[this.model.primaryKey] });
         }
-        result.push({ label: "", id: null });  // Empty item for search input
+        result.push({ label: "", id: null });  // None item for search input
         // result = [...result, ...this.items.map(item => ({
         //   label: item[this.model.titleKey],
         //   id: item[this.model.primaryKey]

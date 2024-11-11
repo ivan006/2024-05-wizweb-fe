@@ -43,7 +43,7 @@
 
     <template #day="{ scope: { timestamp } }">
       <template v-if="!getEvents(timestamp.date).length">
-        <div class="text-center q-pa-md text-grey-5">Empty</div>
+        <div class="text-center q-pa-md text-grey-5">None</div>
       </template>
       <template v-for="event in getEvents(timestamp.date)" :key="event.id">
         <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">

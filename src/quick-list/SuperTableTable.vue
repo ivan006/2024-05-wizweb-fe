@@ -80,7 +80,7 @@
         <div class="text-center q-pa-md text-grey-5">Loading Error</div>
       </template>
       <template v-else>
-        <div class="text-center q-pa-md text-grey-5">Empty</div>
+        <div class="text-center q-pa-md text-grey-5">None</div>
       </template>
     </template>
   </div>

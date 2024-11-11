@@ -1,7 +1,7 @@
 <template>
   <div>
     <template v-if="!item || (item.constructor === Object  && Object.keys(item).length === 0)  ">
-      <div class="text-center q-pa-md text-grey-5">Empty</div>
+      <div class="text-center q-pa-md text-grey-5">None</div>
     </template>
     <template v-else>
       <template v-if="templateOverview && templateOverview.cols">

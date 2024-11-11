@@ -5,7 +5,7 @@
         <div class="text-center q-pa-md">
           <!--No data available-->
           
-          Empty
+          None
         </div>
       </template>
       <MyGoogleMap
