@@ -229,7 +229,7 @@ export default {
       );
     },
     modelValueComp() {
-      const foundItem = this.items.find(item => item.id === this.modelValue);
+      const foundItem = this.itemsComp.find(item => item.id === this.modelValue);
       return foundItem ? this.modelValue : null;
     },
     itemsComp() {
