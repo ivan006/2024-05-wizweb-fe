@@ -7,7 +7,7 @@
         :error-message="''"
         @click="showDialog = true"
         readonly
-        outlined
+        filled
         dense
     ></q-input>
 

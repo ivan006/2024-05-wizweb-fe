@@ -1,30 +1,37 @@
 <template>
   <div>
     <template v-for="field in superOptions.modelFields" :key="field.name">
-      <template v-if="superOptions.model.primaryKey !== field.name && !field.meta.hideField">
+      <template v-if="
+      superOptions.model.primaryKey !== field.name
+      && !field.meta.hideField
+      && !['relLookupNormal','relChildrenNormal'].includes(field.usageType)
+      && !field.usageType.startsWith('relLookupMap')
+        && !field.usageType.startsWith('relForeignKeyMap')
+        && !field.usageType.startsWith('mapExtraGeo')
+        && !field.usageType.startsWith('mapExtraPlace')
+    ">
         <div
           class="q-mb-sm"
          v-show="!(typeof field.fieldExtras.autoFill === 'function')"
         >
-          <template v-if="!['relLookupNormal','relChildrenNormal'].includes(field.usageType) ">
-            <div v-if="rendered && !field.usageType.startsWith('relLookupMapExtraRel')" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
-              {{ field.label }}:
-            </div>
-            <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->
-            <DatapointForEditInner
-                @superTableMounted="rendered = true"
-                :item="itemData"
-                :modelValue="itemData[field.name]"
-                @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
-                :superOptions="superOptions"
-                @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
-                :field="field"
-                :formServerErrors="formServerErrors"
-                :itemErrors="itemErrors"
-                hideLabel
-                @placeSelected="(e)=>{$emit('placeSelected', e)}"
-            />
-          </template>
+
+          <div v-if="rendered && !field.usageType.startsWith('relLookupMapExtraRel')" class="text-subtitle2" :style="`visibility: ${field.label.length ? 'visible' : 'hidden'}`">
+            {{ field.label }}:
+          </div>
+          <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->
+          <DatapointForEditInner
+              @superTableMounted="rendered = true"
+              :item="itemData"
+              :modelValue="itemData[field.name]"
+              @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
+              :superOptions="superOptions"
+              @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
+              :field="field"
+              :formServerErrors="formServerErrors"
+              :itemErrors="itemErrors"
+              hideLabel
+              @placeSelected="(e)=>{$emit('placeSelected', e)}"
+          />
         </div>
       </template>
     </template>
