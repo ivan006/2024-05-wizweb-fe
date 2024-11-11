@@ -1,6 +1,5 @@
 <template>
   <span :class="isHeading ? 'text-h6' : ''">
-
     <template v-if="typeof header.usageType == 'undefined'"></template>
     <template v-else-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
       <div class="text-caption">
@@ -115,10 +114,16 @@
           style="min-height: 32px; cursor: pointer;"
           @click.stop="clickParent(item?.[header.field], header)"
       >
+
+
         <q-chip
+            class="q-ma-none"
             v-if="item?.[header.field]?.[header.meta.lookupDisplayField]"
         >
-          {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
+
+          <div :title="item?.[header.field]?.[header.meta.lookupDisplayField]" style="overflow: hidden;">
+              {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
+          </div>
         </q-chip>
       </div>
     </template>
@@ -134,7 +139,7 @@
         </div>
       </template>
       <template v-else>
-        <div :title="item[header.field]">
+        <div :title="item[header.field]" style="overflow: hidden;">
           {{ truncateStr(item[header.field]) }}
         </div>
       </template>

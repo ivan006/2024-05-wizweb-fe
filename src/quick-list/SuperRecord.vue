@@ -287,10 +287,9 @@ export default {
             // },
           }
 
-
-
           const headers = QuickListsHelpers.SupaerTableHeaders(
-              field.meta.field.related
+              field.meta.field.related,
+              [this.parentKeyValuePair({field}).parentFKey],
           )
 
           const startfield = Helpers.getFieldFromModelOrParent(headers, 'timeRangeStart');
