@@ -50,7 +50,7 @@
             :isForSelectingRelation="true"
             :canEdit="false"
             :modelValue="modelValue"
-            @update:modelValue="updateModelValue"
+            @update:modelValue="(newValue) => { updateModelValue(newValue); updateForeignKey(newValue); }"
             :model="field.meta.field.parent"
             :rules="[() => true]"
             :modelField="field"
@@ -489,6 +489,9 @@ export default {
       }
     },
     updateModelValue(item){
+      this.$emit('update:modelValue', item)
+    },
+    updateForeignKey(item){
       this.$emit('update:modelValue', item)
     },
     updateStartTime(item) {

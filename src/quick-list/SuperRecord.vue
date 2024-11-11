@@ -309,12 +309,11 @@ export default {
             child.canBeMapped = false
           }
 
-
           child.superOptions = {
             headers,
             modelFields: QuickListsHelpers.computedAttrs(
                 field.meta.field.related,
-                [],
+                [this.parentKeyValuePair({field}).parentFKey],
             ),
             displayMapField: false,
             model: field.meta.field.related,

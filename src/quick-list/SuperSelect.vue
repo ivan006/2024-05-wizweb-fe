@@ -1,7 +1,8 @@
 <template>
   <div>
     <q-select
-        :modelValue="modelValue"
+        ref="selectRef"
+        :modelValue="modelValueComp"
         @update:modelValue="updateValue"
         :options="itemsComp"
         option-label="label"
@@ -227,6 +228,10 @@ export default {
           this.displayMapField
       );
     },
+    modelValueComp() {
+      const foundItem = this.items.find(item => item.id === this.modelValue);
+      return foundItem ? this.modelValue : null;
+    },
     itemsComp() {
       let result = [];
       if (!this.disabled) {
@@ -266,6 +271,9 @@ export default {
     // },
   },
   methods: {
+    hidePopup() {
+      this.$refs.selectRef.hidePopup();
+    },
     pageUpdate(value) {
       this.$emit('update:page', value);
     },

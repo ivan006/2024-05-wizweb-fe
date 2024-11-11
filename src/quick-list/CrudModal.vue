@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    <!--<pre>{{superOptions}}</pre>-->
     <template v-if="superOptions.canEdit">
       <q-dialog
           v-model="createItemData.showModal"
@@ -156,6 +156,7 @@ export default {
 
             // this.fetchData();
             this.$emit('fetchData');
+            this.$emit('createdItem', response.response.data.data);
 
             // After handling, reset formData (if needed)
             this.createItemData.data = {};

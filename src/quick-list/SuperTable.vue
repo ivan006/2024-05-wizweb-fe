@@ -10,6 +10,7 @@
         <!--    :superOptions="superOptions"-->
         <!--/>-->
         <SuperSelect
+            ref="selectRef"
             :forcedFilters="forcedFilters"
             :readonly="disabled"
             :allowAll="allowAll"
@@ -386,9 +387,21 @@
         </div>
       </template>
     </template>
+    <template v-else>
+      <CreateButton
+          v-if="superOptions.model.rules.creatable() && canCreateComputed && !hideCreate"
+          :modelFields="modelFields"
+          @createItem="createItem"
+          :model="model"
+          :superOptions="superOptions"
+          :template="templateForm"
+          :createButtonText="createButtonText"
+      />
+    </template>
     <CrudModal
         :templateForm="templateForm"
         @fetchData="fetchData"
+        @createdItem="createdItem"
         ref="CrudModalRef"
         :superOptions="superOptions"
         :parentKeyValuePair="parentKeyValuePair"
@@ -1105,16 +1118,24 @@ export default {
 
       if (this.isForSelectingRelation) {
         this.highlightedRow = pVal;
-      }
-      // if (!this.isForSelectingRelation && typeof this.model.openRecord === 'function'){
-      //   this.model.openRecord(item[this.pKey]);
-      // }
+      } else {
 
-      if (this.model.rules.readable(item)){
-        this.$emit("clickRow", pVal, item, this.$router);
+        if (this.model.rules.readable(item)){
+          if (typeof this.model.openRecord === 'function'){
+            this.model.openRecord(item[this.pKey], item, this.$router)
+          } else {
+            this.$emit("clickRow", pVal, item, this.$router);
+          }
+        }
       }
 
       this.$emit("update:modelValue", pVal);
+    },
+    createdItem(item) {
+      if (this.isForSelectingRelation) {
+        this.$emit("update:modelValue", item[this.superOptions.model.primaryKey]);
+        this.$refs.selectRef.hidePopup();
+      }
     },
     applyFilters(items, filters) {
       const groupedFilters = {};

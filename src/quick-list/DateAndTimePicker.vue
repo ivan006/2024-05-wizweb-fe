@@ -13,13 +13,14 @@
         :disable="disabled"
         v-slot:append
     >
-      <q-icon name="calendar_today" />
+      <q-icon name="calendar_today"
+              @click="click" />
     </q-input>
 
     <!-- The Main Modal -->
     <q-dialog v-model="showDialog" max-width="500px">
       <q-card class="q-pa-md">
-        <h3>Select Date & Time</h3>
+        <div class="q-mb-md">Select Date & Time</div>
 
         <!-- Date -->
         <q-input
