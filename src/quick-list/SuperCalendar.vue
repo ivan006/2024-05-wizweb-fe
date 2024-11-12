@@ -4,23 +4,43 @@
       <div class="text-center q-pa-md">Loading...</div>
     </template>
     <div :style="`display: ${loading ? 'none' : 'block'};`">
-      <div class="row ">
+      <div class="row items-center wrap q-pb-sm">
         <!--justify-center-->
-        <q-btn-toggle
-            class=" q-mb-sm block"
+        <!--<div>-->
+        <!--  Time Grid-->
+        <!--</div>-->
+        <q-toggle
+            label="Time Grid"
             v-model="calendarMode"
             toggle-color="primary"
-            :options="[
-              {label: 'Timeline', value: 'Timeline'},
-              {label: 'List', value: 'List'},
-            ]"
+            false-value="List"
+            true-value="Timeline"
             unelevated
             text-color="grey-8"
-            color="grey-3"
         />
+        <!--<q-btn-toggle-->
+        <!--    label="dddd"-->
+        <!--    class=" block"-->
+        <!--    v-model="calendarMode"-->
+        <!--    toggle-color="primary"-->
+        <!--    :options="[-->
+        <!--      // {label: 'Timeline Calendar', value: 'Timeline'},-->
+        <!--      // {label: 'List Calendar', value: 'List'},-->
+        <!--      // {label: 'Per Hour Calendar', value: 'Timeline'},-->
+        <!--      // {label: 'Per Day Calendar', value: 'List'},-->
+        <!--      // {label: 'Hour by Hour', value: 'Timeline'},-->
+        <!--      // {label: 'Day by Day', value: 'List'},-->
+        <!--      {label: 'Time Grid', value: 'Timeline'},-->
+        <!--      {label: 'No Grid', value: 'List'},-->
+        <!--    ]"-->
+        <!--    unelevated-->
+        <!--    text-color="grey-8"-->
+        <!--    color="grey-3"-->
+        <!--/>-->
         <!--q-ml-sm-->
         <!--style="margin-bottom: 20px;"-->
-        <div class="q-mb-sm q-ml-sm">
+        <!--<div class="q-mb-sm q-ml-sm">-->
+        <div class="q-ml-md">
           <CalendarNavigationBar
               @today="onToday"
               @prev="onPrev"
@@ -210,13 +230,15 @@ export default {
             end = new Date(item[endSplit[0]][endSplit[1]]);
           } else {
             start = new Date(item[startSplit[0]]);
-            end = new Date(item[startSplit[0]]);
+            end = new Date(item[endSplit[0]]);
           }
 
           // Normalize event data
           const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
           const time = start.toISOString().substr(11, 5); // HH:mm format
-          const duration = Math.max((end - start) / 1000 / 60, 15);
+          const actualDuration = (end - start) / 1000 / 60
+
+          const duration = Math.max(actualDuration, 15);
 
           // Determine the event title
           const title = Array.isArray(firstNonIdKey)

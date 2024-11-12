@@ -4,6 +4,8 @@
         class="button"
         @click="$emit('today')"
         unelevated
+        color="grey-3"
+        text-color="grey-8"
     >
       <!--style="margin: 2px;"-->
       Today
