@@ -31,19 +31,19 @@
                 <SuperTable
 
                     allowAll
-                    v-if="typeof filtersData[childFilter.name] !== 'undefined'"
+                    v-if="typeof modelValueRef[childFilter.name] !== 'undefined'"
                     :modelField="childFilter"
                     :model="childFilter.meta.field.parent"
                     :forcedFilters="getFilters(childFilter)"
-                    v-model="filtersData[childFilter.name]"
-                    :disabled="filterParentName(childFilter) && !modelValue[filterParentName(childFilter)]"
+                    v-model="modelValueRef[childFilter.name]"
+                    :disabled="filterParentName(childFilter) && !modelValueRef[filterParentName(childFilter)]"
                     @update:modelValue="handleSelectChange(childFilter.name)"
 
                     :isForSelectingRelation="true"
                     hideCreate
                     selectHideBottomSpace
                 />
-                <!--:modelField="filtersData[childFilter.name]"-->
+                <!--:modelField="modelValueRef[childFilter.name]"-->
 
                 <!--:hideLabel="hideLabel"-->
                 <!--:isForSelectingRelation="true"-->
@@ -58,11 +58,11 @@
 
                 <!--<SuperSelect-->
                 <!--    allowAll-->
-                <!--    v-if="typeof filtersData[childFilter.name] !== 'undefined'"-->
+                <!--    v-if="typeof modelValueRef[childFilter.name] !== 'undefined'"-->
                 <!--    :modelField="childFilter"-->
                 <!--    :model="childFilter.meta.field.parent"-->
                 <!--    :filters="getFilters(childFilter)"-->
-                <!--    v-model="filtersData[childFilter.name]"-->
+                <!--    v-model="modelValueRef[childFilter.name]"-->
                 <!--    :disabled="filterParentName(childFilter) && !modelValue[filterParentName(childFilter)]"-->
                 <!--    @update:modelValue="handleSelectChange(childFilter.name)"-->
                 <!--/>-->
@@ -107,7 +107,7 @@ export default {
   data() {
     return {
       menu: false,
-      filtersData: [],
+      modelValueRef: [],
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -136,12 +136,12 @@ export default {
 
         if (
             placeField &&
-            this.filtersData[placeField.name] &&
-            this.filtersData[placeField.name]
+            this.modelValueRef[placeField.name] &&
+            this.modelValueRef[placeField.name]
         ) {
           let displayName = this.fetchDisplayNameFromVuex(
               placeField.meta.field.parent,
-              this.filtersData[placeField.name]
+              this.modelValueRef[placeField.name]
           );
           if (displayName) {
             displayText = displayName;
@@ -164,8 +164,8 @@ export default {
           const childField = this.filterField.children.find(
               (child) => child.usageType === childType
           );
-          if (childField && this.filtersData[childField.name]) {
-            this.filtersData[childField.name] = null;
+          if (childField && this.modelValueRef[childField.name]) {
+            this.modelValueRef[childField.name] = null;
           }
         }
       }
@@ -228,15 +228,33 @@ export default {
     },
   },
   watch: {
-    filtersData: {
-      handler(newVal) {
-        this.$emit("update:modelValue", newVal);
+
+
+
+
+
+    modelValue: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.modelValueRef = {...newVal};
+        }
       },
-      deep: true,
+      deep: true
+    },
+    modelValueRef: {
+      handler(newVal, oldVal) {
+        console.log("chaneg")
+        console.log({...newVal})
+        console.log({...oldVal})
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        // }
+        this.$emit('update:modelValue', this.modelValueRef);
+      },
+      deep: true
     },
   },
   mounted() {
-    this.filtersData = this.modelValue;
+    this.modelValueRef = {...this.modelValue};
   },
 };
 </script>
