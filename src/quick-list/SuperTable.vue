@@ -797,13 +797,16 @@ export default {
       //   { label: 'Calendar', value: 'calendar' },
       // ]
       if(this.viewAs.show.includes('grid')){
-        result.push({ label: 'Grid', value: 'grid' })
+        result.push({ label: 'Grid', value: 'grid',
+          icon: 'grid_view' })
       }
       if(this.viewAs.show.includes('map') && this.longField){
-        result.push({ label: 'Map', value: 'map' })
+        result.push({ label: 'Map', value: 'map',
+          icon: 'map'  })
       }
       if(this.viewAs.show.includes('calendar') && this.startFieldName){
-        result.push({ label: 'Calendar', value: 'calendar' })
+        result.push({ label: 'Calendar', value: 'calendar',
+          icon: 'calendar_today' })
       }
       if(this.viewAs.show.includes('table')){
         result.push({ label: 'Table', value: 'table' })
