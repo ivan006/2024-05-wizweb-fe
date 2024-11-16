@@ -76,7 +76,6 @@
     </q-menu>
   </div>
 </template>
-
 <script>
 import SuperSelect from "./SuperSelect.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
@@ -106,7 +105,7 @@ export default {
   data() {
     return {
       menu: false,
-      modelValueRef: [],
+      modelValueRef: {},
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -239,28 +238,30 @@ export default {
     modelValue: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.modelValueRef = {...newVal};
+          this.modelValueRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
         }
       },
       deep: true,
     },
     modelValueRef: {
       handler(newVal, oldVal) {
-        console.log("chaneg");
-        console.log({...newVal});
-        console.log({...oldVal});
         // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
         // }
-        this.$emit("update:modelValue", this.modelValueRef);
+
+        this.$emit(
+            "update:modelValue",
+            JSON.parse(JSON.stringify(this.modelValueRef)),
+        ); // Emit deep copy
       },
       deep: true,
     },
   },
   mounted() {
-    this.modelValueRef = {...this.modelValue};
+    this.modelValueRef = JSON.parse(JSON.stringify(this.modelValue)); // Initialize with a deep copy
   },
 };
 </script>
+
 
 <style>
 .FilterPlaceTrigger > div {

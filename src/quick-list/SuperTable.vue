@@ -49,194 +49,26 @@
         <!--v-model="filters[filterInput.name]"-->
       </template>
       <template v-else>
-        <template v-if="shouldWeShowTopBar()">
-          <div :class="noBorder ? 'q-mx-md' : ''">
-
-            <DestructableExpansionPanels
-                :destroy="!quickListsIsMobile"
-                title="Settings"
-            >
-              <div class="row items-center wrap">
-
-                <div
-                    v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
-
-                    style="margin-bottom: 20px;"
-                    class="q-mr-sm"
-                >
-                  <template v-if="!!$slots.create">
-                    <slot name="create" />
-                  </template>
-                  <template v-else>
-                    <CreateButton
-                        v-if="superOptions.model.rules.creatable()"
-                        :modelFields="modelFields"
-                        @createItem="createItem"
-                        :model="model"
-                        :superOptions="superOptions"
-                        :template="templateForm"
-                        :createButtonText="createButtonText"
-                    />
-                  </template>
-                </div>
-                <template v-if="viewAs.show.length">
-                  <div class="q-mr-sm">
-                    <!--<q-select-->
-                    <!--    style="width: 200px"-->
-                    <!--    :options="tabOptions"-->
-                    <!--    v-model="activeTab"-->
-                    <!--    label="View As"-->
-                    <!--    option-label="label"-->
-                    <!--    option-value="value"-->
-                    <!--    emit-value-->
-                    <!--    map-options-->
-                    <!--    dense-->
-                    <!--    class="col-grow "-->
-                    <!--    filled-->
-                    <!--    :rules="[() => true]"-->
-                    <!--/>-->
-
-                    <q-btn-toggle
-                        v-model="activeTab"
-                        toggle-color="primary"
-                        :options="tabOptions"
-                        style="margin-bottom: 20px;"
-                        unelevated
-                        text-color="grey-8"
-                        color="grey-3"
-                    />
-
-
-                    <!--<q-btn-toggle-->
-                    <!--    v-if="activeTab === 'calendar'"-->
-                    <!--    class="q-ml-sm"-->
-                    <!--    v-model="calendarMode"-->
-                    <!--    toggle-color="primary"-->
-                    <!--    :options="[-->
-                    <!--      {label: 'Timeline', value: 'Timeline'},-->
-                    <!--      {label: 'List', value: 'List'},-->
-                    <!--    ]"-->
-                    <!--    unelevated-->
-                    <!--    text-color="grey-8"-->
-                    <!--    color="grey-3"-->
-                    <!--    style="margin-bottom: 20px;"-->
-                    <!--/>-->
-                  </div>
-                </template>
-                <template
-                    v-for="filterInput of filterInputs"
-                    :key="filterInput.name"
-                >
-                  <template v-if="typeof filters[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
-                    <template
-                        v-if="filterInput.usageType.startsWith('relForeignKey')"
-                    >
-                      <div style="min-width: 200px;">
-
-                        <SuperTable
-                            :isForSelectingRelation="true"
-                            :canEdit="false"
-                            v-model="filters[filterInput.name]"
-                            :model="filterInput.meta.field.parent"
-                            :rules="[() => true]"
-                            :modelField="filterInput"
-                            class="q-mr-sm"
-
-                        />
-                        <!--v-model="filters[filterInput.name].value"-->
-                      </div>
-                    </template>
-                    <template v-if="filterInput.usageType == 'timeRangeStart'">
-
-                      <FilterTime
-                          :key="filterInput.name"
-                          :modelField="filterInput"
-                          v-model="filters[filterInput.name].value"
-                          class="q-mr-sm col-grow"
-                          style="max-width: 200px;"
-                      />
-                    </template>
-                  </template>
-                  <template v-else>
-                    <template v-if="filterInput.usageType == 'mapFilter'">
-                      <FilterPlace
-                          :key="filterInput.name"
-                          :filterField="filterInput"
-                          v-model="filters"
-                          class="q-mr-sm col-grow"
-                          style="max-width: 200px;"
-                      />
-                    </template>
-                  </template>
-                </template>
-                <q-input
-                    v-if="this.model.titleKey !== this.model.primaryKey"
-                    v-model="search"
-                    :error="false"
-                    :error-message="''"
-                    label="Search"
-                    dense
-                    filled
-                ></q-input>
-                <template v-if="Object.keys(downloadables).includes('csv')">
-                  <q-btn
-                      icon="download"
-                      label="CSV"
-                      @click="downloadCsv"
-                      class="q-mb-md q-ml-md text-grey-8"
-                      filled
-                      unelevated
-                      :style="{ backgroundColor: 'var(--q-color-grey-2)', 'margin-left': 'auto'}"
-                  />
-                </template>
-                <template v-if="Object.keys(downloadables).includes('pdf')">
-                  <q-btn
-                      icon="download"
-                      label="Pdf"
-                      @click="downloadPdf()"
-                      class="q-mb-md q-ml-md text-grey-8"
-                      filled
-                      unelevated
-                      :style="{ backgroundColor: 'var(--q-color-grey-2)' }"
-                  />
-                  <div
-                      style="display: none"
-                  >
-                    <PdfTemplate
-                        :id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"
-                        :options="downloadables.pdf"
-                        :items="itemsForExport"
-                    />
-
-                    <template v-if="downloadables.pdf.header">
-                      <div
-                          :id="`pdfHeader${toHtmlIdSafeString(downloadables.pdf?.title)}`"
-                      >
-                        <!--<div style="width: 793px;">-->
-                        <!--</div>-->
-                        <component
-                            :is="defineAsyncComponent(downloadables.pdf?.header)"
-                        />
-                      </div>
-                    </template>
-
-                    <template v-if="downloadables.pdf.footer">
-                      <div
-                          :id="`pdfFooter${toHtmlIdSafeString(downloadables.pdf?.title)}`"
-                      >
-                        <!--<div style="width: 793px;">-->
-                        <!--</div>-->
-                        <component
-                            :is="defineAsyncComponent(downloadables.pdf?.footer)"
-                        />
-                      </div>
-                    </template>
-                  </div>
-                </template>
-              </div>
-            </DestructableExpansionPanels>
-          </div>
-        </template>
+  <pre>{{filters }}</pre>
+        <SuperTableTopBar
+            v-model="filters"
+            v-model:activeTab="activeTab"
+            v-model:search="search"
+            ref="SuperTableTopBar"
+            :superOptions="superOptions"
+            :viewAs="viewAs"
+            :downloadables="downloadables"
+            :noBorder="noBorder"
+            :canCreateComputed="canCreateComputed"
+            :canEdit="canEdit"
+            :hideCreate="hideCreate"
+            :isForSelectingRelation="isForSelectingRelation"
+            :startFieldName="startFieldName"
+            :longField="longField"
+            :allowedFilters="allowedFilters"
+            :templateListTable="templateListTable"
+            :templateForm="templateForm"
+        />
         <div class="">
           <template v-if="activeTab == 'table'">
 
@@ -434,6 +266,7 @@ import PdfTemplate from "./PdfTemplate.vue";
 import {Helpers} from "../index";
 import SuperCalendar from "./SuperCalendar.vue";
 import CrudModal from "./CrudModal.vue";
+import SuperTableTopBar from "./SuperTableTopBar.vue";
 // import html2pdf from 'html2pdf.js';
 
 const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
@@ -446,6 +279,7 @@ const AsyncComponentSuperTable = defineAsyncComponent(() =>
 export default {
   name: "SuperTable",
   components: {
+    SuperTableTopBar,
     CrudModal,
     SuperCalendar,
     PdfTemplate,
@@ -669,14 +503,17 @@ export default {
       highlightedRow: null,
       filters: {},
       items: [],
+      activeTab: "",
       // activeTab: {
       //   "label": "Table",
       //   "value": "table"
       // },
-      activeTab: "table",
     };
   },
   computed: {
+    // activeTab() {
+    //   return this.$refs.SuperTableTopBar?.activeTab;
+    // },
     longField(){
       let longField = this.mapHeaders.find((field) => {
         return field.usageType == "mapExtraGeoLocLong";
@@ -690,127 +527,6 @@ export default {
     },
     endFieldName() {
       const result = Helpers.getFieldFromModelOrParent(this.superOptions.headers, 'timeRangeEnd');
-      return result
-    },
-    flattenedHeaders() {
-
-      let result = [];
-      if (this.templateListTable.length){
-        for (const field of this.templateListTable) {
-
-          const validField = this.superOptions.headers.find((header) => header.field === field.field);
-          let addableField = {}
-
-          if (typeof validField !== "undefined"){
-
-            addableField = validField
-
-            if (typeof field.label !== "undefined"){
-              addableField.label = field.label
-            }
-            addableField.userConfig = field
-
-          } else {
-
-            let label = "";
-            if (typeof field.label !== "undefined" && !field.hideLabel){
-              label = field.label
-            }
-
-            let fieldName = "";
-            if (typeof field.field !== "undefined"){
-              fieldName = field.field
-            }
-
-            addableField = {
-              align: "left",
-              dataType: "attr",
-              field: fieldName,
-              label: label,
-              meta: {},
-              name: fieldName,
-              sortable: fieldName.length ? true : false,
-              usageType: "normal",
-              userConfig: field
-            }
-
-          }
-
-          result.push(addableField);
-        }
-
-      } else {
-        for (const header of this.superOptions.headers) {
-          result.push(header);
-          if (header.headerParentFields) {
-            for (const childHeader of header.headerParentFields) {
-              result.push({
-                // isChildOf: header,
-                ...childHeader,
-                userConfig: {}
-              });
-            }
-          }
-        }
-      }
-
-      return result;
-    },
-    itemsForExport() {
-      const result = []
-      let compItem = {}
-      for (const item of this.items) {
-        compItem = {}
-        for (const header of this.flattenedHeaders) {
-          if (header.userConfig && header.userConfig.type === 'function'){
-            compItem[header.label] = header.userConfig.function(item)
-          } else if(header.usageType) {
-            if (
-                header.usageType === 'readOnlyTimestampType' ||
-                header.usageType === 'timestampType' ||
-                header.usageType === 'timeRangeStart' ||
-                header.usageType === 'timeRangeEnd'
-            ){
-              compItem[header.label] = this.formatTimestamp(item[header.field])
-            } else if (header.usageType.startsWith('relLookup')) {
-              if (item?.[header.field]?.[header.meta.lookupDisplayField]) {
-                compItem[header.label] = item?.[header.field]?.[header.meta.lookupDisplayField]
-              }
-            } else if (
-                !header.usageType.startsWith('relChildren') &&
-                item[header.field]
-            ){
-              compItem[header.label] = this.truncateStr(item[header.field])
-            }
-          }
-        }
-        result.push(compItem)
-      }
-      return result
-    },
-    tabOptions() {
-      let result = []
-      // let result = [
-      //   { label: 'Table', value: 'table' },
-      //   { label: 'Grid', value: 'grid' },
-      //   { label: 'Map', value: 'map' },
-      //   { label: 'Calendar', value: 'calendar' },
-      // ]
-      if(this.viewAs.show.includes('grid')){
-        result.push({ label: 'Grid', value: 'grid',
-          icon: 'grid_view' })
-      }
-      if(this.viewAs.show.includes('map') && this.longField){
-        result.push({ label: 'Map', value: 'map',
-          icon: 'map'  })
-      }
-      if(this.viewAs.show.includes('calendar') && this.startFieldName){
-        result.push({ label: 'Calendar', value: 'calendar',
-          icon: 'calendar_today' })
-      }
-      if(this.viewAs.show.includes('table')){
-        result.push({ label: 'Table', value: 'table' })
-      }
       return result
     },
     // optionsComputed: {
@@ -872,35 +588,6 @@ export default {
       }
       return result;
     },
-    quickListsIsMobile() {
-      return QuickListsHelpers.quickListsIsMobile();
-    },
-    filterInputs() {
-      const data = this.modelFields;
-
-      const result = [];
-      for (const item of data) {
-        if (
-            item.usageType.startsWith("relForeignKeyNormal") ||
-            item.usageType == "timeRangeStart"
-        ) {
-          result.push(item);
-        } else if (item.usageType == "relForeignKeyMapExtraRelSublocality") {
-          const children = data.filter((item) =>
-              item.usageType.startsWith("relForeignKeyMapExtraRel"),
-          );
-
-          result.push({
-            label: "Place",
-            name: "Place",
-            usageType: "mapFilter",
-            dataType: "normal",
-            children: children,
-          });
-        }
-      }
-      return result;
-    },
     headers() {
       const result = QuickListsHelpers.SupaerTableHeaders(
           this.model,
@@ -956,119 +643,10 @@ export default {
       this.$emit("editItem", item);
       this.$refs.CrudModalRef.editItem(item)
     },
-    defineAsyncComponent,
-    downloadCsv() {
-      const csvData = this.convertToCsv();
-      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', `${this.downloadables.csv?.title}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    },
-    // downloadPdf() {
-    //   const doc = new jsPDF();
-    //
-    //   // Extract headers and rows directly without additional formatting
-    //   const tableColumn = Object.keys(this.itemsForExport[0]);
-    //   const tableRows = this.itemsForExport.map(row => Object.values(row));
-    //
-    //   // Generate PDF table using autoTable plugin
-    //   doc.autoTable({
-    //     head: [tableColumn],
-    //     body: tableRows
-    //   });
-    //
-    //   // Save the PDF file
-    //   doc.save(`${this.downloadables.pdf}.pdf`);
-    // },import html2pdf from 'html2pdf.js';
-
-    downloadPdf() {
-
-      const bodyElement = document.querySelector(
-          `#pdfBody${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-      );
-      const headerElement = document.querySelector(
-          `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-      );
-      const footerElement = document.querySelector(
-          `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
-      );
-
-      QuickListsHelpers.downloadPdf(
-          this.downloadables.pdf?.title,
-          bodyElement,
-          this.downloadables.pdf['margin'] ? this.downloadables.pdf['margin'] : 0,
-          footerElement,
-          headerElement
-      )
-
-    },
 
 
 
 
-
-
-
-
-    toHtmlIdSafeString(str) {
-      return str
-          .toString()                  // Ensure it's a string
-          .toLowerCase()               // Convert to lowercase
-          .trim()                      // Remove whitespace from both ends
-          .replace(/\s+/g, '-')        // Replace spaces with hyphens
-          .replace(/[^a-z0-9_-]/g, '') // Remove invalid characters
-          .replace(/^-+/, '');         // Remove leading hyphens (if any)
-    },
-    convertToCsv() {
-      // Check if data is not empty
-      if (this.itemsForExport.length === 0) {
-        return '';
-      }
-
-      // Generate header from the keys of the first object in the data array
-      const header = Object.keys(this.itemsForExport[0]).join(',');
-
-      // Generate rows from the data
-      const rows = this.itemsForExport.map(row => {
-        return Object.values(row).map(value => `"${value}"`).join(',');
-      });
-
-      return [header, ...rows].join('\r\n');
-    },
-    truncateStr(str) {
-      let truncatedStr = "";
-      if (str) {
-        const maxLength = 40;
-        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
-      }
-      return truncatedStr;
-    },
-    shouldWeShowTopBar() {
-      // let result = true
-      let result = false
-      if (
-          this.viewAs.show.length ||
-          (
-              this.filterInputs.length &&
-              (
-                  this.allowedFilters == null ||
-                  this.filterInputs.some(
-                      filterInput =>  this.allowedFilters.includes(filterInput.name)
-                  )
-              )
-          ) ||
-          this.model.titleKey !== this.model.primaryKey ||
-          Object.keys(this.downloadables).includes('csv') ||
-          Object.keys(this.downloadables).includes('pdf') ||
-          this.canCreateComputed && this.canEdit && !this.hideCreate && !this.isForSelectingRelation
-      ){
-        result = true
-      }
-      return result
-    },
     doSearch(searchTerm) {
       this.filters[this.model.titleKey] = searchTerm
       this.fetchData();
@@ -1103,18 +681,6 @@ export default {
     // },
     quickListsGetIfMatchesAllChecks(item, filters) {
       return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters);
-    },
-    formatTimestamp(timestamp) {
-      if (timestamp) {
-        const timezone = "Africa/Johannesburg"; // replace with desired timezone
-        const formattedDateInTimeZone = moment
-            .tz(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ", "UTC")
-            .tz(timezone)
-            .format("dddd, MMMM D, YYYY h:mm A");
-        return formattedDateInTimeZone;
-      } else {
-        return null;
-      }
     },
 
     clickRow(pVal, item) {
@@ -1289,19 +855,7 @@ export default {
     //   this.activeTab = this.templateOverview.defaultViewMode;
     // }
 
-    for (const modelField of this.modelFields) {
-      if (
-          modelField.usageType.startsWith("relForeignKey") ||
-          modelField.dataType.startsWith("mapExtraRel")
-      ) {
-        this.filters[modelField.name] = null;
-      } else if (modelField.usageType == "timeRangeStart") {
-        this.filters[modelField.name] = {
-          value: null,
-          usageType: "timeRangeStart",
-        };
-      }
-    }
+
     if (this.activated || !this.isForSelectingRelation){
       // if (!this.loading && !this.justCreateButton) {
       if (!this.justCreateButton) {
