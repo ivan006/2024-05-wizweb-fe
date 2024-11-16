@@ -78,7 +78,7 @@
                 v-for="filterInput of filterInputs"
                 :key="filterInput.name"
             >
-              <pre>{{modelValueRef[filterInput.name]}}</pre>
+              <!--<pre>{{modelValueRef[filterInput.name]}}</pre>-->
               <!--<pre>{{allowedFilters}}</pre>-->
               <!--{{filterInput.name}} {{ modelValue[filterInput.name] !== 'undefined'}}-->
               <template v-if="typeof modelValue[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">

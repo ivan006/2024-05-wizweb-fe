@@ -49,7 +49,7 @@
         <!--v-model="filters[filterInput.name]"-->
       </template>
       <template v-else>
-  <pre>{{filters }}</pre>
+        <!--<pre>{{filters }}</pre>-->
         <SuperTableTopBar
             v-model="filters"
             v-model:activeTab="activeTab"
@@ -68,6 +68,7 @@
             :allowedFilters="allowedFilters"
             :templateListTable="templateListTable"
             :templateForm="templateForm"
+            @createItem="createItem"
         />
         <div class="">
           <template v-if="activeTab == 'table'">
