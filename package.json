@@ -1,6 +1,6 @@
 {
   "name": "wizweb-fe",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "A Vue library to streamline UI development.",
   "main": "src/index.js",
   "scripts": {
