@@ -10,14 +10,24 @@ export default defineConfig({
       fileName: (format) => `quicklists.${format}.js`,
     },
     rollupOptions: {
-      // Make sure to externalize dependencies that you don't want to bundle
-      external: ['vue', 'vuetify', 'moment', 'moment-timezone'],
+      // Externalize dependencies you don’t want to bundle
+      external: [
+        'vue',
+        'vuetify',
+        'moment',
+        'moment-timezone',
+        '@quasar/quasar-ui-qcalendar',
+        'quasar',
+        'vue3-google-map',
+      ],
       output: {
-        // Provide global variables to use in the UMD build
-        // for externalized deps
+        // Provide global variables for externalized deps
         globals: {
           vue: 'Vue',
           vuetify: 'Vuetify',
+          moment: 'moment',
+          'moment-timezone': 'momentTimezone',
+          quasar: 'Quasar',
         },
       },
     },
