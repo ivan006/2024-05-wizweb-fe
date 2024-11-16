@@ -11,7 +11,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // Make sure to externalize dependencies that you don't want to bundle
-      external: ['vue', 'vuetify'],
+      external: ['vue', 'vuetify', 'moment', 'moment-timezone'],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
