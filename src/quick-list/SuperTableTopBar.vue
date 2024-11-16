@@ -81,7 +81,7 @@
               <!--<pre>{{modelValueRef[filterInput.name]}}</pre>-->
               <!--<pre>{{allowedFilters}}</pre>-->
               <!--{{filterInput.name}} {{ modelValue[filterInput.name] !== 'undefined'}}-->
-              <template v-if="typeof modelValue[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
+              <template v-if="typeof modelValueRef[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
                 <template
                     v-if="filterInput.usageType.startsWith('relForeignKey')"
                 >
@@ -103,7 +103,7 @@
                   <FilterTime
                       :key="filterInput.name"
                       :modelField="filterInput"
-                      v-model="modelValueRef[filterInput.name].value"
+                      v-model="modelValueRef[filterInput.name]"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px;"
                   />
@@ -314,7 +314,7 @@ export default {
 
       activeTabRef: "",
       searchRef: "",
-      modelValueRef: []
+      modelValueRef: {}
     };
   },
   computed: {
@@ -654,12 +654,10 @@ export default {
           modelField.usageType.startsWith("relForeignKey") ||
           modelField.dataType.startsWith("mapExtraRel")
       ) {
+
         this.modelValueRef[modelField.name] = null;
       } else if (modelField.usageType == "timeRangeStart") {
-        this.modelValueRef[modelField.name] = {
-          value: null,
-          usageType: "timeRangeStart",
-        };
+        this.modelValueRef[modelField.name] = null;
       }
     }
   }
