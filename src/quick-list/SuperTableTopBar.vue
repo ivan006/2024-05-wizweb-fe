@@ -193,10 +193,10 @@
 </template>
 
 <script>
+import moment from "moment";
 import "moment-timezone";
 import {defineAsyncComponent} from "vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-import moment from "moment/moment";
 import FilterPlace from "./FilterPlace.vue";
 import FilterTime from "./FilterTime.vue";
 import DestructableExpansionPanels from "./DestructableExpansionPanels.vue";
