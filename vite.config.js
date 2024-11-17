@@ -1,16 +1,16 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default defineConfig({
   plugins: [vue()],
   build: {
     lib: {
-      entry: 'src/index.js', // Replace with the path to your entry file
+      entry: 'src/index.js',
       name: 'QuickLists',
       fileName: (format) => `quicklists.${format}.js`,
     },
     rollupOptions: {
-      // Externalize dependencies you don’t want to bundle
       external: [
         'vue',
         'vuetify',
@@ -21,7 +21,6 @@ export default defineConfig({
         'vue3-google-map',
       ],
       output: {
-        // Provide global variables for externalized deps
         globals: {
           vue: 'Vue',
           vuetify: 'Vuetify',
@@ -30,6 +29,9 @@ export default defineConfig({
           quasar: 'Quasar',
         },
       },
+      plugins: [
+        commonjs(), // Add CommonJS plugin
+      ],
     },
   },
 });

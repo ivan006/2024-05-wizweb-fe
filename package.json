@@ -1,6 +1,6 @@
 {
   "name": "wizweb-fe",
-  "version": "1.0.35",
+  "version": "1.0.36",
   "description": "A Vue library to streamline UI development.",
   "main": "src/index.js",
   "scripts": {
@@ -61,6 +61,7 @@
   },
   "homepage": "https://github.com/ivan006/2024-05-vue-orm-ui#readme",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.1",
     "@vitejs/plugin-vue": "^5.1.4",
     "vite": "^5.4.10"
   }
