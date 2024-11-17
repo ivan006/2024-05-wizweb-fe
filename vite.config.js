@@ -30,8 +30,17 @@ export default defineConfig({
         },
       },
       plugins: [
-        commonjs(), // Add CommonJS plugin
+        commonjs(), // Keep CommonJS plugin
       ],
+    },
+  },
+  optimizeDeps: {
+    include: ['moment', 'moment-timezone'], // Pre-bundle these dependencies
+  },
+  resolve: {
+    alias: {
+      moment: 'moment/moment.js', // Alias for moment
+      'moment-timezone': 'moment-timezone/builds/moment-timezone-with-data.js', // Alias for moment-timezone
     },
   },
 });
