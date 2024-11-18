@@ -87,10 +87,10 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from "moment";
 
 export default {
-  name: 'FilterTime',
+  name: "FilterTime",
   props: {
     modelField: {
       type: Object,
@@ -124,35 +124,35 @@ export default {
   computed: {
     displayDate() {
       if (this.selectedDay) {
-        return moment(this.selectedDay).format('ddd, MMM D, YYYY');
+        return moment(this.selectedDay).format("ddd, MMM D, YYYY");
       }
       if (this.selectedWeek) {
         const startOfWeek = moment()
             .year(this.selectedYear)
             .month(this.selectedMonth - 1)
             .isoWeek(this.selectedWeek)
-            .startOf('isoWeek');
-        const endOfWeek = startOfWeek.clone().endOf('isoWeek');
+            .startOf("isoWeek");
+        const endOfWeek = startOfWeek.clone().endOf("isoWeek");
 
         if (startOfWeek.month() === endOfWeek.month()) {
-          return `${startOfWeek.format('ddd D')} - ${endOfWeek.format(
-              'ddd D, MMM, YYYY'
+          return `${startOfWeek.format("ddd D")} - ${endOfWeek.format(
+              "ddd D, MMM, YYYY",
           )}`;
         } else {
-          return `${startOfWeek.format('ddd D, MMM')} - ${endOfWeek.format(
-              'ddd D, MMM, YYYY'
+          return `${startOfWeek.format("ddd D, MMM")} - ${endOfWeek.format(
+              "ddd D, MMM, YYYY",
           )}`;
         }
       }
       if (this.selectedMonth) {
         return moment(`${this.selectedYear}-${this.selectedMonth}-01`).format(
-            'MMM, YYYY'
+            "MMM, YYYY",
         );
       }
       if (this.selectedYear) {
         return this.selectedYear.toString();
       }
-      return ''; // Default case if nothing is selected
+      return ""; // Default case if nothing is selected
     },
     selectedYear: {
       get() {
@@ -166,7 +166,7 @@ export default {
           week: null,
           day: null,
         };
-        this.$emit('update:modelValue', {
+        this.$emit("update:modelValue", {
           ...updatedValues,
           range: this.computeRange(updatedValues),
         });
@@ -184,7 +184,7 @@ export default {
           week: null,
           day: null,
         };
-        this.$emit('update:modelValue', {
+        this.$emit("update:modelValue", {
           ...updatedValues,
           range: this.computeRange(updatedValues),
         });
@@ -202,7 +202,7 @@ export default {
           week: val,
           day: null,
         };
-        this.$emit('update:modelValue', {
+        this.$emit("update:modelValue", {
           ...updatedValues,
           range: this.computeRange(updatedValues),
         });
@@ -210,7 +210,7 @@ export default {
         this.days = this.generateDays(
             this.selectedYear,
             this.selectedMonth,
-            val
+            val,
         );
       },
     },
@@ -220,7 +220,7 @@ export default {
       },
       set(val) {
         const updatedValues = { ...this.modelValue, day: val };
-        this.$emit('update:modelValue', {
+        this.$emit("update:modelValue", {
           ...updatedValues,
           range: this.computeRange(updatedValues),
         });
@@ -234,9 +234,8 @@ export default {
     computeRange(values) {
       let startDate, endDate;
       if (values.day) {
-
-        startDate = moment(values.day).startOf('day');
-        endDate = moment(values.day).add(1, 'day').startOf('day');
+        startDate = moment(values.day).startOf("day");
+        endDate = moment(values.day).add(1, "day").startOf("day");
 
         // startDate = endDate = moment(values.day);
       } else if (values.week) {
@@ -244,17 +243,17 @@ export default {
             .year(values.year)
             .isoWeek(values.week)
             .isoWeekday(1);
-        endDate = startDate.clone().endOf('isoWeek');
+        endDate = startDate.clone().endOf("isoWeek");
       } else if (values.month) {
-        startDate = moment(`${values.year}-${values.month}-01`, 'YYYY-MM-DD');
-        endDate = startDate.clone().endOf('month');
+        startDate = moment(`${values.year}-${values.month}-01`, "YYYY-MM-DD");
+        endDate = startDate.clone().endOf("month");
       } else if (values.year) {
-        startDate = moment(`${values.year}-01-01`, 'YYYY-MM-DD');
-        endDate = moment(`${values.year}-12-31`, 'YYYY-MM-DD');
+        startDate = moment(`${values.year}-01-01`, "YYYY-MM-DD");
+        endDate = moment(`${values.year}-12-31`, "YYYY-MM-DD");
       }
       return {
-        start: startDate ? startDate.format('YYYY-MM-DD') : null,
-        end: endDate ? endDate.format('YYYY-MM-DD') : null,
+        start: startDate ? startDate.format("YYYY-MM-DD") : null,
+        end: endDate ? endDate.format("YYYY-MM-DD") : null,
       };
     },
     generateYears() {
@@ -262,7 +261,7 @@ export default {
       const result = [];
 
       result.push({
-        label: 'All',
+        label: "All",
         value: null,
       });
 
@@ -287,14 +286,14 @@ export default {
       const result = [];
 
       result.push({
-        label: 'All',
+        label: "All",
         value: null,
       });
 
       const currentMonth = moment().month(); // Get the current month (0-11)
 
       for (let month = 0; month < 12; month++) {
-        let label = moment().month(month).format('MMMM');
+        let label = moment().month(month).format("MMMM");
 
         // Append " (Current)" if this is the current month
         if (month === currentMonth) {
@@ -303,19 +302,21 @@ export default {
 
         result.push({
           label: label,
-          value: +moment().month(month).format('MM'),
+          value: +moment().month(month).format("MM"),
         });
       }
 
       return result;
     },
     generateWeeks(year, month) {
-      const startOfMonth = moment(`${year}-${month}-01`, 'YYYY-MM-DD').startOf('month');
-      const endOfMonth = startOfMonth.clone().endOf('month');
+      const startOfMonth = moment(`${year}-${month}-01`, "YYYY-MM-DD").startOf(
+          "month",
+      );
+      const endOfMonth = startOfMonth.clone().endOf("month");
       const result = [];
 
       result.push({
-        label: 'All',
+        label: "All",
         value: null,
       });
 
@@ -323,19 +324,19 @@ export default {
       const today = moment(); // Get today's date
 
       while (startOfMonth <= endOfMonth) {
-        const startOfWeek = startOfMonth.clone().startOf('isoWeek');
-        const endOfWeek = startOfWeek.clone().endOf('isoWeek');
+        const startOfWeek = startOfMonth.clone().startOf("isoWeek");
+        const endOfWeek = startOfWeek.clone().endOf("isoWeek");
         let label;
 
         if (startOfWeek.month() === endOfWeek.month()) {
-          label = `Week ${weekNum} (${startOfWeek.format('MMM D dd')} - ${endOfWeek.format('D dd')})`;
+          label = `Week ${weekNum} (${startOfWeek.format("MMM D dd")} - ${endOfWeek.format("D dd")})`;
         } else {
-          label = `Week ${weekNum} (${startOfWeek.format('MMM D dd')} - ${endOfWeek.format('MMM D dd')})`;
+          label = `Week ${weekNum} (${startOfWeek.format("MMM D dd")} - ${endOfWeek.format("MMM D dd")})`;
         }
 
         // Check if today's date falls within this week
-        if (today.isBetween(startOfWeek, endOfWeek, null, '[]')) {
-          label = `${label} (Current Week)`
+        if (today.isBetween(startOfWeek, endOfWeek, null, "[]")) {
+          label = `${label} (Current Week)`;
         }
 
         result.push({
@@ -343,7 +344,7 @@ export default {
           value: startOfWeek.isoWeek(),
         });
 
-        startOfMonth.add(1, 'week');
+        startOfMonth.add(1, "week");
         ++weekNum;
       }
 
@@ -351,38 +352,35 @@ export default {
     },
     generateDays(year, month, week) {
       const weekNumber = week;
-      const start = moment()
-          .year(year)
-          .isoWeek(weekNumber)
-          .isoWeekday(1);
+      const start = moment().year(year).isoWeek(weekNumber).isoWeekday(1);
 
-      const end = start.clone().endOf('isoWeek');
+      const end = start.clone().endOf("isoWeek");
       const days = [];
-      const today = moment().format('YYYY-MM-DD'); // Get today's date in the same format
+      const today = moment().format("YYYY-MM-DD"); // Get today's date in the same format
 
       while (start <= end) {
-        let label = start.format('dd, Do');
+        let label = start.format("dd, Do");
 
         // Append " (Current)" if this is the current day
-        if (start.format('YYYY-MM-DD') === today) {
+        if (start.format("YYYY-MM-DD") === today) {
           label = `${label} (Today)`;
         }
 
         days.push({
           label: label,
-          value: start.format('YYYY-MM-DD'),
+          value: start.format("YYYY-MM-DD"),
         });
 
-        start.add(1, 'day');
+        start.add(1, "day");
       }
 
       const filteredDays = days.filter(
-          (day) => +moment(day.value).format('MM') === month
+          (day) => +moment(day.value).format("MM") === month,
       );
 
       const result = [
         {
-          label: 'All',
+          label: "All",
           value: null,
         },
         ...filteredDays,
@@ -398,11 +396,9 @@ export default {
 </script>
 
 <style>
-
 .FilterTimeTrigger > div {
   cursor: pointer !important;
 }
-
 
 .FilterTimeTrigger.q-field--disabled .q-field__control > div {
   opacity: 1 !important;

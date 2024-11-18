@@ -78,7 +78,10 @@
     </div>
 
     <q-dialog v-model="viewItemData.showModal" max-width="800px">
-      <q-card class="q-pa-none" style="width: 700px; max-width: calc(100vw - 32px);">
+      <q-card
+          class="q-pa-none"
+          style="width: 700px; max-width: calc(100vw - 32px)"
+      >
         <template
             v-if="
             activeItemAndType.templateListGrid &&
@@ -92,9 +95,21 @@
               isSummary
               :superOptions="activeItemAndType.superOptions"
               :template="activeItemAndType.templateListGrid"
-              @editItem="(e)=>{$emit('editItem', e, this.viewItemData.configIndex)}"
-              @deleteItem="(e)=>{$emit('deleteItem', e, this.viewItemData.configIndex)}"
-              @clickRow="(e)=>{$emit('clickRow', null, e, this.viewItemData.configIndex)}"
+              @editItem="
+              (e) => {
+                $emit('editItem', e, this.viewItemData.configIndex);
+              }
+            "
+              @deleteItem="
+              (e) => {
+                $emit('deleteItem', e, this.viewItemData.configIndex);
+              }
+            "
+              @clickRow="
+              (e) => {
+                $emit('clickRow', null, e, this.viewItemData.configIndex);
+              }
+            "
               :unClickable="activeItemAndType.unClickable"
           />
         </template>
@@ -103,9 +118,21 @@
               :item="viewItemData.data"
               :maxFields="6"
               :superOptions="activeItemAndType.superOptions"
-              @editItem="(e)=>{$emit('editItem', e, this.viewItemData.configIndex)}"
-              @deleteItem="(e)=>{$emit('deleteItem', e, this.viewItemData.configIndex)}"
-              @clickRow="(e)=>{$emit('clickRow', null, e, this.viewItemData.configIndex)}"
+              @editItem="
+              (e) => {
+                $emit('editItem', e, this.viewItemData.configIndex);
+              }
+            "
+              @deleteItem="
+              (e) => {
+                $emit('deleteItem', e, this.viewItemData.configIndex);
+              }
+            "
+              @clickRow="
+              (e) => {
+                $emit('clickRow', null, e, this.viewItemData.configIndex);
+              }
+            "
               :unClickable="activeItemAndType.unClickable"
           />
         </template>
@@ -171,7 +198,7 @@ export default {
 
       this.mixedConfigs.forEach((config, index) => {
         let key = Object.keys(config.superOptions.headers).find(
-            (field) => config.superOptions.headers[field].name !== "id"
+            (field) => config.superOptions.headers[field].name !== "id",
         );
         let result = config.superOptions.headers[key].name;
 
@@ -182,20 +209,21 @@ export default {
         if (!timeRangeStartField) {
           for (const modelField of config.superOptions.headers) {
             if (modelField.headerParentFields) {
-              const timeRangeStartFieldParent = modelField.headerParentFields.find(
-                  (field) => field.usageType == "timeRangeStart"
-              );
+              const timeRangeStartFieldParent =
+                  modelField.headerParentFields.find(
+                      (field) => field.usageType == "timeRangeStart",
+                  );
 
               if (timeRangeStartFieldParent) {
                 const parentHeaders = QuickListsHelpers.SupaerTableHeaders(
                     modelField.meta.relatedModel,
                     [],
                     [],
-                    []
+                    [],
                 );
 
                 const parentKey = Object.keys(parentHeaders).find(
-                    (field) => parentHeaders[field].name !== "id"
+                    (field) => parentHeaders[field].name !== "id",
                 );
                 result = [modelField.name, parentHeaders[parentKey].name];
               }
@@ -222,7 +250,6 @@ export default {
           let start, end;
           // Extract start and end dates, handling nested fields if needed
 
-
           const startSplit = config.startFieldName.split(".");
           const endSplit = config.endFieldName.split(".");
           if (startSplit.length > 1) {
@@ -236,7 +263,7 @@ export default {
           // Normalize event data
           const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
           const time = start.toISOString().substr(11, 5); // HH:mm format
-          const actualDuration = (end - start) / 1000 / 60
+          const actualDuration = (end - start) / 1000 / 60;
 
           const duration = Math.max(actualDuration, 15);
 
@@ -266,7 +293,6 @@ export default {
     },
   },
   methods: {
-
     // Generates events based on items, startFieldName, and endFieldName in the config
 
     // Handle event interaction

@@ -23,8 +23,6 @@
         <!--    :rules="[() => true]"-->
         <!--/>-->
 
-
-
         <SuperTable
             :disabled="disabled"
             :hideLabel="hideLabel"
@@ -36,34 +34,43 @@
             :rules="[() => true]"
             :modelField="field"
             :fetchFlags="{
-              sort: field.meta.field.parent.titleKey
-            }"
+            sort: field.meta.field.parent.titleKey,
+          }"
             :forcedFilters="getForcedFilters(field)"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
         />
         <!--parentKeyValuePair-->
       </template>
-      <template v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')">
+      <template
+          v-else-if="field.usageType.startsWith('relForeignKeyMapExtraRel')"
+      >
         <SuperTable
             :hideLabel="hideLabel"
             :isForSelectingRelation="true"
             :canEdit="false"
             :modelValue="modelValue"
-            @update:modelValue="(newValue) => { updateModelValue(newValue); updateForeignKey(newValue); }"
+            @update:modelValue="
+            (newValue) => {
+              updateModelValue(newValue);
+              updateForeignKey(newValue);
+            }
+          "
             :model="field.meta.field.parent"
             :rules="[() => true]"
             :modelField="field"
             :fetchFlags="{
-              sort: field.meta.field.parent.titleKey
-            }"
+            sort: field.meta.field.parent.titleKey,
+          }"
             :forcedFilters="getForcedFilters(field)"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
             disabled
         />
       </template>
-      <template v-else-if="field.usageType == 'relForeignKeyOwnerAppliedToProviderType'">
+      <template
+          v-else-if="field.usageType == 'relForeignKeyOwnerAppliedToProviderType'"
+      >
         <SuperSelect
             :hideLabel="hideLabel"
             :modelField="field"
@@ -99,7 +106,7 @@
     <template v-else-if="field.usageType == 'timeRangeStart'">
       <DateAndTimePicker
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateStartTime"
           :rules="field.meta.rules"
@@ -110,7 +117,7 @@
     <template v-else-if="field.usageType == 'timeRangeEnd'">
       <DateAndTimePicker
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -157,24 +164,21 @@
     </template>
     <template v-else-if="field.usageType.startsWith('fileImageType')">
       <!--<template  v-if="typeof modelValue === 'string' && modelValue.length">-->
-      <template  v-if="itemPVal">
-        <div
-            class="q-mb-md"
-        >
-          <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
-            <q-card-section class="q-pa-sm" style="text-align: center;">
-              <template v-if="typeof modelValue === 'string' && modelValue.length">
-
+      <template v-if="itemPVal">
+        <div class="q-mb-md">
+          <q-card style="width: unset; max-width: unset" flat class="bg-grey-2">
+            <q-card-section class="q-pa-sm" style="text-align: center">
+              <template
+                  v-if="typeof modelValue === 'string' && modelValue.length"
+              >
                 <!--:src="`${superOptions.model?.fileUrlPrefix}/${modelValue}`"-->
                 <img
                     :src="`${modelValue}`"
                     alt="File not found."
-                    style="max-width:100%; max-height: 200px;"
+                    style="max-width: 100%; max-height: 200px"
                 />
               </template>
-              <template v-else>
-                Images can only be set on create.
-              </template>
+              <template v-else> Images can only be set on create. </template>
             </q-card-section>
           </q-card>
         </div>
@@ -197,8 +201,6 @@
             <q-icon name="attach_file" />
           </template>
         </q-file>
-
-
       </template>
     </template>
     <template v-else-if="field.usageType.startsWith('htmlField')">
@@ -206,11 +208,11 @@
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :toolbar="[
-              ['bold', 'italic', 'underline', 'strike'],
-              ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
-              ['link', 'image', 'hr'],
-              ['undo', 'redo']
-            ]"
+          ['bold', 'italic', 'underline', 'strike'],
+          ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+          ['link', 'image', 'hr'],
+          ['undo', 'redo'],
+        ]"
           :label="compLabel"
           :error="!!compError"
           :error-message="compError"
@@ -220,7 +222,12 @@
           filled
       />
     </template>
-    <template v-else-if="field.usageType.startsWith('staticLookup') && field.fieldExtras.usageTypeExtras?.options">
+    <template
+        v-else-if="
+        field.usageType.startsWith('staticLookup') &&
+        field.fieldExtras.usageTypeExtras?.options
+      "
+    >
       <q-select
           :label="compLabel"
           :placeholder="compPlaceholder"
@@ -237,12 +244,11 @@
           filled
           dense
       />
-
     </template>
     <template v-else-if="field.usageType == 'readOnlyTimestampType'">
       <DateAndTimePicker
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -257,7 +263,11 @@
           :configs="field"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
-          @placeSelected="(e)=>{$emit('placeSelected', e)}"
+          @placeSelected="
+          (e) => {
+            $emit('placeSelected', e);
+          }
+        "
       />
       <!--@change="searchGooglePlace"-->
     </template>
@@ -316,7 +326,6 @@
         />
       </template>
       <template v-else-if="field.dataType === 'attr'">
-
         <q-input
             :label="compLabel"
             :placeholder="compPlaceholder"
@@ -333,7 +342,7 @@
     <template v-else>
       <q-input
           :label="compLabel"
-            :placeholder="compPlaceholder"
+          :placeholder="compPlaceholder"
           :modelValue="modelValue"
           @update:modelValue="updateModelValue"
           :rules="field.meta.rules"
@@ -355,10 +364,10 @@ import SearchGooglePlace from "./SearchGooglePlace.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperSelect from "./SuperSelect.vue";
 // import SuperTable from "./SuperTable.vue";
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from "vue";
 
-const AsyncSuperTableComponent = defineAsyncComponent(() =>
-    import('./SuperTable.vue')
+const AsyncSuperTableComponent = defineAsyncComponent(
+    () => import("./SuperTable.vue"),
 );
 
 export default {
@@ -371,7 +380,7 @@ export default {
     RelationComponent,
     // SuperTable,
     // SuperTable: () => import("./SuperTable.vue"),
-    SuperTable: AsyncSuperTableComponent
+    SuperTable: AsyncSuperTableComponent,
   },
   props: {
     disabled: {
@@ -397,9 +406,9 @@ export default {
       },
     },
     modelValue: {
-      type: [Object,String,Number,Boolean],
+      type: [Object, String, Number, Boolean],
       default() {
-        return null
+        return null;
       },
     },
     field: {
@@ -429,34 +438,30 @@ export default {
   },
   computed: {
     itemPVal() {
-      const result = this.item[this.superOptions.model.primaryKey]
-      return result
-
+      const result = this.item[this.superOptions.model.primaryKey];
+      return result;
     },
     compServerError() {
-      let result = null
+      let result = null;
       if (
           this.formServerErrors &&
           this.formServerErrors.errors &&
           this.formServerErrors.errors[this.field.name]
-      ){
-        result = this.formServerErrors.errors[this.field.name]
+      ) {
+        result = this.formServerErrors.errors[this.field.name];
       }
-      return result
-
+      return result;
     },
     compError() {
-
-      let result = null
+      let result = null;
       if (
           this.itemErrors &&
           this.itemErrors &&
           this.itemErrors[this.field.name]
-      ){
-        result = `${this.field.label} is required.`
+      ) {
+        result = `${this.field.label} is required.`;
       }
-      return result
-
+      return result;
     },
     compLabel() {
       // if (this.hideLabel){
@@ -465,7 +470,7 @@ export default {
       //   return this.field.label
       // }
 
-      return void 0
+      return void 0;
     },
     compPlaceholder() {
       // if (this.hideLabel){
@@ -473,30 +478,30 @@ export default {
       // } else {
       //   return void 0
       // }
-      return this.field.label
+      return this.field.label;
     },
   },
   methods: {
     getForcedFilters(field) {
-      if (typeof field.fieldExtras.linkablesRule === 'function') {
+      if (typeof field.fieldExtras.linkablesRule === "function") {
         return field.fieldExtras.linkablesRule();
       }
       return {};
     },
-    handleFileUpload(file){
+    handleFileUpload(file) {
       if (file) {
-        this.$emit('update:modelValue', file)
+        this.$emit("update:modelValue", file);
       }
     },
-    updateModelValue(item){
-      this.$emit('update:modelValue', item)
+    updateModelValue(item) {
+      this.$emit("update:modelValue", item);
     },
-    updateForeignKey(item){
-      this.$emit('update:modelValue', item)
+    updateForeignKey(item) {
+      this.$emit("update:modelValue", item);
     },
     updateStartTime(item) {
-      this.$emit('update:modelValue', item)
-      this.$emit('updateSetDefaultEndTime', item);
+      this.$emit("update:modelValue", item);
+      this.$emit("updateSetDefaultEndTime", item);
     },
   },
   mounted() {

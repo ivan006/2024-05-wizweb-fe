@@ -1,7 +1,11 @@
 <template>
   <span :class="isHeading ? 'text-h6' : ''">
     <template v-if="typeof header.usageType == 'undefined'"></template>
-    <template v-else-if="!isHeading && !hideLabel && !header.usageType.startsWith('relChildren')">
+    <template
+        v-else-if="
+        !isHeading && !hideLabel && !header.usageType.startsWith('relChildren')
+      "
+    >
       <div class="text-caption">
         {{ header.label }}
       </div>
@@ -30,20 +34,18 @@
             icon="image"
             color="grey"
         />
-            <!--label="Show Image"-->
-        <q-dialog
-            v-model="showImageModel"
-        >
+        <!--label="Show Image"-->
+        <q-dialog v-model="showImageModel">
           <q-card
-              style="width: 700px; max-width: calc(-32px + 100vw);"
+              style="width: 700px; max-width: calc(-32px + 100vw)"
               flat
-              class="bg-grey-2 "
+              class="bg-grey-2"
           >
-            <q-card-section class="q-pa-sm flex flex-center" >
+            <q-card-section class="q-pa-sm flex flex-center">
               <img
                   alt="&nbsp;File not found."
                   :src="`${item[header.field]}`"
-                  style="max-width: 100%;"
+                  style="max-width: 100%"
               />
               <!--<q-img-->
               <!--    alt="File not found."-->
@@ -59,33 +61,29 @@
         </q-dialog>
       </template>
       <template v-else>
+        <q-card style="width: unset; max-width: unset" flat class="bg-grey-2">
+          <q-card-section class="q-pa-sm">
+            <!--<img-->
+            <!--    alt="File not found."-->
+            <!--    style="max-width:100%;"-->
+            <!--/>-->
 
-      <q-card style="width: unset; max-width: unset;"  flat class="bg-grey-2">
-        <q-card-section class="q-pa-sm">
-
-          <!--<img-->
-          <!--    alt="File not found."-->
-          <!--    style="max-width:100%;"-->
-          <!--/>-->
-
-          <!--:src="`${superOptions.model?.fileUrlPrefix}/${item[header.field]}`"-->
-          <q-img
-              alt="File not found."
-              :src="`${item[header.field]}`"
-          >
-            <!--:ratio="16/5"-->
-            <div v-if="!item[header.field]" class="absolute-full text-subtitle2 flex flex-center">
-              Oops, no image found!
-            </div>
-          </q-img>
-        </q-card-section>
-      </q-card>
+            <!--:src="`${superOptions.model?.fileUrlPrefix}/${item[header.field]}`"-->
+            <q-img alt="File not found." :src="`${item[header.field]}`">
+              <!--:ratio="16/5"-->
+              <div
+                  v-if="!item[header.field]"
+                  class="absolute-full text-subtitle2 flex flex-center"
+              >
+                Oops, no image found!
+              </div>
+            </q-img>
+          </q-card-section>
+        </q-card>
       </template>
     </template>
     <template v-else-if="header.usageType.startsWith('htmlField')">
-      <div
-          v-html="item[header.field]"
-      />
+      <div v-html="item[header.field]" />
     </template>
     <template v-else-if="header.usageType == 'actions' && !disabled()">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
@@ -106,40 +104,35 @@
             size="sm"
         />
       </div>
-
-
     </template>
     <template v-else-if="header.usageType.startsWith('relLookup')">
       <div
-          style="min-height: 32px; cursor: pointer;"
+          style="min-height: 32px; cursor: pointer"
           @click.stop="clickParent(item?.[header.field], header)"
       >
-
-
         <q-chip
             class="q-ma-none"
             v-if="item?.[header.field]?.[header.meta.lookupDisplayField]"
         >
-
-          <div :title="item?.[header.field]?.[header.meta.lookupDisplayField]" style="overflow: hidden;">
-              {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
+          <div
+              :title="item?.[header.field]?.[header.meta.lookupDisplayField]"
+              style="overflow: hidden"
+          >
+            {{ item?.[header.field]?.[header.meta.lookupDisplayField] }}
           </div>
         </q-chip>
       </div>
     </template>
     <template v-else>
       <template v-if="isTag">
-        <div
-            @click.stop="clickParent(item)"
-            style="cursor: pointer;"
-        >
+        <div @click.stop="clickParent(item)" style="cursor: pointer">
           <q-chip v-if="isTag">
             {{ item[header.field] }}
           </q-chip>
         </div>
       </template>
       <template v-else>
-        <div :title="item[header.field]" style="overflow: hidden;">
+        <div :title="item[header.field]" style="overflow: hidden">
           {{ truncateStr(item[header.field]) }}
         </div>
       </template>
@@ -150,16 +143,15 @@
 <script>
 import moment from "moment";
 import "moment-timezone";
-import QuickListsHelpers from './QuickListsHelpers';
+import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
-  name: 'DatapointForDisplayInner',
-  components: {
-  },
-  data(){
+  name: "DatapointForDisplayInner",
+  components: {},
+  data() {
     return {
       showImageModel: false,
-    }
+    };
   },
   props: {
     protectImage: {
@@ -221,7 +213,8 @@ export default {
       let truncatedStr = "";
       if (str) {
         const maxLength = 40;
-        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+        truncatedStr =
+            str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
       }
       return truncatedStr;
     },
@@ -241,11 +234,11 @@ export default {
     },
     formatTimestamp(timestamp) {
       if (timestamp) {
-        const timezone = 'Africa/Johannesburg'; // replace with desired timezone
+        const timezone = "Africa/Johannesburg"; // replace with desired timezone
         const formattedDateInTimeZone = moment
-            .tz(timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSSSSZ', 'UTC')
+            .tz(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ", "UTC")
             .tz(timezone)
-            .format('dddd, MMMM D, YYYY h:mm A');
+            .format("dddd, MMMM D, YYYY h:mm A");
         return formattedDateInTimeZone;
       } else {
         return null;

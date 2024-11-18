@@ -79,9 +79,14 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
-import {QIcon, QInput} from "quasar";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+import { QIcon, QInput } from "quasar";
+
+// Extend Day.js with plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export default {
   name: "DateAndTimePicker",
@@ -114,7 +119,7 @@ export default {
       showTimePicker: false,
       selectedDate: null,
       selectedTime: null,
-      selectedTimezone: "Africa/Johannesburg", // default timezone
+      selectedTimezone: "Africa/Johannesburg", // Default timezone
     };
   },
   computed: {
@@ -129,19 +134,22 @@ export default {
     formattedDate() {
       return this.selectedDate
           ? this.useTimezone
-              ? moment
+              ? dayjs
                   .tz(this.selectedDate, this.selectedTimezone)
                   .format("dddd, MMMM D, YYYY")
-              : moment(this.selectedDate).format("dddd, MMMM D, YYYY")
+              : dayjs(this.selectedDate).format("dddd, MMMM D, YYYY")
           : "";
     },
     formattedTime() {
       return this.selectedTime
           ? this.useTimezone
-              ? moment
-                  .tz(this.selectedTime, "HH:mm:ss", this.selectedTimezone)
+              ? dayjs
+                  .tz(
+                      `${this.selectedDate} ${this.selectedTime}`,
+                      this.selectedTimezone,
+                  )
                   .format("h:mm A")
-              : moment(this.selectedTime, "HH:mm:ss").format("h:mm A")
+              : dayjs(`${this.selectedDate} ${this.selectedTime}`).format("h:mm A")
           : "";
     },
   },
@@ -153,19 +161,19 @@ export default {
     },
     setDefaultStartTime() {
       const now = this.useTimezone
-          ? moment.tz(this.selectedTimezone)
-          : moment();
+          ? dayjs().tz(this.selectedTimezone)
+          : dayjs();
 
       // Set minutes, seconds, and milliseconds to 0 and add 1 hour
-      now.minutes(0).seconds(0).milliseconds(0).add(1, "hours");
+      now.minute(0).second(0).millisecond(0).add(1, "hour");
 
       this.selectedTime = now.format("HH:mm:ss");
     },
     parseTimestamptz(value) {
       if (value) {
         const dateTime = this.useTimezone
-            ? moment.tz(value, this.selectedTimezone)
-            : moment(value);
+            ? dayjs.tz(value, this.selectedTimezone)
+            : dayjs(value);
 
         this.selectedDate = dateTime.format("YYYY-MM-DD");
         this.selectedTime = dateTime.format("HH:mm:ss");
@@ -173,13 +181,13 @@ export default {
     },
     getTimestampForDatabase() {
       return this.useTimezone
-          ? moment
+          ? dayjs
               .tz(
                   `${this.selectedDate} ${this.selectedTime}`,
                   this.selectedTimezone,
               )
               .toISOString()
-          : moment(`${this.selectedDate} ${this.selectedTime}`).format(
+          : dayjs(`${this.selectedDate} ${this.selectedTime}`).format(
               "YYYY-MM-DDTHH:mm:ss.SSS",
           );
     },
@@ -199,5 +207,6 @@ export default {
   },
 };
 </script>
+
 
 <style scoped></style>

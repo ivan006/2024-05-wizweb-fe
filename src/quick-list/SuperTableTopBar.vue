@@ -2,17 +2,19 @@
   <div>
     <template v-if="shouldWeShowTopBar()">
       <div :class="noBorder ? 'q-mx-md' : ''">
-
         <DestructableExpansionPanels
             :destroy="!quickListsIsMobile"
             title="Settings"
         >
           <div class="row items-center wrap">
-
             <div
-                v-if="canCreateComputed && canEdit && !hideCreate && !isForSelectingRelation"
-
-                style="margin-bottom: 20px;"
+                v-if="
+                canCreateComputed &&
+                canEdit &&
+                !hideCreate &&
+                !isForSelectingRelation
+              "
+                style="margin-bottom: 20px"
                 class="q-mr-sm"
             >
               <template v-if="!!$slots.create">
@@ -51,12 +53,11 @@
                     v-model="activeTabRef"
                     toggle-color="primary"
                     :options="tabOptions"
-                    style="margin-bottom: 20px;"
+                    style="margin-bottom: 20px"
                     unelevated
                     text-color="grey-8"
                     color="grey-3"
                 />
-
 
                 <!--<q-btn-toggle-->
                 <!--    v-if="activeTab === 'calendar'"-->
@@ -81,11 +82,17 @@
               <!--<pre>{{modelValueRef[filterInput.name]}}</pre>-->
               <!--<pre>{{allowedFilters}}</pre>-->
               <!--{{filterInput.name}} {{ modelValue[filterInput.name] !== 'undefined'}}-->
-              <template v-if="typeof modelValueRef[filterInput.name] !== 'undefined' && (allowedFilters==null || allowedFilters.includes(filterInput.name))">
+              <template
+                  v-if="
+                  typeof modelValueRef[filterInput.name] !== 'undefined' &&
+                  (allowedFilters == null ||
+                    allowedFilters.includes(filterInput.name))
+                "
+              >
                 <template
                     v-if="filterInput.usageType.startsWith('relForeignKey')"
                 >
-                  <div style="min-width: 200px;">
+                  <div style="min-width: 200px">
                     <SuperTable
                         :isForSelectingRelation="true"
                         :canEdit="false"
@@ -94,7 +101,6 @@
                         :rules="[() => true]"
                         :modelField="filterInput"
                         class="q-mr-sm"
-
                     />
                     <!--v-model="modelValueRef[filterInput.name].value"-->
                   </div>
@@ -105,7 +111,7 @@
                       :modelField="filterInput"
                       v-model="modelValueRef[filterInput.name]"
                       class="q-mr-sm col-grow"
-                      style="max-width: 200px;"
+                      style="max-width: 200px"
                   />
                 </template>
               </template>
@@ -116,13 +122,16 @@
                       :filterField="filterInput"
                       v-model="modelValueRef"
                       class="q-mr-sm col-grow"
-                      style="max-width: 200px;"
+                      style="max-width: 200px"
                   />
                 </template>
               </template>
             </template>
             <q-input
-                v-if="this.superOptions.model.titleKey !== this.superOptions.model.primaryKey"
+                v-if="
+                this.superOptions.model.titleKey !==
+                this.superOptions.model.primaryKey
+              "
                 v-model="searchRef"
                 :error="false"
                 :error-message="''"
@@ -138,7 +147,10 @@
                   class="q-mb-md q-ml-md text-grey-8"
                   filled
                   unelevated
-                  :style="{ backgroundColor: 'var(--q-color-grey-2)', 'margin-left': 'auto'}"
+                  :style="{
+                  backgroundColor: 'var(--q-color-grey-2)',
+                  'margin-left': 'auto',
+                }"
               />
             </template>
             <template v-if="Object.keys(downloadables).includes('pdf')">
@@ -151,9 +163,7 @@
                   unelevated
                   :style="{ backgroundColor: 'var(--q-color-grey-2)' }"
               />
-              <div
-                  style="display: none"
-              >
+              <div style="display: none">
                 <PdfTemplate
                     :id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"
                     :options="downloadables.pdf"
@@ -203,9 +213,8 @@ import DestructableExpansionPanels from "./DestructableExpansionPanels.vue";
 import CreateButton from "./CreateButton.vue";
 import PdfTemplate from "./PdfTemplate.vue";
 
-
-const AsyncComponentSuperTable = defineAsyncComponent(() =>
-    import('./SuperTable.vue')
+const AsyncComponentSuperTable = defineAsyncComponent(
+    () => import("./SuperTable.vue"),
 );
 
 export default {
@@ -216,7 +225,7 @@ export default {
     DestructableExpansionPanels,
     FilterTime,
     SuperTable: AsyncComponentSuperTable,
-    FilterPlace
+    FilterPlace,
   },
   props: {
     templateForm: {
@@ -267,15 +276,15 @@ export default {
     },
     startFieldName: {
       type: String,
-      default: '',
+      default: "",
     },
     activeTab: {
       type: String,
-      default: '',
+      default: "",
     },
     search: {
       type: String,
-      default: '',
+      default: "",
     },
     longField: {
       type: Object,
@@ -298,55 +307,45 @@ export default {
       type: Object,
       default() {
         return {
-          show: [
-            'table',
-            'grid',
-            'map',
-            'calendar',
-          ],
-          default: "table"
+          show: ["table", "grid", "map", "calendar"],
+          default: "table",
         };
       },
     },
   },
   data() {
     return {
-
       activeTabRef: "",
       searchRef: "",
-      modelValueRef: {}
+      modelValueRef: {},
     };
   },
   computed: {
-
     flattenedHeaders() {
-
       let result = [];
-      if (this.templateListTable.length){
+      if (this.templateListTable.length) {
         for (const field of this.templateListTable) {
+          const validField = this.superOptions.headers.find(
+              (header) => header.field === field.field,
+          );
+          let addableField = {};
 
-          const validField = this.superOptions.headers.find((header) => header.field === field.field);
-          let addableField = {}
+          if (typeof validField !== "undefined") {
+            addableField = validField;
 
-          if (typeof validField !== "undefined"){
-
-            addableField = validField
-
-            if (typeof field.label !== "undefined"){
-              addableField.label = field.label
+            if (typeof field.label !== "undefined") {
+              addableField.label = field.label;
             }
-            addableField.userConfig = field
-
+            addableField.userConfig = field;
           } else {
-
             let label = "";
-            if (typeof field.label !== "undefined" && !field.hideLabel){
-              label = field.label
+            if (typeof field.label !== "undefined" && !field.hideLabel) {
+              label = field.label;
             }
 
             let fieldName = "";
-            if (typeof field.field !== "undefined"){
-              fieldName = field.field
+            if (typeof field.field !== "undefined") {
+              fieldName = field.field;
             }
 
             addableField = {
@@ -358,14 +357,12 @@ export default {
               name: fieldName,
               sortable: fieldName.length ? true : false,
               usageType: "normal",
-              userConfig: field
-            }
-
+              userConfig: field,
+            };
           }
 
           result.push(addableField);
         }
-
       } else {
         for (const header of this.superOptions.headers) {
           result.push(header);
@@ -374,7 +371,7 @@ export default {
               result.push({
                 // isChildOf: header,
                 ...childHeader,
-                userConfig: {}
+                userConfig: {},
               });
             }
           }
@@ -387,61 +384,63 @@ export default {
       return QuickListsHelpers.quickListsIsMobile();
     },
     tabOptions() {
-      let result = []
+      let result = [];
       // let result = [
       //   { label: 'Table', value: 'table' },
       //   { label: 'Grid', value: 'grid' },
       //   { label: 'Map', value: 'map' },
       //   { label: 'Calendar', value: 'calendar' },
       // ]
-      if(this.viewAs.show.includes('grid')){
-        result.push({ label: 'Grid', value: 'grid',
-          icon: 'grid_view' })
+      if (this.viewAs.show.includes("grid")) {
+        result.push({label: "Grid", value: "grid", icon: "grid_view"});
       }
-      if(this.viewAs.show.includes('map') && this.longField){
-        result.push({ label: 'Map', value: 'map',
-          icon: 'map'  })
+      if (this.viewAs.show.includes("map") && this.longField) {
+        result.push({label: "Map", value: "map", icon: "map"});
       }
-      if(this.viewAs.show.includes('calendar') && this.startFieldName){
-        result.push({ label: 'Calendar', value: 'calendar',
-          icon: 'calendar_today' })
+      if (this.viewAs.show.includes("calendar") && this.startFieldName) {
+        result.push({
+          label: "Calendar",
+          value: "calendar",
+          icon: "calendar_today",
+        });
       }
-      if(this.viewAs.show.includes('table')){
-        result.push({ label: 'Table', value: 'table' })
+      if (this.viewAs.show.includes("table")) {
+        result.push({label: "Table", value: "table"});
       }
-      return result
+      return result;
     },
     itemsForExport() {
-      const result = []
-      let compItem = {}
+      const result = [];
+      let compItem = {};
       for (const item of this.items) {
-        compItem = {}
+        compItem = {};
         for (const header of this.flattenedHeaders) {
-          if (header.userConfig && header.userConfig.type === 'function'){
-            compItem[header.label] = header.userConfig.function(item)
-          } else if(header.usageType) {
+          if (header.userConfig && header.userConfig.type === "function") {
+            compItem[header.label] = header.userConfig.function(item);
+          } else if (header.usageType) {
             if (
-                header.usageType === 'readOnlyTimestampType' ||
-                header.usageType === 'timestampType' ||
-                header.usageType === 'timeRangeStart' ||
-                header.usageType === 'timeRangeEnd'
-            ){
-              compItem[header.label] = this.formatTimestamp(item[header.field])
-            } else if (header.usageType.startsWith('relLookup')) {
+                header.usageType === "readOnlyTimestampType" ||
+                header.usageType === "timestampType" ||
+                header.usageType === "timeRangeStart" ||
+                header.usageType === "timeRangeEnd"
+            ) {
+              compItem[header.label] = this.formatTimestamp(item[header.field]);
+            } else if (header.usageType.startsWith("relLookup")) {
               if (item?.[header.field]?.[header.meta.lookupDisplayField]) {
-                compItem[header.label] = item?.[header.field]?.[header.meta.lookupDisplayField]
+                compItem[header.label] =
+                    item?.[header.field]?.[header.meta.lookupDisplayField];
               }
             } else if (
-                !header.usageType.startsWith('relChildren') &&
+                !header.usageType.startsWith("relChildren") &&
                 item[header.field]
-            ){
-              compItem[header.label] = this.truncateStr(item[header.field])
+            ) {
+              compItem[header.label] = this.truncateStr(item[header.field]);
             }
           }
         }
-        result.push(compItem)
+        result.push(compItem);
       }
-      return result
+      return result;
     },
     filterInputs() {
       const data = this.superOptions.modelFields;
@@ -473,15 +472,15 @@ export default {
   methods: {
     toHtmlIdSafeString(str) {
       return str
-          .toString()                  // Ensure it's a string
-          .toLowerCase()               // Convert to lowercase
-          .trim()                      // Remove whitespace from both ends
-          .replace(/\s+/g, '-')        // Replace spaces with hyphens
-          .replace(/[^a-z0-9_-]/g, '') // Remove invalid characters
-          .replace(/^-+/, '');         // Remove leading hyphens (if any)
+          .toString() // Ensure it's a string
+          .toLowerCase() // Convert to lowercase
+          .trim() // Remove whitespace from both ends
+          .replace(/\s+/g, "-") // Replace spaces with hyphens
+          .replace(/[^a-z0-9_-]/g, "") // Remove invalid characters
+          .replace(/^-+/, ""); // Remove leading hyphens (if any)
     },
     createItem(event) {
-      this.$emit('createItem', event);
+      this.$emit("createItem", event);
     },
     formatTimestamp(timestamp) {
       if (timestamp) {
@@ -498,34 +497,37 @@ export default {
     convertToCsv() {
       // Check if data is not empty
       if (this.itemsForExport.length === 0) {
-        return '';
+        return "";
       }
 
       // Generate header from the keys of the first object in the data array
-      const header = Object.keys(this.itemsForExport[0]).join(',');
+      const header = Object.keys(this.itemsForExport[0]).join(",");
 
       // Generate rows from the data
-      const rows = this.itemsForExport.map(row => {
-        return Object.values(row).map(value => `"${value}"`).join(',');
+      const rows = this.itemsForExport.map((row) => {
+        return Object.values(row)
+            .map((value) => `"${value}"`)
+            .join(",");
       });
 
-      return [header, ...rows].join('\r\n');
+      return [header, ...rows].join("\r\n");
     },
     truncateStr(str) {
       let truncatedStr = "";
       if (str) {
         const maxLength = 40;
-        truncatedStr = str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
+        truncatedStr =
+            str.length > maxLength ? str.substring(0, maxLength) + "..." : str;
       }
       return truncatedStr;
     },
     defineAsyncComponent,
     downloadCsv() {
       const csvData = this.convertToCsv();
-      const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvData], {type: "text/csv;charset=utf-8;"});
+      const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', `${this.downloadables.csv?.title}.csv`);
+      link.setAttribute("download", `${this.downloadables.csv?.title}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -548,56 +550,50 @@ export default {
     // },import html2pdf from 'html2pdf.js';
 
     downloadPdf() {
-
       const bodyElement = document.querySelector(
-          `#pdfBody${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+          `#pdfBody${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`,
       );
       const headerElement = document.querySelector(
-          `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+          `#pdfHeader${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`,
       );
       const footerElement = document.querySelector(
-          `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`
+          `#pdfFooter${this.toHtmlIdSafeString(this.downloadables.pdf?.title)}`,
       );
 
       QuickListsHelpers.downloadPdf(
           this.downloadables.pdf?.title,
           bodyElement,
-          this.downloadables.pdf['margin'] ? this.downloadables.pdf['margin'] : 0,
+          this.downloadables.pdf["margin"] ? this.downloadables.pdf["margin"] : 0,
           footerElement,
-          headerElement
-      )
-
+          headerElement,
+      );
     },
-
-
-
 
     shouldWeShowTopBar() {
       // let result = true
-      let result = false
+      let result = false;
       if (
           this.viewAs.show.length ||
-          (
-              this.filterInputs.length &&
-              (
-                  this.allowedFilters == null ||
-                  this.filterInputs.some(
-                      filterInput =>  this.allowedFilters.includes(filterInput.name)
-                  )
-              )
-          ) ||
-          this.superOptions.model.titleKey !== this.superOptions.model.primaryKey ||
-          Object.keys(this.downloadables).includes('csv') ||
-          Object.keys(this.downloadables).includes('pdf') ||
-          this.canCreateComputed && this.canEdit && !this.hideCreate && !this.isForSelectingRelation
-      ){
-        result = true
+          (this.filterInputs.length &&
+              (this.allowedFilters == null ||
+                  this.filterInputs.some((filterInput) =>
+                      this.allowedFilters.includes(filterInput.name),
+                  ))) ||
+          this.superOptions.model.titleKey !==
+          this.superOptions.model.primaryKey ||
+          Object.keys(this.downloadables).includes("csv") ||
+          Object.keys(this.downloadables).includes("pdf") ||
+          (this.canCreateComputed &&
+              this.canEdit &&
+              !this.hideCreate &&
+              !this.isForSelectingRelation)
+      ) {
+        result = true;
       }
-      return result
+      return result;
     },
   },
   watch: {
-
     modelValue: {
       handler(newVal, oldVal) {
         // Use stringified comparison for deep change detection
@@ -605,16 +601,16 @@ export default {
           this.modelValueRef = {...newVal};
         }
       },
-      deep: true
+      deep: true,
     },
     modelValueRef: {
       handler(newVal, oldVal) {
         // Use stringified comparison to prevent unnecessary updates
         // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.$emit('update:modelValue', this.modelValueRef);
+        this.$emit("update:modelValue", this.modelValueRef);
         // }
       },
-      deep: true
+      deep: true,
     },
     activeTab: {
       handler(newVal, oldVal) {
@@ -626,7 +622,7 @@ export default {
     activeTabRef: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.$emit('update:activeTab', this.activeTabRef);
+          this.$emit("update:activeTab", this.activeTabRef);
         }
       },
     },
@@ -640,10 +636,10 @@ export default {
     searchRef: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.$emit('update:search', newVal);
+          this.$emit("update:search", newVal);
         }
       },
-    }
+    },
   },
   mounted() {
     this.modelValueRef = {...this.modelValue};
@@ -654,14 +650,11 @@ export default {
           modelField.usageType.startsWith("relForeignKey") ||
           modelField.dataType.startsWith("mapExtraRel")
       ) {
-
         this.modelValueRef[modelField.name] = null;
       } else if (modelField.usageType == "timeRangeStart") {
         this.modelValueRef[modelField.name] = null;
       }
     }
-  }
+  },
 };
 </script>
-
-

@@ -15,7 +15,11 @@
         :hideBottom="hidePagination"
     >
       <template v-slot:body="props">
-        <q-tr :props="props" @click="clickRow(props.row)" :no-hover="!model.rules.readable(props.row)">
+        <q-tr
+            :props="props"
+            @click="clickRow(props.row)"
+            :no-hover="!model.rules.readable(props.row)"
+        >
           <q-td
               v-for="header in flattenedHeaders"
               :key="header.field"
@@ -23,7 +27,6 @@
           >
             <template v-if="header.isChildOf">
               <div>
-
                 <DatapointForDisplay
                     :item="props.row[header.isChildOf.value]"
                     :superOptions="superOptions"
@@ -46,7 +49,6 @@
             </template>
             <template v-else>
               <div>
-
                 <DatapointForDisplay
                     :item="props.row"
                     :superOptions="superOptions"
@@ -69,8 +71,6 @@
           </q-td>
         </q-tr>
       </template>
-
-
     </q-table>
     <template v-if="!items.length">
       <template v-if="loading">
@@ -94,7 +94,7 @@ import moment from "moment";
 
 export default {
   name: "SuperTableTable",
-  components: {DatapointForDisplay, DatapointForDisplayInner },
+  components: {DatapointForDisplay, DatapointForDisplayInner},
   props: {
     hidePagination: {
       type: Boolean,
@@ -191,7 +191,7 @@ export default {
         displayMapField: this.displayMapField,
         model: this.model,
         canEdit: this.canEdit,
-      }
+      };
     },
     headers() {
       const result = QuickListsHelpers.SupaerTableHeaders(
@@ -221,33 +221,30 @@ export default {
       },
     },
     flattenedHeaders() {
-
       let result = [];
-      if (this.templateListTable.length){
+      if (this.templateListTable.length) {
         for (const field of this.templateListTable) {
+          const validField = this.superOptions.headers.find(
+              (header) => header.field === field.field,
+          );
+          let addableField = {};
 
-          const validField = this.superOptions.headers.find((header) => header.field === field.field);
-          let addableField = {}
+          if (typeof validField !== "undefined") {
+            addableField = validField;
 
-          if (typeof validField !== "undefined"){
-
-            addableField = validField
-
-            if (typeof field.label !== "undefined"){
-              addableField.label = field.label
+            if (typeof field.label !== "undefined") {
+              addableField.label = field.label;
             }
-            addableField.userConfig = field
-
+            addableField.userConfig = field;
           } else {
-
             let label = "";
-            if (typeof field.label !== "undefined" && !field.hideLabel){
-              label = field.label
+            if (typeof field.label !== "undefined" && !field.hideLabel) {
+              label = field.label;
             }
 
             let fieldName = "";
-            if (typeof field.field !== "undefined"){
-              fieldName = field.field
+            if (typeof field.field !== "undefined") {
+              fieldName = field.field;
             }
 
             addableField = {
@@ -259,9 +256,8 @@ export default {
               name: fieldName,
               sortable: fieldName.length ? true : false,
               usageType: "normal",
-              userConfig: field
-            }
-
+              userConfig: field,
+            };
           }
 
           result.push(addableField);
@@ -275,18 +271,17 @@ export default {
         //     ...actionField
         //   });
         // }
-
       } else {
         for (const header of this.superOptions.headers) {
-          if (header.usageType !== "relChildrenNormal"){
+          if (header.usageType !== "relChildrenNormal") {
             result.push(header);
             if (header.headerParentFields) {
               for (const childHeader of header.headerParentFields) {
-                if(childHeader.meta.important){
+                if (childHeader.meta.important) {
                   result.push({
                     // isChildOf: header,
                     ...childHeader,
-                    userConfig: {}
+                    userConfig: {},
                   });
                 }
               }
@@ -300,8 +295,7 @@ export default {
     flattenedHeadersHideMapField() {
       let result = [];
       for (const header of this.flattenedHeaders) {
-        if (!header.meta || !header.meta.hideField){
-
+        if (!header.meta || !header.meta.hideField) {
           if (!this.superOptions.superOptions) {
             if (
                 !header.usageType.startsWith("relLookupMapExtra") &&
@@ -319,11 +313,11 @@ export default {
   },
   methods: {
     tableRowClassFn(props) {
-      let result = 'ccc'
-      if (this.model.rules.readable(props.row)){
-        result = "hhh"
+      let result = "ccc";
+      if (this.model.rules.readable(props.row)) {
+        result = "hhh";
       }
-      return result
+      return result;
     },
     updateOptions(e) {
       this.$emit("update:options", e);
@@ -335,12 +329,12 @@ export default {
       this.$emit("editItem", e);
     },
     clickRow(row) {
-      if (this.model.rules.readable(row)){
+      if (this.model.rules.readable(row)) {
         this.$emit("clickRow", row[this.model.primaryKey], row);
       }
     },
     onRequest(props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination;
+      const {page, rowsPerPage, sortBy, descending} = props.pagination;
       this.pagination = {
         ...this.pagination,
         page,
@@ -348,7 +342,7 @@ export default {
         sortBy,
         descending,
       };
-      this.$emit("update:options", { page, rowsPerPage, sortBy, descending });
+      this.$emit("update:options", {page, rowsPerPage, sortBy, descending});
     },
   },
   watch: {
@@ -377,7 +371,6 @@ export default {
 </script>
 
 <style scoped>
-
 .qTable .q-tr {
   cursor: pointer;
 }

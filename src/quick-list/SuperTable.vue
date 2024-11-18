@@ -1,7 +1,6 @@
 <template>
   <div>
     <template v-if="!justCreateButton">
-
       <template v-if="isForSelectingRelation">
         <!--<SuperTableList-->
         <!--    :items="items"-->
@@ -33,7 +32,11 @@
             :hideBottomSpace="selectHideBottomSpace"
         >
           <CreateButton
-              v-if="superOptions.model.rules.creatable() && canCreateComputed && !hideCreate"
+              v-if="
+              superOptions.model.rules.creatable() &&
+              canCreateComputed &&
+              !hideCreate
+            "
               :modelFields="modelFields"
               @createItem="createItem"
               :model="model"
@@ -72,31 +75,28 @@
         />
         <div class="">
           <template v-if="activeTab == 'table'">
-
-            <div
-            >
+            <div>
               <!--:id="`pdfBody${toHtmlIdSafeString(downloadables.pdf?.title)}`"-->
               <template v-if="!noBorder">
                 <q-card class="">
-                    <SuperTableTable
-                        ref="SuperTableTableRef"
-                        :items="items"
-                        :loading="loading"
-                        @clickRow="clickRow"
-                        :templateListTable="templateListTable"
-                        :hidePagination="hidePagination"
-                        :excludedCols="excludedCols"
-                        :model="model"
-                        :displayMapField="displayMapField"
-                        :canEdit="canEdit"
-                        @editItem="editItem"
-                        @deleteItem="deleteItem"
-                        :loadingError="loadingError"
-                    />
+                  <SuperTableTable
+                      ref="SuperTableTableRef"
+                      :items="items"
+                      :loading="loading"
+                      @clickRow="clickRow"
+                      :templateListTable="templateListTable"
+                      :hidePagination="hidePagination"
+                      :excludedCols="excludedCols"
+                      :model="model"
+                      :displayMapField="displayMapField"
+                      :canEdit="canEdit"
+                      @editItem="editItem"
+                      @deleteItem="deleteItem"
+                      :loadingError="loadingError"
+                  />
                 </q-card>
               </template>
               <template v-else>
-
                 <SuperTableTable
                     :items="items"
                     :loading="loading"
@@ -119,7 +119,6 @@
             <!--:pagination="options"-->
             <!--@update:pagination="updatePagination"-->
             <div class="flex flex-center">
-
               <q-pagination
                   class="q-mt-sm"
                   :class="noBorder ? 'q-mx-md' : ''"
@@ -160,10 +159,8 @@
             />
           </template>
           <template v-if="activeTab == 'calendar'">
-
             <template v-if="!noBorder">
               <q-card class="q-pa-sm">
-
                 <!--<SuperTableCalendarWrapper-->
                 <!--    :startFieldName="startFieldName"-->
                 <!--    :endFieldName="endFieldName"-->
@@ -185,15 +182,15 @@
                     @deleteItem="deleteItem"
                     :loading="loading"
                     :mixedConfigs="[
-                      {
-                        templateListCalendar: templateListCalendar,
-                        startFieldName: startFieldName,
-                        endFieldName: endFieldName,
-                        items: items,
-                        superOptions: superOptions,
-                        unClickable: unClickable,
-                      }
-                    ]"
+                    {
+                      templateListCalendar: templateListCalendar,
+                      startFieldName: startFieldName,
+                      endFieldName: endFieldName,
+                      items: items,
+                      superOptions: superOptions,
+                      unClickable: unClickable,
+                    },
+                  ]"
                 />
                 <!--:calendarMode="calendarMode"-->
               </q-card>
@@ -205,15 +202,15 @@
                   @deleteItem="deleteItem"
                   :loading="loading"
                   :mixedConfigs="[
-                    {
-                      templateListCalendar: templateListCalendar,
-                      startFieldName: startFieldName,
-                      endFieldName: endFieldName,
-                      items: items,
-                      superOptions: superOptions,
-                      unClickable: unClickable,
-                    }
-                  ]"
+                  {
+                    templateListCalendar: templateListCalendar,
+                    startFieldName: startFieldName,
+                    endFieldName: endFieldName,
+                    items: items,
+                    superOptions: superOptions,
+                    unClickable: unClickable,
+                  },
+                ]"
               />
             </template>
           </template>
@@ -222,7 +219,11 @@
     </template>
     <template v-else>
       <CreateButton
-          v-if="superOptions.model.rules.creatable() && canCreateComputed && !hideCreate"
+          v-if="
+          superOptions.model.rules.creatable() &&
+          canCreateComputed &&
+          !hideCreate
+        "
           :modelFields="modelFields"
           @createItem="createItem"
           :model="model"
@@ -258,23 +259,23 @@ import DestructableExpansionPanels from "./DestructableExpansionPanels.vue";
 import CreateButton from "./CreateButton.vue";
 import RelationComponent from "./RelationComponent.vue";
 
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from "vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import SearchGooglePlace from "./SearchGooglePlace.vue";
 import jsPDF from "jspdf";
-import 'jspdf-autotable';
+import "jspdf-autotable";
 import PdfTemplate from "./PdfTemplate.vue";
-import {Helpers} from "../index";
+import { Helpers } from "../index";
 import SuperCalendar from "./SuperCalendar.vue";
 import CrudModal from "./CrudModal.vue";
 import SuperTableTopBar from "./SuperTableTopBar.vue";
 // import html2pdf from 'html2pdf.js';
 
-const AsyncComponentCreateEditForm = defineAsyncComponent(() =>
-    import('./CreateEditForm.vue')
+const AsyncComponentCreateEditForm = defineAsyncComponent(
+    () => import("./CreateEditForm.vue"),
 );
-const AsyncComponentSuperTable = defineAsyncComponent(() =>
-    import('./SuperTable.vue')
+const AsyncComponentSuperTable = defineAsyncComponent(
+    () => import("./SuperTable.vue"),
 );
 
 export default {
@@ -344,13 +345,8 @@ export default {
       type: Object,
       default() {
         return {
-          show: [
-              'table',
-              'grid',
-              'map',
-              'calendar',
-          ],
-          default: "table"
+          show: ["table", "grid", "map", "calendar"],
+          default: "table",
         };
       },
     },
@@ -489,7 +485,7 @@ export default {
       loadingError: false,
       search: "",
       years: Array.from(
-          {length: 5},
+          { length: 5 },
           (_, index) => new Date().getFullYear() - index,
       ), // last 5 years including this year
       itemsLength: 1,
@@ -515,20 +511,25 @@ export default {
     // activeTab() {
     //   return this.$refs.SuperTableTopBar?.activeTab;
     // },
-    longField(){
+    longField() {
       let longField = this.mapHeaders.find((field) => {
         return field.usageType == "mapExtraGeoLocLong";
       });
-      return longField
+      return longField;
     },
     startFieldName() {
-
-      const result = Helpers.getFieldFromModelOrParent(this.superOptions.headers, 'timeRangeStart');
-      return result
+      const result = Helpers.getFieldFromModelOrParent(
+          this.superOptions.headers,
+          "timeRangeStart",
+      );
+      return result;
     },
     endFieldName() {
-      const result = Helpers.getFieldFromModelOrParent(this.superOptions.headers, 'timeRangeEnd');
-      return result
+      const result = Helpers.getFieldFromModelOrParent(
+          this.superOptions.headers,
+          "timeRangeEnd",
+      );
+      return result;
     },
     // optionsComputed: {
     //   get() {
@@ -543,21 +544,29 @@ export default {
     // },
     parentField() {
       const result = this.superOptions.modelFields.find((field) => {
-        return field.name == this.parentKeyValuePair.parentFKey
-      })
-      return result
+        return field.name == this.parentKeyValuePair.parentFKey;
+      });
+      return result;
     },
     canCreateComputed() {
-      if (this.parentField && typeof this.parentField.fieldExtras.linkablesRule === 'function') {
-        const linkablesRule =  this.parentField.fieldExtras.linkablesRule();
-        if (linkablesRule[this.model.primaryKey] && this.parentKeyValuePair.parentFVal){
-          const array = linkablesRule[this.model.primaryKey].split(",").map(Number);
-          if (!array.includes(this.parentKeyValuePair.parentFVal)){
-            return false
+      if (
+          this.parentField &&
+          typeof this.parentField.fieldExtras.linkablesRule === "function"
+      ) {
+        const linkablesRule = this.parentField.fieldExtras.linkablesRule();
+        if (
+            linkablesRule[this.model.primaryKey] &&
+            this.parentKeyValuePair.parentFVal
+        ) {
+          const array = linkablesRule[this.model.primaryKey]
+              .split(",")
+              .map(Number);
+          if (!array.includes(this.parentKeyValuePair.parentFVal)) {
+            return false;
           }
         }
       }
-      return true
+      return true;
     },
     superOptions() {
       return {
@@ -566,7 +575,7 @@ export default {
         displayMapField: this.displayMapField,
         model: this.model,
         canEdit: this.canEdit,
-      }
+      };
     },
     excludedCols() {
       let result = [];
@@ -576,7 +585,7 @@ export default {
       return result;
     },
     canEdit() {
-      const result = this.model.rules.creatable()
+      const result = this.model.rules.creatable();
       return result;
     },
     filtersComp() {
@@ -584,8 +593,12 @@ export default {
         ...this.filters,
         ...this.forcedFilters,
       };
-      if (this.parentKeyValuePair.parentFKey && this.parentKeyValuePair.parentFVal) {
-        result[this.parentKeyValuePair.parentFKey] = this.parentKeyValuePair.parentFVal;
+      if (
+          this.parentKeyValuePair.parentFKey &&
+          this.parentKeyValuePair.parentFVal
+      ) {
+        result[this.parentKeyValuePair.parentFKey] =
+            this.parentKeyValuePair.parentFVal;
       }
       return result;
     },
@@ -634,22 +647,19 @@ export default {
   },
   methods: {
     createItem() {
-      this.$refs.CrudModalRef.createItem()
+      this.$refs.CrudModalRef.createItem();
     },
     deleteItem(item) {
       this.$emit("deleteItem", item);
-      this.$refs.CrudModalRef.deleteItem(item)
+      this.$refs.CrudModalRef.deleteItem(item);
     },
     editItem(item) {
       this.$emit("editItem", item);
-      this.$refs.CrudModalRef.editItem(item)
+      this.$refs.CrudModalRef.editItem(item);
     },
 
-
-
-
     doSearch(searchTerm) {
-      this.filters[this.model.titleKey] = searchTerm
+      this.filters[this.model.titleKey] = searchTerm;
       this.fetchData();
     },
     pageUpdate(page) {
@@ -685,14 +695,12 @@ export default {
     },
 
     clickRow(pVal, item) {
-
       if (this.isForSelectingRelation) {
         this.highlightedRow = pVal;
       } else {
-
-        if (this.model.rules.readable(item)){
-          if (typeof this.model.openRecord === 'function'){
-            this.model.openRecord(item[this.pKey], item, this.$router)
+        if (this.model.rules.readable(item)) {
+          if (typeof this.model.openRecord === "function") {
+            this.model.openRecord(item[this.pKey], item, this.$router);
           } else {
             this.$emit("clickRow", pVal, item, this.$router);
           }
@@ -703,7 +711,10 @@ export default {
     },
     createdItem(item) {
       if (this.isForSelectingRelation) {
-        this.$emit("update:modelValue", item[this.superOptions.model.primaryKey]);
+        this.$emit(
+            "update:modelValue",
+            item[this.superOptions.model.primaryKey],
+        );
         this.$refs.selectRef.hidePopup();
       }
     },
@@ -711,26 +722,27 @@ export default {
       const groupedFilters = {};
 
       // Group filters by relation
-      Object.keys(filters).forEach(filterKey => {
-        const [relation, attr] = filterKey.split('.');
+      Object.keys(filters).forEach((filterKey) => {
+        const [relation, attr] = filterKey.split(".");
         if (!groupedFilters[relation]) {
           groupedFilters[relation] = {};
         }
         groupedFilters[relation][attr] = filters[filterKey];
       });
 
-      return items.filter(item => {
-        return Object.keys(groupedFilters).every(relation => {
+      return items.filter((item) => {
+        return Object.keys(groupedFilters).every((relation) => {
           const relationFilters = groupedFilters[relation];
           if (!item[relation]) return false;
-          return item[relation].some(relatedItem => {
-            return Object.keys(relationFilters).every(attr => relatedItem[attr] === relationFilters[attr]);
+          return item[relation].some((relatedItem) => {
+            return Object.keys(relationFilters).every(
+                (attr) => relatedItem[attr] === relationFilters[attr],
+            );
           });
         });
       });
     },
     async fetchData() {
-
       try {
         if (!this.activated && this.isForSelectingRelation) return;
 
@@ -798,7 +810,7 @@ export default {
           count = response.response.data.total;
         }
         this.itemsLength = count; // Assuming your API returns a total count
-        this.$emit('fetchComplete', this.model.name, this.items);
+        this.$emit("fetchComplete", this.model.name, this.items);
       } catch (error) {
         this.loading = false;
         this.loadingError = true;
@@ -814,24 +826,25 @@ export default {
   watch: {
     forcedFilters: {
       handler(newVal, oldVal) {
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) { // Compare serialized objects
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          // Compare serialized objects
           this.activated = false;
-          this.items = []
+          this.items = [];
         }
       },
       deep: true, // Deep watch to detect changes in nested properties
     },
     items(newVal) {
-      if (newVal.length){
-        this.$emit('update:items', newVal)
+      if (newVal.length) {
+        this.$emit("update:items", newVal);
       }
     },
     search(value) {
       if (!this.disabled) {
-        if (this.timeout) clearTimeout(this.timeout)
+        if (this.timeout) clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
-          this.doSearch(value)
-        }, 300)
+          this.doSearch(value);
+        }, 300);
       }
     },
     filters: {
@@ -844,9 +857,9 @@ export default {
     },
   },
   mounted() {
-    this.$emit('superTableMounted');
+    this.$emit("superTableMounted");
 
-    this.activeTab = this.viewAs.default
+    this.activeTab = this.viewAs.default;
 
     // if (this.quickListsIsMobile) {
     //   this.activeTab = "grid";
@@ -856,14 +869,13 @@ export default {
     //   this.activeTab = this.templateOverview.defaultViewMode;
     // }
 
-
-    if (this.activated || !this.isForSelectingRelation){
+    if (this.activated || !this.isForSelectingRelation) {
       // if (!this.loading && !this.justCreateButton) {
       if (!this.justCreateButton) {
         this.fetchData();
       }
     }
-  }
+  },
 };
 </script>
 
@@ -871,6 +883,4 @@ export default {
 //.highlighted {
 //  background-color: #f0f0f0;
 //}
-
-
 </style>
