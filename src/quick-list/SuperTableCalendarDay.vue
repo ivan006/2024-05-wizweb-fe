@@ -115,8 +115,13 @@
 </template>
 
 <script>
-import moment from "moment";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import { parseDate } from "@quasar/quasar-ui-qcalendar";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export default {
   props: {
@@ -144,7 +149,7 @@ export default {
   computed: {
     style() {
       return {
-        top: this.timeStartPos + "px",
+        top: `${this.timeStartPos}px`,
       };
     },
   },
@@ -158,11 +163,11 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    momentMethod(e, format) {
-      return moment(e).format(format);
+    momentMethod(date, format) {
+      return dayjs(date).format(format);
     },
     isToday(date) {
-      return moment(date).isSame(moment(), "day");
+      return dayjs(date).isSame(dayjs(), "day");
     },
     getEvents(date) {
       return this.events.filter((event) => event.date === date);
@@ -188,15 +193,15 @@ export default {
     ) {
       const s = {};
       if (timeStartPos && timeDurationHeight) {
-        s.top = timeStartPos(event.time) + "px";
-        s.height = timeDurationHeight(event.duration) + "px";
+        s.top = `${timeStartPos(event.time)}px`;
+        s.height = `${timeDurationHeight(event.duration)}px`;
       }
       s["align-items"] = "flex-start";
       return s;
     },
     hasDate(days) {
       return this.currentDate
-          ? days.find((day) => day.date === this.currentDate)
+          ? days.some((day) => day.date === this.currentDate)
           : false;
     },
     adjustCurrentTime() {
@@ -211,11 +216,12 @@ export default {
   },
   mounted() {
     this.adjustCurrentTime();
-    const intervalId = setInterval(() => {
+    setInterval(() => {
       this.adjustCurrentTime();
     }, 60000);
   },
 };
+
 </script>
 
 <style style lang="sass">

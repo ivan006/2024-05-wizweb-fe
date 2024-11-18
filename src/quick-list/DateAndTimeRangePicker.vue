@@ -110,17 +110,19 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export default {
   name: "DateRangePicker",
   props: {
     hideLabel: {
       type: Boolean,
-      default() {
-        return false;
-      },
+      default: false,
     },
     modelValue: {
       type: String,
@@ -144,48 +146,46 @@ export default {
   },
   computed: {
     formattedValue() {
-      let result = "";
       if (
           this.formattedStartDate &&
           this.formattedStartTime &&
           this.formattedEndTime
       ) {
-        if (this.startDate === this.endDate) {
-          result = `${this.formattedStartDate} \n${this.formattedStartTime} - ${this.formattedEndTime} (${this.selectedTimezone})`;
-        } else {
-          result = `${this.formattedStartDate} ${this.formattedStartTime} -\n${this.formattedEndDate} ${this.formattedEndTime} (${this.selectedTimezone})`;
-        }
+        return this.startDate === this.endDate
+            ? `${this.formattedStartDate} \n${this.formattedStartTime} - ${this.formattedEndTime} (${this.selectedTimezone})`
+            : `${this.formattedStartDate} ${this.formattedStartTime} -\n${this.formattedEndDate} ${this.formattedEndTime} (${this.selectedTimezone})`;
       }
-      return result;
+      return "";
     },
     formattedStartDate() {
       return this.startDate
-          ? moment
-              .tz(this.startDate, this.selectedTimezone)
+          ? dayjs(this.startDate)
+              .tz(this.selectedTimezone)
               .format("dddd, MMMM D, YYYY")
           : "";
     },
     formattedEndDate() {
       return this.endDate
-          ? moment
-              .tz(this.endDate, this.selectedTimezone)
+          ? dayjs(this.endDate)
+              .tz(this.selectedTimezone)
               .format("dddd, MMMM D, YYYY")
           : "";
     },
     formattedStartTime() {
       return this.startTime
-          ? moment
-              .tz(this.startTime, "HH:mm:ss", this.selectedTimezone)
+          ? dayjs(this.startTime, "HH:mm:ss")
+              .tz(this.selectedTimezone)
               .format("h:mm A")
           : "";
     },
     formattedEndTime() {
       return this.endTime
-          ? moment
-              .tz(this.endTime, "HH:mm:ss", this.selectedTimezone)
+          ? dayjs(this.endTime, "HH:mm:ss")
+              .tz(this.selectedTimezone)
               .format("h:mm A")
           : "";
     },
+
     dateTimeRange() {
       if (
           this.formattedStartDate &&
@@ -196,26 +196,26 @@ export default {
       }
       return null;
     },
-    pgDateTimeRange() {
-      const startDateTime = moment(
-          `${this.startDate} ${this.startTime}`
-      ).format("YYYY-MM-DD HH:mm:ssZZ");
-      const endDateTime = moment(`${this.endDate} ${this.endTime}`).format(
-          "YYYY-MM-DD HH:mm:ssZZ"
-      );
-      return `"[${startDateTime},${endDateTime}]"`;
-    },
+    // pgDateTimeRange() {
+    //   const startDateTime = moment(
+    //       `${this.startDate} ${this.startTime}`
+    //   ).format("YYYY-MM-DD HH:mm:ssZZ");
+    //   const endDateTime = moment(`${this.endDate} ${this.endTime}`).format(
+    //       "YYYY-MM-DD HH:mm:ssZZ"
+    //   );
+    //   return `"[${startDateTime},${endDateTime}]"`;
+    // },
   },
   methods: {
     parseTstzrange(value) {
       const matches = value.match(/\[(.*?),(.*)\]/);
       if (matches) {
-        const startDateTime = moment.tz(matches[1], this.selectedTimezone);
-        const endDateTime = moment.tz(matches[2], this.selectedTimezone);
+        const startDateTime = dayjs(matches[1]).tz(this.selectedTimezone);
+        const endDateTime = dayjs(matches[2]).tz(this.selectedTimezone);
 
         this.detectDuration(
             startDateTime.format("HH:mm:ss"),
-            endDateTime.format("HH:mm:ss")
+            endDateTime.format("HH:mm:ss"),
         );
         this.startDate = startDateTime.format("YYYY-MM-DD");
         this.startTime = startDateTime.format("HH:mm:ss");
@@ -226,17 +226,19 @@ export default {
     },
     setDefaultStartTime() {
       this.showStartDatePicker = false;
-      const now = moment.tz(this.selectedTimezone);
-      now.minutes(0).seconds(0).milliseconds(0).add(1, "hours");
+      const now = dayjs()
+          .tz(this.selectedTimezone)
+          .startOf("hour")
+          .add(1, "hour");
       this.startTime = now.format("HH:mm:ss");
       this.endDate = this.startDate;
     },
     getTimestampsForDatabase() {
-      const startDateTime = moment
-          .tz(`${this.startDate} ${this.startTime}`, this.selectedTimezone)
+      const startDateTime = dayjs(`${this.startDate} ${this.startTime}`)
+          .tz(this.selectedTimezone)
           .toISOString();
-      const endDateTime = moment
-          .tz(`${this.endDate} ${this.endTime}`, this.selectedTimezone)
+      const endDateTime = dayjs(`${this.endDate} ${this.endTime}`)
+          .tz(this.selectedTimezone)
           .toISOString();
       return `[${startDateTime}, ${endDateTime}]`;
     },
@@ -249,15 +251,15 @@ export default {
       this.detectDuration(this.startTime, input);
     },
     detectDuration(startTime, endTime) {
-      this.duration = moment(endTime, "HH:mm:ss").diff(
-          moment(startTime, "HH:mm:ss"),
-          "minutes"
+      this.duration = dayjs(endTime, "HH:mm:ss").diff(
+          dayjs(startTime, "HH:mm:ss"),
+          "minutes",
       );
     },
   },
   watch: {
     startTime(newStartTime) {
-      this.endTime = moment(newStartTime, "HH:mm:ss")
+      this.endTime = dayjs(newStartTime, "HH:mm:ss")
           .add(this.duration, "minutes")
           .format("HH:mm:ss");
     },
@@ -266,6 +268,7 @@ export default {
     this.parseTstzrange(this.modelValue);
   },
 };
+
 </script>
 
 <style scoped></style>

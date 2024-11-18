@@ -142,13 +142,21 @@
 </template>
 
 <script>
+
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Extend Day.js with required plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 import SuperTableCalendarDay from "./SuperTableCalendarDay.vue";
 import SuperTableCalendarAgenda from "./SuperTableCalendarAgenda.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
-import moment from "moment";
-import {QuickListsHelpers} from "../index";
+import { QuickListsHelpers } from "../index";
 
 export default {
   name: "SuperCalendar",
@@ -164,11 +172,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    // calendarMode: {
-    //   type: String,
-    //   // default: "Timeline",
-    //   default: "List",
-    // },
     mixedConfigs: {
       type: Array,
       required: true,
@@ -176,9 +179,8 @@ export default {
   },
   data() {
     return {
-      // calendarMode: "Timeline",
       calendarMode: "List",
-      selectedDate: moment().format("YYYY-MM-DD"), // Default to today
+      selectedDate: dayjs().format("YYYY-MM-DD"), // Default to today
       view: "week",
       viewItemData: {
         showModal: false,
@@ -188,7 +190,6 @@ export default {
     };
   },
   computed: {
-    // Get the config for the currently selected item
     activeItemAndType() {
       return this.mixedConfigs[this.viewItemData.configIndex] || {};
     },
@@ -202,16 +203,16 @@ export default {
         );
         let result = config.superOptions.headers[key].name;
 
-        let timeRangeStartField = config.superOptions.headers.find((field) => {
-          return field.usageType == "timeRangeStart";
-        });
+        const timeRangeStartField = config.superOptions.headers.find(
+            (field) => field.usageType === "timeRangeStart",
+        );
 
         if (!timeRangeStartField) {
           for (const modelField of config.superOptions.headers) {
             if (modelField.headerParentFields) {
               const timeRangeStartFieldParent =
                   modelField.headerParentFields.find(
-                      (field) => field.usageType == "timeRangeStart",
+                      (field) => field.usageType === "timeRangeStart",
                   );
 
               if (timeRangeStartFieldParent) {
@@ -231,61 +232,53 @@ export default {
           }
         }
 
-        // Assign to the `keys` object with the index of the config as the key
         keys[index] = result;
       });
 
       return keys;
     },
-    combinedEvents() {
-      const eventsArray = []; // Array to hold all combined events
 
-      // Iterate through each config in mixedConfigs
+    combinedEvents() {
+      const eventsArray = [];
+
       this.mixedConfigs.forEach((config, configIndex) => {
-        // Get the firstNonIdKey for the current config
         const firstNonIdKey = this.firstNonIdKeys[configIndex];
 
-        // Iterate through each item in the config's items array
         config.items.forEach((item) => {
           let start, end;
-          // Extract start and end dates, handling nested fields if needed
 
           const startSplit = config.startFieldName.split(".");
           const endSplit = config.endFieldName.split(".");
           if (startSplit.length > 1) {
-            start = new Date(item[startSplit[0]][startSplit[1]]);
-            end = new Date(item[endSplit[0]][endSplit[1]]);
+            start = dayjs(item[startSplit[0]][startSplit[1]]);
+            end = dayjs(item[endSplit[0]][endSplit[1]]);
           } else {
-            start = new Date(item[startSplit[0]]);
-            end = new Date(item[endSplit[0]]);
+            start = dayjs(item[startSplit[0]]);
+            end = dayjs(item[endSplit[0]]);
           }
 
-          // Normalize event data
-          const eventDate = start.toISOString().split("T")[0]; // YYYY-MM-DD format
-          const time = start.toISOString().substr(11, 5); // HH:mm format
-          const actualDuration = (end - start) / 1000 / 60;
+          const eventDate = start.format("YYYY-MM-DD");
+          const time = start.format("HH:mm");
+          const actualDuration = end.diff(start, "minute");
 
           const duration = Math.max(actualDuration, 15);
 
-          // Determine the event title
           const title = Array.isArray(firstNonIdKey)
               ? item[firstNonIdKey[0]][firstNonIdKey[1]]
               : item[firstNonIdKey] || "Untitled Event";
 
-          // Create the event object
           const event = {
-            id: item.id || `${eventDate}-${configIndex}-${title}`, // Unique identifier
+            id: item.id || `${eventDate}-${configIndex}-${title}`,
             title: title,
             date: eventDate,
             time: time,
             duration: duration,
-            bgcolor: "deep-purple", // Placeholder color
-            icon: "fas fa-calendar-alt", // Placeholder icon
-            meta: item, // Full item data as metadata
-            configIndex: configIndex, // Store config index for later reference
+            bgcolor: "deep-purple",
+            icon: "fas fa-calendar-alt",
+            meta: item,
+            configIndex: configIndex,
           };
 
-          // Push event into the eventsArray
           eventsArray.push(event);
         });
       });
@@ -293,9 +286,6 @@ export default {
     },
   },
   methods: {
-    // Generates events based on items, startFieldName, and endFieldName in the config
-
-    // Handle event interaction
     onShowEvent(event) {
       this.viewItemData = {
         showModal: true,
@@ -335,10 +325,10 @@ export default {
     },
   },
   mounted() {
-    // Example of a mobile-first check
     if (window.innerWidth < 768) {
       this.view = "day";
     }
   },
 };
+
 </script>

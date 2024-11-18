@@ -203,8 +203,12 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import {defineAsyncComponent} from "vue";
 import QuickListsHelpers from "./QuickListsHelpers";
 import FilterPlace from "./FilterPlace.vue";
@@ -485,14 +489,11 @@ export default {
     formatTimestamp(timestamp) {
       if (timestamp) {
         const timezone = "Africa/Johannesburg"; // replace with desired timezone
-        const formattedDateInTimeZone = moment
-            .tz(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ", "UTC")
-            .tz(timezone)
-            .format("dddd, MMMM D, YYYY h:mm A");
-        return formattedDateInTimeZone;
-      } else {
-        return null;
+        return dayjs.utc(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ") // Parse in UTC
+            .tz(timezone) // Convert to target timezone
+            .format("dddd, MMMM D, YYYY h:mm A"); // Format in target timezone
       }
+      return null;
     },
     convertToCsv() {
       // Check if data is not empty

@@ -77,7 +77,13 @@
 </template>
 
 <script>
-import moment from "moment";
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import isSame from "dayjs/plugin/isSame";
+
+dayjs.extend(localizedFormat);
+dayjs.extend(isSame);
+
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 
@@ -102,11 +108,11 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    momentMethod(e, format) {
-      return moment(e).format(format);
+    dayjsMethod(date, format) {
+      return dayjs(date).format(format);
     },
     isToday(date) {
-      return moment(date).isSame(moment(), "day");
+      return dayjs(date).isSame(dayjs(), "day");
     },
     getEvents(date) {
       // Return all events for the specific date or an empty array if none exist
@@ -140,4 +146,5 @@ export default {
     },
   },
 };
+
 </script>

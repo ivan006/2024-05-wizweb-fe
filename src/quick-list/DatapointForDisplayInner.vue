@@ -141,13 +141,18 @@
 </template>
 
 <script>
-import moment from "moment";
-import "moment-timezone";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+// Extend Day.js with required plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 import QuickListsHelpers from "./QuickListsHelpers";
 
 export default {
   name: "DatapointForDisplayInner",
-  components: {},
   data() {
     return {
       showImageModel: false,
@@ -234,11 +239,11 @@ export default {
     },
     formatTimestamp(timestamp) {
       if (timestamp) {
-        const timezone = "Africa/Johannesburg"; // replace with desired timezone
-        const formattedDateInTimeZone = moment
-            .tz(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ", "UTC")
-            .tz(timezone)
-            .format("dddd, MMMM D, YYYY h:mm A");
+        const timezone = "Africa/Johannesburg"; // Replace with your desired timezone
+        const formattedDateInTimeZone = dayjs
+            .utc(timestamp, "YYYY-MM-DDTHH:mm:ss.SSSSSSZ") // Parse in UTC
+            .tz(timezone) // Convert to target timezone
+            .format("dddd, MMMM D, YYYY h:mm A"); // Format as needed
         return formattedDateInTimeZone;
       } else {
         return null;
@@ -246,6 +251,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped></style>
