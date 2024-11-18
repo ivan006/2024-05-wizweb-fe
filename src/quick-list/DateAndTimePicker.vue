@@ -13,8 +13,7 @@
         :disable="disabled"
         v-slot:append
     >
-      <q-icon name="calendar_today"
-              @click="click" />
+      <q-icon name="calendar_today" @click="click" />
     </q-input>
 
     <!-- The Main Modal -->
@@ -37,7 +36,10 @@
         <!-- Date Picker Modal -->
         <q-dialog v-model="showDatePicker" max-width="290px">
           <q-card>
-            <q-date v-model="selectedDate" @update:modelValue="setDefaultStartTime" />
+            <q-date
+                v-model="selectedDate"
+                @update:modelValue="setDefaultStartTime"
+            />
             <div class="q-pa-md text-right">
               <q-btn color="primary" @click="showDatePicker = false">OK</q-btn>
             </div>
@@ -79,7 +81,7 @@
 <script>
 import moment from "moment";
 import "moment-timezone";
-import { QIcon, QInput } from 'quasar';
+import {QIcon, QInput} from "quasar";
 
 export default {
   name: "DateAndTimePicker",
@@ -172,10 +174,14 @@ export default {
     getTimestampForDatabase() {
       return this.useTimezone
           ? moment
-              .tz(`${this.selectedDate} ${this.selectedTime}`, this.selectedTimezone)
+              .tz(
+                  `${this.selectedDate} ${this.selectedTime}`,
+                  this.selectedTimezone,
+              )
               .toISOString()
-          : moment(`${this.selectedDate} ${this.selectedTime}`)
-              .format('YYYY-MM-DDTHH:mm:ss.SSS');
+          : moment(`${this.selectedDate} ${this.selectedTime}`).format(
+              "YYYY-MM-DDTHH:mm:ss.SSS",
+          );
     },
     finalizeDateTime() {
       const dateTimeForDB = this.getTimestampForDatabase();
