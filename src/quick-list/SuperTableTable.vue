@@ -90,7 +90,6 @@
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
 import DatapointForDisplay from "./DatapointForDisplay.vue";
 import QuickListsHelpers from "./QuickListsHelpers";
-import moment from "moment";
 
 export default {
   name: "SuperTableTable",
