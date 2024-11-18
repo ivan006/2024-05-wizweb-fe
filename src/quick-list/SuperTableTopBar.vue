@@ -109,7 +109,7 @@
                   <FilterTime
                       :key="filterInput.name"
                       :modelField="filterInput"
-                      v-model="modelValueRef[filterInput.name]"
+                      v-model="modelValueRef[filterInput.name].value"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px"
                   />
@@ -653,7 +653,11 @@ export default {
       ) {
         this.modelValueRef[modelField.name] = null;
       } else if (modelField.usageType == "timeRangeStart") {
-        this.modelValueRef[modelField.name] = null;
+
+        this.modelValueRef[modelField.name] = {
+          value: null,
+          usageType: "timeRangeStart",
+        };
       }
     }
   },

@@ -18,7 +18,7 @@
     <template #head-day="{ scope }">
       <div class="text-center">
         <div class="text-weight-bold q-mt-xs">
-          {{ momentMethod(scope.timestamp.date, "ddd") }}
+          {{ dayjsMethod(scope.timestamp.date, "ddd") }}
         </div>
         <q-btn
             flat
@@ -31,9 +31,9 @@
           "
             style="font-size: 0.75em"
             :label="
-            momentMethod(scope.timestamp.date, 'D') +
+            dayjsMethod(scope.timestamp.date, 'D') +
             ' ' +
-            momentMethod(scope.timestamp.date, 'MMM')
+            dayjsMethod(scope.timestamp.date, 'MMM')
           "
             @click="onClickDate(scope.timestamp.date)"
             class="q-mb-sm text-bold"
@@ -79,10 +79,10 @@
 <script>
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import isSame from "dayjs/plugin/isSame";
+
 
 dayjs.extend(localizedFormat);
-dayjs.extend(isSame);
+
 
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";

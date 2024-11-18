@@ -88,12 +88,15 @@
 
 <script>
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import isoWeek from "dayjs/plugin/isoWeek"; // For ISO week support
 import localizedFormat from "dayjs/plugin/localizedFormat"; // For "Do" formatting
 import weekday from "dayjs/plugin/weekday"; // For week-day-based operations
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore"; // For comparison
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter"; // For comparison
 
+
+dayjs.extend(isBetween);
 dayjs.extend(isoWeek);
 dayjs.extend(localizedFormat);
 dayjs.extend(weekday);
