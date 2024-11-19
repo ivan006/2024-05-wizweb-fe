@@ -398,7 +398,7 @@ export default {
       if (this.viewAs.show.includes("grid")) {
         result.push({label: "Grid", value: "grid", icon: "grid_view"});
       }
-      if (this.viewAs.show.includes("map") && this.longField) {
+      if (this.viewAs.show.includes("map") && Object.keys(this.longField).length !== 0) {
         result.push({label: "Map", value: "map", icon: "map"});
       }
       if (this.viewAs.show.includes("calendar") && this.startFieldName) {
