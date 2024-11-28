@@ -109,10 +109,11 @@
                   <FilterTime
                       :key="filterInput.name"
                       :modelField="filterInput"
-                      v-model="modelValueRef[filterInput.name].value"
+                      v-model="modelValueRef[filterInput.name]"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px"
                   />
+                  <!--v-model="modelValueRef[filterInput.name].value"-->
                 </template>
               </template>
               <template v-else>
@@ -648,16 +649,19 @@ export default {
     this.searchRef = this.search;
     for (const modelField of this.superOptions.modelFields) {
       if (
-          modelField.usageType.startsWith("relForeignKey") ||
-          modelField.dataType.startsWith("mapExtraRel")
+          modelField.usageType.startsWith("relForeignKey")
       ) {
-        this.modelValueRef[modelField.name] = null;
-      } else if (modelField.usageType == "timeRangeStart") {
 
-        this.modelValueRef[modelField.name] = {
-          value: null,
-          usageType: "timeRangeStart",
-        };
+        this.modelValueRef[modelField.name] = null;
+
+      } else if (modelField.dataType.startsWith("mapExtraRel")) {
+
+        this.modelValueRef[modelField.name] = null;
+
+      } else if (modelField.usageType == "timeRangeStart") {
+        
+        this.modelValueRef[modelField.name] = null;
+
       }
     }
   },
