@@ -754,14 +754,14 @@ export default {
 
         let extraHeaderComputed = {};
         let flagsComputed = {};
-        if (this.model.adapator == "supabase") {
+        if (this.model.adapter == "supabase") {
           extraHeaderComputed = {
             Prefer: "count=exact",
           };
           flagsComputed = {
             order: "id.desc",
           };
-        } else if (this.model.adapator == "laravel") {
+        } else if (this.model.adapter == "laravel") {
           extraHeaderComputed = {};
           flagsComputed = {
             sort: `-${this.model.primaryKey}`,
@@ -799,12 +799,12 @@ export default {
         this.loading = false;
         let count = 0;
 
-        if (this.model.adapator == "supabase") {
+        if (this.model.adapter == "supabase") {
           if (response?.response?.headers?.["content-range"]) {
             const contentRange = response?.response?.headers?.["content-range"];
             count = contentRange.split("/")[1];
           }
-        } else if (this.model.adapator == "laravel") {
+        } else if (this.model.adapter == "laravel") {
           count = response.response.data.total;
         }
         this.itemsLength = count; // Assuming your API returns a total count
