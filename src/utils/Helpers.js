@@ -18,11 +18,11 @@ class Helpers {
                 !Array.isArray(filter) &&
                 filter !== null
             ) {
-                if (filter?.value) {
+                if (filter) {
                     if (filter.usageType === 'timeRangeStart') {
-                        if (filter.value.range.start) {
-                            const startDate = new Date(filter.value.range.start)
-                            const endDate = new Date(filter.value.range.end)
+                        if (filter.range.start) {
+                            const startDate = new Date(filter.range.start)
+                            const endDate = new Date(filter.range.end)
                             const itemDate = new Date(item[key])
                             return startDate < itemDate && itemDate < endDate
                         }
@@ -45,13 +45,13 @@ class Helpers {
                 !Array.isArray(filter) &&
                 filter !== null
             ) {
-                if (filter?.value) {
+                if (filter) {
                     if (filter.usageType === 'timeRangeStart') {
-                        if (filter.value.range.start) {
+                        if (filter.range.start) {
                             result.push(
-                                `${key}=gte.${filter.value.range.start}`
+                                `${key}=gte.${filter.range.start}`
                             )
-                            result.push(`${key}=lte.${filter.value.range.end}`)
+                            result.push(`${key}=lte.${filter.range.end}`)
                         }
                     }
                 }
@@ -68,14 +68,14 @@ class Helpers {
         const result = {};
 
         for (const [key, filter] of Object.entries(obj)) {
-            if (typeof filter === 'object' && filter !== null && filter?.usageType === 'timeRangeStart') {
+            if (typeof filter === 'object' && filter !== null ) {
                 // Handle time range filters using gt/lt for start and end dates
-                if (filter.value && filter.value.range) {
-                    if (filter.value.range.start) {
-                        result[`filter[${key}-ge]`] = filter.value.range.start; // Changed to 'ge' to match allowed filters
+                if (filter && filter.range) {
+                    if (filter.range.start) {
+                        result[`filter[${key}-ge]`] = filter.range.start; // Changed to 'ge' to match allowed filters
                     }
-                    if (filter.value.range.end) {
-                        result[`filter[${key}-le]`] = filter.value.range.end; // Changed to 'le' to match allowed filters
+                    if (filter.range.end) {
+                        result[`filter[${key}-le]`] = filter.range.end; // Changed to 'le' to match allowed filters
                     }
                 }
             } else if (filter !== null) {
