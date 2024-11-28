@@ -4,7 +4,7 @@ import Helpers from '../utils/Helpers'
 
 export default class DBBaseModel extends Model {
 
-    static adapator = 'supabase'
+    static adapter = 'supabase'
     static primaryKey = 'id';
 
     static openRecord(pKeyValue, item, router){}
@@ -127,12 +127,12 @@ export default class DBBaseModel extends Model {
         let preparedRels = {}
         let filtersObj = {}
 
-        if (modelClass.adapator === "supabase"){
+        if (modelClass.adapter === "supabase"){
 
             computedUrl= `${url}?${Helpers.prepareFiltersForSupabase(options.filters)}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
 
-        } else if(modelClass.adapator === "laravel") {
+        } else if(modelClass.adapter === "laravel") {
 
             // computedUrl= `${url}?${Helpers.prepareFiltersForLaravel(options.filters)}`
             filtersObj = Helpers.prepareFiltersForLaravel(options.filters); // Now returns an object
@@ -174,10 +174,10 @@ export default class DBBaseModel extends Model {
 
         let computedUrl = url
         let preparedRels = {}
-        if (modelClass.adapator === "supabase"){
+        if (modelClass.adapter === "supabase"){
             computedUrl= `${url}?id=eq.${id}`
             preparedRels = Helpers.prepareRelationsForSupabase(relationships)
-        } else if(modelClass.adapator === "laravel") {
+        } else if(modelClass.adapter === "laravel") {
             computedUrl = `${url}/${id}`
             preparedRels = Helpers.prepareRelationsForLaravel(relationships)
         }
@@ -202,9 +202,9 @@ export default class DBBaseModel extends Model {
 
     static customSupabaseApiStore(url, entity, relationships = [], flags = {}, headers = {} , modelClass, supportFiles = false) {
         let computedUrl = url
-        // if (modelClass.adapator === "supabase"){
+        // if (modelClass.adapter === "supabase"){
         //   computedUrl = `${url}?id=eq.${entity.id}`
-        // } else if(modelClass.adapator === "laravel") {
+        // } else if(modelClass.adapter === "laravel") {
         //   computedUrl = `${url}/${entity.id}`
         // }
         if (supportFiles) {
@@ -264,9 +264,9 @@ export default class DBBaseModel extends Model {
 
     static customSupabaseApiUpdate(url, entity, relationships = [], flags = {}, headers = {}, modelClass, supportFiles = false) {
         let computedUrl = url
-        if (modelClass.adapator === "supabase"){
+        if (modelClass.adapter === "supabase"){
             computedUrl = `${url}?id=eq.${entity.id}`
-        } else if(modelClass.adapator === "laravel") {
+        } else if(modelClass.adapter === "laravel") {
             computedUrl = `${url}/${entity.id}`
         }
 
@@ -301,9 +301,9 @@ export default class DBBaseModel extends Model {
     static customSupabaseApiDelete(url, entityId, flags = {}, headers = {} , modelClass) {
 
         let computedUrl = url
-        if (modelClass.adapator === "supabase"){
+        if (modelClass.adapter === "supabase"){
             computedUrl = `${url}?id=eq.${entityId}`
-        } else if(modelClass.adapator === "laravel") {
+        } else if(modelClass.adapter === "laravel") {
             computedUrl = `${url}/${entityId}`
         }
 
