@@ -66,7 +66,6 @@ class Helpers {
 
     static prepareFiltersForLaravel(obj) {
         const result = {};
-
         for (const [key, filter] of Object.entries(obj)) {
             if (typeof filter === 'object' && filter !== null ) {
                 // Handle time range filters using gt/lt for start and end dates
@@ -78,6 +77,9 @@ class Helpers {
                         result[`filter[${key}-le]`] = filter.range.end; // Changed to 'le' to match allowed filters
                     }
                 }
+            } else if (filter && filter.id) {
+                // Handle simple equality filters
+                result[`filter[${key}]`] = filter.id;
             } else if (filter !== null) {
                 // Handle simple equality filters
                 result[`filter[${key}]`] = filter;
