@@ -52,9 +52,10 @@
         <!--v-model="filters[filterInput.name]"-->
       </template>
       <template v-else>
-        <!--<pre>{{filters }}</pre>-->
+        <pre>{{lookupFilterTitleValues }}</pre>
         <SuperTableTopBar
             v-model="filters"
+            v-model:lookupFilterTitleValues="lookupFilterTitleValues"
             v-model:activeTab="activeTab"
             v-model:search="search"
             ref="SuperTableTopBar"
@@ -299,6 +300,10 @@ export default {
     SuperTable: AsyncComponentSuperTable,
   },
   props: {
+    titleVal: {
+      type: String,
+      default: "",
+    },
     downloadables: {
       type: Object,
       default: {},
@@ -497,6 +502,7 @@ export default {
       },
       highlightedRow: null,
       filters: {},
+      lookupFilterTitleValues: {},
       items: [],
       activeTab: "",
       // activeTab: {
@@ -706,6 +712,12 @@ export default {
       }
 
       this.$emit("update:modelValue", pVal);
+
+      let title = null
+      if (pVal){
+        title = item[this.model.titleKey]
+      }
+      this.$emit("update:titleVal", title);
     },
     createdItem(item) {
       if (this.isForSelectingRelation) {

@@ -97,6 +97,7 @@
                         :isForSelectingRelation="true"
                         :canEdit="false"
                         v-model="modelValueRef[filterInput.name]"
+                        v-model:titleVal="lookupFilterTitleValuesRef[filterInput.name]"
                         :model="filterInput.meta.field.parent"
                         :rules="[() => true]"
                         :modelField="filterInput"
@@ -119,9 +120,11 @@
               <template v-else>
                 <template v-if="filterInput.usageType == 'mapFilter'">
                   <FilterPlace
+                      v-if="Object.keys(this.lookupFilterTitleValues).length !== 0"
                       :key="filterInput.name"
                       :filterField="filterInput"
                       v-model="modelValueRef"
+                      v-model:lookupFilterTitleValues="lookupFilterTitleValuesRef"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px"
                   />
@@ -233,6 +236,12 @@ export default {
     FilterPlace,
   },
   props: {
+    lookupFilterTitleValues: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     templateForm: {
       type: Object,
       default() {
@@ -323,6 +332,7 @@ export default {
       activeTabRef: "",
       searchRef: "",
       modelValueRef: {},
+      lookupFilterTitleValuesRef: {},
     };
   },
   computed: {
@@ -614,6 +624,20 @@ export default {
       },
       deep: true,
     },
+    lookupFilterTitleValues: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.lookupFilterTitleValuesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+        }
+      },
+      deep: true,
+    },
+    lookupFilterTitleValuesRef: {
+      handler(newVal, oldVal) {
+        this.$emit("update:lookupFilterTitleValues", newVal);
+      },
+      deep: true,
+    },
     activeTab: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
@@ -644,7 +668,26 @@ export default {
     },
   },
   mounted() {
+
     this.modelValueRef = {...this.modelValue};
+
+
+    if (Object.keys(this.lookupFilterTitleValues).length !== 0) {
+
+      this.lookupFilterTitleValuesRef = {...this.lookupFilterTitleValues};
+
+    } else {
+
+      for (const filterInput of this.superOptions.modelFields) {
+        if (
+            filterInput.usageType.startsWith('relForeignKey')
+        ) {
+          this.lookupFilterTitleValuesRef[filterInput.name] = null
+        }
+      }
+
+    }
+
     this.activeTabRef = this.activeTab;
     this.searchRef = this.search;
     for (const modelField of this.superOptions.modelFields) {
@@ -659,7 +702,7 @@ export default {
         this.modelValueRef[modelField.name] = null;
 
       } else if (modelField.usageType == "timeRangeStart") {
-        
+
         this.modelValueRef[modelField.name] = null;
 
       }

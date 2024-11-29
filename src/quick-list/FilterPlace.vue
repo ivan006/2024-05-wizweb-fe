@@ -32,6 +32,7 @@
                     :model="childFilter.meta.field.parent"
                     :forcedFilters="getFilters(childFilter)"
                     v-model="modelValueRef[childFilter.name]"
+                    v-model:titleVal="lookupFilterTitleValuesRef[childFilter.name]"
                     :disabled="
                     filterParentName(childFilter) &&
                     !modelValueRef[filterParentName(childFilter)]
@@ -93,6 +94,12 @@ export default {
     SuperTable: AsyncSuperTableComponent,
   },
   props: {
+    lookupFilterTitleValues: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     filterField: {
       type: Object,
       default: () => ({}),
@@ -106,6 +113,7 @@ export default {
     return {
       menu: false,
       modelValueRef: {},
+      lookupFilterTitleValuesRef: {},
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -255,9 +263,25 @@ export default {
       },
       deep: true,
     },
+    lookupFilterTitleValues: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.lookupFilterTitleValuesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+        }
+      },
+      deep: true,
+    },
+    lookupFilterTitleValuesRef: {
+      handler(newVal, oldVal) {
+        this.$emit("update:lookupFilterTitleValues", newVal);
+      },
+      deep: true,
+    },
   },
   mounted() {
     this.modelValueRef = JSON.parse(JSON.stringify(this.modelValue)); // Initialize with a deep copy
+
+    this.lookupFilterTitleValuesRef = {...this.lookupFilterTitleValues};
   },
 };
 </script>

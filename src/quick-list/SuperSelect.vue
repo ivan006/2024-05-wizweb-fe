@@ -278,8 +278,9 @@ export default {
       this.$emit('update:page', value);
     },
     updateValue(value) {
-      const item = {}
-      item[this.model.primaryKey] = value
+
+      const item = this.items.find(item => item[this.model.primaryKey] === value);
+
       this.$emit('update:modelValue', value, item);
     },
     fetchDefaultItem() {
