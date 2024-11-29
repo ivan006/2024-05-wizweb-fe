@@ -32,7 +32,7 @@
                     :model="childFilter.meta.field.parent"
                     :forcedFilters="getFilters(childFilter)"
                     v-model="modelValueRef[childFilter.name]"
-                    v-model:titleVal="lookupFilterTitleValuesRef[childFilter.name]"
+                    v-model:titleVal="filterLookupNamesRef[childFilter.name]"
                     :disabled="
                     filterParentName(childFilter) &&
                     !modelValueRef[filterParentName(childFilter)]
@@ -94,7 +94,7 @@ export default {
     SuperTable: AsyncSuperTableComponent,
   },
   props: {
-    lookupFilterTitleValues: {
+    filterLookupNames: {
       type: Object,
       default() {
         return {};
@@ -113,7 +113,7 @@ export default {
     return {
       menu: false,
       modelValueRef: {},
-      lookupFilterTitleValuesRef: {},
+      filterLookupNamesRef: {},
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -263,17 +263,17 @@ export default {
       },
       deep: true,
     },
-    lookupFilterTitleValues: {
+    filterLookupNames: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.lookupFilterTitleValuesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
         }
       },
       deep: true,
     },
-    lookupFilterTitleValuesRef: {
+    filterLookupNamesRef: {
       handler(newVal, oldVal) {
-        this.$emit("update:lookupFilterTitleValues", newVal);
+        this.$emit("update:filterLookupNames", newVal);
       },
       deep: true,
     },
@@ -281,7 +281,7 @@ export default {
   mounted() {
     this.modelValueRef = JSON.parse(JSON.stringify(this.modelValue)); // Initialize with a deep copy
 
-    this.lookupFilterTitleValuesRef = {...this.lookupFilterTitleValues};
+    this.filterLookupNamesRef = {...this.filterLookupNames};
   },
 };
 </script>

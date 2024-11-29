@@ -97,7 +97,7 @@
                         :isForSelectingRelation="true"
                         :canEdit="false"
                         v-model="modelValueRef[filterInput.name]"
-                        v-model:titleVal="lookupFilterTitleValuesRef[filterInput.name]"
+                        v-model:titleVal="filterLookupNamesRef[filterInput.name]"
                         :model="filterInput.meta.field.parent"
                         :rules="[() => true]"
                         :modelField="filterInput"
@@ -120,11 +120,11 @@
               <template v-else>
                 <template v-if="filterInput.usageType == 'mapFilter'">
                   <FilterPlace
-                      v-if="Object.keys(this.lookupFilterTitleValues).length !== 0"
+                      v-if="Object.keys(this.filterLookupNames).length !== 0"
                       :key="filterInput.name"
                       :filterField="filterInput"
                       v-model="modelValueRef"
-                      v-model:lookupFilterTitleValues="lookupFilterTitleValuesRef"
+                      v-model:filterLookupNames="filterLookupNamesRef"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px"
                   />
@@ -236,7 +236,7 @@ export default {
     FilterPlace,
   },
   props: {
-    lookupFilterTitleValues: {
+    filterLookupNames: {
       type: Object,
       default() {
         return {};
@@ -332,7 +332,7 @@ export default {
       activeTabRef: "",
       searchRef: "",
       modelValueRef: {},
-      lookupFilterTitleValuesRef: {},
+      filterLookupNamesRef: {},
     };
   },
   computed: {
@@ -624,17 +624,17 @@ export default {
       },
       deep: true,
     },
-    lookupFilterTitleValues: {
+    filterLookupNames: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.lookupFilterTitleValuesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
         }
       },
       deep: true,
     },
-    lookupFilterTitleValuesRef: {
+    filterLookupNamesRef: {
       handler(newVal, oldVal) {
-        this.$emit("update:lookupFilterTitleValues", newVal);
+        this.$emit("update:filterLookupNames", newVal);
       },
       deep: true,
     },
@@ -672,9 +672,9 @@ export default {
     this.modelValueRef = {...this.modelValue};
 
 
-    if (Object.keys(this.lookupFilterTitleValues).length !== 0) {
+    if (Object.keys(this.filterLookupNames).length !== 0) {
 
-      this.lookupFilterTitleValuesRef = {...this.lookupFilterTitleValues};
+      this.filterLookupNamesRef = {...this.filterLookupNames};
 
     } else {
 
@@ -682,7 +682,7 @@ export default {
         if (
             filterInput.usageType.startsWith('relForeignKey')
         ) {
-          this.lookupFilterTitleValuesRef[filterInput.name] = null
+          this.filterLookupNamesRef[filterInput.name] = null
         }
       }
 
