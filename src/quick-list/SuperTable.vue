@@ -52,7 +52,6 @@
         <!--v-model="filters[filterInput.name]"-->
       </template>
       <template v-else>
-        <pre>{{lookupFilterTitleValues }}</pre>
         <SuperTableTopBar
             v-model="filters"
             v-model:lookupFilterTitleValues="lookupFilterTitleValues"
