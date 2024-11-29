@@ -102,6 +102,12 @@ export default {
         return null;
       },
     },
+    titleVal: {
+      type: String,
+      default() {
+        return null;
+      },
+    },
     hideLabel: {
       type: Boolean,
       default() {
@@ -245,6 +251,8 @@ export default {
           let preSelectedItemLabel = ""
           if (this.preSelectedItem){
             preSelectedItemLabel = this.preSelectedItem[this.model.titleKey]
+          } else {
+            preSelectedItemLabel = this.titleVal
           }
           if (this.modelValue){
             result.push({ label: preSelectedItemLabel, id: this.modelValue });
@@ -295,7 +303,7 @@ export default {
                 {},
             )
             .then((response) => {
-              this.preSelectedItem = response.response.data.data
+              this.preSelectedItem = response.response.data.data[0]
               this.loadingInner = false
             })
             .catch(() => {

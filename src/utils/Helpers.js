@@ -78,6 +78,8 @@ class Helpers {
                         result[`filter[${key}-le]`] = filter.range.end; // Changed to 'le' to match allowed filters
                     }
                 }
+            } else if (filter === 0) {
+                // show all
             } else if (filter !== null) {
                 // Handle simple equality filters
                 result[`filter[${key}]`] = filter;

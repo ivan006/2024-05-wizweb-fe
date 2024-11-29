@@ -10,7 +10,6 @@
         <!--/>-->
         <SuperSelect
             ref="selectRef"
-            :forcedFilters="forcedFilters"
             :readonly="disabled"
             :allowAll="allowAll"
             dense
@@ -24,6 +23,7 @@
             :rules="rules"
             :modelValue="modelValue"
             @update:modelValue="clickRow"
+            :titleVal="titleVal"
             :model="model"
             :modelField="modelField"
             :activated="activated"
@@ -49,12 +49,12 @@
         <!--:key="filterInput.name"-->
         <!--:model="filterInput.meta.field.parent"-->
         <!--:modelField="filterInput"-->
-        <!--v-model="filters[filterInput.name]"-->
+        <!--v-model="filtersRef[filterInput.name]"-->
       </template>
       <template v-else>
         <SuperTableTopBar
-            v-model="filters"
-            v-model:lookupFilterTitleValues="lookupFilterTitleValues"
+            v-model="filtersRef"
+            v-model:filterLookupNames="filterLookupNamesRef"
             v-model:activeTab="activeTab"
             v-model:search="search"
             ref="SuperTableTopBar"
@@ -358,7 +358,13 @@ export default {
         return false;
       },
     },
-    forcedFilters: {
+    filtersProp: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    filterLookupNames: {
       type: Object,
       default() {
         return {};
@@ -500,8 +506,8 @@ export default {
         groupBy: [],
       },
       highlightedRow: null,
-      filters: {},
-      lookupFilterTitleValues: {},
+      filtersRef: {},
+      filterLookupNamesRef: {},
       items: [],
       activeTab: "",
       // activeTab: {
@@ -593,8 +599,7 @@ export default {
     },
     filtersComp() {
       const result = {
-        ...this.filters,
-        ...this.forcedFilters,
+        ...this.filtersRef,
       };
       if (
           this.parentKeyValuePair.parentFKey &&
@@ -662,7 +667,7 @@ export default {
     },
 
     doSearch(searchTerm) {
-      this.filters[this.model.titleKey] = searchTerm;
+      this.filtersRef[this.model.titleKey] = searchTerm;
       this.fetchData();
     },
     pageUpdate(page) {
@@ -801,7 +806,7 @@ export default {
         );
 
         // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
-        // this.items = this.applyFilters(response.response.data.data, this.forcedFilters);
+        // this.items = this.applyFilters(response.response.data.data, this.filtersProp);
         this.items = response.response.data.data;
         // console.log("this.items")
         // console.log(this.items)
@@ -833,16 +838,6 @@ export default {
     },
   },
   watch: {
-    forcedFilters: {
-      handler(newVal, oldVal) {
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          // Compare serialized objects
-          this.activated = false;
-          this.items = [];
-        }
-      },
-      deep: true, // Deep watch to detect changes in nested properties
-    },
     items(newVal) {
       if (newVal.length) {
         this.$emit("update:items", newVal);
@@ -856,16 +851,57 @@ export default {
         }, 300);
       }
     },
-    filters: {
-      handler() {
+
+
+    filtersProp: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          // Compare serialized objects
+          if(this.isForSelectingRelation){
+            this.activated = false;
+          }
+          this.items = [];
+
+
+          this.filtersRef = JSON.parse(JSON.stringify(newVal));
+        }
+
+      },
+      deep: true,
+    },
+    filtersRef: {
+      handler(newVal, oldVal) {
         if (!this.loading && !this.justCreateButton) {
           this.fetchData();
         }
+
+        this.$emit("update:filtersProp", newVal);
+      },
+      deep: true,
+    },
+
+    filterLookupNames: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal));
+        }
+      },
+      deep: true,
+    },
+    filterLookupNamesRef: {
+      handler(newVal, oldVal) {
+        console.log(1111)
+        console.log(newVal)
+        this.$emit("update:filterLookupNames", newVal);
       },
       deep: true,
     },
   },
   mounted() {
+
+    this.filtersRef = {...this.filtersProp};
+    this.filterLookupNamesRef = {...this.filterLookupNames};
+
     this.$emit("superTableMounted");
 
     this.activeTab = this.viewAs.default;
