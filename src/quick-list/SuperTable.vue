@@ -49,11 +49,11 @@
         <!--:key="filterInput.name"-->
         <!--:model="filterInput.meta.field.parent"-->
         <!--:modelField="filterInput"-->
-        <!--v-model="filtersRef[filterInput.name]"-->
+        <!--v-model="filterValsRef[filterInput.name]"-->
       </template>
       <template v-else>
         <SuperTableTopBar
-            v-model="filtersRef"
+            v-model="filterValsRef"
             v-model:filterNames="filterNamesRef"
             v-model:activeTab="activeTab"
             v-model:search="search"
@@ -358,7 +358,7 @@ export default {
         return false;
       },
     },
-    filtersProp: {
+    filterVals: {
       type: Object,
       default() {
         return {};
@@ -506,7 +506,7 @@ export default {
         groupBy: [],
       },
       highlightedRow: null,
-      filtersRef: {},
+      filterValsRef: {},
       filterNamesRef: {},
       items: [],
       activeTab: "",
@@ -597,9 +597,9 @@ export default {
       const result = this.model.rules.creatable();
       return result;
     },
-    filtersComp() {
+    filterValsComp() {
       const result = {
-        ...this.filtersRef,
+        ...this.filterValsRef,
       };
       if (
           this.parentKeyValuePair.parentFKey &&
@@ -639,7 +639,7 @@ export default {
     //   const result = this.model
     //       .query()
     //       .where((item) => {
-    //         return this.quickListsGetIfMatchesAllChecks(item, this.filtersComp);
+    //         return this.quickListsGetIfMatchesAllChecks(item, this.filterValsComp);
     //       })
     //       .withAll()
     //       .orderBy(`${this.model.primaryKey}`, "desc")
@@ -667,7 +667,7 @@ export default {
     },
 
     doSearch(searchTerm) {
-      this.filtersRef[this.model.titleKey] = searchTerm;
+      this.filterValsRef[this.model.titleKey] = searchTerm;
       this.fetchData();
     },
     pageUpdate(page) {
@@ -698,8 +698,8 @@ export default {
     //   };
     //   this.fetchData();
     // },
-    quickListsGetIfMatchesAllChecks(item, filters) {
-      return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filters);
+    quickListsGetIfMatchesAllChecks(item, filterVals) {
+      return QuickListsHelpers.quickListsGetIfMatchesAllChecks(item, filterVals);
     },
 
     clickRow(pVal, item) {
@@ -732,16 +732,16 @@ export default {
         this.$refs.selectRef.hidePopup();
       }
     },
-    applyFilters(items, filters) {
+    applyFilters(items, filterVals) {
       const groupedFilters = {};
 
-      // Group filters by relation
-      Object.keys(filters).forEach((filterKey) => {
+      // Group filterVals by relation
+      Object.keys(filterVals).forEach((filterKey) => {
         const [relation, attr] = filterKey.split(".");
         if (!groupedFilters[relation]) {
           groupedFilters[relation] = {};
         }
-        groupedFilters[relation][attr] = filters[filterKey];
+        groupedFilters[relation][attr] = filterVals[filterKey];
       });
 
       return items.filter((item) => {
@@ -800,13 +800,13 @@ export default {
               page: this.options.page,
               limit: this.options.itemsPerPage,
               //============================
-              filters: this.filtersComp,
+              filters: this.filterValsComp,
               clearPrimaryModelOnly: false,
             },
         );
 
-        // this.items = this.applyFilters(response.response.data.data, this.filtersComp);
-        // this.items = this.applyFilters(response.response.data.data, this.filtersProp);
+        // this.items = this.applyFilters(response.response.data.data, this.filterValsComp);
+        // this.items = this.applyFilters(response.response.data.data, this.filterVals);
         this.items = response.response.data.data;
         // console.log("this.items")
         // console.log(this.items)
@@ -853,7 +853,7 @@ export default {
     },
 
 
-    filtersProp: {
+    filterVals: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
           // Compare serialized objects
@@ -863,19 +863,19 @@ export default {
           this.items = [];
 
 
-          this.filtersRef = JSON.parse(JSON.stringify(newVal));
+          this.filterValsRef = JSON.parse(JSON.stringify(newVal));
         }
 
       },
       deep: true,
     },
-    filtersRef: {
+    filterValsRef: {
       handler(newVal, oldVal) {
         if (!this.loading && !this.justCreateButton) {
           this.fetchData();
         }
 
-        this.$emit("update:filtersProp", newVal);
+        this.$emit("update:filterVals", newVal);
       },
       deep: true,
     },
@@ -897,7 +897,7 @@ export default {
   },
   mounted() {
 
-    this.filtersRef = {...this.filtersProp};
+    this.filterValsRef = {...this.filterVals};
     this.filterNamesRef = {...this.filterNames};
 
     this.$emit("superTableMounted");

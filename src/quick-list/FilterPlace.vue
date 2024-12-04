@@ -30,7 +30,7 @@
                     v-if="typeof modelValueRef[childFilter.name] !== 'undefined'"
                     :modelField="childFilter"
                     :model="childFilter.meta.field.parent"
-                    :forcedFilters="getFilters(childFilter)"
+                    :filterVals="getFilters(childFilter)"
                     v-model="modelValueRef[childFilter.name]"
                     v-model:titleVal="filterNamesRef[childFilter.name]"
                     :disabled="

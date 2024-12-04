@@ -36,7 +36,7 @@
             :fetchFlags="{
             sort: field.meta.field.parent.titleKey,
           }"
-            :forcedFilters="getForcedFilters(field)"
+            :filterVals="getForcedFilters(field)"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
         />
@@ -62,7 +62,7 @@
             :fetchFlags="{
             sort: field.meta.field.parent.titleKey,
           }"
-            :forcedFilters="getForcedFilters(field)"
+            :filterVals="getForcedFilters(field)"
             @superTableMounted="$emit('superTableMounted')"
             :errorMessage="compError"
             disabled

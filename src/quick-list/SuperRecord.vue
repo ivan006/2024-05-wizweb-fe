@@ -88,7 +88,7 @@
               :parentKeyValuePair="parentKeyValuePair(relation)"
               :model="relation.field.meta.field.related"
               :canEdit="canEdit"
-              :forcedFilters="filters(relation)"
+              :filterVals="filters(relation)"
               @clickRow="(pVal, item) => {clickRow(pVal, item, relation)}"
           >
             <template v-if="$slots[relation.field.name]" v-slot:create>
