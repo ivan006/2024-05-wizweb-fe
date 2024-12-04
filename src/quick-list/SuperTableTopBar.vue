@@ -97,7 +97,7 @@
                         :isForSelectingRelation="true"
                         :canEdit="false"
                         v-model="modelValueRef[filterInput.name]"
-                        v-model:titleVal="filterLookupNamesRef[filterInput.name]"
+                        v-model:titleVal="filterNamesRef[filterInput.name]"
                         :model="filterInput.meta.field.parent"
                         :rules="[() => true]"
                         :modelField="filterInput"
@@ -120,11 +120,11 @@
               <template v-else>
                 <template v-if="filterInput.usageType == 'mapFilter'">
                   <FilterPlace
-                      v-if="Object.keys(this.filterLookupNames).length !== 0"
+                      v-if="Object.keys(this.filterNames).length !== 0"
                       :key="filterInput.name"
                       :filterField="filterInput"
                       v-model="modelValueRef"
-                      v-model:filterLookupNames="filterLookupNamesRef"
+                      v-model:filterNames="filterNamesRef"
                       class="q-mr-sm col-grow"
                       style="max-width: 200px"
                   />
@@ -236,7 +236,7 @@ export default {
     FilterPlace,
   },
   props: {
-    filterLookupNames: {
+    filterNames: {
       type: Object,
       default() {
         return {};
@@ -332,7 +332,7 @@ export default {
       activeTabRef: "",
       searchRef: "",
       modelValueRef: {},
-      filterLookupNamesRef: {},
+      filterNamesRef: {},
     };
   },
   computed: {
@@ -624,17 +624,17 @@ export default {
       },
       deep: true,
     },
-    filterLookupNames: {
+    filterNames: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+          this.filterNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
         }
       },
       deep: true,
     },
-    filterLookupNamesRef: {
+    filterNamesRef: {
       handler(newVal, oldVal) {
-        this.$emit("update:filterLookupNames", newVal);
+        this.$emit("update:filterNames", newVal);
       },
       deep: true,
     },
@@ -672,9 +672,9 @@ export default {
     this.modelValueRef = {...this.modelValue};
 
 
-    if (Object.keys(this.filterLookupNames).length !== 0) {
+    if (Object.keys(this.filterNames).length !== 0) {
 
-      this.filterLookupNamesRef = {...this.filterLookupNames};
+      this.filterNamesRef = {...this.filterNames};
 
     } else {
 
@@ -682,7 +682,7 @@ export default {
         if (
             filterInput.usageType.startsWith('relForeignKey')
         ) {
-          this.filterLookupNamesRef[filterInput.name] = null
+          this.filterNamesRef[filterInput.name] = null
         }
       }
 

@@ -32,7 +32,7 @@
                     :model="childFilter.meta.field.parent"
                     :forcedFilters="getFilters(childFilter)"
                     v-model="modelValueRef[childFilter.name]"
-                    v-model:titleVal="filterLookupNamesRef[childFilter.name]"
+                    v-model:titleVal="filterNamesRef[childFilter.name]"
                     :disabled="
                     filterParentName(childFilter) &&
                     !modelValueRef[filterParentName(childFilter)]
@@ -94,7 +94,7 @@ export default {
     SuperTable: AsyncSuperTableComponent,
   },
   props: {
-    filterLookupNames: {
+    filterNames: {
       type: Object,
       default() {
         return {};
@@ -113,7 +113,7 @@ export default {
     return {
       menu: false,
       modelValueRef: {},
-      filterLookupNamesRef: {},
+      filterNamesRef: {},
       placeFieldLevelTypes: [
         "relForeignKeyMapExtraRelCountry",
         "relForeignKeyMapExtraRelAdminArea1",
@@ -263,17 +263,17 @@ export default {
       },
       deep: true,
     },
-    filterLookupNames: {
+    filterNames: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+          this.filterNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
         }
       },
       deep: true,
     },
-    filterLookupNamesRef: {
+    filterNamesRef: {
       handler(newVal, oldVal) {
-        this.$emit("update:filterLookupNames", newVal);
+        this.$emit("update:filterNames", newVal);
       },
       deep: true,
     },
@@ -281,7 +281,7 @@ export default {
   mounted() {
     this.modelValueRef = JSON.parse(JSON.stringify(this.modelValue)); // Initialize with a deep copy
 
-    this.filterLookupNamesRef = {...this.filterLookupNames};
+    this.filterNamesRef = {...this.filterNames};
   },
 };
 </script>

@@ -54,7 +54,7 @@
       <template v-else>
         <SuperTableTopBar
             v-model="filtersRef"
-            v-model:filterLookupNames="filterLookupNamesRef"
+            v-model:filterNames="filterNamesRef"
             v-model:activeTab="activeTab"
             v-model:search="search"
             ref="SuperTableTopBar"
@@ -364,7 +364,7 @@ export default {
         return {};
       },
     },
-    filterLookupNames: {
+    filterNames: {
       type: Object,
       default() {
         return {};
@@ -507,7 +507,7 @@ export default {
       },
       highlightedRow: null,
       filtersRef: {},
-      filterLookupNamesRef: {},
+      filterNamesRef: {},
       items: [],
       activeTab: "",
       // activeTab: {
@@ -880,19 +880,17 @@ export default {
       deep: true,
     },
 
-    filterLookupNames: {
+    filterNames: {
       handler(newVal, oldVal) {
         if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterLookupNamesRef = JSON.parse(JSON.stringify(newVal));
+          this.filterNamesRef = JSON.parse(JSON.stringify(newVal));
         }
       },
       deep: true,
     },
-    filterLookupNamesRef: {
+    filterNamesRef: {
       handler(newVal, oldVal) {
-        console.log(1111)
-        console.log(newVal)
-        this.$emit("update:filterLookupNames", newVal);
+        this.$emit("update:filterNames", newVal);
       },
       deep: true,
     },
@@ -900,7 +898,7 @@ export default {
   mounted() {
 
     this.filtersRef = {...this.filtersProp};
-    this.filterLookupNamesRef = {...this.filterLookupNames};
+    this.filterNamesRef = {...this.filterNames};
 
     this.$emit("superTableMounted");
 
