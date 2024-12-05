@@ -153,7 +153,6 @@ export default {
     filterVals: {
       deep: true,
       handler() {
-        console.log(111)
         this.updateRoute();
       },
     },
