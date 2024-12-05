@@ -190,7 +190,7 @@ export default {
     // Update routeParamValue and route
     updateRoute() {
       this.routeParamValue = this.encodeRouteParam();
-      
+
       this.$router.push({
         name: this.boundRoute, // Stay on the current route
         params: {
@@ -198,11 +198,6 @@ export default {
           [this.boundRouteParam]: this.routeParamValue, // Dynamically set the parameter name
         },
       });
-    },
-    updateRouteParamValue(newRouteParamValue) {
-
-      this.decodeRouteParam(newRouteParamValue || []);
-
     },
   },
   watch: {
@@ -224,8 +219,7 @@ export default {
     // On page load, decode routeParamValue from route
     const initialRouteParamValue = this.$route.params[this.boundRouteParam] || [];
     if (initialRouteParamValue.length) {
-
-      this.updateRouteParamValue(initialRouteParamValue)
+      this.decodeRouteParam(initialRouteParamValue || []);
       // const decodeRouteParam = this.decodeRouteParam(initialRouteParamValue);
       //
       // this.$emit('update:filterVals', decodeRouteParam.newFilters)
