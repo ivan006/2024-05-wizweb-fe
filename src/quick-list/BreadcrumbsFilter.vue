@@ -1,11 +1,12 @@
 <template>
   <div class="q-mb-md">
-    <q-breadcrumbs  class="">
+    <q-breadcrumbs class="">
       <q-breadcrumbs-el
         v-for="(crumb, index) in breadcrumbTrail"
         :key="index"
         :label="crumb.label"
         class="text-subtitle2"
+        :to="crumb.to"
       />
     </q-breadcrumbs>
     <!--<pre>{{ filterVals }}</pre>-->
@@ -60,7 +61,6 @@ export default {
 
 
 
-
     breadcrumbTrail() {
       const trail = [...this.trailPrefix];
 
@@ -71,13 +71,13 @@ export default {
 
         // Create separate breadcrumb objects for key and value
         trail.push(
-          { label: this.formatKey(key) }, // Filter key as a separate breadcrumb
-          { label: name } // Merged value (only the name) as a separate breadcrumb
+          {label: this.formatKey(key)}, // Filter key as a separate breadcrumb
+          {label: name} // Merged value (only the name) as a separate breadcrumb
         );
       }
 
       return trail;
-    },
+    }
   },
 
   methods: {
@@ -94,7 +94,7 @@ export default {
       return formattedKey;
     },
     // Decode filterParams (array) to populate filterVals and filterNames
-    filterParamsDecode(filterParams) {
+    decodeRouteParam(filterParams) {
       const newFilters = {};
       const newfilterNames = {};
 
@@ -110,7 +110,7 @@ export default {
       }
     },
     // Encode filters and filterNames into filterParams (array)
-    filterParamsEncode() {
+    encodeRouteParam() {
       const params = [];
       let lastNonDefaultIndex = -1;
 
@@ -138,15 +138,21 @@ export default {
 
     // Update filterParams and route
     updateRoute() {
-      this.filterParams = this.filterParamsEncode();
+      this.routeParamValue = this.encodeRouteParam();
 
       this.$router.push({
         name: this.boundRoute, // Stay on the current route
         params: {
           ...this.$route.params, // Keep existing params
-          [this.boundRouteParam]: this.filterParams, // Dynamically set the parameter name
+          [this.boundRouteParam]: this.routeParamValue, // Dynamically set the parameter name
         },
       });
+    },
+    updateRouteParamValue(newFilterParams) {
+
+      const decoded = this.decodeRouteParam(newFilterParams || []);
+      this.$emit("update:filterVals", decoded.newFilters);
+      this.$emit("update:filterNames", decoded.newFilterNames);
     },
   },
   watch: {
@@ -168,12 +174,14 @@ export default {
     // On page load, decode filterParams from route
     const initialFilterParams = this.$route.params[this.boundRouteParam] || [];
     if (initialFilterParams.length) {
-      const filterParamsDecode = this.filterParamsDecode(initialFilterParams);
 
-      this.$emit('update:filterVals', filterParamsDecode.newFilters)
-      this.$emit('update:filterNames', filterParamsDecode.newfilterNames)
-      // console.log('filterParams1')
-      // console.log(this.filterParams)
+      this.updateRouteParamValue(initialFilterParams)
+      // const decodeRouteParam = this.decodeRouteParam(initialFilterParams);
+      //
+      // this.$emit('update:filterVals', decodeRouteParam.newFilters)
+      // this.$emit('update:filterNames', decodeRouteParam.newfilterNames)
+      // // console.log('filterParams1')
+      // // console.log(this.routeParamValue)
     }
   },
 };
