@@ -2,11 +2,11 @@
   <div class="q-mb-md">
     <q-breadcrumbs class="">
       <q-breadcrumbs-el
-        v-for="(crumb, index) in breadcrumbTrail"
-        :key="index"
-        :label="crumb.label"
-        class="text-subtitle2"
-        :to="crumb.to"
+          v-for="(crumb, index) in breadcrumbTrail"
+          :key="index"
+          :label="crumb.label"
+          class="text-subtitle2"
+          :to="crumb.to"
       />
     </q-breadcrumbs>
     <!--<pre>{{ filterVals }}</pre>-->
@@ -71,8 +71,8 @@ export default {
 
         // Create separate breadcrumb objects for key and value
         trail.push(
-          {label: this.formatKey(key)}, // Filter key as a separate breadcrumb
-          {label: name} // Merged value (only the name) as a separate breadcrumb
+            {label: this.formatKey(key)}, // Filter key as a separate breadcrumb
+            {label: name} // Merged value (only the name) as a separate breadcrumb
         );
       }
 
@@ -87,9 +87,9 @@ export default {
 
       // Convert snake_case to Title Case
       formattedKey = formattedKey
-        .split("_")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(" ");
+          .split("_")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(" ");
 
       return formattedKey;
     },
