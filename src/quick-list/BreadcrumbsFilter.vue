@@ -128,7 +128,6 @@ export default {
             }
         );
       }
-
       return trail;
     }
 
@@ -158,16 +157,14 @@ export default {
         newfilterNames[key] = routeParamValue[i + 2] || "All";
       }
 
-      return {
-        newFilters,
-        newfilterNames
-      }
+
+      this.$emit("update:filterVals", newFilters);
+      this.$emit("update:filterNames", newFilterNames);
     },
     // Encode filters and filterNames into routeParamValue (array)
     encodeRouteParam() {
       const params = [];
       let lastNonDefaultIndex = -1;
-
       // Build params and track the last non-default filter set
       Object.keys(this.filterNames).forEach((key, index) => {
         const id = this.filterVals[key] !== null ? this.filterVals[key] : 0;
@@ -193,7 +190,7 @@ export default {
     // Update routeParamValue and route
     updateRoute() {
       this.routeParamValue = this.encodeRouteParam();
-
+      
       this.$router.push({
         name: this.boundRoute, // Stay on the current route
         params: {
@@ -204,9 +201,8 @@ export default {
     },
     updateRouteParamValue(newRouteParamValue) {
 
-      const decoded = this.decodeRouteParam(newRouteParamValue || []);
-      this.$emit("update:filterVals", decoded.newFilters);
-      this.$emit("update:filterNames", decoded.newFilterNames);
+      this.decodeRouteParam(newRouteParamValue || []);
+
     },
   },
   watch: {
