@@ -150,18 +150,18 @@ export default {
   },
   watch: {
     // Watch filterVals and filterNames for changes
-    filterVals: {
-      deep: true,
-      handler() {
-        this.updateRoute();
-      },
-    },
-    // filterNames: {
+    // filterVals: {
     //   deep: true,
     //   handler() {
     //     this.updateRoute();
     //   },
     // },
+    filterNames: {
+      deep: true,
+      handler() {
+        this.updateRoute();
+      },
+    },
   },
   mounted() {
     // On page load, decode filterParams from route
