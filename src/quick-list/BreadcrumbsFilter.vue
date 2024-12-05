@@ -148,9 +148,9 @@ export default {
         },
       });
     },
-    updateRouteParamValue(newFilterParams) {
+    updateRouteParamValue(newRouteParamValue) {
 
-      const decoded = this.decodeRouteParam(newFilterParams || []);
+      const decoded = this.decodeRouteParam(newRouteParamValue || []);
       this.$emit("update:filterVals", decoded.newFilters);
       this.$emit("update:filterNames", decoded.newFilterNames);
     },
@@ -172,11 +172,11 @@ export default {
   },
   mounted() {
     // On page load, decode routeParamValue from route
-    const initialFilterParams = this.$route.params[this.boundRouteParam] || [];
-    if (initialFilterParams.length) {
+    const initialRouteParamValue = this.$route.params[this.boundRouteParam] || [];
+    if (initialRouteParamValue.length) {
 
-      this.updateRouteParamValue(initialFilterParams)
-      // const decodeRouteParam = this.decodeRouteParam(initialFilterParams);
+      this.updateRouteParamValue(initialRouteParamValue)
+      // const decodeRouteParam = this.decodeRouteParam(initialRouteParamValue);
       //
       // this.$emit('update:filterVals', decodeRouteParam.newFilters)
       // this.$emit('update:filterNames', decodeRouteParam.newfilterNames)
