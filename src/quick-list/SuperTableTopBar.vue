@@ -460,28 +460,7 @@ export default {
     filterInputs() {
       const data = this.superOptions.modelFields;
 
-      const result = [];
-      for (const item of data) {
-        if (
-            item.usageType.startsWith("relForeignKeyNormal") ||
-            item.usageType == "timeRangeStart"
-        ) {
-          result.push(item);
-        } else if (item.usageType == "relForeignKeyMapExtraRelSublocality") {
-          const children = data.filter((item) =>
-              item.usageType.startsWith("relForeignKeyMapExtraRel"),
-          );
-
-          result.push({
-            label: "Place",
-            name: "Place",
-            usageType: "mapFilter",
-            dataType: "normal",
-            children: children,
-          });
-        }
-      }
-      return result;
+      return QuickListsHelpers.filterInputs(data)
     },
   },
   methods: {
@@ -708,5 +687,7 @@ export default {
       }
     }
   },
+
+
 };
 </script>

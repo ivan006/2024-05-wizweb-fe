@@ -18,9 +18,15 @@
 </template>
 <script>
 
+import QuickListsHelpers from "./QuickListsHelpers";
+
 export default {
   name: "FilterBreadcrumbs",
   props: {
+    model: {
+      type: [Object, Function],
+      required: true,
+    },
     boundRoute: {
       type: String,
       default: () => {
@@ -57,7 +63,26 @@ export default {
       routeParamValue: []
     }
   },
+
   computed: {
+    blankFilterVals() {
+      return this.filterInputs.reduce((acc, filterInput) => {
+        acc[filterInput.name] = null;
+        return acc;
+      }, {});
+    },
+    modelFields() {
+      const result = QuickListsHelpers.computedAttrs(
+          this.model,
+          [],
+      );
+      return result;
+    },
+    filterInputs() {
+      const data = this.modelFields;
+
+      return QuickListsHelpers.filterInputs(data)
+    },
 
 
 
@@ -148,15 +173,27 @@ export default {
     },
     // Decode routeParamValue (array) to populate filterVals and filterNames
     decodeRouteParam(routeParamValue) {
-      const newFilters = {};
-      const newfilterNames = {};
+      const newFilters = { ...this.filterVals }; // Start with all existing keys
+      const newFilterNames = { ...this.filterNames }; // Start with all existing keys
 
       for (let i = 0; i < routeParamValue.length; i += 3) {
         const key = routeParamValue[i];
         newFilters[key] = parseInt(routeParamValue[i + 1], 10) || 0;
-        newfilterNames[key] = routeParamValue[i + 2] || "All";
+        newFilterNames[key] = routeParamValue[i + 2] || "All";
       }
 
+      // Ensure all keys in the original filterVals and filterNames have a value
+      Object.keys(this.blankFilterVals).forEach((key) => {
+        if (!newFilters.hasOwnProperty(key)) {
+          newFilters[key] = null;
+        }
+      });
+
+      Object.keys(this.blankFilterVals).forEach((key) => {
+        if (!newFilterNames.hasOwnProperty(key)) {
+          newFilterNames[key] = null;
+        }
+      });
 
       this.$emit("update:filterVals", newFilters);
       this.$emit("update:filterNames", newFilterNames);
@@ -220,12 +257,8 @@ export default {
     const initialRouteParamValue = this.$route.params[this.boundRouteParam] || [];
     if (initialRouteParamValue.length) {
       this.decodeRouteParam(initialRouteParamValue || []);
-      // const decodeRouteParam = this.decodeRouteParam(initialRouteParamValue);
-      //
-      // this.$emit('update:filterVals', decodeRouteParam.newFilters)
-      // this.$emit('update:filterNames', decodeRouteParam.newfilterNames)
-      // // console.log('filterParams1')
-      // // console.log(this.routeParamValue)
+
+
     }
   },
 };

@@ -245,6 +245,32 @@ class QuickListsHelpers {
         return result
     }
 
+    static filterInputs(data) {
+
+        const result = [];
+        for (const item of data) {
+            if (
+                item.usageType.startsWith("relForeignKeyNormal") ||
+                item.usageType == "timeRangeStart"
+            ) {
+                result.push(item);
+            } else if (item.usageType == "relForeignKeyMapExtraRelSublocality") {
+                const children = data.filter((item) =>
+                    item.usageType.startsWith("relForeignKeyMapExtraRel"),
+                );
+
+                result.push({
+                    label: "Place",
+                    name: "Place",
+                    usageType: "mapFilter",
+                    dataType: "normal",
+                    children: children,
+                });
+            }
+        }
+        return result;
+    }
+
 
     static SupaerTableHeaders(model, excludedCols = [], canEdit = true, displayMapField = false) {
         let result = [];
