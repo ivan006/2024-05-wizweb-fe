@@ -66,7 +66,7 @@ export default {
       const params = [];
       let lastNonDefaultIndex = -1;
 
-      // Build breadcrumb trail and track the last non-default filter set
+      // Build params and track the last non-default filter set
       Object.keys(this.filterNames).forEach((key, index) => {
         const id = this.filterVals[key] !== null ? this.filterVals[key] : 0;
         const name = this.filterNames[key] !== null ? this.filterNames[key] : "All";
@@ -80,7 +80,7 @@ export default {
       });
 
       // Trim trailing default filter sets
-      const trimmedParams = params.slice(0, (lastNonDefaultIndex + 1) * 3); // Multiply by 3 for full sets
+      const trimmedParams = params.slice(0, (lastNonDefaultIndex + 1) * 3);
 
       // Build breadcrumbs from trimmed params
       for (let i = 0; i < trimmedParams.length; i += 3) {
@@ -91,8 +91,18 @@ export default {
             {
               label: this.formatKey(key),
               action: () => {
-                const updatedVals = { ...this.filterVals, [key]: 0 }; // Reset key to "All"
-                const updatedNames = { ...this.filterNames, [key]: "All" };
+                // Reset this key and all lower levels to default
+                const updatedVals = { ...this.filterVals };
+                const updatedNames = { ...this.filterNames };
+
+                // Reset current key and all lower levels
+                Object.keys(updatedVals).forEach((filterKey, idx) => {
+                  if (idx >= i / 3) { // Match key index and reset lower levels
+                    updatedVals[filterKey] = 0;
+                    updatedNames[filterKey] = "All";
+                  }
+                });
+
                 this.$emit("update:filterVals", updatedVals);
                 this.$emit("update:filterNames", updatedNames);
               },
@@ -100,16 +110,28 @@ export default {
             {
               label: name,
               action: () => {
-                // No changes, keep the current state
-                this.$emit("update:filterVals", this.filterVals);
-                this.$emit("update:filterNames", this.filterNames);
+                // Keep current name but reset all lower levels
+                const updatedVals = { ...this.filterVals };
+                const updatedNames = { ...this.filterNames };
+
+                // Reset lower levels only
+                Object.keys(updatedVals).forEach((filterKey, idx) => {
+                  if (idx > i / 3) { // Match lower levels only
+                    updatedVals[filterKey] = 0;
+                    updatedNames[filterKey] = "All";
+                  }
+                });
+
+                this.$emit("update:filterVals", updatedVals);
+                this.$emit("update:filterNames", updatedNames);
               },
             }
         );
       }
 
       return trail;
-    },
+    }
+
   },
 
   methods: {
