@@ -11,7 +11,7 @@
     </q-breadcrumbs>
     <!--<pre>{{ filterVals }}</pre>-->
     <!--<pre>{{ filterNames }}</pre>-->
-    <!--<pre>{{ filterParams }}</pre>-->
+    <!--<pre>{{ routeParamValue }}</pre>-->
     <!--<pre>{{ boundRouteParam }}</pre>-->
     <!--<pre>{{ breadcrumbTrail }}</pre>-->
   </div>
@@ -54,7 +54,7 @@ export default {
   },
   data(){
     return {
-      filterParams: []
+      routeParamValue: []
     }
   },
   computed: {
@@ -64,10 +64,10 @@ export default {
     breadcrumbTrail() {
       const trail = [...this.trailPrefix];
 
-      for (let i = 0; i < this.filterParams.length; i += 3) {
-        const key = this.filterParams[i];
-        const id = this.filterParams[i + 1];
-        const name = this.filterParams[i + 2];
+      for (let i = 0; i < this.routeParamValue.length; i += 3) {
+        const key = this.routeParamValue[i];
+        const id = this.routeParamValue[i + 1];
+        const name = this.routeParamValue[i + 2];
 
         // Create separate breadcrumb objects for key and value
         trail.push(
@@ -93,15 +93,15 @@ export default {
 
       return formattedKey;
     },
-    // Decode filterParams (array) to populate filterVals and filterNames
-    decodeRouteParam(filterParams) {
+    // Decode routeParamValue (array) to populate filterVals and filterNames
+    decodeRouteParam(routeParamValue) {
       const newFilters = {};
       const newfilterNames = {};
 
-      for (let i = 0; i < filterParams.length; i += 3) {
-        const key = filterParams[i];
-        newFilters[key] = parseInt(filterParams[i + 1], 10) || 0;
-        newfilterNames[key] = filterParams[i + 2] || "All";
+      for (let i = 0; i < routeParamValue.length; i += 3) {
+        const key = routeParamValue[i];
+        newFilters[key] = parseInt(routeParamValue[i + 1], 10) || 0;
+        newfilterNames[key] = routeParamValue[i + 2] || "All";
       }
 
       return {
@@ -109,7 +109,7 @@ export default {
         newfilterNames
       }
     },
-    // Encode filters and filterNames into filterParams (array)
+    // Encode filters and filterNames into routeParamValue (array)
     encodeRouteParam() {
       const params = [];
       let lastNonDefaultIndex = -1;
@@ -136,7 +136,7 @@ export default {
       return params.slice(0, (lastNonDefaultIndex + 1) * 3); // Multiply by 3 to include full sets
     },
 
-    // Update filterParams and route
+    // Update routeParamValue and route
     updateRoute() {
       this.routeParamValue = this.encodeRouteParam();
 
@@ -171,7 +171,7 @@ export default {
     },
   },
   mounted() {
-    // On page load, decode filterParams from route
+    // On page load, decode routeParamValue from route
     const initialFilterParams = this.$route.params[this.boundRouteParam] || [];
     if (initialFilterParams.length) {
 
