@@ -24,6 +24,7 @@ import SuperTableList from './quick-list/SuperTableList.vue';
 import SuperTableMap from './quick-list/SuperTableMap.vue';
 import SuperTableTable from './quick-list/SuperTableTable.vue';
 import CalendarPolyContentWrapper from './quick-list/CalendarPolyContentWrapper.vue';
+import BreadcrumbsFilter from './quick-list/BreadcrumbsFilter.vue';
 import FieldUsageTypes from './utils/FieldUsageTypes.js';
 import Helpers from './utils/Helpers.js';
 
@@ -57,4 +58,5 @@ export {
   FieldUsageTypes,
   Helpers,
   CalendarPolyContentWrapper,
+  BreadcrumbsFilter,
 };
