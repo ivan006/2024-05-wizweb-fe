@@ -6,7 +6,7 @@
           :key="index"
           :label="crumb.label"
           class="text-subtitle2"
-          :to="crumb.to"
+          @click="crumb.action"
       />
     </q-breadcrumbs>
     <!--<pre>{{ filterVals }}</pre>-->
@@ -63,21 +63,53 @@ export default {
 
     breadcrumbTrail() {
       const trail = [...this.trailPrefix];
+      const params = [];
+      let lastNonDefaultIndex = -1;
 
-      for (let i = 0; i < this.routeParamValue.length; i += 3) {
-        const key = this.routeParamValue[i];
-        const id = this.routeParamValue[i + 1];
-        const name = this.routeParamValue[i + 2];
+      // Build breadcrumb trail and track the last non-default filter set
+      Object.keys(this.filterNames).forEach((key, index) => {
+        const id = this.filterVals[key] !== null ? this.filterVals[key] : 0;
+        const name = this.filterNames[key] !== null ? this.filterNames[key] : "All";
 
-        // Create separate breadcrumb objects for key and value
+        params.push(key, id, name);
+
+        // Check if this is a non-default filter
+        if (id !== 0 || name !== "All") {
+          lastNonDefaultIndex = index;
+        }
+      });
+
+      // Trim trailing default filter sets
+      const trimmedParams = params.slice(0, (lastNonDefaultIndex + 1) * 3); // Multiply by 3 for full sets
+
+      // Build breadcrumbs from trimmed params
+      for (let i = 0; i < trimmedParams.length; i += 3) {
+        const key = trimmedParams[i];
+        const name = trimmedParams[i + 2];
+
         trail.push(
-            {label: this.formatKey(key)}, // Filter key as a separate breadcrumb
-            {label: name} // Merged value (only the name) as a separate breadcrumb
+            {
+              label: this.formatKey(key),
+              action: () => {
+                const updatedVals = { ...this.filterVals, [key]: 0 }; // Reset key to "All"
+                const updatedNames = { ...this.filterNames, [key]: "All" };
+                this.$emit("update:filterVals", updatedVals);
+                this.$emit("update:filterNames", updatedNames);
+              },
+            },
+            {
+              label: name,
+              action: () => {
+                // No changes, keep the current state
+                this.$emit("update:filterVals", this.filterVals);
+                this.$emit("update:filterNames", this.filterNames);
+              },
+            }
         );
       }
 
       return trail;
-    }
+    },
   },
 
   methods: {
