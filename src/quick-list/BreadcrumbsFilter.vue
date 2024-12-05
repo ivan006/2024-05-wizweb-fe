@@ -62,7 +62,7 @@ export default {
 
 
     breadcrumbTrail() {
-      const trail = this.trailPrefix;
+      const trail = [...this.trailPrefix];
 
       for (let i = 0; i < this.filterParams.length; i += 3) {
         const key = this.filterParams[i];
@@ -139,6 +139,7 @@ export default {
     // Update filterParams and route
     updateRoute() {
       this.filterParams = this.filterParamsEncode();
+
       this.$router.push({
         name: this.boundRoute, // Stay on the current route
         params: {
