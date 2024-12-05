@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-mb-md">
     <q-breadcrumbs  class="">
       <q-breadcrumbs-el
         v-for="(crumb, index) in breadcrumbTrail"
@@ -153,6 +153,7 @@ export default {
     filterVals: {
       deep: true,
       handler() {
+        console.log(111)
         this.updateRoute();
       },
     },
