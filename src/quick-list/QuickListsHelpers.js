@@ -245,56 +245,36 @@ class QuickListsHelpers {
         return result
     }
 
-    static bindPseudoMutableProps(component, props) {
-        const data = {};
-        const watch = {};
-        const mounted = function () {
-            props.forEach((prop) => {
-                this[`${prop}Ref`] = { ...this[prop] };
-            });
-        };
-
-        props.forEach((prop) => {
-            data[`${prop}Ref`] = {};
-
-            // Watch for changes in the prop
-            watch[prop] = {
-                handler(newVal, oldVal) {
-                    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-                        this[`${prop}Ref`] = { ...newVal };
-                    }
-                },
-                deep: true,
-            };
-
-            // Watch for changes in the ref
-            watch[`${prop}Ref`] = {
-                handler(newVal, oldVal) {
-                    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-                        this.$emit(`update:${prop}`, this[`${prop}Ref`]);
-                    }
-                },
-                deep: true,
-            };
-        });
-
-        // Inject data, watch, and mounted into the component
-        component.data = () => ({
-            ...(component.data ? component.data() : {}),
-            ...data,
-        });
-
-        component.watch = {
-            ...(component.watch || {}),
-            ...watch,
-        };
-
-        component.mounted = function () {
-            mounted.call(this);
-            if (component.mounted) {
-                component.mounted.call(this);
+    static bindPseudoMutableProps(component, propsWithRefs) {
+        propsWithRefs.forEach(({ prop, refName }) => {
+            // Ensure the ref for the prop is initialized in the component's data
+            if (!component.$data[refName]) {
+                component.$data[refName] = { ...component[prop] };
             }
-        };
+
+            // Watch for changes in the prop and update the corresponding ref
+            component.$watch(
+                prop,
+                (newVal, oldVal) => {
+                    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                        component.$data[refName] = { ...newVal };
+                    }
+                },
+                { deep: true }
+            );
+
+            // Watch for changes in the ref and emit an update for the prop
+            component.$watch(
+                refName,
+                (newVal, oldVal) => {
+                    // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                        component.$emit(`update:${prop}`, newVal);
+                        console.log(111)
+                    // }
+                },
+                { deep: true }
+            );
+        });
     }
 
     static filterInputs(data) {
