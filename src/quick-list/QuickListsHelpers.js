@@ -245,7 +245,7 @@ class QuickListsHelpers {
         return result
     }
 
-    static bindPseudoMutableProps(component, propsWithRefs) {
+    static bindDeepPropToRef(component, propsWithRefs) {
         propsWithRefs.forEach(({ prop, refName }) => {
             // Ensure the ref for the prop is initialized in the component's data
             if (!component.$data[refName]) {
@@ -269,7 +269,6 @@ class QuickListsHelpers {
                 (newVal, oldVal) => {
                     // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
                         component.$emit(`update:${prop}`, newVal);
-                        console.log(111)
                     // }
                 },
                 { deep: true }
