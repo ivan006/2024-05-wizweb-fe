@@ -245,6 +245,58 @@ class QuickListsHelpers {
         return result
     }
 
+    static bindPseudoMutableProps(component, props) {
+        const data = {};
+        const watch = {};
+        const mounted = function () {
+            props.forEach((prop) => {
+                this[`${prop}Ref`] = { ...this[prop] };
+            });
+        };
+
+        props.forEach((prop) => {
+            data[`${prop}Ref`] = {};
+
+            // Watch for changes in the prop
+            watch[prop] = {
+                handler(newVal, oldVal) {
+                    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                        this[`${prop}Ref`] = { ...newVal };
+                    }
+                },
+                deep: true,
+            };
+
+            // Watch for changes in the ref
+            watch[`${prop}Ref`] = {
+                handler(newVal, oldVal) {
+                    if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                        this.$emit(`update:${prop}`, this[`${prop}Ref`]);
+                    }
+                },
+                deep: true,
+            };
+        });
+
+        // Inject data, watch, and mounted into the component
+        component.data = () => ({
+            ...(component.data ? component.data() : {}),
+            ...data,
+        });
+
+        component.watch = {
+            ...(component.watch || {}),
+            ...watch,
+        };
+
+        component.mounted = function () {
+            mounted.call(this);
+            if (component.mounted) {
+                component.mounted.call(this);
+            }
+        };
+    }
+
     static filterInputs(data) {
 
         const result = [];
