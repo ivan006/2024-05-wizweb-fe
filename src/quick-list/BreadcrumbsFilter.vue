@@ -264,48 +264,48 @@ export default {
     filterVals: {
       handler(newVal, oldVal) {
         // Use stringified comparison for deep change detection
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterValsRef = {...newVal};
-        }
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        //   this.filterValsRef = {...newVal};
+        // }
         this.updateRoute();
       },
       deep: true,
     },
-    filterValsRef: {
-      handler(newVal, oldVal) {
-        // Use stringified comparison to prevent unnecessary updates
-        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        this.$emit("update:filterVals", newVal);
-        // }
-      },
-      deep: true,
-    },
+    // filterValsRef: {
+    //   handler(newVal, oldVal) {
+    //     // Use stringified comparison to prevent unnecessary updates
+    //     // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+    //     this.$emit("update:filterVals", newVal);
+    //     // }
+    //   },
+    //   deep: true,
+    // },
 
     filterNames: {
       handler(newVal, oldVal) {
         // Use stringified comparison for deep change detection
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterNamesRef = {...newVal};
-        }
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        //   this.filterNamesRef = {...newVal};
+        // }
         this.updateRoute();
       },
       deep: true,
     },
-    filterNamesRef: {
-      handler(newVal, oldVal) {
-        // Use stringified comparison to prevent unnecessary updates
-        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        this.$emit("update:filterNames", newVal);
-        // }
-      },
-      deep: true,
-    },
+    // filterNamesRef: {
+    //   handler(newVal, oldVal) {
+    //     // Use stringified comparison to prevent unnecessary updates
+    //     // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+    //     this.$emit("update:filterNames", newVal);
+    //     // }
+    //   },
+    //   deep: true,
+    // },
   },
   mounted() {
-    // QuickListsHelpers.bindDeepPropToRef(this, [
-    //   { prop: "filterVals", refName: "filterValsRef" },
-    //   { prop: "filterNames", refName: "filterNamesRef" },
-    // ]);
+    QuickListsHelpers.bindDeepPropToRef(this, [
+      { prop: "filterVals", refName: "filterValsRef" },
+      { prop: "filterNames", refName: "filterNamesRef" },
+    ]);
 
     this.decodeRouteParam();
     // this.filterValsRef = this.blankFilterVals

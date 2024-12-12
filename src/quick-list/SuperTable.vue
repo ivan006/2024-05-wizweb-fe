@@ -880,25 +880,29 @@ export default {
       deep: true,
     },
 
-    filterNames: {
-      handler(newVal, oldVal) {
-        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-          this.filterNamesRef = JSON.parse(JSON.stringify(newVal));
-        }
-      },
-      deep: true,
-    },
-    filterNamesRef: {
-      handler(newVal, oldVal) {
-        this.$emit("update:filterNames", newVal);
-      },
-      deep: true,
-    },
+    // filterNames: {
+    //   handler(newVal, oldVal) {
+    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+    //       this.filterNamesRef = JSON.parse(JSON.stringify(newVal));
+    //     }
+    //   },
+    //   deep: true,
+    // },
+    // filterNamesRef: {
+    //   handler(newVal, oldVal) {
+    //     this.$emit("update:filterNames", newVal);
+    //   },
+    //   deep: true,
+    // },
   },
   mounted() {
+    QuickListsHelpers.bindDeepPropToRef(this, [
+      // { prop: "filterVals", refName: "filterValsRef" },
+      { prop: "filterNames", refName: "filterNamesRef" },
+    ]);
 
-    this.filterValsRef = {...this.filterVals};
-    this.filterNamesRef = {...this.filterNames};
+    // this.filterValsRef = {...this.filterVals};
+    // this.filterNamesRef = {...this.filterNames};
 
     this.$emit("superTableMounted");
 
