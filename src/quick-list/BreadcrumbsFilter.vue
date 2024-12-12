@@ -92,27 +92,35 @@ export default {
     },
 
 
-
-    breadcrumbTrail() {
-      const trail = [...this.trailPrefix];
-      const params = [];
-      let lastNonDefaultIndex = -1;
-
-      // Build params and track the last non-default filter set
+    lastNonDefaultIndex() {
+      let lastIndex = -1;
       Object.keys(this.filterNames).forEach((key, index) => {
         const id = this.filterVals[key] !== null ? this.filterVals[key] : 0;
         const name = this.filterNames[key] !== null ? this.filterNames[key] : "All";
 
-        params.push(key, id, name);
-
         // Check if this is a non-default filter
         if (id !== 0 || name !== "All") {
-          lastNonDefaultIndex = index;
+          lastIndex = index;
         }
+      });
+      return lastIndex;
+    },
+
+
+    breadcrumbTrail() {
+      const trail = [...this.trailPrefix];
+      const params = [];
+
+      // Build params based on filters
+      Object.keys(this.filterNames).forEach((key) => {
+        const id = this.filterVals[key] !== null ? this.filterVals[key] : 0;
+        const name = this.filterNames[key] !== null ? this.filterNames[key] : "All";
+
+        params.push(key, id, name);
       });
 
       // Trim trailing default filter sets
-      const trimmedParams = params.slice(0, (lastNonDefaultIndex + 1) * 3);
+      const trimmedParams = params.slice(0, (this.lastNonDefaultIndex + 1) * 3);
 
       // Build breadcrumbs from trimmed params
       for (let i = 0; i < trimmedParams.length; i += 3) {
@@ -127,18 +135,15 @@ export default {
                 const updatedVals = { ...this.filterVals };
                 const updatedNames = { ...this.filterNames };
 
-                // Reset current key and all lower levels
                 Object.keys(updatedVals).forEach((filterKey, idx) => {
-                  if (idx >= i / 3) { // Match key index and reset lower levels
+                  if (idx >= i / 3) {
                     updatedVals[filterKey] = 0;
                     updatedNames[filterKey] = "All";
                   }
                 });
 
-                // this.$emit("update:filterVals", updatedVals);
-                // this.$emit("update:filterNames", updatedNames);
-                this.filterValsRef = updatedVals
-                this.filterNamesRef = updatedNames
+                this.filterValsRef = updatedVals;
+                this.filterNamesRef = updatedNames;
               },
             },
             {
@@ -148,24 +153,22 @@ export default {
                 const updatedVals = { ...this.filterVals };
                 const updatedNames = { ...this.filterNames };
 
-                // Reset lower levels only
                 Object.keys(updatedVals).forEach((filterKey, idx) => {
-                  if (idx > i / 3) { // Match lower levels only
+                  if (idx > i / 3) {
                     updatedVals[filterKey] = 0;
                     updatedNames[filterKey] = "All";
                   }
                 });
 
-                // this.$emit("update:filterVals", updatedVals);
-                // this.$emit("update:filterNames", updatedNames);
-                this.filterValsRef = updatedVals
-                this.filterNamesRef = updatedNames
+                this.filterValsRef = updatedVals;
+                this.filterNamesRef = updatedNames;
               },
             }
         );
       }
+
       return trail;
-    }
+    },
 
   },
 

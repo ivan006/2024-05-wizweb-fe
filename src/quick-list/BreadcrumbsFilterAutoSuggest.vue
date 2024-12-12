@@ -54,18 +54,23 @@ export default {
       return QuickListsHelpers.filterInputs(this.modelFields);
     },
     nextFilter() {
-      // Determine the next filter in rank that is not yet set
-      return this.filterInputs.find(
-          (filterInput) =>
-              !this.filterValsRef[filterInput.name] ||
-              this.filterValsRef[filterInput.name] === 0
-      );
+      // Find the index of the lowest set filter
+      const lowestSetIndex = this.filterInputs.findIndex((filterInput) => {
+        const val = this.filterValsRef[filterInput.name];
+        return val !== 0 && val !== null; // Check if set to a specific value
+      });
+
+      // If no filters are set, prompt for the first one
+      if (lowestSetIndex === -1) return this.filterInputs[0];
+
+      // Otherwise, prompt for the filter immediately after the lowest set one
+      return this.filterInputs[lowestSetIndex + 1] || null;
     },
   },
   mounted() {
     QuickListsHelpers.bindDeepPropToRef(this, [
-      { prop: "filterVals", refName: "filterValsRef" },
-      { prop: "filterNames", refName: "filterNamesRef" },
+      {prop: "filterVals", refName: "filterValsRef"},
+      {prop: "filterNames", refName: "filterNamesRef"},
     ]);
   },
 };
