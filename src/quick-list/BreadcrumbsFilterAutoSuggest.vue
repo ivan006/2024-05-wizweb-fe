@@ -29,6 +29,12 @@ export default {
     };
   },
   props: {
+    lastNonDefaultIndex: {
+      type: Number,
+      default() {
+        return 0;
+      },
+    },
     filterNames: {
       type: Object,
       default() {
@@ -53,6 +59,7 @@ export default {
     filterInputs() {
       return QuickListsHelpers.filterInputs(this.modelFields);
     },
+
     nextFilter() {
       // Find the index of the lowest set filter
       const lowestSetIndex = this.filterInputs.findIndex((filterInput) => {
