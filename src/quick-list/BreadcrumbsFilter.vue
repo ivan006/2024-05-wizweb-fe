@@ -60,7 +60,9 @@ export default {
   },
   data(){
     return {
-      routeParamValue: []
+      routeParamValue: [],
+      filterValsRef: {},
+      filterNamesRef: {},
     }
   },
 
@@ -128,8 +130,10 @@ export default {
                   }
                 });
 
-                this.$emit("update:filterVals", updatedVals);
-                this.$emit("update:filterNames", updatedNames);
+                // this.$emit("update:filterVals", updatedVals);
+                // this.$emit("update:filterNames", updatedNames);
+                this.filterValsRef = updatedVals
+                this.filterNamesRef = updatedNames
               },
             },
             {
@@ -147,8 +151,10 @@ export default {
                   }
                 });
 
-                this.$emit("update:filterVals", updatedVals);
-                this.$emit("update:filterNames", updatedNames);
+                // this.$emit("update:filterVals", updatedVals);
+                // this.$emit("update:filterNames", updatedNames);
+                this.filterValsRef = updatedVals
+                this.filterNamesRef = updatedNames
               },
             }
         );
@@ -172,31 +178,41 @@ export default {
       return formattedKey;
     },
     // Decode routeParamValue (array) to populate filterVals and filterNames
-    decodeRouteParam(routeParamValue) {
-      const newFilters = { ...this.filterVals }; // Start with all existing keys
-      const newFilterNames = { ...this.filterNames }; // Start with all existing keys
+    decodeRouteParam() {
 
-      for (let i = 0; i < routeParamValue.length; i += 3) {
-        const key = routeParamValue[i];
-        newFilters[key] = parseInt(routeParamValue[i + 1], 10) || 0;
-        newFilterNames[key] = routeParamValue[i + 2] || "All";
+      // On page load, decode routeParamValue from route
+      const routeParamValue = this.$route.params[this.boundRouteParam] || [];
+
+      if (routeParamValue.length) {
+
+
+        const newFilters = { ...this.filterVals }; // Start with all existing keys
+        const newFilterNames = { ...this.filterNames }; // Start with all existing keys
+
+        for (let i = 0; i < routeParamValue.length; i += 3) {
+          const key = routeParamValue[i];
+          newFilters[key] = parseInt(routeParamValue[i + 1], 10) || 0;
+          newFilterNames[key] = routeParamValue[i + 2] || "All";
+        }
+
+        // Ensure all keys in the original filterVals and filterNames have a value
+        Object.keys(this.blankFilterVals).forEach((key) => {
+          if (!newFilters.hasOwnProperty(key)) {
+            newFilters[key] = null;
+          }
+        });
+
+        Object.keys(this.blankFilterVals).forEach((key) => {
+          if (!newFilterNames.hasOwnProperty(key)) {
+            newFilterNames[key] = null;
+          }
+        });
+
+        // this.$emit("update:filterVals", newFilters);
+        // this.$emit("update:filterNames", newFilterNames);
+        this.filterValsRef = {...newFilters}
+        this.filterNamesRef = {...newFilterNames}
       }
-
-      // Ensure all keys in the original filterVals and filterNames have a value
-      Object.keys(this.blankFilterVals).forEach((key) => {
-        if (!newFilters.hasOwnProperty(key)) {
-          newFilters[key] = null;
-        }
-      });
-
-      Object.keys(this.blankFilterVals).forEach((key) => {
-        if (!newFilterNames.hasOwnProperty(key)) {
-          newFilterNames[key] = null;
-        }
-      });
-
-      this.$emit("update:filterVals", newFilters);
-      this.$emit("update:filterNames", newFilterNames);
     },
     // Encode filters and filterNames into routeParamValue (array)
     encodeRouteParam() {
@@ -227,7 +243,6 @@ export default {
     // Update routeParamValue and route
     updateRoute() {
       this.routeParamValue = this.encodeRouteParam();
-
       this.$router.push({
         name: this.boundRoute, // Stay on the current route
         params: {
@@ -245,21 +260,57 @@ export default {
     //     this.updateRoute();
     //   },
     // },
-    filterNames: {
-      deep: true,
-      handler() {
+
+    filterVals: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison for deep change detection
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.filterValsRef = {...newVal};
+        }
         this.updateRoute();
       },
+      deep: true,
+    },
+    filterValsRef: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison to prevent unnecessary updates
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        this.$emit("update:filterVals", newVal);
+        // }
+      },
+      deep: true,
+    },
+
+    filterNames: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison for deep change detection
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.filterNamesRef = {...newVal};
+        }
+        this.updateRoute();
+      },
+      deep: true,
+    },
+    filterNamesRef: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison to prevent unnecessary updates
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        this.$emit("update:filterNames", newVal);
+        // }
+      },
+      deep: true,
     },
   },
   mounted() {
-    // On page load, decode routeParamValue from route
-    const initialRouteParamValue = this.$route.params[this.boundRouteParam] || [];
-    if (initialRouteParamValue.length) {
-      this.decodeRouteParam(initialRouteParamValue || []);
+    // QuickListsHelpers.bindDeepPropToRef(this, [
+    //   { prop: "filterVals", refName: "filterValsRef" },
+    //   { prop: "filterNames", refName: "filterNamesRef" },
+    // ]);
 
-
-    }
+    this.decodeRouteParam();
+    // this.filterValsRef = this.blankFilterVals
+    // this.filterNamesRef = this.blankFilterVals
+    this.$emit("hasMounted");
   },
 };
 </script>

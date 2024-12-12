@@ -248,14 +248,21 @@ class QuickListsHelpers {
     static bindDeepPropToRef(component, propsWithRefs) {
         propsWithRefs.forEach(({ prop, refName }) => {
             // Ensure the ref for the prop is initialized in the component's data
-            if (!component.$data[refName]) {
+            // console.log(`--(1.) Helper bindDeepPropToRef `)
+            // console.log(`${refName}`)
+            // console.log(component.$data[refName])
+            // if (!component.$data[refName]) {
+            //     console.log(`--(1.2.) Helper bindDeepPropToRef  if check`)
+            //     console.log(component[prop])
                 component.$data[refName] = { ...component[prop] };
-            }
+            // }
 
             // Watch for changes in the prop and update the corresponding ref
             component.$watch(
                 prop,
                 (newVal, oldVal) => {
+                    // console.log('newVal,oldVal')
+                    // console.log(newVal,oldVal)
                     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
                         component.$data[refName] = { ...newVal };
                     }
@@ -267,6 +274,9 @@ class QuickListsHelpers {
             component.$watch(
                 refName,
                 (newVal, oldVal) => {
+                    // console.log(`--(6.) Helper bindDeepPropToRef watch`)
+                    // console.log(`${refName}`)
+                    // console.log(newVal,oldVal)
                     // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
                         component.$emit(`update:${prop}`, newVal);
                     // }

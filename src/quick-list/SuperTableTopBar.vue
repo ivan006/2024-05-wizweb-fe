@@ -585,77 +585,64 @@ export default {
     },
   },
   watch: {
-    // modelValue: {
-    //   handler(newVal, oldVal) {
-    //     // Use stringified comparison for deep change detection
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.modelValueRef = {...newVal};
-    //     }
-    //   },
-    //   deep: true,
-    // },
-    // modelValueRef: {
-    //   handler(newVal, oldVal) {
-    //     // Use stringified comparison to prevent unnecessary updates
-    //     // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //     this.$emit("update:modelValue", this.modelValueRef);
-    //     // }
-    //   },
-    //   deep: true,
-    // },
-    // filterNames: {
-    //   handler(newVal, oldVal) {
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.filterNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
-    //     }
-    //   },
-    //   deep: true,
-    // },
-    // filterNamesRef: {
-    //   handler(newVal, oldVal) {
-    //     this.$emit("update:filterNames", newVal);
-    //   },
-    //   deep: true,
-    // },
-    // activeTab: {
-    //   handler(newVal, oldVal) {
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.activeTabRef = newVal;
-    //     }
-    //   },
-    // },
-    // activeTabRef: {
-    //   handler(newVal, oldVal) {
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.$emit("update:activeTab", this.activeTabRef);
-    //     }
-    //   },
-    // },
-    // search: {
-    //   handler(newVal, oldVal) {
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.searchRef = newVal;
-    //     }
-    //   },
-    // },
-    // searchRef: {
-    //   handler(newVal, oldVal) {
-    //     if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-    //       this.$emit("update:search", newVal);
-    //     }
-    //   },
-    // },
+    modelValue: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison for deep change detection
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.modelValueRef = {...newVal};
+        }
+      },
+      deep: true,
+    },
+    modelValueRef: {
+      handler(newVal, oldVal) {
+        // Use stringified comparison to prevent unnecessary updates
+        // if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        this.$emit("update:modelValue", this.modelValueRef);
+        // }
+      },
+      deep: true,
+    },
+
+    filterNames: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.filterNamesRef = JSON.parse(JSON.stringify(newVal)); // Deep copy to avoid reference issues
+        }
+      },
+      deep: true,
+    },
+    filterNamesRef: {
+      handler(newVal, oldVal) {
+        this.$emit("update:filterNames", newVal);
+      },
+      deep: true,
+    },
+
+    search: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.searchRef = newVal;
+        }
+      },
+    },
+    searchRef: {
+      handler(newVal, oldVal) {
+        if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.$emit("update:search", newVal);
+        }
+      },
+    },
   },
   mounted() {
 
-    QuickListsHelpers.bindDeepPropToRef(this, [
-      { prop: "modelValue", refName: "modelValueRef" },
-      // { prop: "activeTab", refName: "activeTabRef" },
-      { prop: "filterNames", refName: "filterNamesRef" },
-      { prop: "search", refName: "searchRef" },
-    ]);
-    // this.modelValueRef = {...this.modelValue};
 
+    // QuickListsHelpers.bindDeepPropToRef(this, [
+    //   { prop: "modelValue", refName: "modelValueRef" },
+    //   { prop: "filterNames", refName: "filterNamesRef" },
+    //   { prop: "search", refName: "searchRef" },
+    // ]);
+    this.modelValueRef = {...this.modelValue};
 
     if (Object.keys(this.filterNames).length !== 0) {
 
@@ -673,7 +660,6 @@ export default {
 
     }
 
-    // this.activeTabRef = this.activeTab;
     this.searchRef = this.search;
     for (const modelField of this.superOptions.modelFields) {
       if (
