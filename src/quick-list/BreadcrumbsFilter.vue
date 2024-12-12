@@ -9,6 +9,9 @@
           @click="crumb.action"
       />
     </q-breadcrumbs>
+    <BreadcrumbsFilterAutoSuggest
+      :model="model"
+    />
     <!--<pre>{{ filterVals }}</pre>-->
     <!--<pre>{{ filterNames }}</pre>-->
     <!--<pre>{{ routeParamValue }}</pre>-->
@@ -19,9 +22,11 @@
 <script>
 
 import QuickListsHelpers from "./QuickListsHelpers";
+import BreadcrumbsFilterAutoSuggest from "./BreadcrumbsFilterAutoSuggest.vue";
 
 export default {
   name: "FilterBreadcrumbs",
+  components: {BreadcrumbsFilterAutoSuggest},
   props: {
     model: {
       type: [Object, Function],

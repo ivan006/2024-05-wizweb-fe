@@ -1,20 +1,16 @@
 <template>
   <div>
-
-    <template
-        v-for="filterInput of filterInputs"
-        :key="filterInput.name"
-    >
-      <!--<SuperTable-->
-      <!--    :isForSelectingRelation="true"-->
-      <!--    :canEdit="false"-->
-      <!--    v-model="modelValueRef[filterInput.name]"-->
-      <!--    v-model:titleVal="filterNamesRef[filterInput.name]"-->
-      <!--    :model="filterInput.meta.field.parent"-->
-      <!--    :rules="[() => true]"-->
-      <!--    :modelField="filterInput"-->
-      <!--    class="q-mr-sm"-->
-      <!--/>-->
+    <template v-if="nextFilter">
+      <SuperTable
+          :isForSelectingRelation="true"
+          :canEdit="false"
+          v-model="filterValsRef[nextFilter.name]"
+          v-model:titleVal="filterNamesRef[nextFilter.name]"
+          :model="nextFilter.meta.field.parent"
+          :rules="[() => true]"
+          :modelField="nextFilter"
+          class="q-mr-sm"
+      />
     </template>
   </div>
 </template>
@@ -25,7 +21,7 @@ import SuperTable from "./SuperTable.vue";
 
 export default {
   name: "BreadcrumbsFilterAutoSuggest",
-  components: {SuperTable},
+  components: { SuperTable },
   data() {
     return {
       filterValsRef: {},
@@ -33,48 +29,46 @@ export default {
     };
   },
   props: {
-    // filterNames: {
-    //   type: Object,
-    //   default() {
-    //     return {};
-    //   },
-    // },
-    // filterVals: {
-    //   type: Object,
-    //   default() {
-    //     return {};
-    //   },
-    // },
+    filterNames: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+    filterVals: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
     model: {
       type: [Object, Function],
       required: true,
     },
   },
   computed: {
-
     modelFields() {
-      const result = QuickListsHelpers.computedAttrs(
-          this.model,
-          [],
-      );
-      return result;
+      return QuickListsHelpers.computedAttrs(this.model, []);
     },
     filterInputs() {
-      const data = this.modelFields;
-
-      return QuickListsHelpers.filterInputs(data)
+      return QuickListsHelpers.filterInputs(this.modelFields);
+    },
+    nextFilter() {
+      // Determine the next filter in rank that is not yet set
+      return this.filterInputs.find(
+          (filterInput) =>
+              !this.filterValsRef[filterInput.name] ||
+              this.filterValsRef[filterInput.name] === 0
+      );
     },
   },
-  mounted(){
-
+  mounted() {
     QuickListsHelpers.bindDeepPropToRef(this, [
       { prop: "filterVals", refName: "filterValsRef" },
       { prop: "filterNames", refName: "filterNamesRef" },
     ]);
-  }
-}
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
