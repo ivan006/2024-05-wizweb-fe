@@ -1,5 +1,6 @@
 <template>
   <div>
+    <pre>{{filterValsRef}}</pre>
     <template v-if="nextFilter">
       <SuperTable
           :isForSelectingRelation="true"
@@ -61,17 +62,11 @@ export default {
     },
 
     nextFilter() {
-      // Find the index of the lowest set filter
-      const lowestSetIndex = this.filterInputs.findIndex((filterInput) => {
-        const val = this.filterValsRef[filterInput.name];
-        return val !== 0 && val !== null; // Check if set to a specific value
-      });
+      // Find the index of the next filter after the last non-default filter
+      const nextIndex = this.lastNonDefaultIndex + 1;
 
-      // If no filters are set, prompt for the first one
-      if (lowestSetIndex === -1) return this.filterInputs[0];
-
-      // Otherwise, prompt for the filter immediately after the lowest set one
-      return this.filterInputs[lowestSetIndex + 1] || null;
+      // Check if the index exists in the filterInputs array
+      return this.filterInputs[nextIndex] || null;
     },
   },
   mounted() {

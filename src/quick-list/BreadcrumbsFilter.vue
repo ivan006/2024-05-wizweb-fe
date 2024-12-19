@@ -9,24 +9,22 @@
           @click="crumb.action"
       />
     </q-breadcrumbs>
-    <BreadcrumbsFilterAutoSuggest
-      :model="model"
-    />
-    <!--<pre>{{ filterVals }}</pre>-->
-    <!--<pre>{{ filterNames }}</pre>-->
-    <!--<pre>{{ routeParamValue }}</pre>-->
-    <!--<pre>{{ boundRouteParam }}</pre>-->
-    <!--<pre>{{ breadcrumbTrail }}</pre>-->
+    <!--<BreadcrumbsFilterAutoSuggest-->
+    <!--  :model="model"-->
+    <!--  :lastNonDefaultIndex="lastNonDefaultIndex"-->
+    <!--/>-->
   </div>
 </template>
 <script>
 
 import QuickListsHelpers from "./QuickListsHelpers";
-import BreadcrumbsFilterAutoSuggest from "./BreadcrumbsFilterAutoSuggest.vue";
+// import BreadcrumbsFilterAutoSuggest from "./BreadcrumbsFilterAutoSuggest.vue";
 
 export default {
   name: "FilterBreadcrumbs",
-  components: {BreadcrumbsFilterAutoSuggest},
+  components: {
+    // BreadcrumbsFilterAutoSuggest
+  },
   props: {
     model: {
       type: [Object, Function],
