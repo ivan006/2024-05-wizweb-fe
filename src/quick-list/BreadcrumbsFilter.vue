@@ -259,6 +259,15 @@ export default {
     },
   },
   watch: {
+    $route: {
+      immediate: true,
+      handler(newRoute, oldRoute) {
+        // Check if the relevant parameter has changed
+        if (newRoute.params[this.boundRouteParam] !== oldRoute?.params[this.boundRouteParam]) {
+          this.decodeRouteParam();
+        }
+      },
+    },
     // Watch filterVals and filterNames for changes
     // filterVals: {
     //   deep: true,
