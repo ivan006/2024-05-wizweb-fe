@@ -28,7 +28,7 @@ Notes for student:
 
 # Read more
 
-https://github.com/ivan006/2024-05-wizweb-fe
+https://linktr.ee/aboutwizweb
 
 
 # WizWeb Overview
