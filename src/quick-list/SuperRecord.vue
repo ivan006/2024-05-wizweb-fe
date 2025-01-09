@@ -1,26 +1,46 @@
 <template>
-  <SuperRecordTabMode
-      :configsCollection="configsCollection"
-      :allowedTabs="allowedTabs"
-      :templateOverview="templateOverview"
-      :templateForm="templateForm"
-      :model="model"
-      :id="id"
-      :displayMapField="displayMapField"
-      :relationships="relationships"
-      :deleteItem="$emit('deleteItem')"
-      :editItem="$emit('editItem')"
-      :initialLoadHappened="$emit('initialLoadHappened')"
-      :update:item="$emit('update:item')"
-  />
+  <template v-if="treeMode">
+    <SuperRecordTreeMode
+        :configsCollection="configsCollection"
+        :allowedTabs="allowedTabs"
+        :templateOverview="templateOverview"
+        :templateForm="templateForm"
+        :model="model"
+        :id="id"
+        :displayMapField="displayMapField"
+        :relationships="relationships"
+        :deleteItem="$emit('deleteItem')"
+        :editItem="$emit('editItem')"
+        :initialLoadHappened="$emit('initialLoadHappened')"
+        :update:item="$emit('update:item')"
+    />
+  </template>
+  <template v-else>
+    <SuperRecordTabMode
+        :configsCollection="configsCollection"
+        :allowedTabs="allowedTabs"
+        :templateOverview="templateOverview"
+        :templateForm="templateForm"
+        :model="model"
+        :id="id"
+        :displayMapField="displayMapField"
+        :relationships="relationships"
+        :deleteItem="$emit('deleteItem')"
+        :editItem="$emit('editItem')"
+        :initialLoadHappened="$emit('initialLoadHappened')"
+        :update:item="$emit('update:item')"
+    />
+  </template>
 </template>
 
 <script>
 import SuperRecordTabMode from "./SuperRecordTabMode.vue";
+import SuperRecordTreeMode from "./SuperRecordTreeMode.vue";
 
 export default {
   name: "SuperRecord",
   components: {
+    SuperRecordTreeMode,
     SuperRecordTabMode,
   },
   props: {
@@ -62,6 +82,12 @@ export default {
       type: Array,
       default() {
         return [];
+      },
+    },
+    treeMode: {
+      type: Boolean,
+      default() {
+        return false;
       },
     },
   },
