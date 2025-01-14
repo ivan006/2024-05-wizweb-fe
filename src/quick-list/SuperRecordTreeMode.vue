@@ -1,56 +1,61 @@
 <template>
   <div>
-    <q-tree
-        :nodes="computedTreeStructure"
-        node-key="label"
-        default-expand-all
-        @lazy-load="handleLazyLoad"
+    <q-expansion-item
+        :label="computedTreeStructure[0]?.label"
+        :expanded.sync="computedTreeStructure[0]?.expanded"
+        :dense="true"
+        v-if="computedTreeStructure.length"
     >
-      <template v-slot:default="props">
-        <div>
-          <template v-if="props.node.type === 'record'">
+      <template v-slot:default>
+        <div v-for="node in computedTreeStructure[0].children" :key="node.label">
+          <div v-if="node.type === 'record'">
             <div class="custom-record">
-              <strong>{{ props.node.label }}</strong>
+              <strong>{{ node.label }}</strong>
               <q-btn-group>
-                <q-btn flat round icon="visibility" @click="viewNode(props.node)" />
-                <q-btn flat round icon="edit" @click="editNode(props.node)" />
-                <q-btn flat round icon="delete" color="negative" @click="deleteNode(props.node)" />
+                <q-btn flat round icon="visibility" @click="viewNode(node)" />
+                <q-btn flat round icon="edit" @click="editNode(node)" />
+                <q-btn flat round icon="delete" color="negative" @click="deleteNode(node)" />
               </q-btn-group>
             </div>
-          </template>
+          </div>
 
-          <template v-else-if="props.node.type === 'attr'">
+          <div v-else-if="node.type === 'attr'">
             <div class="custom-attr">
-              <span>{{ props.node.label }}: </span>
-              <span>{{ props.node.value }}</span>
-              <q-btn-group>
-                <q-btn flat round icon="visibility" @click="viewNode(props.node)" />
-                <q-btn flat round icon="edit" @click="editNode(props.node)" />
-                <q-btn flat round icon="delete" color="negative" @click="deleteNode(props.node)" />
-              </q-btn-group>
+              <span>{{ node.label }}: </span>
+              <span>{{ node.value }}</span>
             </div>
-          </template>
+          </div>
 
-          <template v-else-if="props.node.type === 'parent'">
+          <div v-else-if="node.type === 'parent'">
             <div class="custom-parent">
               <span>Parent: </span>
               <SuperRecordTreeMode
-                  :tree-structure="props.node.children"
-                  :data="props.node.data"
-                  :relationships="props.node.relations"
+                  :tree-structure="node.children"
+                  :data="node.data"
+                  :relationships="node.relations"
                   :active="false"
               />
-              <q-btn-group>
-                <q-btn flat round icon="visibility" @click="viewNode(props.node)" />
-                <q-btn flat round icon="edit" @click="editNode(props.node)" />
-                <q-btn flat round icon="delete" color="negative" @click="deleteNode(props.node)" />
-              </q-btn-group>
             </div>
-          </template>
+          </div>
+
+          <q-expansion-item
+              v-if="node.type === 'child'"
+              :label="node.label"
+              :expanded.sync="node.expanded"
+              :dense="true"
+          >
+            <template v-slot:default>
+              <SuperRecordTreeMode
+                  :tree-structure="node.children"
+                  :data="node.data"
+                  :relationships="node.relations"
+                  :active="false"
+              />
+            </template>
+          </q-expansion-item>
         </div>
       </template>
-    </q-tree>
-    <pre>{{computedTreeStructure}}</pre>
+    </q-expansion-item>
   </div>
 </template>
 
@@ -183,14 +188,6 @@ export default {
       ];
 
       return treeNodes;
-    },
-
-    handleLazyLoad(node, done) {
-      if (!node.children || node.children.length === 0) {
-        done();
-        return;
-      }
-      done();
     },
 
     viewNode(node) {
