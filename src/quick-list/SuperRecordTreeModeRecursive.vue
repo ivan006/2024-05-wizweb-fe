@@ -58,8 +58,8 @@
 export default {
   name: "SuperRecordTreeModeRecursive",
   props: {
-    headersTree: {type: Array, required: true},
-    data: {type: Object, default: () => ({})},
+    headersTree: { type: Array, required: true },
+    data: { type: Object, default: () => ({}) },
   },
 };
 </script>
