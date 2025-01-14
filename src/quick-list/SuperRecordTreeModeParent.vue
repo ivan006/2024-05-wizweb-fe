@@ -1,9 +1,12 @@
 <template>
-  <div v-if="!loading">
-    <SuperRecordTreeModeRecursive
-        :headers-tree="headersTree"
-        :data="data"
-    />
+  <div>
+    <q-spinner v-if="loading" size="lg" color="primary" />
+    <div v-else>
+      <SuperRecordTreeModeRecursive
+          :headers-tree="headersTree"
+          :data="localData"
+      />
+    </div>
   </div>
 </template>
 
@@ -30,6 +33,7 @@ export default {
     return {
       loading: true,
       headersTree: [],
+      localData: {}, // Create a local copy of the data prop
     };
   },
   async mounted() {
@@ -37,7 +41,7 @@ export default {
 
     try {
       const response = await this.model.FetchById(this.id, this.relationships);
-      this.data = response.response.data.data;
+      this.localData = response.response.data.data; // Assign to localData
       this.headersTree = this.buildHeadersTree(this.model, null, null);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -53,7 +57,10 @@ export default {
      * @param {String|null} excludedRelType - The relation type ("BelongsTo" or "HasMany").
      */
     buildHeadersTree(model, excludedRel = null, excludedRelType = null) {
-      return QuickListsHelpers.SupaerTableHeaders(model).map(header => {
+      const headers = QuickListsHelpers.SupaerTableHeaders(model)
+      console.log('headers')
+      console.log(headers)
+      return headers.map(header => {
         // Exclude specific relations
         if (header.usageType.startsWith("relLookup") && header.meta.relation === "BelongsTo") {
           if (header.meta.field.foreignKey === excludedRel && excludedRelType === "BelongsTo") {
@@ -83,7 +90,6 @@ export default {
           };
         }
 
-        // Return normal headers and attributes
         return header;
       }).filter(Boolean); // Remove null values
     },
