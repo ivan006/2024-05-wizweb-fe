@@ -1,71 +1,36 @@
 <template>
-  <div>
+  <div v-if="!loading">
     <q-expansion-item
-        :expanded.sync="computedTreeStructure[0]?.expanded"
+        :label="'treeStructure.label'"
+        :expanded.sync="true"
         :dense="true"
-        v-if="computedTreeStructure.length"
     >
-      <template v-slot:header>
-        <div class="custom-record">
-          <strong>{{ computedTreeStructure[0]?.label }}</strong>
-          <q-btn-group>
-            <q-btn flat round icon="visibility" @click="viewNode(computedTreeStructure[0])" />
-            <q-btn flat round icon="edit" @click="editNode(computedTreeStructure[0])" />
-            <q-btn flat round icon="delete" color="negative" @click="deleteNode(computedTreeStructure[0])" />
-          </q-btn-group>
-        </div>
-      </template>
       <template v-slot:default>
-        <div v-for="node in computedTreeStructure[0].children" :key="node.label">
-          <div v-if="node.type === 'record'">
-            <div class="custom-record">
-              <strong>{{ node.label }}</strong>
-              <q-btn-group>
-                <q-btn flat round icon="visibility" @click="viewNode(node)" />
-                <q-btn flat round icon="edit" @click="editNode(node)" />
-                <q-btn flat round icon="delete" color="negative" @click="deleteNode(node)" />
-              </q-btn-group>
-            </div>
-          </div>
+        <!-- Attributes -->
+        <div v-for="attr in treeStructure.attrs" :key="attr.field" class="custom-attr">
+          <span>{{ attr.label }}: </span>
+          <span>{{ data[attr.field] }}</span>
+        </div>
 
-          <div v-else-if="node.type === 'attr'">
-            <div class="custom-attr">
-              <span>{{ node.label }}: </span>
-              <span>{{ node.value }}</span>
-            </div>
-          </div>
-
-          <div v-else-if="node.type === 'parent'">
-            <div class="custom-parent">
-              <span>Parent: </span>
-              <SuperRecordTreeMode
-                  :tree-structure="node.children"
-                  :data="node.data"
-                  :relationships="node.relations"
-                  :active="false"
-              />
-            </div>
-          </div>
-
-          <q-expansion-item
-              v-if="node.type === 'child'"
-              :label="node.label"
-              :expanded.sync="node.expanded"
-              :dense="true"
-          >
-            <template v-slot:default>
-              <SuperRecordTreeMode
-                  :tree-structure="node.children"
-                  :data="node.data"
-                  :relationships="node.relations"
-                  :active="false"
-              />
-            </template>
-          </q-expansion-item>
+        <!-- Parents -->
+        <div v-for="parent in treeStructure.parents" :key="parent.label" class="custom-parent">
+          <span>{{ parent.label }}:</span>
+          <SuperRecordTreeMode
+              v-if="data[parent.field]"
+              :headers="parent.structure"
+              :data="data[parent.field]"
+              :relationships="relationships"
+              :template-overview="templateOverview"
+              :template-form="templateForm"
+              :configs-collection="configsCollection"
+              :active="false"
+          />
         </div>
       </template>
     </q-expansion-item>
-    <pre>{{computedTreeStructure}}</pre>
+  </div>
+  <div v-else>
+    <q-spinner size="lg" color="primary" />
   </div>
 </template>
 
@@ -90,10 +55,32 @@ export default {
   data() {
     return {
       loading: false,
-      computedTreeStructure: [],
     };
   },
   computed: {
+    treeStructure() {
+      if (!this.data) return null;
+
+      // Attributes
+      const attrs = this.headers.filter(
+          header => !header.usageType.startsWith("relChildren") && !header.usageType.startsWith("relLookup")
+      );
+
+      // Parent relationships
+      const parents = this.headers
+          .filter(header => header.usageType.startsWith("relLookup"))
+          .map(header => ({
+            label: header.label,
+            structure: QuickListsHelpers.SupaerTableHeaders(header.meta.relatedModel),
+            field: header.field,
+          }));
+
+      return {
+        label: this.model?.entity || "Record",
+        attrs,
+        parents,
+      };
+    },
     headers() {
       return QuickListsHelpers.SupaerTableHeaders(this.model, [], this.canEdit, this.displayMapField);
     },
@@ -113,84 +100,41 @@ export default {
   methods: {
     async fetchData() {
       if (!this.active) return;
+
       this.loading = true;
       try {
         const response = await this.model.FetchById(this.id, this.relationships);
-        const fetchedData = response.response.data.data;
-        this.computedTreeStructure = this.computeTreeStructure(fetchedData, this.relationships);
-        this.$emit("update:data", fetchedData);
+        this.$emit("update:data", response.response.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
         this.loading = false;
       }
     },
-    computeTreeStructure(data, relationships) {
-      const attrs = this.headers
-          .filter(header => !header.usageType.startsWith("relChildren"))
-          .map(header => ({
-            type: "attr",
-            label: header.label,
-            value: data[header.field],
-          }));
-
-      const parentRelations = relationships
-          .filter(relation => relation.type === "parent")
-          .map(relation => ({
-            label: relation.label || relation.name,
-            type: "parent",
-            children: data[relation.name]?.map(childData => this.computeTreeStructure(childData, relation.children || [])) || [],
-            data: data[relation.name],
-            relations: relation.children || [],
-          }))[0] || null;
-
-      const childGroups = relationships
-          .filter(relation => relation.type === "child")
-          .map(relation => ({
-            label: relation.label || relation.name,
-            type: "child",
-            children: data[relation.name]?.map(childData => this.computeTreeStructure(childData, relation.children || [])) || [],
-            data: data[relation.name],
-            relations: relation.children || [],
-          }));
-
-      const treeNodes = [
-        {
-          label: this.model.entity,
-          type: "record",
-          children: [...attrs, ...(parentRelations ? [parentRelations] : []), ...childGroups],
-        },
-      ];
-
-      return treeNodes;
-    },
-    viewNode(node) {
-      console.log("View node:", node);
-    },
-    editNode(node) {
-      console.log("Edit node:", node);
-    },
-    deleteNode(node) {
-      console.log("Delete node:", node);
-    },
   },
   mounted() {
     if (this.active) {
       this.fetchData();
-    } else {
-      this.computedTreeStructure = this.treeStructure;
     }
   },
 };
 </script>
 
 <style lang="scss">
-.custom-record,
-.custom-attr,
-.custom-parent {
+.custom-attr {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   padding: 0.5rem;
+}
+
+.custom-parent {
+  margin-top: 1rem;
+}
+
+q-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
 }
 </style>
