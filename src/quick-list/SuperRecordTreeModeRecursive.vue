@@ -6,7 +6,11 @@
   >
     <template v-slot:default>
       <!-- Render attributes -->
-      <div v-for="header in filteredAttributes" :key="header.name" class="custom-attr">
+      <div
+          v-for="header in filteredAttributes"
+          :key="header.name"
+          class="custom-attr q-pl-md"
+      >
         <span>{{ header.label }}: </span>
         <span>{{ data[header.field] }}</span>
       </div>
@@ -15,7 +19,7 @@
       <div
           v-for="header in parentRelationships"
           :key="header.name"
-          class="custom-parent"
+          class="custom-parent q-pl-md"
       >
         <span>{{ header.label }}:</span>
         <SuperRecordTreeModeRecursive
@@ -49,8 +53,8 @@
 export default {
   name: "SuperRecordTreeModeRecursive",
   props: {
-    headers: {type: Array, required: true},
-    data: {type: Object, required: true},
+    headers: { type: Array, required: true },
+    data: { type: Object, required: true },
   },
   computed: {
     filteredAttributes() {
@@ -72,8 +76,10 @@ export default {
   justify-content: space-between;
   padding: 0.5rem;
 }
-
 .custom-parent {
   margin-top: 1rem;
+}
+.q-pl-md {
+  padding-left: 1.5rem;
 }
 </style>
