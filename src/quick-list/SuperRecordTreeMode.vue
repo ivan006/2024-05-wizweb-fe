@@ -1,11 +1,20 @@
 <template>
   <div>
     <q-expansion-item
-        :label="computedTreeStructure[0]?.label"
         :expanded.sync="computedTreeStructure[0]?.expanded"
         :dense="true"
         v-if="computedTreeStructure.length"
     >
+      <template v-slot:header>
+        <div class="custom-record">
+          <strong>{{ computedTreeStructure[0]?.label }}</strong>
+          <q-btn-group>
+            <q-btn flat round icon="visibility" @click="viewNode(computedTreeStructure[0])" />
+            <q-btn flat round icon="edit" @click="editNode(computedTreeStructure[0])" />
+            <q-btn flat round icon="delete" color="negative" @click="deleteNode(computedTreeStructure[0])" />
+          </q-btn-group>
+        </div>
+      </template>
       <template v-slot:default>
         <div v-for="node in computedTreeStructure[0].children" :key="node.label">
           <div v-if="node.type === 'record'">
@@ -56,6 +65,7 @@
         </div>
       </template>
     </q-expansion-item>
+    <pre>{{computedTreeStructure}}</pre>
   </div>
 </template>
 
@@ -65,50 +75,17 @@ import QuickListsHelpers from "./QuickListsHelpers";
 export default {
   name: "SuperRecordTreeMode",
   props: {
-    configsCollection: {
-      type: Object,
-      default: () => ({}),
-    },
-    allowedTabs: {
-      type: Array,
-      default: () => [],
-    },
-    templateOverview: {
-      type: Object,
-      default: () => ({}),
-    },
-    templateForm: {
-      type: Object,
-      default: () => ({}),
-    },
-    model: {
-      type: [Object, Function],
-      required: true,
-    },
-    id: {
-      type: Number,
-      required: true,
-    },
-    displayMapField: {
-      type: Boolean,
-      default: false,
-    },
-    relationships: {
-      type: Array,
-      default: () => [],
-    },
-    data: {
-      type: Object,
-      default: null,
-    },
-    treeStructure: {
-      type: Array,
-      default: () => [],
-    },
-    active: {
-      type: Boolean,
-      default: true,
-    },
+    configsCollection: { type: Object, default: () => ({}) },
+    allowedTabs: { type: Array, default: () => [] },
+    templateOverview: { type: Object, default: () => ({}) },
+    templateForm: { type: Object, default: () => ({}) },
+    model: { type: [Object, Function], required: true },
+    id: { type: Number, required: true },
+    displayMapField: { type: Boolean, default: false },
+    relationships: { type: Array, default: () => [] },
+    data: { type: Object, default: null },
+    treeStructure: { type: Array, default: () => [] },
+    active: { type: Boolean, default: true },
   },
   data() {
     return {
@@ -135,8 +112,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      if (!this.active) return; // Skip fetching if passive
-
+      if (!this.active) return;
       this.loading = true;
       try {
         const response = await this.model.FetchById(this.id, this.relationships);
@@ -149,7 +125,6 @@ export default {
         this.loading = false;
       }
     },
-
     computeTreeStructure(data, relationships) {
       const attrs = this.headers
           .filter(header => !header.usageType.startsWith("relChildren"))
@@ -181,7 +156,7 @@ export default {
 
       const treeNodes = [
         {
-          label: this.model.entity, // Root record label
+          label: this.model.entity,
           type: "record",
           children: [...attrs, ...(parentRelations ? [parentRelations] : []), ...childGroups],
         },
@@ -189,20 +164,14 @@ export default {
 
       return treeNodes;
     },
-
     viewNode(node) {
       console.log("View node:", node);
-      // Add logic for viewing node details
     },
-
     editNode(node) {
       console.log("Edit node:", node);
-      // Add logic for editing node
     },
-
     deleteNode(node) {
       console.log("Delete node:", node);
-      // Add logic for deleting node
     },
   },
   mounted() {
