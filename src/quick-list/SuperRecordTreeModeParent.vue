@@ -1,14 +1,9 @@
 <template>
   <div>
-    <div v-if="!loading">
+    <div v-if="!loading && data">
       <SuperRecordTreeModeRecursive
           :headers="headers"
           :data="data"
-          :relationships="relationships"
-          :template-overview="templateOverview"
-          :template-form="templateForm"
-          :configs-collection="configsCollection"
-          :active="true"
       />
     </div>
     <div v-else>
@@ -22,7 +17,7 @@ import QuickListsHelpers from "./QuickListsHelpers";
 import SuperRecordTreeModeRecursive from "./SuperRecordTreeModeRecursive.vue";
 
 export default {
-  name: "SuperRecordTreeMode",
+  name: "SuperRecordTreeModeParent",
   components: {
     SuperRecordTreeModeRecursive,
   },
@@ -39,7 +34,7 @@ export default {
   data() {
     return {
       data: null,
-      loading: false,
+      loading: true,
     };
   },
   computed: {
@@ -52,7 +47,6 @@ export default {
   },
   methods: {
     async fetchData() {
-      this.loading = true;
       try {
         const response = await this.model.FetchById(this.id, this.relationships);
         this.data = response.response.data.data;

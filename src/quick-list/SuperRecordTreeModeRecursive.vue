@@ -1,43 +1,44 @@
 <template>
   <q-expansion-item
-      :label="treeStructure.label"
+      :label="headers[0]?.label || 'Record'"
       :expanded.sync="true"
       :dense="true"
   >
     <template v-slot:default>
-      <!-- Attributes -->
-      <div v-for="attr in treeStructure.attrs" :key="attr.field" class="custom-attr">
-        <span>{{ attr.label }}: </span>
-        <span>{{ data[attr.field] }}</span>
+      <!-- Render attributes -->
+      <div v-for="header in filteredAttributes" :key="header.name" class="custom-attr">
+        <span>{{ header.label }}: </span>
+        <span>{{ data[header.field] }}</span>
       </div>
 
-      <!-- Parents -->
-      <div v-for="parent in treeStructure.parents" :key="parent.label" class="custom-parent">
-        <span>{{ parent.label }}:</span>
+      <!-- Render parent relationships -->
+      <div
+          v-for="header in parentRelationships"
+          :key="header.name"
+          class="custom-parent"
+      >
+        <span>{{ header.label }}:</span>
         <SuperRecordTreeModeRecursive
-            v-if="data[parent.field]"
-            :headers="parent.structure"
-            :data="data[parent.field]"
-            :relationships="parent.relations"
-            :active="false"
+            v-if="data[header.field]"
+            :headers="header.children || []"
+            :data="data[header.field]"
         />
       </div>
 
-      <!-- Children -->
+      <!-- Render child relationships -->
       <q-expansion-item
-          v-for="child in treeStructure.children"
-          :key="child.label"
-          :label="child.label"
-          :expanded.sync="child.expanded"
+          v-for="header in childRelationships"
+          :key="header.name"
+          :label="header.label"
           :dense="true"
       >
         <template v-slot:default>
-          <SuperRecordTreeModeRecursive
-              :headers="child.structure"
-              :data="data[child.field]"
-              :relationships="child.relations"
-              :active="false"
-          />
+          <div v-for="child in data[header.field] || []" :key="child.id">
+            <SuperRecordTreeModeRecursive
+                :headers="header.children || []"
+                :data="child"
+            />
+          </div>
         </template>
       </q-expansion-item>
     </template>
@@ -45,48 +46,21 @@
 </template>
 
 <script>
-import QuickListsHelpers from "./QuickListsHelpers";
-
 export default {
   name: "SuperRecordTreeModeRecursive",
   props: {
-    headers: { type: Array, required: true },
-    data: { type: Object, required: true },
-    relationships: { type: Array, default: () => [] },
-    active: { type: Boolean, default: false },
+    headers: {type: Array, required: true},
+    data: {type: Object, required: true},
   },
   computed: {
-    treeStructure() {
-      const attrs = this.headers
-          .filter(header => !header.usageType.startsWith("relChildren") && !header.usageType.startsWith("relLookup"))
-          .map(header => ({
-            type: "attr",
-            label: header.label,
-            field: header.field,
-          }));
-
-      const parents = this.headers
-          .filter(header => header.usageType.startsWith("relLookup"))
-          .map(header => ({
-            label: header.label,
-            field: header.field,
-            structure: QuickListsHelpers.SupaerTableHeaders(header.meta.relatedModel),
-            relations: header.meta.relatedModel ? QuickListsHelpers.SupaerTableHeaders(header.meta.relatedModel) : [],
-          }));
-
-      const children = this.relationships.map(relation => ({
-        label: relation.label || relation.name,
-        field: relation.name,
-        structure: QuickListsHelpers.SupaerTableHeaders(relation.meta.relatedModel),
-        relations: relation.children || [],
-      }));
-
-      return {
-        label: "Record", // Adjust if needed
-        attrs,
-        parents,
-        children,
-      };
+    filteredAttributes() {
+      return this.headers.filter(header => header.usageType === "normal");
+    },
+    parentRelationships() {
+      return this.headers.filter(header => header.usageType.startsWith("relLookup"));
+    },
+    childRelationships() {
+      return this.headers.filter(header => header.usageType.startsWith("relChildren"));
     },
   },
 };
@@ -98,6 +72,7 @@ export default {
   justify-content: space-between;
   padding: 0.5rem;
 }
+
 .custom-parent {
   margin-top: 1rem;
 }
