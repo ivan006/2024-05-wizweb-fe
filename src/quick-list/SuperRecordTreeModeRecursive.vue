@@ -3,26 +3,13 @@
       :label="headers[0]?.label || 'Record'"
       :expanded.sync="true"
       :dense="true"
-      expand-icon="keyboard_arrow_right"
-      expand-icon-expanded="keyboard_arrow_down"
   >
-    <template v-slot:header>
-      <div class="q-flex q-items-center" style="gap: 0.5rem;">
-        <q-icon
-            :name="expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_right'"
-            class="cursor-pointer"
-            @click.stop="toggleExpand"
-        />
-        <span class="text-bold">{{ headers[0]?.label || 'Record' }}</span>
-      </div>
-    </template>
-
     <template v-slot:default>
       <!-- Render attributes -->
       <div
           v-for="header in filteredAttributes"
           :key="header.name"
-          class="q-py-md q-flex q-items-center"
+          class="q-mb-md q-flex q-items-center"
           style="gap: 1rem;"
       >
         <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
@@ -33,7 +20,7 @@
       <div
           v-for="header in parentRelationships"
           :key="header.name"
-          class="q-py-md q-flex q-items-start"
+          class="q-mb-md q-flex q-items-start"
           style="gap: 1rem;"
       >
         <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
@@ -52,28 +39,19 @@
           :key="header.name"
           :label="header.label"
           :dense="true"
-          class="q-py-md"
-          :expanded.sync="true"
-          expand-icon="keyboard_arrow_right"
-          expand-icon-expanded="keyboard_arrow_down"
+          class="q-mb-md"
       >
-        <template v-slot:header>
-          <div class="q-flex q-items-center" style="gap: 0.5rem;">
-            <q-icon
-                :name="expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_right'"
-                class="cursor-pointer"
-                @click.stop="toggleExpand"
-            />
-            <span class="text-bold">{{ header.label }}</span>
-          </div>
-        </template>
-
         <template v-slot:default>
-          <SuperRecordTreeModeRecursive
-              v-if="data[header.field]"
-              :headers="header.children || []"
-              :data="data[header.field]"
-          />
+          <div
+              v-for="(child, index) in data[header.field]"
+              :key="index"
+              class="q-mb-md"
+          >
+            <SuperRecordTreeModeRecursive
+                :headers="header.children || []"
+                :data="child"
+            />
+          </div>
         </template>
       </q-expansion-item>
     </template>
@@ -87,17 +65,10 @@ export default {
     headers: { type: Array, default: () => [] },
     data: { type: Object, default: () => ({}) },
   },
-  data() {
-    return {
-      expanded: true,
-    };
-  },
   computed: {
     filteredAttributes() {
       return this.headers.filter(
-          (header) =>
-              !header.usageType.startsWith("relLookup") &&
-              !header.usageType.startsWith("relChildren")
+          (header) => header.usageType.startsWith("normal")
       );
     },
     parentRelationships() {
@@ -109,11 +80,6 @@ export default {
       return this.headers.filter((header) =>
           header.usageType.startsWith("relChildren")
       );
-    },
-  },
-  methods: {
-    toggleExpand() {
-      this.expanded = !this.expanded;
     },
   },
 };
