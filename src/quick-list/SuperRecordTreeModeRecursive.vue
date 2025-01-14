@@ -9,19 +9,19 @@
       <div
           v-for="header in filteredAttributes"
           :key="header.name"
-          class="q-mb-md q-flex q-items-center"
-          style="gap: 1rem;"
+          class="q-pa-sm"
+          style="padding-left: 1.5rem; padding-right: 1.5rem;"
       >
         <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
-        <span style="width: 70%;">{{ data[header.field] }}</span>
+        <span style="width: 70%;">{{ data[header.field] || '-' }}</span>
       </div>
 
       <!-- Render parent relationships -->
       <div
           v-for="header in parentRelationships"
           :key="header.name"
-          class="q-mb-md q-flex q-items-start"
-          style="gap: 1rem;"
+          class="q-pa-sm"
+          style="padding-left: 1.5rem; padding-right: 1.5rem;"
       >
         <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
         <div style="width: 70%; padding-left: 1rem;">
@@ -39,13 +39,15 @@
           :key="header.name"
           :label="header.label"
           :dense="true"
-          class="q-mb-md"
+          :expanded.sync="true"
+          class="q-pa-sm"
+          style="padding-left: 1.5rem; padding-right: 1.5rem;"
       >
         <template v-slot:default>
           <div
               v-for="(child, index) in data[header.field]"
               :key="index"
-              class="q-mb-md"
+              class="q-mb-md q-pa-sm"
           >
             <SuperRecordTreeModeRecursive
                 :headers="header.children || []"
