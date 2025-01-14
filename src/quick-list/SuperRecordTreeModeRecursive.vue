@@ -3,30 +3,47 @@
       :label="headers[0]?.label || 'Record'"
       :expanded.sync="true"
       :dense="true"
+      expand-icon="keyboard_arrow_right"
+      expand-icon-expanded="keyboard_arrow_down"
   >
+    <template v-slot:header>
+      <div class="q-flex q-items-center" style="gap: 0.5rem;">
+        <q-icon
+            :name="expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_right'"
+            class="cursor-pointer"
+            @click.stop="toggleExpand"
+        />
+        <span class="text-bold">{{ headers[0]?.label || 'Record' }}</span>
+      </div>
+    </template>
+
     <template v-slot:default>
       <!-- Render attributes -->
       <div
           v-for="header in filteredAttributes"
           :key="header.name"
-          class="custom-attr q-pl-md"
+          class="q-py-md q-flex q-items-center"
+          style="gap: 1rem;"
       >
-        <span>{{ header.label }}: </span>
-        <span>{{ data[header.field] }}</span>
+        <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
+        <span style="width: 70%;">{{ data[header.field] }}</span>
       </div>
 
       <!-- Render parent relationships -->
       <div
           v-for="header in parentRelationships"
           :key="header.name"
-          class="custom-parent q-pl-md"
+          class="q-py-md q-flex q-items-start"
+          style="gap: 1rem;"
       >
-        <span>{{ header.label }}:</span>
-        <SuperRecordTreeModeRecursive
-            v-if="data[header.field]"
-            :headers="header.children || []"
-            :data="data[header.field]"
-        />
+        <span class="text-bold" style="width: 30%;">{{ header.label }}:</span>
+        <div style="width: 70%; padding-left: 1rem;">
+          <SuperRecordTreeModeRecursive
+              v-if="data[header.field]"
+              :headers="header.children || []"
+              :data="data[header.field]"
+          />
+        </div>
       </div>
 
       <!-- Render child relationships -->
@@ -35,14 +52,28 @@
           :key="header.name"
           :label="header.label"
           :dense="true"
+          class="q-py-md"
+          :expanded.sync="true"
+          expand-icon="keyboard_arrow_right"
+          expand-icon-expanded="keyboard_arrow_down"
       >
-        <template v-slot:default>
-          <div v-for="child in data[header.field] || []" :key="child.id">
-            <SuperRecordTreeModeRecursive
-                :headers="header.children || []"
-                :data="child"
+        <template v-slot:header>
+          <div class="q-flex q-items-center" style="gap: 0.5rem;">
+            <q-icon
+                :name="expanded ? 'keyboard_arrow_down' : 'keyboard_arrow_right'"
+                class="cursor-pointer"
+                @click.stop="toggleExpand"
             />
+            <span class="text-bold">{{ header.label }}</span>
           </div>
+        </template>
+
+        <template v-slot:default>
+          <SuperRecordTreeModeRecursive
+              v-if="data[header.field]"
+              :headers="header.children || []"
+              :data="data[header.field]"
+          />
         </template>
       </q-expansion-item>
     </template>
@@ -53,33 +84,37 @@
 export default {
   name: "SuperRecordTreeModeRecursive",
   props: {
-    headers: { type: Array, required: true },
-    data: { type: Object, required: true },
+    headers: { type: Array, default: () => [] },
+    data: { type: Object, default: () => ({}) },
+  },
+  data() {
+    return {
+      expanded: true,
+    };
   },
   computed: {
     filteredAttributes() {
-      return this.headers.filter(header => header.usageType === "normal");
+      return this.headers.filter(
+          (header) =>
+              !header.usageType.startsWith("relLookup") &&
+              !header.usageType.startsWith("relChildren")
+      );
     },
     parentRelationships() {
-      return this.headers.filter(header => header.usageType.startsWith("relLookup"));
+      return this.headers.filter((header) =>
+          header.usageType.startsWith("relLookup")
+      );
     },
     childRelationships() {
-      return this.headers.filter(header => header.usageType.startsWith("relChildren"));
+      return this.headers.filter((header) =>
+          header.usageType.startsWith("relChildren")
+      );
+    },
+  },
+  methods: {
+    toggleExpand() {
+      this.expanded = !this.expanded;
     },
   },
 };
 </script>
-
-<style lang="scss">
-.custom-attr {
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem;
-}
-.custom-parent {
-  margin-top: 1rem;
-}
-.q-pl-md {
-  padding-left: 1.5rem;
-}
-</style>
