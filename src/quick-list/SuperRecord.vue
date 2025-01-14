@@ -1,6 +1,6 @@
 <template>
   <template v-if="treeMode">
-    <SuperRecordTreeMode
+    <SuperRecordTreeModeParent
         :configsCollection="configsCollection"
         :allowedTabs="allowedTabs"
         :templateOverview="templateOverview"
@@ -35,12 +35,12 @@
 
 <script>
 import SuperRecordTabMode from "./SuperRecordTabMode.vue";
-import SuperRecordTreeMode from "./SuperRecordTreeMode.vue";
+import SuperRecordTreeModeParent from "./SuperRecordTreeModeParent.vue";
 
 export default {
   name: "SuperRecord",
   components: {
-    SuperRecordTreeMode,
+    SuperRecordTreeModeParent,
     SuperRecordTabMode,
   },
   props: {
