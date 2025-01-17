@@ -86,37 +86,46 @@ export default {
     buildHeadersTree(treeSkeleton, model) {
       const buildTree = (skeleton, currentModel) => {
         const headers = QuickListsHelpers.SupaerTableHeaders(currentModel);
-        return skeleton.map((node) => {
-          const matchingHeader = headers.find(
-              (header) => header.field === node.name
-          );
 
-          if (matchingHeader) {
-            const isRelation =
-                matchingHeader.usageType?.startsWith("relLookup") ||
-                matchingHeader.usageType?.startsWith("relChildren");
+        return headers.map((header) => {
+          const isRelation =
+              header.usageType?.startsWith("relLookup") ||
+              header.usageType?.startsWith("relChildren");
 
-            const relatedModel = isRelation
-                ? matchingHeader.meta.relation === "BelongsTo"
-                    ? matchingHeader.meta.relatedModel
-                    : matchingHeader.meta.field?.related
-                : null;
-            return {
-              ...matchingHeader,
-              children: relatedModel
-                  ? buildTree(node.children, relatedModel)
-                  : [],
-            };
+          // Check if the relation is present in the skeleton at this level
+          if (isRelation) {
+            const relatedNode = skeleton.find(
+                (node) => node.name === header.field
+            );
+
+            if (relatedNode) {
+              const relatedModel =
+                  header.meta.relation === "BelongsTo"
+                      ? header.meta.relatedModel
+                      : header.meta.field?.related;
+
+              return {
+                ...header,
+                children: buildTree(relatedNode.children, relatedModel),
+              };
+            }
+
+            // If the relation is not in the skeleton, skip it
+            return null;
           }
 
-          console.warn(`No matching header found for ${node.name}`);
-          return null; // If no header matches, return null to filter later
-        }).filter((item) => item !== null); // Filter out any null entries
+          // Non-relation headers are directly included
+          return {
+            ...header,
+            children: [], // Non-relation headers don't have children
+          };
+        }).filter(Boolean); // Remove null entries (skipped relations)
       };
 
-      const result = buildTree(treeSkeleton, model);
-      return result
+      return buildTree(treeSkeleton, model);
     }
+
+
 
 
 
