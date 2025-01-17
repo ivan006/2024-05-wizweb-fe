@@ -57,42 +57,38 @@ export default {
      * @param {String|null} excludedRelType - The relation type ("BelongsTo" or "HasMany").
      */
     buildHeadersTree(model, excludedRel = null, excludedRelType = null) {
-      const headers = QuickListsHelpers.SupaerTableHeaders(model)
-      console.log('headers')
-      console.log(headers)
+      const headers = QuickListsHelpers.SupaerTableHeaders(model); // Get headers for the current model
+
       return headers.map(header => {
-        // Exclude specific relations
+        // Handle parent relationships (BelongsTo)
         if (header.usageType.startsWith("relLookup") && header.meta.relation === "BelongsTo") {
-          if (header.meta.field.foreignKey === excludedRel && excludedRelType === "BelongsTo") {
-            return null;
-          }
           return {
             ...header,
             children: this.buildHeadersTree(
-                header.meta.relatedModel,
-                header.meta.field.foreignKey,
+                header.meta.relatedModel, // Use related model for the relationship
+                header.meta.field.foreignKey, // Set excluded relation to avoid processing inverse
                 "HasMany" // Inverse of BelongsTo
             ),
           };
         }
 
+        // Handle child relationships (HasMany)
         if (header.usageType.startsWith("relChildren") && header.meta.relation === "HasMany") {
-          if (header.meta.field.foreignKey === excludedRel && excludedRelType === "HasMany") {
-            return null;
-          }
           return {
             ...header,
             children: this.buildHeadersTree(
-                header.meta.relatedModel,
-                header.meta.field.foreignKey,
+                header.meta.field.related, // Use field.related for HasMany relationships
+                header.meta.field.foreignKey, // Set excluded relation for inverse
                 "BelongsTo" // Inverse of HasMany
             ),
           };
         }
 
+        // Return non-relationship fields as-is
         return header;
-      }).filter(Boolean); // Remove null values
-    },
+      });
+    }
+
   },
 };
 </script>
