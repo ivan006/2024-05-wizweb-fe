@@ -48,7 +48,7 @@ export default {
       const treeSkeleton = this.buildTreeSkeleton(this.relationships);
       console.log(this.relationships)
       console.log(treeSkeleton)
-      this.headersTree = this.buildHeadersTree(this.model, treeSkeleton);
+      this.headersTree = this.buildHeadersTree(treeSkeleton,this.model);
 
       // Assign the fetched data reactively
       this.localData = { ...fetchedData }; // Ensures reactivity by creating a new object
@@ -83,40 +83,41 @@ export default {
 
       return convertToTree(tree);
     },
-    buildHeadersTree(model, treeSkeleton) {
-      const headers = QuickListsHelpers.SupaerTableHeaders(model);
+    buildHeadersTree(treeSkeleton, model) {
+      const buildTree = (skeleton, currentModel) => {
+        const headers = QuickListsHelpers.SupaerTableHeaders(currentModel);
+        return skeleton.map((node) => {
+          const matchingHeader = headers.find(
+              (header) => header.field === node.name
+          );
 
-      return treeSkeleton.map(skeletonNode => {
-        // Find a matching header for the current skeleton node
-        const matchingHeader = headers.find(header => header.field === skeletonNode.field);
+          if (matchingHeader) {
+            const isRelation =
+                matchingHeader.usageType?.startsWith("relLookup") ||
+                matchingHeader.usageType?.startsWith("relChildren");
 
-        if (!matchingHeader) {
-          console.warn(`No matching header found for field: ${skeletonNode.field}`);
-          return null; // Skip if no matching header is found
-        }
-
-        // Handle recursive relationships
-        if (skeletonNode.children.length > 0) {
-          const relatedModel =
-              matchingHeader.meta.relation === "BelongsTo"
-                  ? matchingHeader.meta.relatedModel
-                  : matchingHeader.meta.field.related;
-
-          if (!relatedModel) {
-            console.warn(`No related model found for field: ${skeletonNode.field}`);
-            return null; // Skip if no related model is defined
+            const relatedModel = isRelation
+                ? matchingHeader.meta.relation === "BelongsTo"
+                    ? matchingHeader.meta.relatedModel
+                    : matchingHeader.meta.field?.related
+                : null;
+            return {
+              ...matchingHeader,
+              children: relatedModel
+                  ? buildTree(node.children, relatedModel)
+                  : [],
+            };
           }
 
-          return {
-            ...matchingHeader,
-            children: this.buildHeadersTree(relatedModel, skeletonNode.children),
-          };
-        }
+          console.warn(`No matching header found for ${node.name}`);
+          return null; // If no header matches, return null to filter later
+        }).filter((item) => item !== null); // Filter out any null entries
+      };
 
-        // Return the header as-is if no children
-        return matchingHeader;
-      }).filter(Boolean); // Remove nulls
+      const result = buildTree(treeSkeleton, model);
+      return result
     }
+
 
 
   },
