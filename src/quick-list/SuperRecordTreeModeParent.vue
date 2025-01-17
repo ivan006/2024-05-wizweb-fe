@@ -38,11 +38,20 @@ export default {
   },
   async mounted() {
     if (!this.active) return;
+    this.loading = true;
 
     try {
       const response = await this.model.FetchById(this.id, this.relationships);
-      this.localData = response.response.data.data; // Assign to localData
-      this.headersTree = this.buildHeadersTree(this.model, null, null);
+      const fetchedData = response.response.data.data;
+
+      // Use tree skeleton to build the headers tree
+      const treeSkeleton = this.buildTreeSkeleton(this.relationships);
+      console.log(this.relationships)
+      console.log(treeSkeleton)
+      this.headersTree = this.buildHeadersTree(this.model, treeSkeleton);
+
+      // Assign the fetched data reactively
+      this.localData = { ...fetchedData }; // Ensures reactivity by creating a new object
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -50,44 +59,65 @@ export default {
     }
   },
   methods: {
-    /**
-     * Build recursive headers tree with exclusion logic.
-     * @param {Object} model - The model to generate headers for.
-     * @param {String|null} excludedRel - The field name of the excluded relation.
-     * @param {String|null} excludedRelType - The relation type ("BelongsTo" or "HasMany").
-     */
-    buildHeadersTree(model, excludedRel = null, excludedRelType = null) {
-      const headers = QuickListsHelpers.SupaerTableHeaders(model); // Get headers for the current model
+    buildTreeSkeleton(relationships) {
+      const tree = {};
 
-      return headers.map(header => {
-        // Handle parent relationships (BelongsTo)
-        if (header.usageType.startsWith("relLookup") && header.meta.relation === "BelongsTo") {
-          return {
-            ...header,
-            children: this.buildHeadersTree(
-                header.meta.relatedModel, // Use related model for the relationship
-                header.meta.field.foreignKey, // Set excluded relation to avoid processing inverse
-                "HasMany" // Inverse of BelongsTo
-            ),
-          };
-        }
+      relationships.forEach((path) => {
+        const levels = path.split(".");
+        let current = tree;
 
-        // Handle child relationships (HasMany)
-        if (header.usageType.startsWith("relChildren") && header.meta.relation === "HasMany") {
-          return {
-            ...header,
-            children: this.buildHeadersTree(
-                header.meta.field.related, // Use field.related for HasMany relationships
-                header.meta.field.foreignKey, // Set excluded relation for inverse
-                "BelongsTo" // Inverse of HasMany
-            ),
-          };
-        }
-
-        // Return non-relationship fields as-is
-        return header;
+        levels.forEach((level) => {
+          if (!current[level]) {
+            current[level] = { name: level, children: {} };
+          }
+          current = current[level].children;
+        });
       });
+
+      function convertToTree(obj) {
+        return Object.keys(obj).map((key) => ({
+          name: key,
+          children: convertToTree(obj[key].children),
+        }));
+      }
+
+      return convertToTree(tree);
+    },
+    buildHeadersTree(model, treeSkeleton) {
+      const headers = QuickListsHelpers.SupaerTableHeaders(model);
+
+      return treeSkeleton.map(skeletonNode => {
+        // Find a matching header for the current skeleton node
+        const matchingHeader = headers.find(header => header.field === skeletonNode.field);
+
+        if (!matchingHeader) {
+          console.warn(`No matching header found for field: ${skeletonNode.field}`);
+          return null; // Skip if no matching header is found
+        }
+
+        // Handle recursive relationships
+        if (skeletonNode.children.length > 0) {
+          const relatedModel =
+              matchingHeader.meta.relation === "BelongsTo"
+                  ? matchingHeader.meta.relatedModel
+                  : matchingHeader.meta.field.related;
+
+          if (!relatedModel) {
+            console.warn(`No related model found for field: ${skeletonNode.field}`);
+            return null; // Skip if no related model is defined
+          }
+
+          return {
+            ...matchingHeader,
+            children: this.buildHeadersTree(relatedModel, skeletonNode.children),
+          };
+        }
+
+        // Return the header as-is if no children
+        return matchingHeader;
+      }).filter(Boolean); // Remove nulls
     }
+
 
   },
 };
