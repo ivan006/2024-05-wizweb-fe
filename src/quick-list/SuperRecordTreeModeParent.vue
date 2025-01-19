@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="q-pa-sm">
     <q-spinner v-if="loading" size="lg" color="primary" />
     <div v-else>
       <SuperRecordTreeModeChild
