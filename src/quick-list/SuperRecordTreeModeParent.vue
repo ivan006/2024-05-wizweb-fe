@@ -2,10 +2,14 @@
   <div>
     <q-spinner v-if="loading" size="lg" color="primary" />
     <div v-else>
-      <SuperRecordTreeModeRecursive
+      <SuperRecordTreeModeChild
           :headers-tree="headersTree"
           :data="localData"
       />
+      <!--<SuperRecordTreeModeRecursive-->
+      <!--    :headers-tree="headersTree"-->
+      <!--    :data="localData"-->
+      <!--/>-->
     </div>
   </div>
 </template>
@@ -13,10 +17,11 @@
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperRecordTreeModeRecursive from "./SuperRecordTreeModeRecursive.vue";
+import SuperRecordTreeModeChild from "./SuperRecordTreeModeChild.vue";
 
 export default {
   name: "SuperRecordTreeModeParent",
-  components: { SuperRecordTreeModeRecursive },
+  components: {SuperRecordTreeModeChild, SuperRecordTreeModeRecursive },
   props: {
     configsCollection: { type: Object, default: () => ({}) },
     allowedTabs: { type: Array, default: () => [] },
