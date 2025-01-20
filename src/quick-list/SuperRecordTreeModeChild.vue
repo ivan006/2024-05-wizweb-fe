@@ -2,7 +2,6 @@
   <q-tree
       :nodes="treeNodes"
       node-key="id"
-      :default-expand-all="true"
       @update:selected="onNodeSelected"
   >
     <template v-slot:default-header="prop">
