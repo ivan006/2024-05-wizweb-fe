@@ -19,7 +19,12 @@
           {{ prop.node.value }}
         </template>
         <template v-else-if="prop.node.type === 'childGroup'">
-          <strong>{{ prop.node.label }}</strong>
+          <strong style="display: inline-block; min-width: 100px;">
+            {{ prop.node.label }}
+          </strong>
+        </template>
+        <template v-else>
+          {{ prop.node.value }}
         </template>
       </div>
     </template>
@@ -56,7 +61,7 @@ export default {
         ) {
           nodes.push({
             id: header.name,
-            label: `${header.label} (Parent Relation)`,
+            label: `${header.label}`,
             type: "parent",
             value: data[header.field]?.[header.meta.lookupDisplayField] || "-",
             children: header.children
@@ -69,11 +74,12 @@ export default {
         ) {
           nodes.push({
             id: header.name,
-            label: `${header.label} (Child Relation Group)`,
+            label: `${header.label}`,
             type: "childGroup",
             children: (data[header.field] || []).map((childData, index) => ({
               id: `${header.name}-${index}`,
               label: `Child ${index + 1}`,
+              value: childData[header.meta.displayField] || "-",
               children: header.children
                   ? this.buildTreeNodes(header.children, childData)
                   : [],
