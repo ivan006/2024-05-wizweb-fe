@@ -35,10 +35,10 @@
                 canEdit: false,
                 currentParentRecord: {},
               }"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
           />
           <!--:superOptions="superOptions"-->
-          <!--@editItem="editItem"-->
-          <!--@deleteItem="deleteItem"-->
         </template>
         <template v-else>
           {{ prop.node.value }}
@@ -64,6 +64,12 @@ export default {
     },
   },
   methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e);
+    },
+    editItem(e) {
+      this.$emit('editItem', e);
+    },
     buildTreeNodes(relationTree, data) {
       const nodes = [];
 

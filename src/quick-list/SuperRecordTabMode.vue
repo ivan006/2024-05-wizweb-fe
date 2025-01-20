@@ -99,42 +99,7 @@
       </q-tab-panels>
     </div>
 
-    <template v-if="canEdit">
 
-      <template v-if="superOptions.canEdit">
-        <q-dialog
-            v-model="editItemData.showModal"
-            @update:modelValue="formServerErrors = {};"
-        >
-          <CreateEditForm
-              titlePrefix="Edit"
-              v-if="editItemData.showModal"
-              v-model="editItemData.data"
-              @submit="editItemSubmit"
-              @cancel="editItemData.showModal = false; formServerErrors = {};"
-              :superOptions="superOptions"
-              :template="templateForm"
-              style="width: 700px; max-width: calc(-32px + 100vw);"
-              :formServerErrors="formServerErrors"
-          />
-        </q-dialog>
-
-        <q-dialog v-model="deleteItemData.showModal" >
-          <q-card style="width: 500px; max-width: calc(-32px + 100vw);">
-            <q-card-section class="q-pt-md q-pb-md q-pl-md q-pr-md">
-              <div class="text-h6">Delete Item</div>
-            </q-card-section>
-            <q-card-section>
-              <p>Are you sure you want to delete this item?</p>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn @click="deleteItemData.showModal = false" flat>Cancel</q-btn>
-              <q-btn @click="deleteItemSubmit" color="negative" flat>Delete</q-btn>
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-      </template>
-    </template>
   </div>
 </template>
 
@@ -164,6 +129,22 @@ export default {
     SuperTable,
   },
   props: {
+    superOptions: {
+      type: Object,
+      default: {},
+    },
+    item: {
+      type: Object,
+      default: {},
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    canEdit: {
+      type: Boolean,
+      default: false,
+    },
     configsCollection: {
       type: Object,
       default: {},
@@ -207,19 +188,7 @@ export default {
   },
   data() {
     return {
-      deleteItemData: {
-        showModal: false,
-        data: null,
-      },
-      editItemData: {
-        showModal: false,
-        data: null,
-      },
       activeTab: 'tab-overview',
-      loading: true,
-      initialLoadHappened: false,
-      item: {},
-      formServerErrors: {},
     };
   },
   computed: {
@@ -232,15 +201,6 @@ export default {
       return this.childRelations.some(
           child =>  child.canBeMapped
       )
-    },
-    superOptions() {
-      return {
-        headers: this.headers,
-        modelFields: this.modelFields,
-        displayMapField: this.displayMapField,
-        model: this.model,
-        canEdit: this.canEdit,
-      };
     },
     fieldsUsedInOverview() {
       // let result = {
@@ -265,9 +225,6 @@ export default {
       }
 
       return result;
-    },
-    canEdit() {
-      return true;
     },
     childRelations() {
       const fields = QuickListsHelpers.computedAttrs(this.model, []);
@@ -341,17 +298,17 @@ export default {
       }
       return result;
     },
-    headers() {
-      return QuickListsHelpers.SupaerTableHeaders(this.model, [], this.canEdit, this.displayMapField);
-    },
     // item() {
     //   return this.model.query().whereId(this.id).withAll().get()[0];
     // },
-    modelFields() {
-      return QuickListsHelpers.computedAttrs(this.model, []);
-    },
   },
   methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e);
+    },
+    editItem(e) {
+      this.$emit('editItem', e);
+    },
     clickRow(pVal, item, relation) {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)
     },
@@ -364,41 +321,6 @@ export default {
         parentItem: this.item,
       }
       return result
-    },
-    deleteItem(item) {
-
-      this.$emit("deleteItem", item);
-
-      this.deleteItemData.data = item;
-      this.deleteItemData.showModal = true;
-    },
-    deleteItemSubmit() {
-      this.superOptions.model.Delete(this.deleteItemData.data.id).then(() => {
-        this.fetchData();
-      });
-      this.deleteItemData.showModal = false;
-    },
-    editItem(item) {
-      this.$emit("editItem", item);
-
-      this.editItemData.data = {...item};
-      this.editItemData.showModal = true;
-    },
-    editItemSubmit() {
-      const payload = QuickListsHelpers.preparePayload(
-          this.editItemData.data,
-          this.superOptions.modelFields
-      );
-
-      this.superOptions.model.Update(payload)
-          .then(() => {
-            this.fetchData();
-            this.editItemData.showModal = false;
-            this.formServerErrors = {};
-          })
-          .catch((err) => {
-            this.formServerErrors = err.response.data;
-          });
     },
     getMsg(type) {
       if (Array.isArray(type)) {
@@ -416,33 +338,11 @@ export default {
         [parentKeyValuePair.parentFKey]: parentKeyValuePair.parentFVal,
       };
     },
-    fetchData() {
-      this.loading = true
-      this.model
-          .FetchById(
-              this.id,
-              this.relationships,
-              { flags: {}, moreHeaders: {}, rels: [] }
-          )
-          .then((response) => {
-
-            this.item = response.response.data.data
-            this.loading = false
-            this.initialLoadHappened = true;
-            this.$emit("initialLoadHappened", true);
-          })
-          .catch(() => {
-            this.loading = false
-            this.initialLoadHappened = true;
-            this.$emit("initialLoadHappened", true);
-          });
-    },
   },
   mounted() {
     if(this.allowedTabs.length){
       this.activeTab = `tab-${this.allowedTabs[0]}`
     }
-    this.fetchData();
   },
   watch: {
     activeTab(newVal) {

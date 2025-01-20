@@ -5,6 +5,8 @@
       <SuperRecordTreeModeChild
           :relation-tree="relationTree"
           :data="localData"
+          @editItem="editItem"
+          @deleteItem="deleteItem"
       />
     </div>
   </div>
@@ -13,10 +15,11 @@
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
 import SuperRecordTreeModeChild from "./SuperRecordTreeModeChild.vue";
+import OverviewTab from "./OverviewTab.vue";
 
 export default {
   name: "SuperRecordTreeModeParent",
-  components: { SuperRecordTreeModeChild },
+  components: {OverviewTab, SuperRecordTreeModeChild },
   props: {
     configsCollection: { type: Object, default: () => ({}) },
     allowedTabs: { type: Array, default: () => [] },
@@ -56,6 +59,12 @@ export default {
     }
   },
   methods: {
+    deleteItem(e) {
+      this.$emit('deleteItem', e);
+    },
+    editItem(e) {
+      this.$emit('editItem', e);
+    },
     buildTreeSkeleton(relationships) {
       const tree = {};
 
