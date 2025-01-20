@@ -71,6 +71,7 @@ export default class DBCrudCacheSet extends Model {
                 field instanceof MorphMany ||
                 field instanceof MorphToMany
             ) {
+                const displayField = field.related.titleKey
                 newField = {
                     name: fieldName,
                     field: fieldName,
@@ -84,6 +85,7 @@ export default class DBCrudCacheSet extends Model {
                     meta: {
                         relation: field.constructor.name,
                         field: field,
+                        displayField: displayField,
                     },
                 }
 

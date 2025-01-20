@@ -7,13 +7,24 @@
     <template v-slot:default-header="prop">
       <div>
         <template v-if="prop.node.type === 'attr'">
-          <strong>{{ prop.node.label }}</strong>: {{ prop.node.value }}
+          <strong style="display: inline-block; min-width: 100px;">
+            {{ prop.node.label }}:
+          </strong>
+          {{ prop.node.value }}
         </template>
         <template v-else-if="prop.node.type === 'parent'">
-          <strong>{{ prop.node.label }}</strong> (Parent Relation)
+          <strong style="display: inline-block; min-width: 100px;">
+            {{ prop.node.label }}:
+          </strong>
+          {{ prop.node.value }}
         </template>
         <template v-else-if="prop.node.type === 'childGroup'">
-          <strong>{{ prop.node.label }}</strong> (Child Relation Group)
+          <strong>{{ prop.node.label }}</strong>
+        </template>
+        <template v-else>
+          <span style="display: inline-block; min-width: 100px;">
+            {{ prop.node.value }}
+          </span>
         </template>
       </div>
     </template>
@@ -54,6 +65,7 @@ export default {
             id: header.name,
             label: header.label,
             type: "parent",
+            value: data[header.field][header.meta.lookupDisplayField] || "-",
             children: this.buildTreeNodes(
                 header.children || [],
                 data[header.field] || {}
@@ -71,10 +83,13 @@ export default {
             children: (data[header.field] || []).map((childData, index) => ({
               id: `${header.name}-${index}`,
               label: `Child ${index + 1}`,
+              // value: header,
+              value: childData[header.meta.displayField] || "-",
+              // value: data[header.field][header.meta.lookupDisplayField] || "-",
               children: this.buildTreeNodes(header.children || [], childData),
             })),
           });
-        }
+        } 
       });
 
       return nodes;
