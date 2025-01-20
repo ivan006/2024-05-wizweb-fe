@@ -1,36 +1,39 @@
 <template>
-  <template v-if="treeMode">
-    <SuperRecordTreeModeParent
-        :configsCollection="configsCollection"
-        :allowedTabs="allowedTabs"
-        :templateOverview="templateOverview"
-        :templateForm="templateForm"
-        :model="model"
-        :id="id"
-        :displayMapField="displayMapField"
-        :relationships="relationships"
-        :deleteItem="$emit('deleteItem')"
-        :editItem="$emit('editItem')"
-        :initialLoadHappened="$emit('initialLoadHappened')"
-        :update:item="$emit('update:item')"
-    />
-  </template>
-  <template v-else>
-    <SuperRecordTabMode
-        :configsCollection="configsCollection"
-        :allowedTabs="allowedTabs"
-        :templateOverview="templateOverview"
-        :templateForm="templateForm"
-        :model="model"
-        :id="id"
-        :displayMapField="displayMapField"
-        :relationships="relationships"
-        :deleteItem="$emit('deleteItem')"
-        :editItem="$emit('editItem')"
-        :initialLoadHappened="$emit('initialLoadHappened')"
-        :update:item="$emit('update:item')"
-    />
-  </template>
+  <div>
+
+    <template v-if="treeMode">
+      <SuperRecordTreeModeParent
+          :configsCollection="configsCollection"
+          :allowedTabs="allowedTabs"
+          :templateOverview="templateOverview"
+          :templateForm="templateForm"
+          :model="model"
+          :id="id"
+          :displayMapField="displayMapField"
+          :relationships="relationships"
+          :deleteItem="$emit('deleteItem')"
+          :editItem="$emit('editItem')"
+          :initialLoadHappened="$emit('initialLoadHappened')"
+          :update:item="$emit('update:item')"
+      />
+    </template>
+    <template v-else>
+      <SuperRecordTabMode
+          :configsCollection="configsCollection"
+          :allowedTabs="allowedTabs"
+          :templateOverview="templateOverview"
+          :templateForm="templateForm"
+          :model="model"
+          :id="id"
+          :displayMapField="displayMapField"
+          :relationships="relationships"
+          :deleteItem="$emit('deleteItem')"
+          :editItem="$emit('editItem')"
+          :initialLoadHappened="$emit('initialLoadHappened')"
+          :update:item="$emit('update:item')"
+      />
+    </template>
+  </div>
 </template>
 
 <script>
