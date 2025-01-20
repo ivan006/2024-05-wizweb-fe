@@ -21,11 +21,6 @@
         <template v-else-if="prop.node.type === 'childGroup'">
           <strong>{{ prop.node.label }}</strong>
         </template>
-        <template v-else>
-          <span style="display: inline-block; min-width: 100px;">
-            {{ prop.node.value }}
-          </span>
-        </template>
       </div>
     </template>
   </q-tree>
@@ -35,21 +30,20 @@
 export default {
   name: "SuperRecordTreeModeChild",
   props: {
-    headersTree: { type: Array, required: true },
-    data: { type: Object, default: () => ({}) },
+    relationTree: {type: Object, required: true},
+    data: {type: Object, default: () => ({})},
   },
   computed: {
     treeNodes() {
-      return this.buildTreeNodes(this.headersTree, this.data);
+      return this.buildTreeNodes(this.relationTree, this.data);
     },
   },
   methods: {
-    buildTreeNodes(headersTree, data) {
+    buildTreeNodes(relationTree, data) {
       const nodes = [];
 
-      headersTree.forEach((header) => {
+      relationTree.headers.forEach((header) => {
         if (header.usageType === "normal") {
-          // Process attributes
           nodes.push({
             id: header.name,
             label: header.label,
@@ -60,36 +54,32 @@ export default {
             header.usageType.startsWith("relLookup") &&
             header.meta.relation === "BelongsTo"
         ) {
-          // Process parent relations
           nodes.push({
             id: header.name,
-            label: header.label,
+            label: `${header.label} (Parent Relation)`,
             type: "parent",
-            value: data[header.field][header.meta.lookupDisplayField] || "-",
-            children: this.buildTreeNodes(
-                header.children || [],
-                data[header.field] || {}
-            ),
+            value: data[header.field]?.[header.meta.lookupDisplayField] || "-",
+            children: header.children
+                ? this.buildTreeNodes(header.children, data[header.field] || {})
+                : [],
           });
         } else if (
             header.usageType.startsWith("relChildren") &&
             header.meta.relation === "HasMany"
         ) {
-          // Process child relations
           nodes.push({
             id: header.name,
-            label: header.label,
+            label: `${header.label} (Child Relation Group)`,
             type: "childGroup",
             children: (data[header.field] || []).map((childData, index) => ({
               id: `${header.name}-${index}`,
               label: `Child ${index + 1}`,
-              // value: header,
-              value: childData[header.meta.displayField] || "-",
-              // value: data[header.field][header.meta.lookupDisplayField] || "-",
-              children: this.buildTreeNodes(header.children || [], childData),
+              children: header.children
+                  ? this.buildTreeNodes(header.children, childData)
+                  : [],
             })),
           });
-        } 
+        }
       });
 
       return nodes;

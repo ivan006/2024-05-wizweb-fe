@@ -3,25 +3,20 @@
     <q-spinner v-if="loading" size="lg" color="primary" />
     <div v-else>
       <SuperRecordTreeModeChild
-          :headers-tree="headersTree"
+          :relation-tree="relationTree"
           :data="localData"
       />
-      <!--<SuperRecordTreeModeRecursive-->
-      <!--    :headers-tree="headersTree"-->
-      <!--    :data="localData"-->
-      <!--/>-->
     </div>
   </div>
 </template>
 
 <script>
 import QuickListsHelpers from "./QuickListsHelpers";
-import SuperRecordTreeModeRecursive from "./SuperRecordTreeModeRecursive.vue";
 import SuperRecordTreeModeChild from "./SuperRecordTreeModeChild.vue";
 
 export default {
   name: "SuperRecordTreeModeParent",
-  components: {SuperRecordTreeModeChild, SuperRecordTreeModeRecursive },
+  components: { SuperRecordTreeModeChild },
   props: {
     configsCollection: { type: Object, default: () => ({}) },
     allowedTabs: { type: Array, default: () => [] },
@@ -37,25 +32,22 @@ export default {
   data() {
     return {
       loading: true,
-      headersTree: [],
+      relationTree: {},
       localData: {}, // Create a local copy of the data prop
     };
   },
   async mounted() {
     if (!this.active) return;
+
     this.loading = true;
 
     try {
       const response = await this.model.FetchById(this.id, this.relationships);
       const fetchedData = response.response.data.data;
 
-      // Use tree skeleton to build the headers tree
       const treeSkeleton = this.buildTreeSkeleton(this.relationships);
-      console.log(this.relationships)
-      console.log(treeSkeleton)
-      this.headersTree = this.buildHeadersTree(treeSkeleton,this.model);
+      this.relationTree = this.buildRelationTree(treeSkeleton, this.model);
 
-      // Assign the fetched data reactively
       this.localData = { ...fetchedData }; // Ensures reactivity by creating a new object
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -88,52 +80,42 @@ export default {
 
       return convertToTree(tree);
     },
-    buildHeadersTree(treeSkeleton, model) {
+    buildRelationTree(treeSkeleton, model) {
       const buildTree = (skeleton, currentModel) => {
         const headers = QuickListsHelpers.SupaerTableHeaders(currentModel);
 
-        return headers.map((header) => {
-          const isRelation =
-              header.usageType?.startsWith("relLookup") ||
-              header.usageType?.startsWith("relChildren");
+        return {
+          model: currentModel,
+          headers: headers.map((header) => {
+            const isRelation =
+                header.usageType?.startsWith("relLookup") ||
+                header.usageType?.startsWith("relChildren");
 
-          // Check if the relation is present in the skeleton at this level
-          if (isRelation) {
-            const relatedNode = skeleton.find(
-                (node) => node.name === header.field
-            );
+            if (isRelation) {
+              const relatedNode = skeleton.find((node) => node.name === header.field);
 
-            if (relatedNode) {
-              const relatedModel =
-                  header.meta.relation === "BelongsTo"
-                      ? header.meta.relatedModel
-                      : header.meta.field?.related;
+              if (relatedNode) {
+                const relatedModel =
+                    header.meta.relation === "BelongsTo"
+                        ? header.meta.relatedModel
+                        : header.meta.field?.related;
 
-              return {
-                ...header,
-                children: buildTree(relatedNode.children, relatedModel),
-              };
+                return {
+                  ...header,
+                  children: buildTree(relatedNode.children, relatedModel),
+                };
+              }
+
+              return null;
             }
 
-            // If the relation is not in the skeleton, skip it
-            return null;
-          }
-
-          // Non-relation headers are directly included
-          return {
-            ...header,
-            children: [], // Non-relation headers don't have children
-          };
-        }).filter(Boolean); // Remove null entries (skipped relations)
+            return {...header, children: []};
+          }).filter(Boolean),
+        };
       };
 
       return buildTree(treeSkeleton, model);
-    }
-
-
-
-
-
+    },
   },
 };
 </script>
