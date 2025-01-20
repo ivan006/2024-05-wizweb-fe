@@ -23,6 +23,23 @@
             {{ prop.node.label }}
           </strong>
         </template>
+        <template v-else-if="prop.node.type === 'actions'">
+          <DatapointForDisplayInner
+              :header="prop.node.header"
+              :item="prop.node.data"
+              :superOptions="{
+                // headers: header,
+                modelFields: [],
+                displayMapField: false,
+                model: prop.node.relationTree.model,
+                canEdit: false,
+                currentParentRecord: {},
+              }"
+          />
+          <!--:superOptions="superOptions"-->
+          <!--@editItem="editItem"-->
+          <!--@deleteItem="deleteItem"-->
+        </template>
         <template v-else>
           {{ prop.node.value }}
         </template>
@@ -32,8 +49,11 @@
 </template>
 
 <script>
+import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
+
 export default {
   name: "SuperRecordTreeModeChild",
+  components: {DatapointForDisplayInner},
   props: {
     relationTree: {type: Object, required: true},
     data: {type: Object, default: () => ({})},
@@ -84,6 +104,19 @@ export default {
                   ? this.buildTreeNodes(header.children, childData)
                   : [],
             })),
+          });
+        } else if (
+            header.usageType === 'actions'
+        ) {
+          // Process attributes
+          nodes.push({
+            id: header.name,
+            label: header.label,
+            type: "actions",
+            // value: data[header.field] || "-",
+            header: header,
+            relationTree: relationTree,
+            data: data,
           });
         }
       });
