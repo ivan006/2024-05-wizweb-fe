@@ -4,7 +4,7 @@
     <div v-else>
       <SuperRecordTreeModeChild
           :relation-tree="relationTree"
-          :data="localData"
+          :data="item"
           @editItem="editItem"
           @deleteItem="deleteItem"
       />
@@ -31,32 +31,32 @@ export default {
     relationships: { type: Array, default: () => [] },
     data: { type: Object, default: null },
     active: { type: Boolean, default: true },
+    superOptions: {
+      type: Object,
+      default: {},
+    },
+    item: {
+      type: Object,
+      default: {},
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+    },
+    canEdit: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
-      loading: true,
       relationTree: {},
-      localData: {}, // Create a local copy of the data prop
     };
   },
   async mounted() {
-    if (!this.active) return;
 
-    this.loading = true;
-
-    try {
-      const response = await this.model.FetchById(this.id, this.relationships);
-      const fetchedData = response.response.data.data;
-
-      const treeSkeleton = this.buildTreeSkeleton(this.relationships);
-      this.relationTree = this.buildRelationTree(treeSkeleton, this.model);
-
-      this.localData = { ...fetchedData }; // Ensures reactivity by creating a new object
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      this.loading = false;
-    }
+    const treeSkeleton = this.buildTreeSkeleton(this.relationships);
+    this.relationTree = this.buildRelationTree(treeSkeleton, this.model);
   },
   methods: {
     deleteItem(e) {
