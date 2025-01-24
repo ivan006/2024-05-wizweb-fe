@@ -143,6 +143,7 @@
                   @deleteItem="deleteItem"
                   :excludedCols="excludedCols"
                   :loading="loading"
+                  :gridColWidth="gridColWidth"
               />
             </div>
           </template>
@@ -420,6 +421,12 @@ export default {
       type: Boolean,
       default() {
         return false;
+      },
+    },
+    gridColWidth: {
+      type: Number,
+      default() {
+        return 3;
       },
     },
     unClickable: {
