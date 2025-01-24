@@ -25,7 +25,6 @@
         @fetchData="fetchData"
         ref="CrudModalRef"
         :superOptions="superOptions"
-        :parentKeyValuePair="parentKeyValuePair"
     />
   </div>
 </template>
@@ -40,7 +39,6 @@ export default {
     canEdit: false,
     item: {},
     superOptions: {},
-    parentKeyValuePair: {},
     templateForm: {},
   },
   methods:{

@@ -652,14 +652,6 @@ export default {
     createItem() {
       this.$refs.CrudModalRef.createItem();
     },
-    deleteItem(item) {
-      this.$emit("deleteItem", item);
-      this.$refs.CrudModalRef.deleteItem(item);
-    },
-    editItem(item) {
-      this.$emit("editItem", item);
-      this.$refs.CrudModalRef.editItem(item);
-    },
 
     doSearch(searchTerm) {
       this.filterValsRef[this.model.titleKey] = searchTerm;
