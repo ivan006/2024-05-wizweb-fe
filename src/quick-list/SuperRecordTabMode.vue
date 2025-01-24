@@ -49,11 +49,7 @@
                 :templateOverview="templateOverview"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-            >
-              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                <slot :name="slotName" v-bind="slotProps"></slot>
-              </template>
-            </OverviewTab>
+            />
           </template>
           <template v-else>
             <div class="text-center q-pa-md">Loading...</div>
