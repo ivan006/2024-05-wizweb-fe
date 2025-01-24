@@ -25,8 +25,6 @@
                 <RecordFieldsForDisplayCustom
                     :item="item"
                     @clickRow="clickRow"
-                    :maxFields="6"
-                    isSummary
                     :superOptions="superOptions"
                     :template="templateListGrid"
                     @editItem="editItem"

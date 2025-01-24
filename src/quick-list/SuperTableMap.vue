@@ -31,7 +31,6 @@
           <RecordFieldsForDisplayCustom
               :item="viewItemData.data"
               :maxFields="6"
-              isSummary
               :superOptions="superOptions"
               :template="templateListGrid"
               @editItem="editItem"

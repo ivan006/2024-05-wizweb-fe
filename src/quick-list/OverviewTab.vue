@@ -23,6 +23,7 @@
       </template>
       <template v-else>
         <RecordFieldsForDisplayGeneric
+            :maxFields="maxFields"
             :item="item"
             :superOptions="superOptions"
             @editItem="editItem"
@@ -44,6 +45,12 @@ export default {
   name: 'OverviewTab',
   components: {DatapointForDisplayInner, RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric },
   props: {
+    maxFields: {
+      type: Number,
+      default() {
+        return 999;
+      },
+    },
     templateOverview: {
       type: Object,
       default() {
