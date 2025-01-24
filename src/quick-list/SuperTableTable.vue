@@ -37,13 +37,6 @@
                     @deleteItem="deleteItem"
                     protectImage
                 />
-                <!--<DatapointForDisplayInner-->
-                <!--    :isTag="true"-->
-                <!--    :header="header"-->
-                <!--    :item="props.row[header.isChildOf.value]"-->
-                <!--    :superOptions="superOptions"-->
-                <!--    hideLabel-->
-                <!--/>-->
               </div>
             </template>
             <template v-else>
@@ -58,12 +51,6 @@
                     @deleteItem="deleteItem"
                     protectImage
                 />
-                <!--<DatapointForDisplayInner-->
-                <!--    :header="header"-->
-                <!--    :item="props.row"-->
-                <!--    :superOptions="superOptions"-->
-                <!--    hideLabel-->
-                <!--/>-->
               </div>
             </template>
           </q-td>

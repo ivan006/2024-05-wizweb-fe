@@ -44,10 +44,10 @@
                     :header="compField"
                     :item="item"
                     :superOptions="superOptions"
-                    hideLabel
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                     :protectImage="protectImage"
+                    :isHeading="isHeading"
                 />
               </template>
             </component>
@@ -102,10 +102,10 @@
               :header="compField"
               :item="item"
               :superOptions="superOptions"
-              hideLabel
               @editItem="editItem"
               @deleteItem="deleteItem"
               :protectImage="protectImage"
+              :isHeading="isHeading"
           />
         </template>
       </component>
@@ -126,6 +126,12 @@ export default {
     DatapointForDisplayInner,
   },
   props: {
+    isHeading: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     header: {
       type: Object,
       default() {

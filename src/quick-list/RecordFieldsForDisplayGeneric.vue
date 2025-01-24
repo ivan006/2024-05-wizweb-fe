@@ -16,10 +16,11 @@
             <template v-if="index === 0"></template>
             <template v-else>
               <div>
-                <DatapointForDisplayInner
-                    :header="header"
+                <DatapointForDisplay
                     :item="item"
                     :superOptions="superOptions"
+                    :dataPoint="header.userConfig"
+                    :header="header"
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                 />
@@ -28,23 +29,25 @@
           </template>
           <template v-else>
             <template v-if="index === 0">
-              <DatapointForDisplayInner
-                  :header="header"
+              <DatapointForDisplay
                   :item="item"
                   :superOptions="superOptions"
+                  :dataPoint="header.userConfig"
+                  :header="header"
+                  hideLabel
                   @editItem="editItem"
                   @deleteItem="deleteItem"
-
                   isHeading
               />
             </template>
             <template v-else>
               <div>
-                <DatapointForDisplayInner
+                <DatapointForDisplay
                     :key="index"
-                    :header="header"
                     :item="item"
                     :superOptions="superOptions"
+                    :dataPoint="header.userConfig"
+                    :header="header"
                     @editItem="editItem"
                     @deleteItem="deleteItem"
                 />
@@ -54,11 +57,12 @@
         </template>
         <template v-else>
           <div>
-            <DatapointForDisplayInner
+            <DatapointForDisplay
                 :key="index"
-                :header="header"
                 :item="item"
                 :superOptions="superOptions"
+                :dataPoint="header.userConfig"
+                :header="header"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
             />
@@ -70,11 +74,13 @@
 </template>
 
 <script>
-import DatapointForDisplayInner from './DatapointForDisplayInner.vue';
+import {defineAsyncComponent} from "vue";
 
 export default {
   name: 'RecordFieldsForDisplayGeneric',
-  components: { DatapointForDisplayInner },
+  components: {
+    DatapointForDisplay: defineAsyncComponent(() => import('./DatapointForDisplay.vue')),
+  },
   props: {
     unClickable: {
       type: Boolean,

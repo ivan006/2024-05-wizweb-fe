@@ -1,15 +1,15 @@
 <template>
   <span :class="isHeading ? 'text-h6' : ''">
-    <template v-if="typeof header.usageType == 'undefined'"></template>
-    <template
-        v-else-if="
-        !isHeading && !hideLabel && !header.usageType.startsWith('relChildren')
-      "
-    >
-      <div class="text-caption">
-        {{ header.label }}
-      </div>
-    </template>
+    <!--<template v-if="typeof header.usageType == 'undefined'"></template>-->
+    <!--<template-->
+    <!--    v-else-if="-->
+    <!--    !isHeading && !hideLabel && !header.usageType.startsWith('relChildren')-->
+    <!--  "-->
+    <!--&gt;-->
+    <!--  <div class="text-caption">-->
+    <!--    {{ header.label }}-->
+    <!--  </div>-->
+    <!--</template>-->
 
     <template v-if="typeof header.usageType == 'undefined'">
       <!--{{typeof header.usageType}}-->
