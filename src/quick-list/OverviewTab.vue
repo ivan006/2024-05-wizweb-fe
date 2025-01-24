@@ -9,7 +9,6 @@
           <div class="row q-col-gutter-xs">
             <RecordFieldsForDisplayCustom
                 :item="item"
-                :childRelations="childRelations"
                 :filteredChildRelations="filteredChildRelations"
                 :superOptions="superOptions"
                 :template="templateOverview"
@@ -53,12 +52,6 @@ export default {
       },
     },
     filteredChildRelations: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    childRelations: {
       type: Array,
       default() {
         return [];

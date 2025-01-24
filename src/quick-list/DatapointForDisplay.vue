@@ -156,12 +156,6 @@ export default {
         return {}
       },
     },
-    childRelations: {
-      type: Array,
-      default() {
-        return []
-      },
-    },
     superOptions: {
       type: Object,
       default() {
@@ -207,15 +201,6 @@ export default {
         })
         return result
       }
-    },
-    compRelation() {
-      let result = {}
-      if (this.compField && this.isRelChildren(this.compField)) {
-        result = this.childRelations.find((relation) => {
-          return relation.field.name == this.dataPoint.field
-        })
-      }
-      return result
     },
     label() {
       if (typeof this.dataPoint.label !== "undefined") {

@@ -26,7 +26,6 @@
                     :item="item"
                     @clickRow="clickRow"
                     :maxFields="6"
-                    :childRelations="[]"
                     isSummary
                     :superOptions="superOptions"
                     :template="templateListGrid"

@@ -51,7 +51,6 @@
             <RecordFieldsForDisplayCustom
                 :item="event.meta"
                 :maxFields="6"
-                :childRelations="[]"
                 isSummary
                 :superOptions="getCurrentSuperOptions(event.configIndex)"
                 :template="getCurrentTemplate(event.configIndex)"

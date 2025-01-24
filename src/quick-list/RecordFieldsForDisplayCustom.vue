@@ -20,7 +20,6 @@
             <RecordFieldsForDisplayCustom
                 :template="col"
                 :item="item"
-                :childRelations="childRelations"
                 :superOptions="superOptions"
                 :unClickable="unClickable"
                 @editItem="editItem"
@@ -37,7 +36,6 @@
             <DatapointForDisplay
                 :item="item"
                 :dataPoint="template.dataPoint"
-                :childRelations="childRelations"
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
@@ -76,12 +74,6 @@ export default {
       type: Boolean,
       default() {
         return false;
-      },
-    },
-    childRelations: {
-      type: Array,
-      default() {
-        return [];
       },
     },
     superOptions: {

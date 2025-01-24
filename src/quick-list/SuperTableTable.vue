@@ -30,7 +30,6 @@
                 <DatapointForDisplay
                     :item="props.row[header.isChildOf.value]"
                     :superOptions="superOptions"
-                    :childRelations="[]"
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
@@ -52,7 +51,6 @@
                 <DatapointForDisplay
                     :item="props.row"
                     :superOptions="superOptions"
-                    :childRelations="[]"
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
