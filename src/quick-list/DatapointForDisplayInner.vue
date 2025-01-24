@@ -90,6 +90,7 @@
         <EditDeleteButtons
             :item="item"
             :superOptions="superOptions"
+            @fetchData="fetchData"
         />
       </div>
     </template>

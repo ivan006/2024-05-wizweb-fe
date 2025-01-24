@@ -23,8 +23,7 @@
                   :item="item"
                   :superOptions="superOptions"
                   :templateOverview="templateListGrid"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
+                  @fetchData="fetchData"
                   @clickRow="clickRow"
                   :unClickable="unClickable || !superOptions.model.rules.readable(item)"
               />
@@ -124,11 +123,8 @@ export default {
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
     },
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(e) {
       this.$emit("clickRow", e[this.superOptions.model.primaryKey], e);

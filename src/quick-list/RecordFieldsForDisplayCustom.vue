@@ -22,8 +22,7 @@
                 :item="item"
                 :superOptions="superOptions"
                 :unClickable="unClickable"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                @fetchData="fetchData"
             />
           </template>
         </template>
@@ -33,8 +32,7 @@
                 :item="item"
                 :dataPoint="template.dataPoint"
                 :superOptions="superOptions"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                @fetchData="fetchData"
             />
           </div>
         </template>
@@ -48,7 +46,7 @@ import DatapointForDisplay from './DatapointForDisplay.vue';
 
 export default {
   name: 'RecordFieldsForDisplayCustom',
-  components: { DatapointForDisplay },
+  components: {DatapointForDisplay },
   props: {
     template: {
       type: Object,
@@ -116,11 +114,8 @@ export default {
 
       return `col-${lg} col-lg-${lg} col-md-${md} col-sm-${sm} col-xs-${xs}`;
     },
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(item) {
       this.$emit('clickRow', item);

@@ -44,8 +44,7 @@
                     :header="compField"
                     :item="item"
                     :superOptions="superOptions"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                     :protectImage="protectImage"
                     :isHeading="isHeading"
                 />
@@ -89,8 +88,7 @@
               :is="asyncComponent"
               :item="item"
               :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
+              @fetchData="fetchData"
           />
         </template>
         <template v-else-if="dataPoint.type === 'function'">
@@ -102,8 +100,7 @@
               :header="compField"
               :item="item"
               :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
+              @fetchData="fetchData"
               :protectImage="protectImage"
               :isHeading="isHeading"
           />

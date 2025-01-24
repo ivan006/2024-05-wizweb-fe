@@ -21,8 +21,7 @@
                     :superOptions="superOptions"
                     :dataPoint="header.userConfig"
                     :header="header"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                 />
               </div>
             </template>
@@ -35,8 +34,7 @@
                   :dataPoint="header.userConfig"
                   :header="header"
                   hideLabel
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
+                  @fetchData="fetchData"
                   isHeading
               />
             </template>
@@ -48,8 +46,7 @@
                     :superOptions="superOptions"
                     :dataPoint="header.userConfig"
                     :header="header"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                 />
               </div>
             </template>
@@ -63,8 +60,7 @@
                 :superOptions="superOptions"
                 :dataPoint="header.userConfig"
                 :header="header"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                @fetchData="fetchData"
             />
           </div>
         </template>
@@ -115,11 +111,8 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(e) {
       this.$emit('clickRow', e);

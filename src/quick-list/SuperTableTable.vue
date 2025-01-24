@@ -33,8 +33,7 @@
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                     protectImage
                 />
               </div>
@@ -47,8 +46,7 @@
                     :dataPoint="header.userConfig"
                     :header="header"
                     hideLabel
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                     protectImage
                 />
               </div>
@@ -306,11 +304,8 @@ export default {
     updateOptions(e) {
       this.$emit("update:options", e);
     },
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(row) {
       if (this.model.rules.readable(row)) {
