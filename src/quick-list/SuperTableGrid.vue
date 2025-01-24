@@ -38,16 +38,12 @@
 </template>
 
 <script>
-import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
-import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import OverviewTab from "./OverviewTab.vue";
 
 export default {
   name: "SuperTableGrid",
   components: {
     OverviewTab,
-    RecordFieldsForDisplayGeneric,
-    RecordFieldsForDisplayCustom,
   },
   props: {
     loading: {

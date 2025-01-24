@@ -22,53 +22,35 @@
       <q-card
           class="q-pa-none"
       >
-        <template
-            v-if="
-                templateListGrid &&
-                templateListGrid.cols
-              "
-        >
-          <RecordFieldsForDisplayCustom
-              :item="viewItemData.data"
-              :maxFields="6"
-              :superOptions="superOptions"
-              :template="templateListGrid"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-              :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
-              @clickRow="clickRow"
-          />
-        </template>
-        <template v-else>
-          <RecordFieldsForDisplayGeneric
-              :item="viewItemData.data"
-              :maxFields="6"
-              :superOptions="superOptions"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
-              :unClickable="unClickable"
-              @clickRow="clickRow"
-          />
-        </template>
+
+        <OverviewTab
+            :genericMaxFields="6"
+            :item="viewItemData.data"
+            :superOptions="superOptions"
+            :templateOverview="templateListGrid"
+            @editItem="editItem"
+            @deleteItem="deleteItem"
+            @clickRow="clickRow"
+            :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
+        />
+
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script>
-import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import MyGoogleMap from "./MyGoogleMap.vue";
 import { useGeolocation } from "@vueuse/core";
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
-import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import OverviewTab from "./OverviewTab.vue";
 
 export default {
   name: "SuperTableMap",
   components: {
-    RecordFieldsForDisplayCustom,
+    OverviewTab,
     DatapointForDisplayInner,
     MyGoogleMap,
-    RecordFieldsForDisplayGeneric,
   },
   props: {
     templateListGrid: {

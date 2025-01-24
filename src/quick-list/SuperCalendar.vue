@@ -123,8 +123,6 @@ dayjs.extend(timezone);
 import SuperTableCalendarDay from "./SuperTableCalendarDay.vue";
 import SuperTableCalendarAgenda from "./SuperTableCalendarAgenda.vue";
 import CalendarNavigationBar from "./CalendarNavigationBar.vue";
-import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
-import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import { QuickListsHelpers } from "../index";
 import OverviewTab from "./OverviewTab.vue";
 
@@ -135,8 +133,6 @@ export default {
     SuperTableCalendarDay,
     SuperTableCalendarAgenda,
     CalendarNavigationBar,
-    RecordFieldsForDisplayCustom,
-    RecordFieldsForDisplayGeneric,
   },
   props: {
     loading: {
