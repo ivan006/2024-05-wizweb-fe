@@ -58,8 +58,7 @@
               v-model="selectedDate"
               :view="view"
               @show-event="onShowEvent"
-              @edit-item="onEditItem"
-              @delete-item="onDeleteItem"
+              @fetchData="fetchData"
           />
         </template>
         <template v-else>
@@ -70,8 +69,7 @@
               v-model="selectedDate"
               :view="view"
               @show-event="onShowEvent"
-              @edit-item="onEditItem"
-              @delete-item="onDeleteItem"
+              @fetchData="fetchData"
           />
         </template>
       </div>
@@ -88,16 +86,7 @@
             :item="viewItemData.data"
             :superOptions="activeItemAndType.superOptions"
             :templateOverview="activeItemAndType.templateListGrid"
-            @editItem="
-              (e) => {
-                $emit('editItem', e, this.viewItemData.configIndex);
-              }
-            "
-            @deleteItem="
-              (e) => {
-                $emit('deleteItem', e, this.viewItemData.configIndex);
-              }
-            "
+            @fetchData="fetchData"
             @clickRow="
               (e) => {
                 $emit('clickRow', null, e, this.viewItemData.configIndex);
@@ -253,6 +242,10 @@ export default {
     },
   },
   methods: {
+    fetchData(e) {
+      this.$emit("fetchData", e);
+      this.viewItemData.showModal = false;
+    },
     onShowEvent(event) {
       this.viewItemData = {
         showModal: true,
@@ -261,13 +254,13 @@ export default {
       };
     },
 
-    onEditItem(event) {
-      this.activeItemAndType.events.editItem(event.meta);
-    },
-
-    onDeleteItem(event) {
-      this.activeItemAndType.events.deleteItem(event.meta);
-    },
+    // onEditItem(event) {
+    //   this.activeItemAndType.events.editItem(event.meta);
+    // },
+    //
+    // onDeleteItem(event) {
+    //   this.activeItemAndType.events.deleteItem(event.meta);
+    // },
 
     onToday() {
       if (this.$refs.calendarAgenda) {

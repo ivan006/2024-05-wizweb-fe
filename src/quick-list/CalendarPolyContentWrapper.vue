@@ -12,8 +12,7 @@
       />
       <SuperCalendar
           ref="SuperCalendar"
-          @editItem="editItem"
-          @deleteItem="deleteItem"
+          @fetchData="fetchAllModels"
           :loading="loading"
           :mixedConfigs="mergedConfigs"
       />
@@ -36,7 +35,7 @@
 import SuperCalendar from "./SuperCalendar.vue";
 import {Helpers} from "../index";
 import CreateButtonWithDropDowns from "./CreateButtonWithDropDowns.vue";
-import CrudModal from "./CrudModal.vue"; // Adjust path as needed
+import CrudModal from "./CrudModal.vue";
 
 export default {
   name: "CalendarPolyContentWrapper",

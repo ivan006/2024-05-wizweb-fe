@@ -28,8 +28,7 @@
             :item="viewItemData.data"
             :superOptions="superOptions"
             :templateOverview="templateListGrid"
-            @editItem="editItem"
-            @deleteItem="deleteItem"
+            @fetchData="fetchData"
             @clickRow="clickRow"
             :unClickable="unClickable || !superOptions.model.rules.readable(viewItemData.data)"
         />
@@ -187,11 +186,9 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
+      this.viewItemData.showModal = false;
     },
     clickRow(e) {
       this.viewItemData.showModal = false;

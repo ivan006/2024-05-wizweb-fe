@@ -47,8 +47,7 @@
                 :item="item"
                 :superOptions="superOptions"
                 :templateOverview="templateOverview"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                @fetchData="fetchData"
             />
           </template>
           <template v-else>
@@ -297,11 +296,8 @@ export default {
     // },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(pVal, item, relation) {
       relation.field.meta.field.related.openRecord(pVal, item, this.$router)

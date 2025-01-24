@@ -13,8 +13,7 @@
             :item="item"
             :superOptions="superOptions"
             :template="templateOverview"
-            @editItem="editItem"
-            @deleteItem="deleteItem"
+            @fetchData="fetchData"
             @clickRow="clickRow"
             :unClickable="unClickable"
         />
@@ -24,8 +23,7 @@
             :maxFields="genericMaxFields"
             :item="item"
             :superOptions="superOptions"
-            @editItem="editItem"
-            @deleteItem="deleteItem"
+            @fetchData="fetchData"
             @clickRow="clickRow"
             :unClickable="unClickable"
         />
@@ -84,11 +82,8 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     clickRow(e) {
       this.$emit('clickRow', e);

@@ -54,8 +54,7 @@
               :item="event.meta"
               :superOptions="getCurrentSuperOptions(event.configIndex)"
               :templateOverview="getCurrentTemplate(event.configIndex)"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
+              @fetchData="fetchData"
               :unClickable="getCurrentUnClickable(event.configIndex)"
           />
           <!--@clickRow="clickRow"-->
@@ -90,6 +89,9 @@ export default {
     mixedConfigs: Array, // Config array for dynamic behavior
   },
   methods: {
+    fetchData(e) {
+      this.$emit("fetchData", e);
+    },
     moveToToday() {
       this.$refs.calendar.moveToToday();
     },

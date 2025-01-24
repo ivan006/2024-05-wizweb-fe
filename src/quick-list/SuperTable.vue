@@ -84,8 +84,7 @@
                       :model="model"
                       :displayMapField="displayMapField"
                       :canEdit="canEdit"
-                      @editItem="editItem"
-                      @deleteItem="deleteItem"
+                      @fetchData="fetchData"
                       :loadingError="loadingError"
                   />
                 </q-card>
@@ -101,8 +100,7 @@
                     :model="model"
                     :displayMapField="displayMapField"
                     :canEdit="canEdit"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                     :loadingError="loadingError"
                 />
               </template>
@@ -133,8 +131,7 @@
                   :superOptions="superOptions"
                   :unClickable="unClickable"
                   :templateListGrid="templateListGrid"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
+                  @fetchData="fetchData"
                   :excludedCols="excludedCols"
                   :loading="loading"
                   :gridColWidth="gridColWidth"
@@ -147,8 +144,7 @@
                 :items="items"
                 @clickRow="clickRow"
                 :superOptions="superOptions"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
+                @fetchData="fetchData"
                 :unClickable="unClickable"
                 :templateListGrid="templateListGrid"
             />
@@ -173,12 +169,12 @@
 
                 <SuperCalendar
                     @clickRow="clickRow"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
+                    @fetchData="fetchData"
                     :loading="loading"
                     :mixedConfigs="[
                     {
                       templateListCalendar: templateListCalendar,
+                      templateListGrid: templateListGrid,
                       startFieldName: startFieldName,
                       endFieldName: endFieldName,
                       items: items,
@@ -193,12 +189,12 @@
             <template v-else>
               <SuperCalendar
                   @clickRow="clickRow"
-                  @editItem="editItem"
-                  @deleteItem="deleteItem"
+                  @fetchData="fetchData"
                   :loading="loading"
                   :mixedConfigs="[
                   {
                     templateListCalendar: templateListCalendar,
+                    templateListGrid: templateListGrid,
                     startFieldName: startFieldName,
                     endFieldName: endFieldName,
                     items: items,
