@@ -87,21 +87,9 @@
     </template>
     <template v-else-if="header.usageType == 'actions' && !disabled()">
       <div @click.stop :style="disabled() ? 'cursor: default;' : ''">
-        <q-btn
-            @click.stop="editItem(item)"
-            :disable="disabled()"
-            color="grey"
-            icon="edit"
-            flat
-            size="sm"
-        />
-        <q-btn
-            @click.stop="deleteItem(item)"
-            :disable="disabled()"
-            color="grey"
-            icon="delete"
-            flat
-            size="sm"
+        <EditDeleteButtons
+            :item="item"
+            :superOptions="superOptions"
         />
       </div>
     </template>
@@ -150,9 +138,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 import QuickListsHelpers from "./QuickListsHelpers";
+import EditDeleteButtons from "./EditDeleteButtons.vue";
 
 export default {
   name: "DatapointForDisplayInner",
+  components: {EditDeleteButtons},
   data() {
     return {
       showImageModel: false,
@@ -223,19 +213,8 @@ export default {
       }
       return truncatedStr;
     },
-    disabled() {
-      let result = false;
-
-      if (this.superOptions.model.rules?.editable) {
-        result = this.superOptions.model.rules.editable(this.item);
-      }
-      return !result;
-    },
-    deleteItem(e) {
-      this.$emit("deleteItem", e);
-    },
-    editItem(e) {
-      this.$emit("editItem", e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     formatTimestamp(timestamp) {
       if (timestamp) {

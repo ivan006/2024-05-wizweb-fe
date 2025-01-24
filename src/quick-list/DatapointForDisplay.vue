@@ -219,11 +219,8 @@ export default {
     }
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e)
-    },
-    editItem(e) {
-      this.$emit('editItem', e)
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     isRelChildren(header) {
       return header?.usageType && header?.usageType.startsWith('relChildren');
