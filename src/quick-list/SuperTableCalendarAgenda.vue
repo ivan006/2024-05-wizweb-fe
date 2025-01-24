@@ -47,27 +47,18 @@
       </template>
       <template v-for="event in getEvents(timestamp.date)" :key="event.id">
         <q-card class="q-pa-none q-ma-sm" @click="showEvent(event)">
-          <template v-if="getCurrentTemplate(event.configIndex)?.cols">
-            <RecordFieldsForDisplayCustom
-                :item="event.meta"
-                :maxFields="6"
-                :superOptions="getCurrentSuperOptions(event.configIndex)"
-                :template="getCurrentTemplate(event.configIndex)"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-                :unClickable="getCurrentUnClickable(event.configIndex)"
-            />
-          </template>
-          <template v-else>
-            <RecordFieldsForDisplayGeneric
-                :item="event.meta"
-                :maxFields="6"
-                :superOptions="getCurrentSuperOptions(event.configIndex)"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-                :unClickable="getCurrentUnClickable(event.configIndex)"
-            />
-          </template>
+
+
+          <OverviewTab
+              :genericMaxFields="6"
+              :item="event.meta"
+              :superOptions="getCurrentSuperOptions(event.configIndex)"
+              :templateOverview="getCurrentTemplate(event.configIndex)"
+              @editItem="editItem"
+              @deleteItem="deleteItem"
+              :unClickable="getCurrentUnClickable(event.configIndex)"
+          />
+          <!--@clickRow="clickRow"-->
         </q-card>
       </template>
     </template>
@@ -84,9 +75,11 @@ dayjs.extend(localizedFormat);
 
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
+import OverviewTab from "./OverviewTab.vue";
 
 export default {
   components: {
+    OverviewTab,
     RecordFieldsForDisplayGeneric,
     RecordFieldsForDisplayCustom,
   },
