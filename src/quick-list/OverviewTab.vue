@@ -9,7 +9,6 @@
           <div class="row q-col-gutter-xs">
             <RecordFieldsForDisplayCustom
                 :item="item"
-                :filteredChildRelations="filteredChildRelations"
                 :superOptions="superOptions"
                 :template="templateOverview"
                 @editItem="editItem"
@@ -49,12 +48,6 @@ export default {
       type: Object,
       default() {
         return {};
-      },
-    },
-    filteredChildRelations: {
-      type: Array,
-      default() {
-        return [];
       },
     },
     item: {

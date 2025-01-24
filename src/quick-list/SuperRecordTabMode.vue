@@ -47,7 +47,6 @@
                 :item="item"
                 :superOptions="superOptions"
                 :templateOverview="templateOverview"
-                :filteredChildRelations="filteredChildRelations"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
             >
