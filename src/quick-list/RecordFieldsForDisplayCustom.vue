@@ -24,11 +24,7 @@
                 :unClickable="unClickable"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-            >
-              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                <slot :name="slotName" v-bind="slotProps"></slot>
-              </template>
-            </RecordFieldsForDisplayCustom>
+            />
           </template>
         </template>
         <template v-else-if="template.dataPoint && (template.dataPoint.field !== 'actions' || superOptions.model.rules.editable(item))">
@@ -39,11 +35,7 @@
                 :superOptions="superOptions"
                 @editItem="editItem"
                 @deleteItem="deleteItem"
-            >
-              <template v-for="(slot, slotName) in $slots" v-slot:[slotName]="slotProps">
-                <slot :name="slotName" v-bind="slotProps"></slot>
-              </template>
-            </DatapointForDisplay>
+            />
           </div>
         </template>
       </div>
