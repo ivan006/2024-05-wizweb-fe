@@ -82,58 +82,29 @@
           class="q-pa-none"
           style="width: 700px; max-width: calc(100vw - 32px)"
       >
-        <template
-            v-if="
-            activeItemAndType.templateListGrid &&
-            activeItemAndType.templateListGrid.cols
-          "
-        >
-          <RecordFieldsForDisplayCustom
-              :item="viewItemData.data"
-              :maxFields="6"
-              :superOptions="activeItemAndType.superOptions"
-              :template="activeItemAndType.templateListGrid"
-              @editItem="
+
+        <OverviewTab
+            :genericMaxFields="6"
+            :item="viewItemData.data"
+            :superOptions="activeItemAndType.superOptions"
+            :templateOverview="activeItemAndType.templateListGrid"
+            @editItem="
               (e) => {
                 $emit('editItem', e, this.viewItemData.configIndex);
               }
             "
-              @deleteItem="
+            @deleteItem="
               (e) => {
                 $emit('deleteItem', e, this.viewItemData.configIndex);
               }
             "
-              @clickRow="
+            @clickRow="
               (e) => {
                 $emit('clickRow', null, e, this.viewItemData.configIndex);
               }
             "
-              :unClickable="activeItemAndType.unClickable"
-          />
-        </template>
-        <template v-else>
-          <RecordFieldsForDisplayGeneric
-              :item="viewItemData.data"
-              :maxFields="6"
-              :superOptions="activeItemAndType.superOptions"
-              @editItem="
-              (e) => {
-                $emit('editItem', e, this.viewItemData.configIndex);
-              }
-            "
-              @deleteItem="
-              (e) => {
-                $emit('deleteItem', e, this.viewItemData.configIndex);
-              }
-            "
-              @clickRow="
-              (e) => {
-                $emit('clickRow', null, e, this.viewItemData.configIndex);
-              }
-            "
-              :unClickable="activeItemAndType.unClickable"
-          />
-        </template>
+            :unClickable="activeItemAndType.unClickable"
+        />
       </q-card>
     </q-dialog>
   </div>
@@ -155,10 +126,12 @@ import CalendarNavigationBar from "./CalendarNavigationBar.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import { QuickListsHelpers } from "../index";
+import OverviewTab from "./OverviewTab.vue";
 
 export default {
   name: "SuperCalendar",
   components: {
+    OverviewTab,
     SuperTableCalendarDay,
     SuperTableCalendarAgenda,
     CalendarNavigationBar,

@@ -21,7 +21,7 @@
       </template>
       <template v-else>
         <RecordFieldsForDisplayGeneric
-            :maxFields="maxFields"
+            :maxFields="genericMaxFields"
             :item="item"
             :superOptions="superOptions"
             @editItem="editItem"
@@ -51,7 +51,7 @@ export default {
         return false;
       },
     },
-    maxFields: {
+    genericMaxFields: {
       type: Number,
       default() {
         return 999;

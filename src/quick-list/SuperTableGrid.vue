@@ -19,6 +19,7 @@
 
             <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
               <OverviewTab
+                  :genericMaxFields="6"
                   :item="item"
                   :superOptions="superOptions"
                   :templateOverview="templateListGrid"
