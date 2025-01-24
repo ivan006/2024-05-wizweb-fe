@@ -2,12 +2,6 @@
   <div>
     <template v-if="!justCreateButton">
       <template v-if="isForSelectingRelation">
-        <!--<SuperTableList-->
-        <!--    :items="items"-->
-        <!--    :modelValue="modelValue"-->
-        <!--    @update:modelValue="clickRow"-->
-        <!--    :superOptions="superOptions"-->
-        <!--/>-->
         <SuperSelect
             ref="selectRef"
             :readonly="disabled"
@@ -250,7 +244,6 @@ import QuickListsHelpers from "./QuickListsHelpers";
 import SuperTableGrid from "./SuperTableGrid.vue";
 import SuperTableTable from "./SuperTableTable.vue";
 import SuperTableMap from "./SuperTableMap.vue";
-import SuperTableList from "./SuperTableList.vue";
 import SuperSelect from "./SuperSelect.vue";
 import FilterTime from "./FilterTime.vue";
 import FilterPlace from "./FilterPlace.vue";
@@ -292,7 +285,6 @@ export default {
     FilterPlace,
     FilterTime,
     SuperSelect,
-    SuperTableList,
     SuperTableMap,
     SuperTableTable,
     SuperTableGrid,
