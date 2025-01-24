@@ -24,8 +24,14 @@
           </strong>
         </template>
         <template v-else-if="prop.node.type === 'actions'">
-          <DatapointForDisplayInner
-              :header="prop.node.header"
+
+          <!--<strong style="display: inline-block; min-width: 100px;">-->
+          <!--  {{ prop.node.label }}-->
+          <!--</strong>-->
+          <!--<div style="display: inline-block;">-->
+          <!--</div>-->
+
+          <DatapointForDisplay
               :item="prop.node.data"
               :superOptions="{
                 // headers: header,
@@ -35,6 +41,9 @@
                 canEdit: false,
                 currentParentRecord: {},
               }"
+              :dataPoint="prop.node.header.userConfig"
+              hideLabel
+              :header="prop.node.header"
               @editItem="editItem"
               @deleteItem="deleteItem"
           />
@@ -50,10 +59,11 @@
 
 <script>
 import DatapointForDisplayInner from "./DatapointForDisplayInner.vue";
+import DatapointForDisplay from "./DatapointForDisplay.vue";
 
 export default {
   name: "SuperRecordTreeModeChild",
-  components: {DatapointForDisplayInner},
+  components: {DatapointForDisplay, DatapointForDisplayInner},
   props: {
     relationTree: {type: Object, required: true},
     data: {type: Object, default: () => ({})},
