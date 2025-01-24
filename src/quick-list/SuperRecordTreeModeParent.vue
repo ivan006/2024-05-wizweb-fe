@@ -5,8 +5,7 @@
       <SuperRecordTreeModeChild
           :relation-tree="relationTree"
           :data="item"
-          @editItem="editItem"
-          @deleteItem="deleteItem"
+          @fetchData="fetchData"
       />
     </div>
   </div>
@@ -59,11 +58,8 @@ export default {
     this.relationTree = this.buildRelationTree(treeSkeleton, this.model);
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     buildTreeSkeleton(relationships) {
       const tree = {};

@@ -38,14 +38,13 @@
                 modelFields: [],
                 displayMapField: false,
                 model: prop.node.relationTree.model,
-                canEdit: false,
+                canEdit: prop.node.relationTree.model.rules.editable(prop.node.data),
                 currentParentRecord: {},
               }"
               :dataPoint="prop.node.header.userConfig"
               hideLabel
               :header="prop.node.header"
-              @editItem="editItem"
-              @deleteItem="deleteItem"
+              @fetchData="fetchData"
           />
           <!--:superOptions="superOptions"-->
         </template>
@@ -63,7 +62,7 @@ import DatapointForDisplay from "./DatapointForDisplay.vue";
 
 export default {
   name: "SuperRecordTreeModeChild",
-  components: {DatapointForDisplay, DatapointForDisplayInner},
+  components: { DatapointForDisplay, DatapointForDisplayInner},
   props: {
     relationTree: {type: Object, required: true},
     data: {type: Object, default: () => ({})},
@@ -74,11 +73,8 @@ export default {
     },
   },
   methods: {
-    deleteItem(e) {
-      this.$emit('deleteItem', e);
-    },
-    editItem(e) {
-      this.$emit('editItem', e);
+    fetchData(e) {
+      this.$emit("fetchData", e);
     },
     buildTreeNodes(relationTree, data) {
       const nodes = [];
