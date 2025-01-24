@@ -20,7 +20,6 @@ import SuperSelect from './quick-list/SuperSelect.vue';
 import SuperTable from './quick-list/SuperTable.vue';
 import SuperCalendar from './quick-list/SuperCalendar.vue';
 import SuperTableGrid from './quick-list/SuperTableGrid.vue';
-import SuperTableList from './quick-list/SuperTableList.vue';
 import SuperTableMap from './quick-list/SuperTableMap.vue';
 import SuperTableTable from './quick-list/SuperTableTable.vue';
 import CalendarPolyContentWrapper from './quick-list/CalendarPolyContentWrapper.vue';
@@ -52,7 +51,6 @@ export {
   SuperTable,
   SuperCalendar,
   SuperTableGrid,
-  SuperTableList,
   SuperTableMap,
   SuperTableTable,
   FieldUsageTypes,
