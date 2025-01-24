@@ -14,41 +14,22 @@
           class="row q-col-gutter-md justify-center"
       >
         <template v-for="item in items" :key="item.name">
-          <template
-              v-if="
-                templateListGrid &&
-                templateListGrid.cols
-              "
-          >
-            <div :class="colClasses(templateListGrid.colWidth ? templateListGrid.colWidth : 3)" >
-              <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
-                <RecordFieldsForDisplayCustom
-                    :item="item"
-                    @clickRow="clickRow"
-                    :superOptions="superOptions"
-                    :template="templateListGrid"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
-                    :unClickable="unClickable || !superOptions.model.rules.readable(item)"
-                />
-              </div>
+
+          <div :class="colClasses(gridColWidth)" >
+
+            <div class="q-card q-mx-auto" style="height: 100%; overflow: hidden;">
+              <OverviewTab
+                  :item="item"
+                  :superOptions="superOptions"
+                  :templateOverview="templateListGrid"
+                  @editItem="editItem"
+                  @deleteItem="deleteItem"
+                  @clickRow="clickRow"
+                  :unClickable="unClickable || !superOptions.model.rules.readable(item)"
+              />
             </div>
-          </template>
-          <template v-else>
-            <div :class="`col-12 col-md-3 `">
-              <div class="q-card q-mx-auto" style="height: 100%">
-                <RecordFieldsForDisplayGeneric
-                    :item="item"
-                    @clickRow="clickRow"
-                    :maxFields="6"
-                    :superOptions="superOptions"
-                    @editItem="editItem"
-                    @deleteItem="deleteItem"
-                    :unClickable="unClickable"
-                />
-              </div>
-            </div>
-          </template>
+
+          </div>
         </template>
       </div>
     </template>
@@ -58,10 +39,12 @@
 <script>
 import RecordFieldsForDisplayGeneric from "./RecordFieldsForDisplayGeneric.vue";
 import RecordFieldsForDisplayCustom from "./RecordFieldsForDisplayCustom.vue";
+import OverviewTab from "./OverviewTab.vue";
 
 export default {
   name: "SuperTableGrid",
   components: {
+    OverviewTab,
     RecordFieldsForDisplayGeneric,
     RecordFieldsForDisplayCustom,
   },
@@ -88,6 +71,12 @@ export default {
       type: Object,
       default() {
         return {};
+      },
+    },
+    gridColWidth: {
+      type: Number,
+      default() {
+        return 3;
       },
     },
     items: {

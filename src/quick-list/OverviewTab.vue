@@ -5,17 +5,19 @@
     </template>
     <template v-else>
       <template v-if="templateOverview && templateOverview.cols">
-        <div style="padding-top:0.03px;">
-          <div class="row q-col-gutter-xs">
-            <RecordFieldsForDisplayCustom
-                :item="item"
-                :superOptions="superOptions"
-                :template="templateOverview"
-                @editItem="editItem"
-                @deleteItem="deleteItem"
-            />
-          </div>
-        </div>
+        <!--<div style="padding-top:0.03px;">-->
+        <!--  <div class="row q-col-gutter-xs">-->
+        <!--  </div>-->
+        <!--</div>-->
+        <RecordFieldsForDisplayCustom
+            :item="item"
+            :superOptions="superOptions"
+            :template="templateOverview"
+            @editItem="editItem"
+            @deleteItem="deleteItem"
+            @clickRow="clickRow"
+            :unClickable="unClickable"
+        />
       </template>
       <template v-else>
         <RecordFieldsForDisplayGeneric
@@ -24,6 +26,8 @@
             :superOptions="superOptions"
             @editItem="editItem"
             @deleteItem="deleteItem"
+            @clickRow="clickRow"
+            :unClickable="unClickable"
         />
       </template>
     </template>
@@ -41,6 +45,12 @@ export default {
   name: 'OverviewTab',
   components: {DatapointForDisplayInner, RecordFieldsForDisplayCustom, RecordFieldsForDisplayGeneric },
   props: {
+    unClickable: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
     maxFields: {
       type: Number,
       default() {
