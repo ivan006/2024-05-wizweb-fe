@@ -200,6 +200,14 @@ export default {
     },
   },
   methods: {
+    disabled() {
+      let result = false;
+
+      if (this.superOptions.model.rules?.editable) {
+        result = this.superOptions.model.rules.editable(this.item);
+      }
+      return !result;
+    },
     clickParent(item, header) {
       const model = header.meta.field.parent;
       model.openRecord(item[model.primaryKey], item, this.$router);
