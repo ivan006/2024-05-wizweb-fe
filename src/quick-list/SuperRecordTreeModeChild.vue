@@ -73,6 +73,14 @@ export default {
     },
   },
   methods: {
+    editable(model, item) {
+      let result = false;
+
+      if (model.rules?.editable) {
+        result = model.rules.editable(item);
+      }
+      return result;
+    },
     fetchData(e) {
       this.$emit("fetchData", e);
     },
@@ -118,7 +126,8 @@ export default {
             })),
           });
         } else if (
-            header.usageType === 'actions'
+            header.usageType === 'actions' &&
+            this.editable(relationTree.model, data)
         ) {
           // Process attributes
           nodes.push({
