@@ -19,19 +19,30 @@
             {{ field.label }}:
           </div>
           <!--:disabled="typeof field.fieldExtras.autoFill === 'function'"-->
-          <DatapointForEditInner
-              @superTableMounted="rendered = true"
-              :item="itemData"
-              :modelValue="itemData[field.name]"
+
+
+          <DatapointForEdit
+              :modelValue="itemData"
+              :compField="field"
               @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"
               :superOptions="superOptions"
               @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"
-              :field="field"
               :formServerErrors="formServerErrors"
               :itemErrors="itemErrors"
-              hideLabel
               @placeSelected="(e)=>{$emit('placeSelected', e)}"
           />
+          <!--<DatapointForEditInner-->
+          <!--    :item="itemData"-->
+          <!--    :modelValue="itemData[field.name]"-->
+          <!--    @update:modelValue="(fieldValue)=>{updateModelValue(fieldValue,field.name)}"-->
+          <!--    :superOptions="superOptions"-->
+          <!--    @updateSetDefaultEndTime="(date)=>{$emit('updateSetDefaultEndTime', date)}"-->
+          <!--    :field="field"-->
+          <!--    :formServerErrors="formServerErrors"-->
+          <!--    :itemErrors="itemErrors"-->
+          <!--    hideLabel-->
+          <!--    @placeSelected="(e)=>{$emit('placeSelected', e)}"-->
+          <!--/>-->
         </div>
       </template>
     </template>
@@ -42,10 +53,12 @@
 import DatapointForEditInner from "./DatapointForEditInner.vue";
 import SuperSelect from "./SuperSelect.vue";
 import RecordFieldsForEditCustom from "./RecordFieldsForEditCustom.vue";
+import DatapointForEdit from "./DatapointForEdit.vue";
 
 export default {
   name: "RecordFieldsForEditGeneric",
   components: {
+    DatapointForEdit,
     RecordFieldsForEditCustom,
     SuperSelect,
     DatapointForEditInner,
