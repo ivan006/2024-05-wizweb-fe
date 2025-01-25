@@ -303,7 +303,7 @@ export default {
                 {},
             )
             .then((response) => {
-              this.preSelectedItem = response.response.data.data[0]
+              this.preSelectedItem = response.response.data.data
               this.loadingInner = false
             })
             .catch(() => {
